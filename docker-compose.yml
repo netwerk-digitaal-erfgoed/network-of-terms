@@ -1,0 +1,10 @@
+version: "3.4"
+services:
+  node:
+    image: network-of-terms-comunica:latest
+    user: node
+    build: .
+    restart: always
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules

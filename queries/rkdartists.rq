@@ -1,0 +1,18 @@
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+    skos:prefLabel ?prefLabel ;
+    skos:altLabel ?altLabel ;
+    skos:scopeNote ?scopeNote .
+}
+WHERE {
+    ?uri a ?type .
+    VALUES ?type { schema:Person }
+    ?uri schema:name ?prefLabel .
+    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+    OPTIONAL { ?uri schema:alternateName ?altLabel . }
+    OPTIONAL { ?uri schema:description ?scopeNote . }
+}
+LIMIT 50

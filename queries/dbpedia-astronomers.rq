@@ -1,0 +1,18 @@
+PREFIX dbo:	<http://dbpedia.org/ontology/>
+PREFIX dbr:	<http://dbpedia.org/resource/>
+PREFIX ns34: <http://purl.org/linguistics/gold/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+    skos:prefLabel ?prefLabel ;
+    skos:scopeNote ?scopeNote .
+}
+WHERE {
+    ?uri ns34:hypernym dbr:Astronomer .
+    ?uri foaf:name ?prefLabel .
+    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+    OPTIONAL { ?uri dbo:abstract ?scopeNote }
+}
+LIMIT 50

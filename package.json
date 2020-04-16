@@ -1,0 +1,49 @@
+{
+  "name": "network-of-terms-comunica",
+  "description": "Prototype: Network of Terms and Comunica",
+  "version": "1.0.0",
+  "bin": "./bin/run",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "private": true,
+  "files": [
+    "build/src",
+    "!build/src/**/*.map"
+  ],
+  "dependencies": {
+    "cli-ux": "5.x.x",
+    "@comunica/actor-init-sparql": "1.x.x",
+    "@comunica/actor-init-sparql-hdt": "1.x.x",
+    "@comunica/actor-init-sparql-rdfjs": "1.x.x",
+    "@hapi/hoek": "9.x.x",
+    "@hapi/joi": "16.x.x",
+    "@oclif/command": "1.x.x",
+    "pino": "5.x.x",
+    "pino-pretty": "4.x.x",
+    "pretty-ms": "6.x.x",
+    "rdf-parse": "1.x.x",
+    "rdf-store-stream": "1.x.x"
+  },
+  "devDependencies": {
+    "globby": "11.x.x",
+    "gts": "1.x.x",
+    "ts-node-dev": "1.0.0-pre.44",
+    "@types/hapi__joi": "16.x.x",
+    "@types/node": "12.x.x",
+    "@types/pino": "5.x.x",
+    "typescript": "3.x.x"
+  },
+  "scripts": {
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc -p .",
+    "fix": "gts fix",
+    "posttest": "npm run check",
+    "prepare": "npm run compile",
+    "watch": "tsc --watch"
+  },
+  "oclif": {
+    "commands": "./build/src/commands"
+  }
+}
