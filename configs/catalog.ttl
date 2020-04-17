@@ -4,7 +4,9 @@
 
 <http://netwerkdigitaalerfgoed.nl/catalogs/network-of-terms> a dcat:Catalog ;
     dcterms:title "Catalog of Network of Terms"@en ;
-    dcat:dataset <https://data.rkd.nl/rkdartists> .
+    dcat:dataset <https://data.rkd.nl/rkdartists>,
+        <https://data.cultureelerfgoed.nl/term/id/cht>,
+        <https://wiki.dbpedia.org/dbpedia-version-2016-04> .
 
 <https://data.rkd.nl/rkdartists> a dcat:Dataset ;
     dcterms:title "RKDartists"@en ;
@@ -101,7 +103,6 @@
     dcterms:title "DBpedia astronomers"@en ;
     dcterms:identifier "dbpedia-astronomers" ;
     dcat:distribution <http://dbpedia.org/2016-04/sparql>, <http://dbpedia.org/2016-04/fragments> .
-
 
 <http://dbpedia.org/2016-04/fragments> a dcat:Distribution ;
     dcterms:title "DBpedia astronomers as LDF"@en ;
