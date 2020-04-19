@@ -116,3 +116,21 @@
             schema:query "file://queries/dbpedia-astronomers.rq"
         ]
     ] .
+
+<http:data.binliotheken.nl/thesp/> a dcat:Dataset ;
+    dcterms:title "Nederlandse Thesaurus voor Auteursnamen"@en ;
+    dcterms:identifier "nta" ;
+    dcat:distribution <http:data.binliotheken.nl/id/thesp/sparql> .
+
+<http:data.binliotheken.nl/thesp/sparql> a dcat:Distribution ;
+    dcterms:title "Nederlandse Thesaurus voor Auteursnamen via Sparql"@en ;
+    dcterms:identifier "nta-sparql" ;
+    dcat:accessService [
+        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
+        dcat:endpointURL <http://data.bibliotheken.nl/sparql> ;
+        dcat:servesDataset <http://data.bibliotheken.nl/thesp/> ;
+        schema:potentialAction [
+            a schema:SearchAction ;
+            schema:query "file://queries/nta.rq"
+        ]
+    ] .
