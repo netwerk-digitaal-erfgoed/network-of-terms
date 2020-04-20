@@ -43,6 +43,9 @@ This command reads the catalog information in file `configs/catalog.ttl`.
 
 # NTA: query SPARQL endpoint
 ./bin/run distributions:query --identifiers nta-sparql --search-term Wieringa
+./bin/run distributions:query --identifiers nta-sparql --search-term "'Wier*'"
+./bin/run distributions:query --identifiers nta-sparql --search-term "Wieringa OR Mulisch"
+./bin/run distributions:query --identifiers nta-sparql --search-term "Jan AND Vries"
 ```
 
 Add `--loglevel` to the commands to see what's going on underneath. For example:

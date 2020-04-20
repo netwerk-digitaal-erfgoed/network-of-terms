@@ -1,7 +1,8 @@
 CONSTRUCT {
     ?uri a skos:Concept ;
          skos:prefLabel ?prefLabel ;
-         skos:altLabel ?altLabel ;
+         skos:altLabel ?altLabel1 ;
+         skos:altLabel ?altLabel2 ;
          skos:scopeNote ?scopeNote
 }
 WHERE {
@@ -9,22 +10,22 @@ WHERE {
         ?uri a schema:Person .
         {
             ?uri rdfs:label ?label .
-            FILTER(CONTAINS(LCASE(?label), LCASE(?searchTerm)))
+            ?label <bif:contains> ?searchTerm
         }
         UNION
         {
             ?uri schema:name ?label .
-            FILTER(CONTAINS(LCASE(?label), LCASE(?searchTerm)))
+            ?label <bif:contains> ?searchTerm
         }
         UNION
         {
             ?uri schema:alternateName ?label .
-            FILTER(CONTAINS(LCASE(?label), LCASE(?searchTerm)))
+            ?label <bif:contains> ?searchTerm
         }
         OPTIONAL { ?uri rdfs:label ?prefLabel }
         OPTIONAL { ?uri rdfs:comment ?scopeNote }
-        OPTIONAL { ?uri schema:name ?altLabel }
-        OPTIONAL { ?uri schema:alternateName ?altLabel }
+        OPTIONAL { ?uri schema:name ?altLabel1 }
+        OPTIONAL { ?uri schema:alternateName ?altLabel2 }
    }
 }
 LIMIT 1000
