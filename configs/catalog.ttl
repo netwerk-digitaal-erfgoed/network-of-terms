@@ -6,7 +6,8 @@
     dcterms:title "Catalog of Network of Terms"@en ;
     dcat:dataset <https://data.rkd.nl/rkdartists>,
         <https://data.cultureelerfgoed.nl/term/id/cht>,
-        <https://wiki.dbpedia.org/dbpedia-version-2016-04> .
+        <https://wiki.dbpedia.org/dbpedia-version-2016-04>,
+        <http://data.bibliotheken.nl/id/dataset/persons> .
 
 <https://data.rkd.nl/rkdartists> a dcat:Dataset ;
     dcterms:title "RKDartists"@en ;
@@ -117,18 +118,18 @@
         ]
     ] .
 
-<http:data.binliotheken.nl/thesp/> a dcat:Dataset ;
+<http://data.bibliotheken.nl/id/dataset/persons> a dcat:Dataset ;
     dcterms:title "Nederlandse Thesaurus voor Auteursnamen"@en ;
     dcterms:identifier "nta" ;
-    dcat:distribution <http:data.binliotheken.nl/id/thesp/sparql> .
+    dcat:distribution <http://data.bibliotheken.nl/thesp/sparql> .
 
-<http:data.binliotheken.nl/thesp/sparql> a dcat:Distribution ;
-    dcterms:title "Nederlandse Thesaurus voor Auteursnamen via Sparql"@en ;
+<http://data.bibliotheken.nl/thesp/sparql> a dcat:Distribution ;
+    dcterms:title "Nederlandse Thesaurus voor Auteursnamen as SPARQL"@en ;
     dcterms:identifier "nta-sparql" ;
     dcat:accessService [
         dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
         dcat:endpointURL <http://data.bibliotheken.nl/sparql> ;
-        dcat:servesDataset <http://data.bibliotheken.nl/thesp/> ;
+        dcat:servesDataset <http://data.bibliotheken.nl/id/dataset/persons> ;
         schema:potentialAction [
             a schema:SearchAction ;
             schema:query "file://queries/nta.rq"

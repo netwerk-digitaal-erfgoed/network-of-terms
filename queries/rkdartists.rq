@@ -9,10 +9,18 @@ CONSTRUCT {
 }
 WHERE {
     ?uri a ?type .
-    VALUES ?type { schema:Person }
-    ?uri schema:name ?prefLabel .
-    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+    VALUES ?type { schema:Person schema:Organization }
+    {
+        ?uri schema:name ?prefLabel .
+        FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+    }
+    UNION
+    {
+        ?uri schema:alternateName ?altLabel .
+        FILTER(CONTAINS(LCASE(?altLabel), LCASE(?searchTerm)))
+    }
+    OPTIONAL { ?uri schema:name ?prefLabel . }
     OPTIONAL { ?uri schema:alternateName ?altLabel . }
     OPTIONAL { ?uri schema:description ?scopeNote . }
 }
-LIMIT 50
+LIMIT 1000

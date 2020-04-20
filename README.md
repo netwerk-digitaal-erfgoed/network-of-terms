@@ -40,6 +40,9 @@ This command reads the catalog information in file `configs/catalog.ttl`.
 
 # DBpedia: query TPF endpoint
 ./bin/run distributions:query --identifiers dbpedia-astronomers-fragments --search-term Anton
+
+# NTA: query SPARQL endpoint
+./bin/run distributions:query --identifiers nta-sparql --search-term Wieringa
 ```
 
 Add `--loglevel` to the commands to see what's going on underneath. For example:
