@@ -135,3 +135,21 @@
             schema:query "file://queries/nta.rq"
         ]
     ] .
+
+<https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus> a dcat:Dataset ;
+    dcterms:title "Thesaurus Nationaal Museum van Wereldculturen"@nl ;
+    dcterms:identifier "nmvw" ;
+    dcat:distribution <https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql> .
+
+<https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql> a dcat:Distribution ;
+    dcterms:title "Thesaurus Nationaal Museum van Wereldculturen"@nl ;
+    dcterms:identifier "nmvw-sparql" ;
+    dcat:accessService [
+        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
+        dcat:endpointURL <https://api.data.netwerkdigitaalerfgoed.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql> ;
+        dcat:servesDataset <https://data.netwerkdigitaalerfgoed.nl/nmvw/thesaurus/graphs/thesaurus> ;
+        schema:potentialAction [
+            a schema:SearchAction ;
+            schema:query "file://queries/nmvw.rq"
+        ]
+    ] .

@@ -1,9 +1,9 @@
 CONSTRUCT {
     ?uri a skos:Concept ;
-         skos:prefLabel ?prefLabel ;
-         skos:altLabel ?altLabel1 ;
-         skos:altLabel ?altLabel2 ;
-         skos:scopeNote ?scopeNote
+         skos:prefLabel ?rdfs_label ;
+         skos:altLabel ?schema_alternateName ;
+         skos:altLabel ?schema_name ;
+         skos:scopeNote ?rdfs_comment .
 }
 WHERE {
     GRAPH <http://data.bibliotheken.nl/thesp/> {
@@ -22,10 +22,10 @@ WHERE {
             ?uri schema:alternateName ?label .
             ?label <bif:contains> ?searchTerm
         }
-        OPTIONAL { ?uri rdfs:label ?prefLabel }
-        OPTIONAL { ?uri rdfs:comment ?scopeNote }
-        OPTIONAL { ?uri schema:name ?altLabel1 }
-        OPTIONAL { ?uri schema:alternateName ?altLabel2 }
+        OPTIONAL { ?uri rdfs:label ?rdfs_label }
+        OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
+        OPTIONAL { ?uri schema:name ?schema_name }
+        OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
    }
 }
 LIMIT 1000

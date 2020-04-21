@@ -3,24 +3,24 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
-    skos:prefLabel ?prefLabel ;
-    skos:altLabel ?altLabel ;
-    skos:scopeNote ?scopeNote .
+    skos:prefLabel ?schema_name ;
+    skos:altLabel ?schema_alternateName ;
+    skos:scopeNote ?schema_description .
 }
 WHERE {
     ?uri a ?type .
     VALUES ?type { schema:Person schema:Organization }
     {
-        ?uri schema:name ?prefLabel .
-        FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+        ?uri schema:name ?label .
+        ?label <bif:contains> ?searchTerm
     }
     UNION
     {
-        ?uri schema:alternateName ?altLabel .
-        FILTER(CONTAINS(LCASE(?altLabel), LCASE(?searchTerm)))
+        ?uri schema:alternateName ?label .
+        ?label <bif:contains> ?searchTerm
     }
-    OPTIONAL { ?uri schema:name ?prefLabel . }
-    OPTIONAL { ?uri schema:alternateName ?altLabel . }
-    OPTIONAL { ?uri schema:description ?scopeNote . }
+    OPTIONAL { ?uri schema:name ?schema_name . }
+    OPTIONAL { ?uri schema:alternateName ?schema_alternateName . }
+    OPTIONAL { ?uri schema:description ?schema_description . }
 }
 LIMIT 1000
