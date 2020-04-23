@@ -7,7 +7,9 @@
     dcat:dataset <https://data.rkd.nl/rkdartists>,
         <https://data.cultureelerfgoed.nl/term/id/cht>,
         <https://wiki.dbpedia.org/dbpedia-version-2016-04>,
-        <http://data.bibliotheken.nl/id/dataset/persons> .
+        <http://data.bibliotheken.nl/id/dataset/persons>,
+        <https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus>,
+        <http://vocab.getty.edu/aat> .
 
 <https://data.rkd.nl/rkdartists> a dcat:Dataset ;
     dcterms:title "RKDartists"@en ;
@@ -137,12 +139,12 @@
     ] .
 
 <https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus> a dcat:Dataset ;
-    dcterms:title "Thesaurus Nationaal Museum van Wereldculturen"@nl ;
+    dcterms:title "Thesaurus Nationaal Museum van Wereldculturen"@en ;
     dcterms:identifier "nmvw" ;
     dcat:distribution <https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql> .
 
 <https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql> a dcat:Distribution ;
-    dcterms:title "Thesaurus Nationaal Museum van Wereldculturen"@nl ;
+    dcterms:title "Thesaurus Nationaal Museum van Wereldculturen as SPARQL"@en ;
     dcterms:identifier "nmvw-sparql" ;
     dcat:accessService [
         dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
@@ -151,5 +153,41 @@
         schema:potentialAction [
             a schema:SearchAction ;
             schema:query "file://queries/nmvw.rq"
+        ]
+    ] .
+
+<http://vocab.getty.edu/aat> a dcat:Dataset ;
+    dcterms:title "Art & Architecture Thesaurus (AAT)"@en ;
+    dcterms:identifier "aat" ;
+    dcat:distribution <http://vocab.getty.edu/aat/sparql> .
+
+<http://vocab.getty.edu/aat/sparql> a dcat:Distribution ;
+    dcterms:title "Art & Architecture Thesaurus (AAT) as SPARQL"@en ;
+    dcterms:identifier "aat-sparql" ;
+    dcat:accessService [
+        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
+        dcat:endpointURL <http://vocab.getty.edu/sparql> ;
+        dcat:servesDataset <http://vocab.getty.edu/aat> ;
+        schema:potentialAction [
+            a schema:SearchAction ;
+            schema:query "file://queries/aat.rq"
+        ]
+    ] .
+
+<https://www.wikidata.org> a dcat:Dataset ;
+    dcterms:title "Wikidata Entities"@en ;
+    dcterms:identifier "wikidata-entities" ;
+    dcat:distribution <https://www.wikidata.org/sparql> .
+
+<https://www.wikidata.org/sparql> a dcat:Distribution ;
+    dcterms:title "Wikidata Entities as SPARQL"@en ;
+    dcterms:identifier "wikidata-entities-sparql" ;
+    dcat:accessService [
+        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
+        dcat:endpointURL <https://query.wikidata.org/sparql> ;
+        dcat:servesDataset <https://www.wikidata.org> ;
+        schema:potentialAction [
+            a schema:SearchAction ;
+            schema:query "file://queries/wikidata-entities.rq"
         ]
     ] .

@@ -6,8 +6,8 @@ CONSTRUCT {
     skos:altLabel ?altLabel ;
     skos:hiddenLabel ?hiddenLabel ;
     skos:scopeNote ?scopeNote ;
-    skos:broader ?broader ;
-    skos:narrower ?narrower .
+    skos:broader ?broader_label ;
+    skos:narrower ?narrower_label .
 }
 WHERE {
     ?uri skos:prefLabel ?prefLabel
@@ -26,12 +26,12 @@ WHERE {
       FILTER(LANG(?hiddenLabel) = "nl")
     }
     OPTIONAL {
-      ?uri skos:broader/skos:prefLabel ?broader .
-      FILTER(LANG(?broader) = "nl")
+      ?uri skos:broader/skos:prefLabel ?broader_label .
+      FILTER(LANG(?broader_label) = "nl")
     }
     OPTIONAL {
-      ?uri skos:narrower/skos:prefLabel ?narrower .
-      FILTER(LANG(?narrower) = "nl")
+      ?uri skos:narrower/skos:prefLabel ?narrower_label .
+      FILTER(LANG(?narrower_label) = "nl")
     }
 }
-LIMIT 50
+LIMIT 1000
