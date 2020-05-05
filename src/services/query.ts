@@ -26,11 +26,6 @@ const schemaConstructor = Joi.object({
   query: Joi.string().required(),
 });
 
-export interface Term {
-  uri: string;
-  prefLabel: string;
-}
-
 export class QueryService {
   protected logger: Pino.Logger;
   protected accessServiceType: string;
