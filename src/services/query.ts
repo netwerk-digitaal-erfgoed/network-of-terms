@@ -26,6 +26,11 @@ const schemaConstructor = Joi.object({
   query: Joi.string().required(),
 });
 
+export interface Term {
+  uri: string;
+  prefLabel: string;
+}
+
 export class QueryService {
   protected logger: Pino.Logger;
   protected accessServiceType: string;
@@ -84,7 +89,7 @@ export class QueryService {
 
   async run(): Promise<NodeJS.ReadableStream> {
     this.logger.info(
-      `Querying "${this.endpointUrl}" for search term "${this.searchTerms}"...`
+      `Querying "${this.endpointUrl}" for search terms "${this.searchTerms}"...`
     );
     const config = this.getConfig();
     const timer = new Hoek.Bench();
