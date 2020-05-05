@@ -32,6 +32,7 @@
     "@types/hapi__joi": "16.x.x",
     "@types/node": "12.x.x",
     "@types/pino": "6.x.x",
+    "@types/rdf-js": "2.x.x",
     "typescript": "3.x.x"
   },
   "scripts": {

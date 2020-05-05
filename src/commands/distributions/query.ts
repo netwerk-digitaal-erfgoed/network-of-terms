@@ -1,5 +1,6 @@
 import { Command, flags } from '@oclif/command';
 import { DistributionsService } from '../../services/distributions';
+import { Term } from '../../services/term';
 
 export class QueryDistributionsCommand extends Command {
   static description = 'Query dataset distributions';
@@ -22,9 +23,11 @@ export class QueryDistributionsCommand extends Command {
     }),
   };
 
-  protected render(results: NodeJS.ReadableStream[]): void {
-    for (const result of results) {
-      result.pipe(process.stdout);
+  protected render(results: Term[][]): void {
+    for (const terms of results) {
+      for (const term of terms) {
+        console.log(term);
+      }
     }
   }
 

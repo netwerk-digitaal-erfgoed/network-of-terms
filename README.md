@@ -64,9 +64,9 @@ Add `--loglevel` to the commands to see what's going on underneath. For example:
 
     ./bin/run distributions:query --identifiers cht-sparql --search-terms fiets --loglevel info
 
-Search results - in Turtle - are piped to stdout. Redirect these elsewhere for further analysis. For example:
+Search results are piped to stdout. Redirect these elsewhere for further analysis. For example:
 
-    ./bin/run distributions:query --identifiers cht-sparql --search-terms fiets > cht.ttl
+    ./bin/run distributions:query --identifiers cht-sparql --search-terms fiets > cht.txt
 
 ## Use Comunica directly
 

@@ -1,4 +1,5 @@
 import { CatalogService } from './catalog';
+import { Term } from './term';
 import { QueryService } from './query';
 import * as Joi from '@hapi/joi';
 import * as Logger from '../helpers/logger';
@@ -50,7 +51,7 @@ export class DistributionsService {
     });
   }
 
-  async query(options: QueryOptions): Promise<NodeJS.ReadableStream> {
+  async query(options: QueryOptions): Promise<Term[]> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(
       `Preparing to query distribution "${args.distributionId}"...`
@@ -74,7 +75,7 @@ export class DistributionsService {
     return queryService.run();
   }
 
-  async queryAll(options: QueryAllOptions): Promise<NodeJS.ReadableStream[]> {
+  async queryAll(options: QueryAllOptions): Promise<Term[][]> {
     const args = Joi.attempt(options, schemaQueryAll);
     const distributionIds = args.distributionIds;
     const requests = distributionIds.map((distributionId: string) =>
