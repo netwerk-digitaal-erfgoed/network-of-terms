@@ -3,13 +3,11 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
-    skos:prefLabel ?prefLabel ;
+    skos:prefLabel ?schema_name ;
 }
 WHERE {
-    # ?uri a ?type .
-    # VALUES ?type { schema:Person }
-    ?uri schema:name ?prefLabel .
-    FILTER(LANG(?prefLabel) = "nl")
-    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+    ?uri schema:name ?schema_name .
+    FILTER(LANG(?schema_name) = "nl")
+    FILTER(CONTAINS(LCASE(?schema_name), LCASE(?searchTerms)))
 }
 LIMIT 50

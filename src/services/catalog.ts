@@ -1,5 +1,8 @@
 import { ActorInitSparql } from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
-import { Bindings } from '@comunica/bus-query-operation';
+import {
+  Bindings,
+  IActorQueryOperationOutputBindings,
+} from '@comunica/bus-query-operation';
 import { literal } from '@rdfjs/data-model';
 import { LoggerPino } from '../helpers/logger-pino';
 import { storeStream } from 'rdf-store-stream';
@@ -86,13 +89,15 @@ export class CatalogService {
       ORDER BY LCASE(?distributionTitle)
     `;
 
-    const result = await this.engine.query(query, config);
-    const distributions: Distribution[] = [];
+    const result = (await this.engine.query(
+      query,
+      config
+    )) as IActorQueryOperationOutputBindings;
 
     return new Promise((resolve, reject) => {
+      const distributions: Distribution[] = [];
       result.bindingsStream.on('error', reject);
-      // tslint:disable-next-line:no-any
-      result.bindingsStream.on('data', (bindings: any) => {
+      result.bindingsStream.on('data', (bindings: Bindings) => {
         distributions.push({
           distribution: bindings.get('?distribution').value,
           distributionId: bindings.get('?distributionId').value,
@@ -107,7 +112,7 @@ export class CatalogService {
     });
   }
 
-  async getAccessServiceByDistribution(
+  async getAccessServiceByDistributionId(
     distributionId: string
   ): Promise<AccessService | null> {
     const config = await this.getConfig();
@@ -130,22 +135,37 @@ export class CatalogService {
       LIMIT 1
     `;
 
-    const result = await this.engine.query(query, config);
-    let accessService: AccessService;
+    const result = (await this.engine.query(
+      query,
+      config
+    )) as IActorQueryOperationOutputBindings;
 
-    return new Promise((resolve, reject) => {
-      result.bindingsStream.on('error', reject);
-      // tslint:disable-next-line:no-any
-      result.bindingsStream.on('data', (bindings: any) => {
-        accessService = {
-          distribution: bindings.get('?distribution').value,
-          distributionId,
-          accessServiceType: bindings.get('?accessServiceType').value,
-          endpointUrl: bindings.get('?endpointUrl').value,
-          query: bindings.get('?query').value,
-        };
-      });
-      result.bindingsStream.on('end', () => resolve(accessService || null));
-    });
+    const promise: Promise<AccessService | null> = new Promise(
+      (resolve, reject) => {
+        let accessService: AccessService;
+        result.bindingsStream.on('error', reject);
+        result.bindingsStream.on('data', (bindings: Bindings) => {
+          accessService = {
+            distribution: bindings.get('?distribution').value,
+            distributionId,
+            accessServiceType: bindings.get('?accessServiceType').value,
+            endpointUrl: bindings.get('?endpointUrl').value,
+            query: bindings.get('?query').value,
+          };
+        });
+        result.bindingsStream.on('end', () => resolve(accessService || null));
+      }
+    );
+
+    const accessService = await promise;
+
+    // "query" can be a string or a file path - if the latter, load from file
+    if (accessService && accessService.query.startsWith('file://')) {
+      const queryFile = Path.resolve(accessService.query.substr(7));
+      this.logger.info(`Reading query from file "${queryFile}"...`);
+      accessService.query = await Fs.promises.readFile(queryFile, 'utf-8');
+    }
+
+    return accessService;
   }
 }

@@ -95,7 +95,7 @@
                 WHERE {
                     ?uri skos:prefLabel ?prefLabel
                     FILTER(LANG(?prefLabel) = "nl")
-                    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+                    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerms)))
                 }
                 LIMIT 50
             """

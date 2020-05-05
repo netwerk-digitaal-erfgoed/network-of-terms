@@ -7,11 +7,11 @@ export class QueryDistributionsCommand extends Command {
   static flags: flags.Input<any> = {
     identifiers: flags.string({
       description:
-        'Identifiers of dataset distributions to query, comma-separated, e.g. "rkdartists-sparql,rkdartists-fragments"',
+        'Identifiers of dataset distributions to query, comma-separated, e.g. "nta-sparql,rkdartists-sparql"',
       required: true,
     }),
-    'search-term': flags.string({
-      description: 'Search term, e.g. "Gogh" or "fiets"',
+    'search-terms': flags.string({
+      description: 'Search terms, e.g. "Gogh" or "fiets"',
       required: true,
     }),
     loglevel: flags.string({
@@ -30,7 +30,7 @@ export class QueryDistributionsCommand extends Command {
 
   async run(): Promise<void> {
     const { flags } = this.parse(QueryDistributionsCommand);
-    const distributionsIds = flags.identifiers
+    const distributionIds = flags.identifiers
       .split(',')
       .map((distributionId: string) => distributionId.trim());
 
@@ -38,8 +38,8 @@ export class QueryDistributionsCommand extends Command {
       logLevel: flags.loglevel,
     });
     const results = await service.queryAll({
-      distributionsIds,
-      searchTerm: flags['search-term'],
+      distributionIds,
+      searchTerms: flags['search-terms'],
     });
     this.render(results);
   }

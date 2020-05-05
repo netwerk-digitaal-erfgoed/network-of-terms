@@ -20,7 +20,15 @@ export function getLogger(options: GetLoggerOptions): Pino.Logger {
     },
     level: args.level,
     messageKey: 'message',
-    useLevelLabels: true,
+    formatters: {
+      level(label) {
+        return {
+          log: {
+            level: label,
+          },
+        };
+      },
+    },
     prettyPrint: {
       colorize: true,
       ignore: 'pid,hostname,time',

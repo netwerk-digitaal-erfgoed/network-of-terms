@@ -14,26 +14,26 @@ export interface ConstructorOptions {
   logLevel: string;
   accessServiceType: string;
   endpointUrl: string;
-  searchTerm: string;
-  sparqlQuery: string;
+  searchTerms: string;
+  query: string;
 }
 
 const schemaConstructor = Joi.object({
   logLevel: Joi.string().required(),
   accessServiceType: Joi.string().required(),
   endpointUrl: Joi.string().required(),
-  searchTerm: Joi.string().required(),
-  sparqlQuery: Joi.string().required(),
+  searchTerms: Joi.string().required(),
+  query: Joi.string().required(),
 });
 
 export class QueryService {
   protected logger: Pino.Logger;
   protected accessServiceType: string;
   protected endpointUrl: string;
-  protected searchTerm: string;
-  protected sparqlQuery: string;
+  protected searchTerms: string;
+  protected query: string;
   protected engine: ActorInitSparql;
-  protected readonly accessServiceTypes = {
+  protected readonly accessServiceTypes: { [key: string]: string } = {
     'http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/hdt':
       'hdtFile',
     'http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/fragments':
@@ -54,8 +54,8 @@ export class QueryService {
     }
     this.accessServiceType = accessServiceType;
     this.endpointUrl = args.endpointUrl;
-    this.searchTerm = args.searchTerm;
-    this.sparqlQuery = args.sparqlQuery;
+    this.searchTerms = args.searchTerms;
+    this.query = args.query;
 
     if (accessServiceType === 'hdtFile') {
       this.engine = ComunicaHdt.newEngine();
@@ -76,19 +76,19 @@ export class QueryService {
         },
       ],
       initialBindings: Bindings({
-        '?searchTerm': literal(this.searchTerm),
+        '?searchTerms': literal(this.searchTerms),
       }),
     };
     return config;
   }
 
-  async query(): Promise<NodeJS.ReadableStream> {
+  async run(): Promise<NodeJS.ReadableStream> {
     this.logger.info(
-      `Querying "${this.endpointUrl}" for search term "${this.searchTerm}"...`
+      `Querying "${this.endpointUrl}" for search term "${this.searchTerms}"...`
     );
     const config = this.getConfig();
     const timer = new Hoek.Bench();
-    const result = await this.engine.query(this.sparqlQuery, config);
+    const result = await this.engine.query(this.query, config);
     const { data } = await this.engine.resultToString(result, 'text/turtle'); // Hard-coded for now
     data.on('end', () => {
       this.logger.info(

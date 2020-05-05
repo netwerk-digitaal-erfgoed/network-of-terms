@@ -19,7 +19,7 @@
     "@hapi/hoek": "9.x.x",
     "@hapi/joi": "16.x.x",
     "@oclif/command": "1.x.x",
-    "pino": "5.x.x",
+    "pino": "6.x.x",
     "pino-pretty": "4.x.x",
     "pretty-ms": "6.x.x",
     "rdf-parse": "1.x.x",
@@ -31,7 +31,7 @@
     "ts-node-dev": "1.0.0-pre.44",
     "@types/hapi__joi": "16.x.x",
     "@types/node": "12.x.x",
-    "@types/pino": "5.x.x",
+    "@types/pino": "6.x.x",
     "typescript": "3.x.x"
   },
   "scripts": {
@@ -40,7 +40,6 @@
     "compile": "tsc -p .",
     "fix": "gts fix",
     "posttest": "npm run check",
-    "prepare": "npm run compile",
     "watch": "tsc --watch"
   },
   "oclif": {

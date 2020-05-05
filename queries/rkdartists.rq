@@ -12,12 +12,12 @@ WHERE {
     VALUES ?type { schema:Person schema:Organization }
     {
         ?uri schema:name ?label .
-        ?label <bif:contains> ?searchTerm
+        ?label <bif:contains> ?searchTerms
     }
     UNION
     {
         ?uri schema:alternateName ?label .
-        ?label <bif:contains> ?searchTerm
+        ?label <bif:contains> ?searchTerms
     }
     OPTIONAL { ?uri schema:name ?schema_name . }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName . }

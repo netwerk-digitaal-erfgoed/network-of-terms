@@ -12,7 +12,7 @@ CONSTRUCT {
 WHERE {
     ?uri skos:prefLabel ?prefLabel
     FILTER(LANG(?prefLabel) = "nl")
-    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
+    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerms)))
     OPTIONAL {
       ?uri skos:scopeNote ?scopeNote .
       FILTER(LANG(?scopeNote) = "nl")

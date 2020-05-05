@@ -1,9 +1,7 @@
 import { CatalogService } from './catalog';
-import { promises as Fs } from 'fs';
 import { QueryService } from './query';
 import * as Joi from '@hapi/joi';
 import * as Logger from '../helpers/logger';
-import * as Path from 'path';
 import * as Pino from 'pino';
 
 export interface ConstructorOptions {
@@ -15,9 +13,27 @@ const schemaConstructor = Joi.object({
 });
 
 export interface QueryOptions {
-  distributionsIds: string[];
-  searchTerm: string;
+  distributionId: string;
+  searchTerms: string;
 }
+
+const schemaQuery = Joi.object({
+  distributionId: Joi.string().required(),
+  searchTerms: Joi.string().required(),
+});
+
+export interface QueryAllOptions {
+  distributionIds: string[];
+  searchTerms: string;
+}
+
+const schemaQueryAll = Joi.object({
+  distributionIds: Joi.array()
+    .items(Joi.string().required())
+    .min(1)
+    .required(),
+  searchTerms: Joi.string().required(),
+});
 
 export class DistributionsService {
   protected logger: Pino.Logger;
@@ -34,43 +50,36 @@ export class DistributionsService {
     });
   }
 
-  async query(
-    distributionId: string,
-    searchTerm: string
-  ): Promise<NodeJS.ReadableStream> {
-    this.logger.info(`Preparing to query distribution "${distributionId}"...`);
-    const accessService = await this.catalogService.getAccessServiceByDistribution(
-      distributionId
+  async query(options: QueryOptions): Promise<NodeJS.ReadableStream> {
+    const args = Joi.attempt(options, schemaQuery);
+    this.logger.info(
+      `Preparing to query distribution "${args.distributionId}"...`
+    );
+    const accessService = await this.catalogService.getAccessServiceByDistributionId(
+      args.distributionId
     );
     if (accessService === null) {
       throw Error(
-        `Access service of distribution "${distributionId}" not found in catalog`
+        `Access service of distribution "${args.distributionId}" not found in catalog`
       );
-    }
-
-    let sparqlQuery = accessService.query;
-    if (accessService.query.startsWith('file://')) {
-      const queryFile = Path.resolve(accessService.query.substr(7));
-      this.logger.info(`Reading query from file "${queryFile}"...`);
-      sparqlQuery = await Fs.readFile(queryFile, 'utf-8');
     }
 
     const queryService = new QueryService({
       logLevel: this.logger.level,
       accessServiceType: accessService.accessServiceType,
       endpointUrl: accessService.endpointUrl,
-      searchTerm,
-      sparqlQuery,
+      searchTerms: args.searchTerms,
+      query: accessService.query,
     });
-    return queryService.query();
+    return queryService.run();
   }
 
-  async queryAll(options: QueryOptions): Promise<NodeJS.ReadableStream[]> {
-    const distributionsIds = options.distributionsIds;
-    const requests = distributionsIds.map((distributionId: string) =>
-      this.query(distributionId, options.searchTerm)
+  async queryAll(options: QueryAllOptions): Promise<NodeJS.ReadableStream[]> {
+    const args = Joi.attempt(options, schemaQueryAll);
+    const distributionIds = args.distributionIds;
+    const requests = distributionIds.map((distributionId: string) =>
+      this.query({ distributionId, searchTerms: args.searchTerms })
     );
-    const results = await Promise.all(requests);
-    return results;
+    return Promise.all(requests);
   }
 }

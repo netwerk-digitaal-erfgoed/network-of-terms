@@ -6,13 +6,13 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
-    skos:prefLabel ?prefLabel ;
-    skos:scopeNote ?scopeNote .
+    skos:prefLabel ?foaf_name ;
+    skos:scopeNote ?dbo_abstract .
 }
 WHERE {
     ?uri ns34:hypernym dbr:Astronomer .
-    ?uri foaf:name ?prefLabel .
-    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerm)))
-    OPTIONAL { ?uri dbo:abstract ?scopeNote }
+    ?uri foaf:name ?foaf_name .
+    FILTER(CONTAINS(LCASE(?foaf_name), LCASE(?searchTerms)))
+    OPTIONAL { ?uri dbo:abstract ?dbo_abstract }
 }
 LIMIT 50
