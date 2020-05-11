@@ -29,10 +29,17 @@ export class QueryDistributionsCommand extends Command {
     for (const terms of results) {
       cli.table(terms, {
         prefLabels: {
-          header: 'Pref labels',
+          header: 'Preferred Labels',
           get: (term: Term) =>
             term.prefLabels
               .map((prefLabel: RDF.Term) => prefLabel.value)
+              .join(' / '),
+        },
+        altLabels: {
+          header: 'Alternative Labels',
+          get: (term: Term) =>
+            term.altLabels
+              .map((altLabel: RDF.Term) => altLabel.value)
               .join(' / '),
         },
         id: {
