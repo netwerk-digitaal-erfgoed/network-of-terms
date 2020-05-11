@@ -1,5 +1,3 @@
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
 CONSTRUCT {
     ?uri a skos:Concept ;
          skos:prefLabel ?rdfs_label ;

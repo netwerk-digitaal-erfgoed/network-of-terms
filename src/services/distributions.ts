@@ -1,5 +1,5 @@
 import { CatalogService } from './catalog';
-import { Term } from './term';
+import { Term } from './terms';
 import { QueryService } from './query';
 import * as Joi from '@hapi/joi';
 import * as Logger from '../helpers/logger';

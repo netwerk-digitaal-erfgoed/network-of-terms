@@ -1,6 +1,8 @@
+import { cli } from 'cli-ux';
 import { Command, flags } from '@oclif/command';
 import { DistributionsService } from '../../services/distributions';
-import { Term } from '../../services/term';
+import { Term } from '../../services/terms';
+import * as RDF from 'rdf-js';
 
 export class QueryDistributionsCommand extends Command {
   static description = 'Query dataset distributions';
@@ -25,9 +27,19 @@ export class QueryDistributionsCommand extends Command {
 
   protected render(results: Term[][]): void {
     for (const terms of results) {
-      for (const term of terms) {
-        console.log(term);
-      }
+      cli.table(terms, {
+        prefLabels: {
+          header: 'Pref labels',
+          get: (term: Term) =>
+            term.prefLabels
+              .map((prefLabel: RDF.Term) => prefLabel.value)
+              .join(' / '),
+        },
+        id: {
+          header: 'ID',
+          get: (term: Term) => term.id!.value,
+        },
+      });
     }
   }
 

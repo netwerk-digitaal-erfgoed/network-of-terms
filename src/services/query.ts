@@ -5,7 +5,7 @@ import {
 } from '@comunica/bus-query-operation';
 import { literal } from '@rdfjs/data-model';
 import { LoggerPino } from '../helpers/logger-pino';
-import { Term } from '../services/term';
+import { Term, TermsTransformer } from './terms';
 import * as ComunicaHdt from '@comunica/actor-init-sparql-hdt';
 import * as ComunicaSparql from '@comunica/actor-init-sparql';
 import * as Hoek from '@hapi/hoek';
@@ -99,50 +99,13 @@ export class QueryService {
     )) as IActorQueryOperationOutputQuads;
 
     return new Promise((resolve, reject) => {
-      const terms: Term[] = [];
-      let term: Term;
-      let subject: RDF.Quad_Subject;
+      const termsTransformer = new TermsTransformer();
       result.quadStream.on('error', reject);
-      result.quadStream.on('data', (quad: RDF.Quad) => {
-        const newSubject = quad.subject;
-        if (!newSubject.equals(subject)) {
-          subject = newSubject;
-          if (term !== undefined) {
-            terms.push(term);
-          }
-          term = new Term();
-          term.id = subject;
-        }
-        const predicate = quad.predicate.value;
-        if (predicate === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type') {
-          term.type = quad.object;
-        } else if (
-          predicate === 'http://www.w3.org/2004/02/skos/core#prefLabel'
-        ) {
-          term.prefLabels.push(quad.object);
-        } else if (
-          predicate === 'http://www.w3.org/2004/02/skos/core#altLabel'
-        ) {
-          term.altLabels.push(quad.object);
-        } else if (
-          predicate === 'http://www.w3.org/2004/02/skos/core#hiddenLabel'
-        ) {
-          term.hiddenLabels.push(quad.object);
-        } else if (
-          predicate === 'http://www.w3.org/2004/02/skos/core#scopeNote'
-        ) {
-          term.scopeNotes.push(quad.object);
-        } else if (
-          predicate === 'http://www.w3.org/2004/02/skos/core#broader'
-        ) {
-          term.broaderLabels.push(quad.object);
-        } else if (
-          predicate === 'http://www.w3.org/2004/02/skos/core#narrower'
-        ) {
-          term.narrowerLabels.push(quad.object);
-        }
-      });
+      result.quadStream.on('data', (quad: RDF.Quad) =>
+        termsTransformer.fromQuad(quad)
+      );
       result.quadStream.on('end', () => {
+        const terms = termsTransformer.asArray();
         this.logger.info(
           `Found ${terms.length} terms matching search query "${
             this.searchTerms
