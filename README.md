@@ -23,23 +23,11 @@ This command reads the catalog information in file `configs/catalog.ttl`.
 # Cultuurhistorische Thesaurus: query SPARQL endpoint
 ./bin/run distributions:query --identifiers cht-sparql --search-terms fiets
 
-# Cultuurhistorische Thesaurus: query (local) HDT file (slow)
-./bin/run distributions:query --identifiers cht-hdt --search-terms fiets
-
 # RKDartists: query SPARQL endpoint
 ./bin/run distributions:query --identifiers rkdartists-sparql --search-terms Gogh
 
-# RKDartists: query TPF endpoint (slow)
-./bin/run distributions:query --identifiers rkdartists-fragments --search-terms Gogh
-
-# RKDartists: query (local) HDT file (slow)
-./bin/run distributions:query --identifiers rkdartists-hdt --search-terms Gogh
-
-# RKDartists: query SPARQL endpoint, TPF endpoint and HDT file simultaneously (slow)
-./bin/run distributions:query --identifiers rkdartists-sparql,rkdartists-fragments,rkdartists-hdt --search-terms Gogh
-
-# DBpedia: query TPF endpoint (slow)
-./bin/run distributions:query --identifiers dbpedia-astronomers-fragments --search-terms Anton
+# Cultuurhistorische Thesaurus and RKDartists: query SPARQL endpoints simultaneously
+./bin/run distributions:query --identifiers cht-sparql,rkdartists-sparql --search-terms Gogh
 
 # NTA: query SPARQL endpoint
 ./bin/run distributions:query --identifiers nta-sparql --search-terms Wieringa
