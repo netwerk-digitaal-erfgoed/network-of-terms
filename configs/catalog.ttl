@@ -6,17 +6,15 @@
     dcterms:title "Catalog of Network of Terms"@en ;
     dcat:dataset <https://data.rkd.nl/rkdartists>,
         <https://data.cultureelerfgoed.nl/term/id/cht>,
-        <https://wiki.dbpedia.org/dbpedia-version-2016-04>,
         <http://data.bibliotheken.nl/id/dataset/persons>,
         <https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus>,
-        <http://vocab.getty.edu/aat> .
+        <http://vocab.getty.edu/aat>,
+        <https://www.wikidata.org> .
 
 <https://data.rkd.nl/rkdartists> a dcat:Dataset ;
     dcterms:title "RKDartists"@en ;
     dcterms:identifier "rkdartists" ;
-    dcat:distribution <https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql>,
-        <https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/fragments>,
-        <https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/hdt> .
+    dcat:distribution <https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql> .
 
 <https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql> a dcat:Distribution ;
     dcterms:title "RKDartists as SPARQL"@en ;
@@ -31,37 +29,10 @@
         ]
     ] .
 
-<https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/fragments> a dcat:Distribution ;
-    dcterms:title "RKDartists as LDF"@en ;
-    dcterms:identifier "rkdartists-fragments" ;
-    dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/fragments> ;
-        dcat:endpointURL <https://api.data.netwerkdigitaalerfgoed.nl/datasets/rkd/rkdartists/fragments> ;
-        dcat:servesDataset <https://data.rkd.nl/rkdartists> ;
-        schema:potentialAction [
-            a schema:SearchAction ;
-            schema:query "file://queries/rkdartists-fragments.rq"
-        ]
-    ] .
-
-<https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/hdt> a dcat:Distribution ;
-    dcterms:title "RKDartists as HDT file"@en ;
-    dcterms:identifier "rkdartists-hdt" ;
-    dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/hdt> ;
-        dcat:endpointURL <data/rkdartists.hdt> ;
-        dcat:servesDataset <https://data.rkd.nl/rkdartists> ;
-        schema:potentialAction [
-            a schema:SearchAction ;
-            schema:query "file://queries/rkdartists-fragments.rq"
-        ]
-    ] .
-
 <https://data.cultureelerfgoed.nl/term/id/cht> a dcat:Dataset ;
     dcterms:title "Cultuurhistorische Thesaurus"@en ;
     dcterms:identifier "cht" ;
-    dcat:distribution <https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht/2>,
-        <https://data.cultureelerfgoed.nl/cht/hdt> .
+    dcat:distribution <https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht/2> .
 
 <https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht/2> a dcat:Distribution ;
     dcterms:title "CHT as SPARQL"@en ;
@@ -73,50 +44,6 @@
         schema:potentialAction [
             a schema:SearchAction ;
             schema:query "file://queries/cht.rq"
-        ]
-    ] .
-
-<https://data.cultureelerfgoed.nl/cht/hdt> a dcat:Distribution ;
-    dcterms:title "CHT as HDT file"@en ;
-    dcterms:identifier "cht-hdt" ;
-    dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/hdt> ;
-        dcat:endpointURL <data/cht.hdt> ;
-        dcat:servesDataset <https://data.cultureelerfgoed.nl/term/id/cht> ;
-        schema:potentialAction [
-            a schema:SearchAction ;
-            schema:query """
-                PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
-                CONSTRUCT {
-                    ?uri a skos:Concept ;
-                    skos:prefLabel ?prefLabel ;
-                }
-                WHERE {
-                    ?uri skos:prefLabel ?prefLabel
-                    FILTER(LANG(?prefLabel) = "nl")
-                    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?searchTerms)))
-                }
-                LIMIT 50
-            """
-        ]
-    ] .
-
-<https://wiki.dbpedia.org/dbpedia-version-2016-04> a dcat:Dataset ;
-    dcterms:title "DBpedia astronomers"@en ;
-    dcterms:identifier "dbpedia-astronomers" ;
-    dcat:distribution <http://dbpedia.org/2016-04/sparql>, <http://dbpedia.org/2016-04/fragments> .
-
-<http://dbpedia.org/2016-04/fragments> a dcat:Distribution ;
-    dcterms:title "DBpedia astronomers as LDF"@en ;
-    dcterms:identifier "dbpedia-astronomers-fragments" ;
-    dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/fragments> ;
-        dcat:endpointURL <http://fragments.dbpedia.org/2016-04/en> ;
-        dcat:servesDataset <https://wiki.dbpedia.org/dbpedia-version-2016-04> ;
-        schema:potentialAction [
-            a schema:SearchAction ;
-            schema:query "file://queries/dbpedia-astronomers.rq"
         ]
     ] .
 
