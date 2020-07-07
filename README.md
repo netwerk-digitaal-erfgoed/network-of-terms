@@ -42,7 +42,7 @@ This command reads the catalog information in file `configs/catalog.ttl`.
 ./bin/run distributions:query --identifiers aat-sparql --search-terms schilderij
 ./bin/run distributions:query --identifiers aat-sparql --search-terms "schil*"
 ./bin/run distributions:query --identifiers aat-sparql --search-terms "schilderij OR tekening"
-./bin/run distributions:query --identifiers aat-sparql --search-terms "cartoon* AND prent*"
+./bin/run distributions:query --identifiers aat-sparql --search-terms "cartoon* OR prent*"
 
 # Wikidata Entities: query SPARQL endpoint
 ./bin/run distributions:query --identifiers wikidata-entities-sparql --search-terms Rembrandt
