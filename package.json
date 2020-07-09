@@ -14,7 +14,6 @@
   "dependencies": {
     "cli-ux": "5.x.x",
     "@comunica/actor-init-sparql": "1.x.x",
-    "@comunica/actor-init-sparql-hdt": "1.x.x",
     "@comunica/actor-init-sparql-rdfjs": "1.x.x",
     "@hapi/hoek": "9.x.x",
     "@hapi/joi": "16.x.x",

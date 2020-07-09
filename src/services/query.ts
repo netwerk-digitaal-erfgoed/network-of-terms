@@ -2,7 +2,6 @@ import { ActorInitSparql } from '@comunica/actor-init-sparql/lib/ActorInitSparql
 import { Bindings } from '@comunica/bus-query-operation';
 import { literal } from '@rdfjs/data-model';
 import { LoggerPino } from '../helpers/logger-pino';
-import * as ComunicaHdt from '@comunica/actor-init-sparql-hdt';
 import * as ComunicaSparql from '@comunica/actor-init-sparql';
 import * as Hoek from '@hapi/hoek';
 import * as Joi from '@hapi/joi';
@@ -34,10 +33,6 @@ export class QueryService {
   protected query: string;
   protected engine: ActorInitSparql;
   protected readonly accessServiceTypes: { [key: string]: string } = {
-    'http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/hdt':
-      'hdtFile',
-    'http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/fragments':
-      'hypermedia',
     'http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql':
       'sparql',
   };
@@ -56,12 +51,7 @@ export class QueryService {
     this.endpointUrl = args.endpointUrl;
     this.searchTerms = args.searchTerms;
     this.query = args.query;
-
-    if (accessServiceType === 'hdtFile') {
-      this.engine = ComunicaHdt.newEngine();
-    } else {
-      this.engine = ComunicaSparql.newEngine();
-    }
+    this.engine = ComunicaSparql.newEngine();
   }
 
   // tslint:disable-next-line:no-any
