@@ -20,7 +20,6 @@
     dcterms:title "RKDartists as SPARQL"@en ;
     dcterms:identifier "rkdartists-sparql" ;
     dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
         dcat:endpointURL <https://api.data.netwerkdigitaalerfgoed.nl/datasets/rkd/rkdartists/services/rkdartists/sparql> ;
         dcat:servesDataset <https://data.rkd.nl/rkdartists> ;
         schema:potentialAction [
@@ -38,7 +37,6 @@
     dcterms:title "CHT as SPARQL"@en ;
     dcterms:identifier "cht-sparql" ;
     dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
         dcat:endpointURL <https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht> ;
         dcat:servesDataset <https://data.cultureelerfgoed.nl/term/id/cht> ;
         schema:potentialAction [
@@ -56,7 +54,6 @@
     dcterms:title "Nederlandse Thesaurus voor Auteursnamen as SPARQL"@en ;
     dcterms:identifier "nta-sparql" ;
     dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
         dcat:endpointURL <http://data.bibliotheken.nl/sparql> ;
         dcat:servesDataset <http://data.bibliotheken.nl/id/dataset/persons> ;
         schema:potentialAction [
@@ -74,7 +71,6 @@
     dcterms:title "Thesaurus Nationaal Museum van Wereldculturen as SPARQL"@en ;
     dcterms:identifier "nmvw-sparql" ;
     dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
         dcat:endpointURL <https://api.data.netwerkdigitaalerfgoed.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql> ;
         dcat:servesDataset <https://data.netwerkdigitaalerfgoed.nl/nmvw/thesaurus/graphs/thesaurus> ;
         schema:potentialAction [
@@ -92,7 +88,6 @@
     dcterms:title "Art & Architecture Thesaurus (AAT) as SPARQL"@en ;
     dcterms:identifier "aat-sparql" ;
     dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
         dcat:endpointURL <http://vocab.getty.edu/sparql> ;
         dcat:servesDataset <http://vocab.getty.edu/aat> ;
         schema:potentialAction [
@@ -110,7 +105,6 @@
     dcterms:title "Wikidata Entities as SPARQL"@en ;
     dcterms:identifier "wikidata-entities-sparql" ;
     dcat:accessService [
-        dcterms:type <http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql> ;
         dcat:endpointURL <https://query.wikidata.org/sparql> ;
         dcat:servesDataset <https://www.wikidata.org> ;
         schema:potentialAction [

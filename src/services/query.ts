@@ -11,7 +11,6 @@ import * as PrettyMilliseconds from 'pretty-ms';
 
 export interface ConstructorOptions {
   logLevel: string;
-  accessServiceType: string;
   endpointUrl: string;
   searchTerms: string;
   query: string;
@@ -19,7 +18,6 @@ export interface ConstructorOptions {
 
 const schemaConstructor = Joi.object({
   logLevel: Joi.string().required(),
-  accessServiceType: Joi.string().required(),
   endpointUrl: Joi.string().required(),
   searchTerms: Joi.string().required(),
   query: Joi.string().required(),
@@ -27,15 +25,10 @@ const schemaConstructor = Joi.object({
 
 export class QueryService {
   protected logger: Pino.Logger;
-  protected accessServiceType: string;
   protected endpointUrl: string;
   protected searchTerms: string;
   protected query: string;
   protected engine: ActorInitSparql;
-  protected readonly accessServiceTypes: { [key: string]: string } = {
-    'http://netwerkdigitaalerfgoed.nl/ontologies/accessServiceTypes/sparql':
-      'sparql',
-  };
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
@@ -43,11 +36,6 @@ export class QueryService {
       name: this.constructor.name,
       level: args.logLevel,
     });
-    const accessServiceType = this.accessServiceTypes[args.accessServiceType];
-    if (accessServiceType === undefined) {
-      throw Error(`Unknown access service type: "${args.accessServiceType}"`);
-    }
-    this.accessServiceType = accessServiceType;
     this.endpointUrl = args.endpointUrl;
     this.searchTerms = args.searchTerms;
     this.query = args.query;
@@ -61,7 +49,7 @@ export class QueryService {
       log: logger,
       sources: [
         {
-          type: this.accessServiceType,
+          type: 'sparql', // Only supported type for now
           value: this.endpointUrl,
         },
       ],

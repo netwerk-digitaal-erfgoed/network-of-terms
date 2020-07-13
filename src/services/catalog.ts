@@ -32,7 +32,6 @@ export interface Distribution {
 export interface AccessService {
   distribution: string;
   distributionId: string;
-  accessServiceType: string;
   endpointUrl: string;
   query: string;
 }
@@ -128,7 +127,6 @@ export class CatalogService {
         ?distribution a dcat:Distribution .
         ?distribution dcterms:identifier ?distributionId .
         ?distribution dcat:accessService ?accessService .
-        ?accessService dcterms:type ?accessServiceType .
         ?accessService dcat:endpointURL ?endpointUrl .
         ?accessService schema:potentialAction/schema:query ?query .
       }
@@ -148,7 +146,6 @@ export class CatalogService {
           accessService = {
             distribution: bindings.get('?distribution').value,
             distributionId,
-            accessServiceType: bindings.get('?accessServiceType').value,
             endpointUrl: bindings.get('?endpointUrl').value,
             query: bindings.get('?query').value,
           };
