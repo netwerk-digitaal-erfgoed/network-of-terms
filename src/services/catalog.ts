@@ -3,16 +3,16 @@ import {
   Bindings,
   IActorQueryOperationOutputBindings,
 } from '@comunica/bus-query-operation';
-import { literal } from '@rdfjs/data-model';
-import { LoggerPino } from '../helpers/logger-pino';
-import { storeStream } from 'rdf-store-stream';
 import * as Comunica from '@comunica/actor-init-sparql-rdfjs';
 import * as Fs from 'fs';
 import * as Joi from '@hapi/joi';
+import { literal } from '@rdfjs/data-model';
 import * as Logger from '../helpers/logger';
+import { LoggerPino } from '../helpers/logger-pino';
 import * as Path from 'path';
 import * as Pino from 'pino';
 import RdfParser from 'rdf-parse';
+import { storeStream } from 'rdf-store-stream';
 
 export interface ConstructorOptions {
   logLevel: string;

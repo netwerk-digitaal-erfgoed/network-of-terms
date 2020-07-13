@@ -1,9 +1,8 @@
 import { CatalogService } from './catalog';
-import { Term } from './terms';
-import { QueryService } from './query';
 import * as Joi from '@hapi/joi';
 import * as Logger from '../helpers/logger';
 import * as Pino from 'pino';
+import { QueryResult, QueryService } from './query';
 
 export interface ConstructorOptions {
   logLevel: string;
@@ -51,7 +50,7 @@ export class DistributionsService {
     });
   }
 
-  async query(options: QueryOptions): Promise<Term[]> {
+  async query(options: QueryOptions): Promise<QueryResult> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(
       `Preparing to query distribution "${args.distributionId}"...`
@@ -67,14 +66,13 @@ export class DistributionsService {
 
     const queryService = new QueryService({
       logLevel: this.logger.level,
-      endpointUrl: accessService.endpointUrl,
+      accessService,
       searchTerms: args.searchTerms,
-      query: accessService.query,
     });
     return queryService.run();
   }
 
-  async queryAll(options: QueryAllOptions): Promise<Term[][]> {
+  async queryAll(options: QueryAllOptions): Promise<QueryResult[]> {
     const args = Joi.attempt(options, schemaQueryAll);
     const distributionIds = args.distributionIds;
     const requests = distributionIds.map((distributionId: string) =>

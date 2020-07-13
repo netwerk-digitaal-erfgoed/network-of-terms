@@ -1,8 +1,16 @@
 import { cli } from 'cli-ux';
 import { Command, flags } from '@oclif/command';
 import { DistributionsService } from '../../services/distributions';
-import { Term } from '../../services/terms';
+import { QueryResult } from '../../services/query';
 import * as RDF from 'rdf-js';
+import { Term } from '../../services/terms';
+
+interface Row {
+  distributionId: string;
+  termId: string;
+  prefLabels: string;
+  altLabels: string;
+}
 
 export class QueryDistributionsCommand extends Command {
   static description = 'Query dataset distributions';
@@ -25,29 +33,40 @@ export class QueryDistributionsCommand extends Command {
     }),
   };
 
-  protected render(results: Term[][]): void {
-    for (const terms of results) {
-      cli.table(terms, {
-        id: {
-          header: 'ID',
-          get: (term: Term) => term.id!.value,
-        },
-        prefLabels: {
-          header: 'Preferred Labels',
-          get: (term: Term) =>
-            term.prefLabels
+  protected render(results: QueryResult[]): void {
+    const rowsPerDistribution = results.map((result: QueryResult): Row[] => {
+      const distributionId = result.accessService.distributionId;
+      return result.terms.map(
+        (term: Term): Row => {
+          return {
+            distributionId,
+            termId: term.id!.value,
+            prefLabels: term.prefLabels
               .map((prefLabel: RDF.Term) => prefLabel.value)
               .join(' / '),
-        },
-        altLabels: {
-          header: 'Alternative Labels',
-          get: (term: Term) =>
-            term.altLabels
+            altLabels: term.altLabels
               .map((altLabel: RDF.Term) => altLabel.value)
               .join(' / '),
-        },
-      });
-    }
+          };
+        }
+      );
+    });
+    const rows = ([] as Row[]).concat(...rowsPerDistribution); // Flatten array
+
+    cli.table(rows, {
+      distributionId: {
+        header: 'Distribution ID',
+      },
+      termId: {
+        header: 'Term ID',
+      },
+      prefLabels: {
+        header: 'Preferred Labels',
+      },
+      altLabels: {
+        header: 'Alternative Labels',
+      },
+    });
   }
 
   async run(): Promise<void> {

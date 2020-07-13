@@ -18,13 +18,13 @@ export class ListDistributionsCommand extends Command {
   protected render(distributions: Distribution[]): void {
     cli.table(distributions, {
       datasetTitle: {
-        header: 'Dataset',
+        header: 'Dataset Name',
       },
       distributionTitle: {
-        header: 'Distribution',
+        header: 'Distribution Name',
       },
       distributionId: {
-        header: 'Identifier',
+        header: 'Distribution ID',
       },
     });
   }

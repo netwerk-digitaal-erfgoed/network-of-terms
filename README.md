@@ -26,8 +26,8 @@ This command reads the catalog information in file `configs/catalog.ttl`.
 # RKDartists: query SPARQL endpoint
 ./bin/run distributions:query --identifiers rkdartists-sparql --search-terms Gogh
 
-# Cultuurhistorische Thesaurus and RKDartists: query SPARQL endpoints simultaneously
-./bin/run distributions:query --identifiers cht-sparql,rkdartists-sparql --search-terms Gogh
+# RKDartists and NTA: query SPARQL endpoints simultaneously
+./bin/run distributions:query --identifiers rkdartists-sparql,nta-sparql --search-terms Gogh
 
 # NTA: query SPARQL endpoint
 ./bin/run distributions:query --identifiers nta-sparql --search-terms Wieringa

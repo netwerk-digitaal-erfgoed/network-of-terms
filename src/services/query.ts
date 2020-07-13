@@ -1,38 +1,41 @@
+import { AccessService } from './catalog';
 import { ActorInitSparql } from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 import {
   Bindings,
   IActorQueryOperationOutputQuads,
 } from '@comunica/bus-query-operation';
-import { literal } from '@rdfjs/data-model';
-import { LoggerPino } from '../helpers/logger-pino';
-import { Term, TermsTransformer } from './terms';
 import * as ComunicaSparql from '@comunica/actor-init-sparql';
 import * as Hoek from '@hapi/hoek';
 import * as Joi from '@hapi/joi';
+import { literal } from '@rdfjs/data-model';
 import * as Logger from '../helpers/logger';
+import { LoggerPino } from '../helpers/logger-pino';
 import * as Pino from 'pino';
 import * as PrettyMilliseconds from 'pretty-ms';
 import * as RDF from 'rdf-js';
+import { Term, TermsTransformer } from './terms';
 
 export interface ConstructorOptions {
   logLevel: string;
-  endpointUrl: string;
+  accessService: AccessService;
   searchTerms: string;
-  query: string;
 }
 
 const schemaConstructor = Joi.object({
   logLevel: Joi.string().required(),
-  endpointUrl: Joi.string().required(),
+  accessService: Joi.object().required(),
   searchTerms: Joi.string().required(),
-  query: Joi.string().required(),
 });
+
+export interface QueryResult {
+  accessService: AccessService;
+  terms: Term[];
+}
 
 export class QueryService {
   protected logger: Pino.Logger;
-  protected endpointUrl: string;
+  protected accessService: AccessService;
   protected searchTerms: string;
-  protected query: string;
   protected engine: ActorInitSparql;
 
   constructor(options: ConstructorOptions) {
@@ -41,9 +44,8 @@ export class QueryService {
       name: this.constructor.name,
       level: args.logLevel,
     });
-    this.endpointUrl = args.endpointUrl;
+    this.accessService = args.accessService;
     this.searchTerms = args.searchTerms;
-    this.query = args.query;
     this.engine = ComunicaSparql.newEngine();
   }
 
@@ -55,7 +57,7 @@ export class QueryService {
       sources: [
         {
           type: 'sparql', // Only supported type for now
-          value: this.endpointUrl,
+          value: this.accessService.endpointUrl,
         },
       ],
       initialBindings: Bindings({
@@ -65,14 +67,14 @@ export class QueryService {
     return config;
   }
 
-  async run(): Promise<Term[]> {
+  async run(): Promise<QueryResult> {
     this.logger.info(
-      `Querying "${this.endpointUrl}" with search query "${this.searchTerms}"...`
+      `Querying "${this.accessService.endpointUrl}" with search query "${this.searchTerms}"...`
     );
     const config = this.getConfig();
     const timer = new Hoek.Bench();
     const result = (await this.engine.query(
-      this.query,
+      this.accessService.query,
       config
     )) as IActorQueryOperationOutputQuads;
 
@@ -87,9 +89,11 @@ export class QueryService {
         this.logger.info(
           `Found ${terms.length} terms matching search query "${
             this.searchTerms
-          }" in "${this.endpointUrl}" in ${PrettyMilliseconds(timer.elapsed())}`
+          }" in "${this.accessService.endpointUrl}" in ${PrettyMilliseconds(
+            timer.elapsed()
+          )}`
         );
-        resolve(terms);
+        resolve({ accessService: this.accessService, terms });
       });
     });
   }
