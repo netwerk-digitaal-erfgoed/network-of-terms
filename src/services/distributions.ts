@@ -67,7 +67,6 @@ export class DistributionsService {
 
     const queryService = new QueryService({
       logLevel: this.logger.level,
-      accessServiceType: accessService.accessServiceType,
       endpointUrl: accessService.endpointUrl,
       searchTerms: args.searchTerms,
       query: accessService.query,
