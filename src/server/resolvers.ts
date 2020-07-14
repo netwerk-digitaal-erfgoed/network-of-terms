@@ -5,7 +5,7 @@ import * as RDF from 'rdf-js';
 import { Term } from '../services/terms';
 
 // tslint:disable-next-line:no-any
-async function getSources(object: any, args: any, context: any): Promise<any> {
+async function listSources(object: any, args: any, context: any): Promise<any> {
   const service = new CatalogService({ logger: context.app.log });
   const distributions = await service.listDistributions();
   return distributions.map((distribution: Distribution) => {
@@ -50,13 +50,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
 
 export const resolvers = {
   Query: {
-    // tslint:disable-next-line:no-any
-    sources: async (obj: any, args: any, context: any) => {
-      return getSources(obj, args, context);
-    },
-    // tslint:disable-next-line:no-any
-    terms: async (obj: any, args: any, context: any) => {
-      return queryTerms(obj, args, context);
-    },
+    sources: listSources,
+    terms: queryTerms,
   },
 };
