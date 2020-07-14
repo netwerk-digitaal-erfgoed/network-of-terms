@@ -4,27 +4,26 @@ import {
   Bindings,
   IActorQueryOperationOutputQuads,
 } from '@comunica/bus-query-operation';
-import * as ComunicaSparql from '@comunica/actor-init-sparql';
+import * as Comunica from '@comunica/actor-init-sparql';
 import * as Hoek from '@hapi/hoek';
 import * as Joi from '@hapi/joi';
 import { literal } from '@rdfjs/data-model';
-import * as Logger from '../helpers/logger';
 import { LoggerPino } from '../helpers/logger-pino';
-import * as Pino from 'pino';
-import * as PrettyMilliseconds from 'pretty-ms';
+import Pino from 'pino';
+import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from 'rdf-js';
 import { Term, TermsTransformer } from './terms';
 
 export interface ConstructorOptions {
-  logLevel: string;
+  logger: Pino.Logger;
   accessService: AccessService;
-  searchTerms: string;
+  query: string;
 }
 
 const schemaConstructor = Joi.object({
-  logLevel: Joi.string().required(),
+  logger: Joi.object().required(),
   accessService: Joi.object().required(),
-  searchTerms: Joi.string().required(),
+  query: Joi.string().required(),
 });
 
 export interface QueryResult {
@@ -32,21 +31,18 @@ export interface QueryResult {
   terms: Term[];
 }
 
-export class QueryService {
+export class QueryTermsService {
   protected logger: Pino.Logger;
   protected accessService: AccessService;
-  protected searchTerms: string;
+  protected query: string;
   protected engine: ActorInitSparql;
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
-    this.logger = Logger.getLogger({
-      name: this.constructor.name,
-      level: args.logLevel,
-    });
+    this.logger = args.logger;
     this.accessService = args.accessService;
-    this.searchTerms = args.searchTerms;
-    this.engine = ComunicaSparql.newEngine();
+    this.query = args.query;
+    this.engine = Comunica.newEngine();
   }
 
   // tslint:disable-next-line:no-any
@@ -61,7 +57,7 @@ export class QueryService {
         },
       ],
       initialBindings: Bindings({
-        '?searchTerms': literal(this.searchTerms),
+        '?query': literal(this.query),
       }),
     };
     return config;
@@ -69,7 +65,7 @@ export class QueryService {
 
   async run(): Promise<QueryResult> {
     this.logger.info(
-      `Querying "${this.accessService.endpointUrl}" with search query "${this.searchTerms}"...`
+      `Querying "${this.accessService.endpointUrl}" with "${this.query}"...`
     );
     const config = this.getConfig();
     const timer = new Hoek.Bench();
@@ -87,11 +83,9 @@ export class QueryService {
       result.quadStream.on('end', () => {
         const terms = termsTransformer.asArray();
         this.logger.info(
-          `Found ${terms.length} terms matching search query "${
-            this.searchTerms
-          }" in "${this.accessService.endpointUrl}" in ${PrettyMilliseconds(
-            timer.elapsed()
-          )}`
+          `Found ${terms.length} terms matching "${this.query}" in "${
+            this.accessService.endpointUrl
+          }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
         resolve({ accessService: this.accessService, terms });
       });

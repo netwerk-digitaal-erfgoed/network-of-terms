@@ -1,5 +1,5 @@
 import * as Joi from '@hapi/joi';
-import * as Pino from 'pino';
+import Pino from 'pino';
 
 export interface GetLoggerOptions {
   name: string;
@@ -11,28 +11,43 @@ const schemaGetLogger = Joi.object({
   level: Joi.string().required(),
 });
 
-export function getLogger(options: GetLoggerOptions): Pino.Logger {
+const baseOptions: Pino.LoggerOptions = {
+  base: {
+    name: undefined, // Don't log PID and hostname
+  },
+  level: 'warn',
+  messageKey: 'message',
+  formatters: {
+    level(label) {
+      return {
+        level: label,
+      };
+    },
+  },
+};
+
+export function getCliLogger(options: GetLoggerOptions): Pino.Logger {
   const args = Joi.attempt(options, schemaGetLogger);
-  const destinationStdErr = Pino.destination(2);
-  const loggerOptions: Pino.LoggerOptions = {
+  const loggerOptions = Object.assign(baseOptions, {
     base: {
-      name: args.name, // Don't log PID and hostname
+      name: args.name,
     },
     level: args.level,
-    messageKey: 'message',
-    formatters: {
-      level(label) {
-        return {
-          log: {
-            level: label,
-          },
-        };
-      },
-    },
     prettyPrint: {
       colorize: true,
-      ignore: 'pid,hostname,time',
     },
-  };
+  });
+  const destinationStdErr = Pino.destination(2);
   return Pino(loggerOptions, destinationStdErr);
+}
+
+export function getHttpLogger(options: GetLoggerOptions): Pino.Logger {
+  const args = Joi.attempt(options, schemaGetLogger);
+  const loggerOptions = Object.assign(baseOptions, {
+    base: {
+      name: args.name,
+    },
+    level: args.level,
+  });
+  return Pino(loggerOptions);
 }

@@ -12,11 +12,11 @@ CONSTRUCT {
 WHERE {
   {
       ?uri skos:prefLabel ?label .
-      ?label <bif:contains> ?searchTerms
+      ?label <bif:contains> ?query
   }
   UNION {
       ?uri skos:altLabel ?label .
-      ?label <bif:contains> ?searchTerms
+      ?label <bif:contains> ?query
   }
   OPTIONAL {
       ?uri skos:prefLabel ?prefLabel .

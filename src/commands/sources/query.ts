@@ -1,28 +1,29 @@
 import { cli } from 'cli-ux';
 import { Command, flags } from '@oclif/command';
 import { DistributionsService } from '../../services/distributions';
+import * as Logger from '../../helpers/logger';
 import { QueryResult } from '../../services/query';
 import * as RDF from 'rdf-js';
 import { Term } from '../../services/terms';
 
 interface Row {
-  distributionId: string;
-  termId: string;
+  distributionTitle: string;
+  termUri: string;
   prefLabels: string;
   altLabels: string;
 }
 
-export class QueryDistributionsCommand extends Command {
-  static description = 'Query dataset distributions';
+export class QuerySourcesCommand extends Command {
+  static description = 'Query sources for terms';
   // tslint:disable-next-line:no-any
   static flags: flags.Input<any> = {
     identifiers: flags.string({
       description:
-        'Identifiers of dataset distributions to query, comma-separated, e.g. "nta-sparql,rkdartists-sparql"',
+        'Identifiers of sources to query, comma-separated, e.g. "nta,rkdartists"',
       required: true,
     }),
-    'search-terms': flags.string({
-      description: 'Search terms, e.g. "Gogh" or "fiets"',
+    query: flags.string({
+      description: 'Query, e.g. "Gogh" or "fiets"',
       required: true,
     }),
     loglevel: flags.string({
@@ -35,12 +36,12 @@ export class QueryDistributionsCommand extends Command {
 
   protected render(results: QueryResult[]): void {
     const rowsPerDistribution = results.map((result: QueryResult): Row[] => {
-      const distributionId = result.accessService.distributionId;
       return result.terms.map(
         (term: Term): Row => {
           return {
-            distributionId,
-            termId: term.id!.value,
+            distributionTitle:
+              result.accessService.distribution.distributionTitle.value,
+            termUri: term.id!.value,
             prefLabels: term.prefLabels
               .map((prefLabel: RDF.Term) => prefLabel.value)
               .join(' / '),
@@ -54,11 +55,11 @@ export class QueryDistributionsCommand extends Command {
     const rows = ([] as Row[]).concat(...rowsPerDistribution); // Flatten array
 
     cli.table(rows, {
-      distributionId: {
-        header: 'Distribution ID',
+      distributionTitle: {
+        header: 'Source Name',
       },
-      termId: {
-        header: 'Term ID',
+      termUri: {
+        header: 'Term URI',
       },
       prefLabels: {
         header: 'Preferred Labels',
@@ -70,17 +71,19 @@ export class QueryDistributionsCommand extends Command {
   }
 
   async run(): Promise<void> {
-    const { flags } = this.parse(QueryDistributionsCommand);
+    const { flags } = this.parse(QuerySourcesCommand);
     const distributionIds = flags.identifiers
       .split(',')
       .map((distributionId: string) => distributionId.trim());
 
-    const service = new DistributionsService({
-      logLevel: flags.loglevel,
+    const logger = Logger.getCliLogger({
+      name: 'cli',
+      level: flags.loglevel,
     });
+    const service = new DistributionsService({ logger });
     const results = await service.queryAll({
       distributionIds,
-      searchTerms: flags['search-terms'],
+      query: flags.query,
     });
     this.render(results);
   }

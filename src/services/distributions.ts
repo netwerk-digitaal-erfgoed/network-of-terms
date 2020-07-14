@@ -1,30 +1,29 @@
 import { CatalogService } from './catalog';
 import * as Joi from '@hapi/joi';
-import * as Logger from '../helpers/logger';
-import * as Pino from 'pino';
-import { QueryResult, QueryService } from './query';
+import Pino from 'pino';
+import { QueryResult, QueryTermsService } from './query';
 
 export interface ConstructorOptions {
-  logLevel: string;
+  logger: Pino.Logger;
 }
 
 const schemaConstructor = Joi.object({
-  logLevel: Joi.string().required(),
+  logger: Joi.object().required(),
 });
 
 export interface QueryOptions {
   distributionId: string;
-  searchTerms: string;
+  query: string;
 }
 
 const schemaQuery = Joi.object({
   distributionId: Joi.string().required(),
-  searchTerms: Joi.string().required(),
+  query: Joi.string().required(),
 });
 
 export interface QueryAllOptions {
   distributionIds: string[];
-  searchTerms: string;
+  query: string;
 }
 
 const schemaQueryAll = Joi.object({
@@ -32,7 +31,7 @@ const schemaQueryAll = Joi.object({
     .items(Joi.string().required())
     .min(1)
     .required(),
-  searchTerms: Joi.string().required(),
+  query: Joi.string().required(),
 });
 
 export class DistributionsService {
@@ -41,33 +40,26 @@ export class DistributionsService {
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
-    this.logger = Logger.getLogger({
-      name: this.constructor.name,
-      level: args.logLevel,
-    });
-    this.catalogService = new CatalogService({
-      logLevel: args.logLevel,
-    });
+    this.logger = args.logger;
+    this.catalogService = new CatalogService({ logger: args.logger });
   }
 
   async query(options: QueryOptions): Promise<QueryResult> {
     const args = Joi.attempt(options, schemaQuery);
-    this.logger.info(
-      `Preparing to query distribution "${args.distributionId}"...`
-    );
+    this.logger.info(`Preparing to query source "${args.distributionId}"...`);
     const accessService = await this.catalogService.getAccessServiceByDistributionId(
       args.distributionId
     );
     if (accessService === null) {
       throw Error(
-        `Access service of distribution "${args.distributionId}" not found in catalog`
+        `Access service of source "${args.distributionId}" not found in catalog`
       );
     }
 
-    const queryService = new QueryService({
-      logLevel: this.logger.level,
+    const queryService = new QueryTermsService({
+      logger: this.logger,
       accessService,
-      searchTerms: args.searchTerms,
+      query: args.query,
     });
     return queryService.run();
   }
@@ -76,7 +68,7 @@ export class DistributionsService {
     const args = Joi.attempt(options, schemaQueryAll);
     const distributionIds = args.distributionIds;
     const requests = distributionIds.map((distributionId: string) =>
-      this.query({ distributionId, searchTerms: args.searchTerms })
+      this.query({ distributionId, query: args.query })
     );
     return Promise.all(requests);
   }

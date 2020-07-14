@@ -1,5 +1,5 @@
-import * as Pino from 'pino';
 import { Logger } from '@comunica/core';
+import Pino from 'pino';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
