@@ -7,59 +7,114 @@ This experimental application is published for examination and evaluation. It is
 
     docker-compose build --no-cache
 
-## Logon to container
+## Query sources via CLI
 
-    docker-compose run --rm node /bin/bash
+### Logon to container
 
-## List queryable dataset distributions
+    docker-compose run --rm --no-deps --entrypoint /bin/bash node
+
+### List queryable sources
 
 This command reads the catalog information in file `configs/catalog.ttl`.
 
-    ./bin/run distributions:list
+    ./bin/run sources:list
 
-## Query one or more dataset distributions
+### Query one or more sources for terms
 
 ```bash
 # Cultuurhistorische Thesaurus: query SPARQL endpoint
-./bin/run distributions:query --identifiers cht-sparql --search-terms fiets
+./bin/run sources:query --identifiers cht --query fiets
 
 # RKDartists: query SPARQL endpoint
-./bin/run distributions:query --identifiers rkdartists-sparql --search-terms Gogh
+./bin/run sources:query --identifiers rkdartists --query Gogh
 
-# Cultuurhistorische Thesaurus and RKDartists: query SPARQL endpoints simultaneously
-./bin/run distributions:query --identifiers cht-sparql,rkdartists-sparql --search-terms Gogh
+# RKDartists and NTA: query SPARQL endpoints simultaneously
+./bin/run sources:query --identifiers rkdartists,nta --query Gogh
 
 # NTA: query SPARQL endpoint
-./bin/run distributions:query --identifiers nta-sparql --search-terms Wieringa
-./bin/run distributions:query --identifiers nta-sparql --search-terms "'Wier*'"
-./bin/run distributions:query --identifiers nta-sparql --search-terms "Wieringa OR Mulisch"
-./bin/run distributions:query --identifiers nta-sparql --search-terms "Jan AND Vries"
+./bin/run sources:query --identifiers nta --query Wieringa
+./bin/run sources:query --identifiers nta --query "'Wier*'"
+./bin/run sources:query --identifiers nta --query "Wieringa OR Mulisch"
+./bin/run sources:query --identifiers nta --query "Jan AND Vries"
 
 # NMvW: query SPARQL endpoint
-./bin/run distributions:query --identifiers nmvw-sparql --search-terms eiland
+./bin/run sources:query --identifiers nmvw --query eiland
 
 # AAT: query SPARQL endpoint
-./bin/run distributions:query --identifiers aat-sparql --search-terms schilderij
-./bin/run distributions:query --identifiers aat-sparql --search-terms "schil*"
-./bin/run distributions:query --identifiers aat-sparql --search-terms "schilderij OR tekening"
-./bin/run distributions:query --identifiers aat-sparql --search-terms "cartoon* AND prent*"
+./bin/run sources:query --identifiers aat --query schilderij
+./bin/run sources:query --identifiers aat --query "schil*"
+./bin/run sources:query --identifiers aat --query "schilderij OR tekening"
+./bin/run sources:query --identifiers aat --query "cartoon* OR prent*"
 
 # Wikidata Entities: query SPARQL endpoint
-./bin/run distributions:query --identifiers wikidata-entities-sparql --search-terms Rembrandt
+./bin/run sources:query --identifiers wikidata-entities --query Rembrandt
 ```
 
 Add `--loglevel` to the commands to see what's going on underneath. For example:
 
-    ./bin/run distributions:query --identifiers cht-sparql --search-terms fiets --loglevel info
+    ./bin/run sources:query --identifiers cht --query fiets --loglevel info
 
-Search results - in Turtle - are piped to stdout. Redirect these elsewhere for further analysis. For example:
+Search results are piped to stdout. Redirect these elsewhere for further analysis. For example:
 
-    ./bin/run distributions:query --identifiers cht-sparql --search-terms fiets > cht.ttl
+    ./bin/run sources:query --identifiers cht --query fiets > cht.txt
 
-## Use Comunica directly
+## Query sources via GraphQL
 
-```bash
-npx comunica-sparql \
-    sparql@https://api.data.netwerkdigitaalerfgoed.nl/datasets/rkd/rkdartists/services/rkdartists/sparql \
-    -q "SELECT * WHERE { ?uri schema:name ?label . ?label <bif:contains> 'gogh' } LIMIT 10"
+### Start server
+
+    docker-compose up
+
+### Open the GraphQL editor
+
+http://localhost:3123/playground
+
+### List queryable sources
+
+```
+query Sources {
+  sources {
+    name
+    identifier
+  }
+}
+```
+
+### Query one or more sources for terms
+
+```
+# Query Cultuurhistorische Thesaurus (CHT)
+query Terms {
+  terms(sources: ["cht"], query: "fiets") {
+    source {
+      identifier
+      name
+    }
+    terms {
+      uri
+      prefLabel
+      altLabel
+      hiddenLabel
+      scopeNote
+    }
+  }
+}
+```
+
+```
+# Query RKDartists and NTA simultaneously
+query QueryTerms {
+  terms(sources: ["rkdartists", "nta"], query: "Gogh") {
+    source {
+      identifier
+      name
+    }
+    terms {
+      uri
+      prefLabel
+      altLabel
+      hiddenLabel
+      scopeNote
+    }
+  }
+}
 ```

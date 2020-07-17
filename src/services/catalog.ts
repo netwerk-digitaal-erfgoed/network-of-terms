@@ -3,35 +3,33 @@ import {
   Bindings,
   IActorQueryOperationOutputBindings,
 } from '@comunica/bus-query-operation';
-import { literal } from '@rdfjs/data-model';
-import { LoggerPino } from '../helpers/logger-pino';
-import { storeStream } from 'rdf-store-stream';
 import * as Comunica from '@comunica/actor-init-sparql-rdfjs';
 import * as Fs from 'fs';
 import * as Joi from '@hapi/joi';
-import * as Logger from '../helpers/logger';
+import { literal } from '@rdfjs/data-model';
+import { LoggerPino } from '../helpers/logger-pino';
 import * as Path from 'path';
-import * as Pino from 'pino';
+import Pino from 'pino';
+import * as RDF from 'rdf-js';
 import RdfParser from 'rdf-parse';
+import { storeStream } from 'rdf-store-stream';
 
 export interface ConstructorOptions {
-  logLevel: string;
+  logger: Pino.Logger;
 }
 
 const schemaConstructor = Joi.object({
-  logLevel: Joi.string().required(),
+  logger: Joi.object().required(),
 });
 
 export interface Distribution {
-  distribution: string;
-  distributionId: string;
-  distributionTitle: string;
-  datasetTitle: string;
+  distributionId: RDF.Term;
+  distributionTitle: RDF.Term;
+  datasetTitle: RDF.Term;
 }
 
 export interface AccessService {
-  distribution: string;
-  distributionId: string;
+  distribution: Distribution;
   endpointUrl: string;
   query: string;
 }
@@ -43,18 +41,13 @@ export class CatalogService {
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
-    this.logger = Logger.getLogger({
-      name: this.constructor.name,
-      level: args.logLevel,
-    });
+    this.logger = args.logger;
     this.engine = Comunica.newEngine();
   }
 
   // tslint:disable-next-line:no-any
   async getConfig(): Promise<any> {
-    this.logger.info(
-      `Processing distributions in file "${this.catalogFile}"...`
-    );
+    this.logger.info(`Processing sources in file "${this.catalogFile}"...`);
     const quadStream = RdfParser.parse(Fs.createReadStream(this.catalogFile), {
       path: this.catalogFile,
     });
@@ -74,7 +67,6 @@ export class CatalogService {
 
   async listDistributions(): Promise<Distribution[]> {
     const config = await this.getConfig();
-    this.logger.info(`Listing distributions...`);
     const query = `
       PREFIX dcat: <http://www.w3.org/ns/dcat#>
       SELECT * WHERE {
@@ -98,14 +90,13 @@ export class CatalogService {
       result.bindingsStream.on('error', reject);
       result.bindingsStream.on('data', (bindings: Bindings) => {
         distributions.push({
-          distribution: bindings.get('?distribution').value,
-          distributionId: bindings.get('?distributionId').value,
-          distributionTitle: bindings.get('?distributionTitle').value,
-          datasetTitle: bindings.get('?datasetTitle').value,
+          distributionId: bindings.get('?distributionId'),
+          distributionTitle: bindings.get('?distributionTitle'),
+          datasetTitle: bindings.get('?datasetTitle'),
         });
       });
       result.bindingsStream.on('end', () => {
-        this.logger.info(`Found ${distributions.length} distributions`);
+        this.logger.info(`Found ${distributions.length} sources`);
         resolve(distributions);
       });
     });
@@ -116,7 +107,7 @@ export class CatalogService {
   ): Promise<AccessService | null> {
     const config = await this.getConfig();
     this.logger.info(
-      `Retrieving access service of distribution "${distributionId}"...`
+      `Retrieving access service of source "${distributionId}"...`
     );
     config.initialBindings = Bindings({
       '?distributionId': literal(distributionId),
@@ -124,11 +115,16 @@ export class CatalogService {
     const query = `
       PREFIX dcat: <http://www.w3.org/ns/dcat#>
       SELECT * WHERE {
+        BIND(?distributionId AS ?distrId) .
         ?distribution a dcat:Distribution .
+        ?distribution dcterms:title ?distributionTitle .
         ?distribution dcterms:identifier ?distributionId .
         ?distribution dcat:accessService ?accessService .
         ?accessService dcat:endpointURL ?endpointUrl .
         ?accessService schema:potentialAction/schema:query ?query .
+        ?dataset a dcat:Dataset .
+        ?dataset dcat:distribution ?distribution .
+        ?dataset dcterms:title ?datasetTitle
       }
       LIMIT 1
     `;
@@ -144,10 +140,13 @@ export class CatalogService {
         result.bindingsStream.on('error', reject);
         result.bindingsStream.on('data', (bindings: Bindings) => {
           accessService = {
-            distribution: bindings.get('?distribution').value,
-            distributionId,
-            endpointUrl: bindings.get('?endpointUrl').value,
-            query: bindings.get('?query').value,
+            distribution: {
+              distributionId: bindings.get('?distrId'), // As RDF.Term
+              distributionTitle: bindings.get('?distributionTitle'),
+              datasetTitle: bindings.get('?datasetTitle'),
+            },
+            endpointUrl: bindings.get('?endpointUrl').value, // As string
+            query: bindings.get('?query').value, // As string
           };
         });
         result.bindingsStream.on('end', () => resolve(accessService || null));

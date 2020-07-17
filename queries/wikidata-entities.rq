@@ -14,7 +14,7 @@ WHERE {
     SERVICE wikibase:mwapi {
         bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
         wikibase:api "EntitySearch" ;
-        mwapi:search ?searchTerms ;
+        mwapi:search ?query ;
         mwapi:language "nl" .
         ?item wikibase:apiOutputItem mwapi:item .
     }

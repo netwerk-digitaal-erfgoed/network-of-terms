@@ -1,45 +1,48 @@
+import { AccessService } from './catalog';
 import { ActorInitSparql } from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
-import { Bindings } from '@comunica/bus-query-operation';
-import { literal } from '@rdfjs/data-model';
-import { LoggerPino } from '../helpers/logger-pino';
-import * as ComunicaSparql from '@comunica/actor-init-sparql';
+import {
+  Bindings,
+  IActorQueryOperationOutputQuads,
+} from '@comunica/bus-query-operation';
+import * as Comunica from '@comunica/actor-init-sparql';
 import * as Hoek from '@hapi/hoek';
 import * as Joi from '@hapi/joi';
-import * as Logger from '../helpers/logger';
-import * as Pino from 'pino';
-import * as PrettyMilliseconds from 'pretty-ms';
+import { literal } from '@rdfjs/data-model';
+import { LoggerPino } from '../helpers/logger-pino';
+import Pino from 'pino';
+import PrettyMilliseconds from 'pretty-ms';
+import * as RDF from 'rdf-js';
+import { Term, TermsTransformer } from './terms';
 
 export interface ConstructorOptions {
-  logLevel: string;
-  endpointUrl: string;
-  searchTerms: string;
+  logger: Pino.Logger;
+  accessService: AccessService;
   query: string;
 }
 
 const schemaConstructor = Joi.object({
-  logLevel: Joi.string().required(),
-  endpointUrl: Joi.string().required(),
-  searchTerms: Joi.string().required(),
+  logger: Joi.object().required(),
+  accessService: Joi.object().required(),
   query: Joi.string().required(),
 });
 
-export class QueryService {
+export interface QueryResult {
+  accessService: AccessService;
+  terms: Term[];
+}
+
+export class QueryTermsService {
   protected logger: Pino.Logger;
-  protected endpointUrl: string;
-  protected searchTerms: string;
+  protected accessService: AccessService;
   protected query: string;
   protected engine: ActorInitSparql;
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
-    this.logger = Logger.getLogger({
-      name: this.constructor.name,
-      level: args.logLevel,
-    });
-    this.endpointUrl = args.endpointUrl;
-    this.searchTerms = args.searchTerms;
+    this.logger = args.logger;
+    this.accessService = args.accessService;
     this.query = args.query;
-    this.engine = ComunicaSparql.newEngine();
+    this.engine = Comunica.newEngine();
   }
 
   // tslint:disable-next-line:no-any
@@ -50,31 +53,42 @@ export class QueryService {
       sources: [
         {
           type: 'sparql', // Only supported type for now
-          value: this.endpointUrl,
+          value: this.accessService.endpointUrl,
         },
       ],
       initialBindings: Bindings({
-        '?searchTerms': literal(this.searchTerms),
+        '?query': literal(this.query),
       }),
     };
     return config;
   }
 
-  async run(): Promise<NodeJS.ReadableStream> {
+  async run(): Promise<QueryResult> {
     this.logger.info(
-      `Querying "${this.endpointUrl}" for search terms "${this.searchTerms}"...`
+      `Querying "${this.accessService.endpointUrl}" with "${this.query}"...`
     );
     const config = this.getConfig();
     const timer = new Hoek.Bench();
-    const result = await this.engine.query(this.query, config);
-    const { data } = await this.engine.resultToString(result, 'text/turtle'); // Hard-coded for now
-    data.on('end', () => {
-      this.logger.info(
-        `Querying "${this.endpointUrl}" took ${PrettyMilliseconds(
-          timer.elapsed()
-        )}`
+    const result = (await this.engine.query(
+      this.accessService.query,
+      config
+    )) as IActorQueryOperationOutputQuads;
+
+    return new Promise((resolve, reject) => {
+      const termsTransformer = new TermsTransformer();
+      result.quadStream.on('error', reject);
+      result.quadStream.on('data', (quad: RDF.Quad) =>
+        termsTransformer.fromQuad(quad)
       );
+      result.quadStream.on('end', () => {
+        const terms = termsTransformer.asArray();
+        this.logger.info(
+          `Found ${terms.length} terms matching "${this.query}" in "${
+            this.accessService.endpointUrl
+          }" in ${PrettyMilliseconds(timer.elapsed())}`
+        );
+        resolve({ accessService: this.accessService, terms });
+      });
     });
-    return data;
   }
 }

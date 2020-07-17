@@ -16,7 +16,7 @@ CONSTRUCT {
     skos:narrower ?narrower_label .
 }
 WHERE {
-    ?uri luc:term ?searchTerms;
+    ?uri luc:term ?query;
     a ?type .
     ?type rdfs:subClassOf gvp:Subject .
     FILTER (?type != gvp:Subject) .

@@ -10,17 +10,17 @@ WHERE {
         ?uri a schema:Person .
         {
             ?uri rdfs:label ?label .
-            ?label <bif:contains> ?searchTerms
+            ?label <bif:contains> ?query
         }
         UNION
         {
             ?uri schema:name ?label .
-            ?label <bif:contains> ?searchTerms
+            ?label <bif:contains> ?query
         }
         UNION
         {
             ?uri schema:alternateName ?label .
-            ?label <bif:contains> ?searchTerms
+            ?label <bif:contains> ?query
         }
         OPTIONAL { ?uri rdfs:label ?rdfs_label }
         OPTIONAL { ?uri rdfs:comment ?rdfs_comment }

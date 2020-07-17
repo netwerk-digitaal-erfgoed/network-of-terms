@@ -1,10 +1,10 @@
 import { CatalogService, Distribution } from '../../services/catalog';
 import { cli } from 'cli-ux';
 import { Command, flags } from '@oclif/command';
+import * as Logger from '../../helpers/logger';
 
-export class ListDistributionsCommand extends Command {
-  static description =
-    'List the queryable dataset distributions in the catalog';
+export class ListSourcesCommand extends Command {
+  static description = 'List queryable sources';
   // tslint:disable-next-line:no-any
   static flags: flags.Input<any> = {
     loglevel: flags.string({
@@ -17,23 +17,25 @@ export class ListDistributionsCommand extends Command {
 
   protected render(distributions: Distribution[]): void {
     cli.table(distributions, {
-      datasetTitle: {
-        header: 'Dataset',
-      },
       distributionTitle: {
-        header: 'Distribution',
+        header: 'Source Name',
+        get: (distribution: Distribution) =>
+          distribution.distributionTitle.value,
       },
       distributionId: {
-        header: 'Identifier',
+        header: 'Source ID',
+        get: (distribution: Distribution) => distribution.distributionId.value,
       },
     });
   }
 
   async run(): Promise<void> {
-    const { flags } = this.parse(ListDistributionsCommand);
-    const service = new CatalogService({
-      logLevel: flags.loglevel,
+    const { flags } = this.parse(ListSourcesCommand);
+    const logger = Logger.getCliLogger({
+      name: 'cli',
+      level: flags.loglevel,
     });
+    const service = new CatalogService({ logger });
     const distributions = await service.listDistributions();
     this.render(distributions);
   }
