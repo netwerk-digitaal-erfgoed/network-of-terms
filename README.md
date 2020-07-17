@@ -66,7 +66,7 @@ Search results are piped to stdout. Redirect these elsewhere for further analysi
 
 ### Open the GraphQL editor
 
-http://0.0.0.0:3123/playground
+http://localhost:3123/playground
 
 ### List queryable sources
 
