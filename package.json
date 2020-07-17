@@ -8,8 +8,8 @@
   },
   "private": true,
   "files": [
-    "build/src",
-    "!build/src/**/*.map"
+    "build",
+    "!build/**/*.map"
   ],
   "dependencies": {
     "cli-ux": "5.x.x",
@@ -39,12 +39,13 @@
   "scripts": {
     "check": "gts check",
     "clean": "gts clean",
-    "compile": "tsc -p .",
+    "compile": "tsc",
     "fix": "gts fix",
     "posttest": "npm run check",
+    "start": "node build/server/server.js",
     "watch": "tsc --watch"
   },
   "oclif": {
-    "commands": "./build/src/commands"
+    "commands": "./build/commands"
   }
 }
