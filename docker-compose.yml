@@ -3,11 +3,13 @@ services:
   node:
     image: network-of-terms-comunica:latest
     user: node
-    build: .
+    build:
+      context: .
+      target: build
     restart: always
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - .:/app
+      - /app/node_modules
     ports:
       - 3123:3123
-    entrypoint: /bin/bash -c 'node_modules/.bin/ts-node-dev src/server/server.ts'
+    entrypoint: /bin/sh -c 'node_modules/.bin/ts-node-dev src/server/server.ts'
