@@ -12,14 +12,15 @@
     "!build/**/*.map"
   ],
   "dependencies": {
-    "cli-ux": "5.x.x",
     "@comunica/actor-init-sparql": "1.x.x",
     "@comunica/actor-init-sparql-rdfjs": "1.x.x",
-    "fastify": "3.x.x",
-    "fastify-gql": "5.x.x",
     "@hapi/hoek": "9.x.x",
     "@hapi/joi": "17.x.x",
     "@oclif/command": "1.x.x",
+    "cli-ux": "5.x.x",
+    "fastify": "3.x.x",
+    "fastify-cors": "^4.1.0",
+    "fastify-gql": "5.x.x",
     "pino": "6.x.x",
     "pino-pretty": "4.x.x",
     "pretty-ms": "6.x.x",
