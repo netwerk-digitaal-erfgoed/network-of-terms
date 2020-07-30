@@ -1,0 +1,15 @@
+{
+  "@context": "https://schema.org/",
+  "@id": "http://data.bibliotheken.nl/id/dataset/persons",
+  "@type": "Dataset",
+  "distribution": {
+    "@id": "http://data.bibliotheken.nl/thesp/sparql",
+    "@type": "DataDownload",
+    "contentUrl": "http://data.bibliotheken.nl/sparql",
+    "encodingFormat": "application/sparql-query",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "query": "file://queries/nta.rq"
+    }
+  }
+}

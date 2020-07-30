@@ -1,0 +1,15 @@
+{
+  "@context": "https://schema.org/",
+  "@id": "https://data.rkd.nl/rkdartists",
+  "@type": "Dataset",
+  "distribution": {
+    "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
+    "@type": "DataDownload",
+    "contentUrl": "http://vocab.getty.edu/sparql",
+    "encodingFormat": "application/sparql-query",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "query": "file://queries/rkdartists.rq"
+    }
+  }
+}
