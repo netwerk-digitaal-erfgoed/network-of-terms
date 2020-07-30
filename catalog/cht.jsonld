@@ -1,0 +1,14 @@
+{
+  "@context": "https://schema.org/",
+  "@id": "https://data.cultureelerfgoed.nl/term/id/cht",
+  "@type": "Dataset",
+  "distribution": {
+    "@type": "DataDownload",
+    "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
+    "encodingFormat": "application/sparql-query",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "query": "file://queries/cht.rq"
+    }
+  }
+}

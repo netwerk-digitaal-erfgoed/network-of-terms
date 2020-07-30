@@ -1,0 +1,15 @@
+{
+  "@context": "https://schema.org/",
+  "@id": "https://www.wikidata.org",
+  "@type": "Dataset",
+  "distribution": {
+    "@id": "https://www.wikidata.org/sparql",
+    "@type": "DataDownload",
+    "contentUrl": "https://query.wikidata.org/sparq",
+    "encodingFormat": "application/sparql-query",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "query": "file://queries/wikidata-entities.rq"
+    }
+  }
+}
