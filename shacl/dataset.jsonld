@@ -1,0 +1,75 @@
+{
+  "@context": {
+    "schema": "http://schema.org/",
+    "sh": "http://www.w3.org/ns/shacl#"
+  },
+  "@graph": [
+    {
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:Dataset"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:distribution"
+          },
+          "sh:minCount": 1,
+          "sh:class": {
+            "@id": "schema:DataDownload"
+          },
+          "sh:node": "schema:DistributionShape"
+        }
+      ]
+    },
+    {
+      "@id": "schema:DistributionShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:DataDownload"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:contentUrl"
+          },
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:encodingFormat"
+          },
+          "sh:hasValue": "application/sparql-query"
+        },
+        {
+          "sh:path": {
+            "@id": "schema:potentialAction"
+          },
+          "sh:minCount": 1,
+          "sh:class": {
+            "@id": "schema:SearchAction"
+          },
+          "sh:node": {
+            "@id": "schema:SearchActionShape"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "schema:SearchActionShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:SearchAction"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:query"
+          },
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        }
+      ]
+    }
+  ]
+}
