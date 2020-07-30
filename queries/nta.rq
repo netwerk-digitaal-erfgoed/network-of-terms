@@ -1,0 +1,31 @@
+CONSTRUCT {
+    ?uri a skos:Concept ;
+         skos:prefLabel ?rdfs_label ;
+         skos:altLabel ?schema_alternateName ;
+         skos:altLabel ?schema_name ;
+         skos:scopeNote ?rdfs_comment .
+}
+WHERE {
+    GRAPH <http://data.bibliotheken.nl/thesp/> {
+        ?uri a schema:Person .
+        {
+            ?uri rdfs:label ?label .
+            ?label <bif:contains> ?query
+        }
+        UNION
+        {
+            ?uri schema:name ?label .
+            ?label <bif:contains> ?query
+        }
+        UNION
+        {
+            ?uri schema:alternateName ?label .
+            ?label <bif:contains> ?query
+        }
+        OPTIONAL { ?uri rdfs:label ?rdfs_label }
+        OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
+        OPTIONAL { ?uri schema:name ?schema_name }
+        OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+   }
+}
+LIMIT 1000
