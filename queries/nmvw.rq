@@ -1,0 +1,42 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+    skos:prefLabel ?prefLabel ;
+    skos:altLabel ?altLabel ;
+    skos:hiddenLabel ?hiddenLabel ;
+    skos:scopeNote ?scopeNote ;
+    skos:broader ?broader_label ;
+    skos:narrower ?narrower_label .
+}
+WHERE {
+  {
+      ?uri skos:prefLabel ?label .
+      ?label <bif:contains> ?query
+  }
+  UNION {
+      ?uri skos:altLabel ?label .
+      ?label <bif:contains> ?query
+  }
+  OPTIONAL {
+      ?uri skos:prefLabel ?prefLabel .
+  }
+  OPTIONAL {
+      ?uri skos:scopeNote ?scopeNote .
+  }
+  OPTIONAL {
+      ?uri skos:altLabel ?altLabel .
+  }
+  OPTIONAL {
+      ?uri skos:hiddenLabel ?hiddenLabel .
+  }
+  OPTIONAL {
+      ?uri skos:broader ?uri_broader .
+      ?uri_broader skos:prefLabel ?broader_label .
+  }
+  OPTIONAL {
+      ?uri skos:narrower ?uri_narrower .
+      ?uri_narrower skos:prefLabel ?narrower_label .
+  }
+}
+LIMIT 1000
