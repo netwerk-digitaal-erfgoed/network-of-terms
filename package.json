@@ -33,10 +33,12 @@
     "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/issues"
   },
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog#readme",
-  "dependencies": {},
-  "eslintConfig": {
-    "env": {
-      "commonjs": true
-    }
+  "dependencies": {
+    "@comunica/actor-init-sparql": "^1.14.0",
+    "@comunica/actor-init-sparql-rdfjs": "^1.14.0",
+    "@types/n3": "^1.4.3",
+    "@types/rdf-js": "^3.0.3",
+    "rdf-parse": "^1.3.1",
+    "rdf-store-stream": "^1.0.1"
   }
 }

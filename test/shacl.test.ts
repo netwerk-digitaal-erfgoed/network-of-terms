@@ -5,7 +5,7 @@ import SHACLValidator from 'rdf-validate-shacl'
 import ValidationReport from 'rdf-validate-shacl'
 import DatasetExt from 'rdf-ext/lib/Dataset'
 
-describe('Dataset shapes', () => {
+describe('Dataset', () => {
     it('validates against SHACL', async () => {
         const datasets = listDatasets()
 
