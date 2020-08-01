@@ -12,6 +12,12 @@
       "sh:property": [
         {
           "sh:path": {
+            "@id": "schema:name"
+          },
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": {
             "@id": "schema:distribution"
           },
           "sh:minCount": 1,
