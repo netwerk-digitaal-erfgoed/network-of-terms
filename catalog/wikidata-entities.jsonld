@@ -2,6 +2,12 @@
   "@context": "https://schema.org/",
   "@id": "https://www.wikidata.org",
   "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Wikidata Entities"
+    }
+  ],
   "distribution": {
     "@id": "https://www.wikidata.org/sparql",
     "@type": "DataDownload",
