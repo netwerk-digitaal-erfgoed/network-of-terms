@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "jest ${1}",
-    "lint": "eslint"
+    "lint": "eslint . --ext .ts"
   },
   "keywords": [
     "nde"
