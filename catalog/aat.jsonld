@@ -2,6 +2,12 @@
   "@context": "https://schema.org/",
   "@id": "http://vocab.getty.edu/aat",
   "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Art & Architecture Thesaurus (AAT)"
+    }
+  ],
   "distribution": {
     "@id": "http://vocab.getty.edu/aat/sparql",
     "@type": "DataDownload",

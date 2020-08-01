@@ -2,6 +2,12 @@
   "@context": "https://schema.org/",
   "@id": "https://data.rkd.nl/rkdartists",
   "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "RKDartists"
+    }
+  ],
   "distribution": {
     "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
     "@type": "DataDownload",
