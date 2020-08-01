@@ -1,5 +1,5 @@
 {
-  "@context": "https://schema.org/",
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
   "@id": "https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus",
   "@type": "Dataset",
   "name": [
