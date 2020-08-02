@@ -1,0 +1,47 @@
+PREFIX aat: <http://vocab.getty.edu/aat/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX gvp: <http://vocab.getty.edu/ontology#>
+PREFIX luc: <http://www.ontotext.com/owlim/lucene#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX skosxl: <http://www.w3.org/2008/05/skos-xl#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+    skos:prefLabel ?prefLabel ;
+    skos:altLabel ?altLabel ;
+    skos:scopeNote ?scopeNote ;
+    skos:broader ?broader_label ;
+    skos:narrower ?narrower_label .
+}
+WHERE {
+    ?uri luc:term ?query;
+    a ?type .
+    ?type rdfs:subClassOf gvp:Subject .
+    FILTER (?type != gvp:Subject) .
+    ?uri skosxl:prefLabel ?uri_prefLabel .
+    ?uri_prefLabel dcterms:language aat:300388256 . # Dutch (language)
+    ?uri_prefLabel skosxl:literalForm ?prefLabel .
+    OPTIONAL {
+        ?uri skosxl:altLabel ?uri_altLabel .
+        ?uri_altLabel dcterms:language aat:300388256 .
+        ?uri_altLabel skosxl:literalForm ?altLabel .
+    }
+    OPTIONAL {
+        ?uri gvp:broaderPreferredExtended/skosxl:prefLabel ?uri_broader .
+        ?uri_broader dcterms:language aat:300388256 . # Dutch (language)
+        ?uri_broader skosxl:literalForm ?broader_label .
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?uri_scopeNote .
+        ?uri_scopeNote dcterms:language aat:300388256 . # Dutch (language)
+        ?uri_scopeNote rdf:value ?scopeNote .
+    }
+    OPTIONAL {
+        ?uri skos:narrower/skosxl:prefLabel ?uri_narrower .
+        ?uri_narrower dcterms:language aat:300388256 . # Dutch (language)
+        ?uri_narrower skosxl:literalForm ?narrower_label .
+    }
+}
+LIMIT 1000

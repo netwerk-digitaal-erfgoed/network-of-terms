@@ -1,9 +1,12 @@
-import fs from "fs"
+import fs from 'fs'
 import RdfParser from 'rdf-parse'
 import * as RDF from 'rdf-js'
 import {newEngine} from '@comunica/actor-init-sparql-rdfjs'
 import {Bindings, IActorQueryOperationOutputBindings} from '@comunica/bus-query-operation'
+import {Transform, TransformCallback} from 'stream'
+import Path from 'path'
 import N3 = require('n3')
+import {URL} from 'url'
 
 export class Catalog {
     constructor(
@@ -15,10 +18,11 @@ export class Catalog {
         const query = `
             PREFIX schema: <http://schema.org/> 
             SELECT * WHERE {
-                ?dataset a schema:Dataset .
-                ?dataset schema:distribution ?distribution .
-                ?distribution schema:contentUrl ?distributionUrl .
-                ?distribution schema:potentialAction/schema:query ?query . 
+                ?dataset a schema:Dataset ;
+                    schema:distribution ?distribution ;
+                    schema:name ?name .
+                ?distribution schema:contentUrl ?distributionUrl ;
+                    schema:potentialAction/schema:query ?query . 
             }
         `
         const result = (await newEngine().query(query, {
@@ -34,7 +38,7 @@ export class Catalog {
                 datasets.push(
                     new Dataset(
                         new URL(bindings.get('?dataset').value),
-                        'TODO',
+                        bindings.get('?name').value,
                         new Distribution(
                             new URL(bindings.get('?distributionUrl').value),
                             bindings.get('?query').value,
@@ -80,9 +84,33 @@ export async function fromFiles(directory: string): Promise<RDF.Store> {
         const quadStream = RdfParser.parse(
             fs.createReadStream(directory + '/' + file),
             {path: file}
-        )
+        ).pipe(new InlineFiles())
         await addStreamToStore(store, quadStream)
     }
 
     return store
+}
+
+/**
+ * An RDF.Quad transform that inlines file://... references in the quad's object value.
+ */
+class InlineFiles extends Transform {
+    constructor() {
+        super({objectMode: true})
+    }
+
+    async _transform(
+      quad: RDF.Quad,
+      encoding: BufferEncoding,
+      callback: TransformCallback
+    ) {
+        if (quad.object.value.startsWith('file://')) {
+            const file = Path.resolve(quad.object.value.substr(7))
+            quad.object.value = await fs.promises.readFile(file, 'utf-8')
+        }
+
+        this.push(quad, encoding)
+
+        callback()
+    }
 }
