@@ -1,1 +1,1 @@
-declare module 'rdf-validate-shacl'
+declare module 'rdf-validate-shacl';
