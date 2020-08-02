@@ -17,3 +17,4 @@ jobs:
       - run: npm run check
       - run: npm run compile
       - run: npm test
+      - run: npm run compile
