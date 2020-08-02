@@ -2,9 +2,9 @@ module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
     env: {
-        "jest": true,
-        "es6": true,
-        "node": true
+        'jest': true,
+        'es6': true,
+        'node': true
     },
     plugins: [
         '@typescript-eslint',
@@ -15,5 +15,6 @@ module.exports = {
     ],
     rules: {
         '@typescript-eslint/semi': ['error', 'never'],
+        '@typescript-eslint/quotes': ['error', 'single'],
     },
 };
