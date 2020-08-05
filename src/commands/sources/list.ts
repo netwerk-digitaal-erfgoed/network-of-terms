@@ -1,11 +1,11 @@
-import { CatalogService, Distribution } from '../../services/catalog';
-import { cli } from 'cli-ux';
-import { Command, flags } from '@oclif/command';
+import {CatalogService, Distribution} from '../../services/catalog';
+import {cli} from 'cli-ux';
+import {Command, flags} from '@oclif/command';
 import * as Logger from '../../helpers/logger';
 
 export class ListSourcesCommand extends Command {
   static description = 'List queryable sources';
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static flags: flags.Input<any> = {
     loglevel: flags.string({
       description: 'Log messages of a given level; defaults to "warn"',
@@ -30,12 +30,12 @@ export class ListSourcesCommand extends Command {
   }
 
   async run(): Promise<void> {
-    const { flags } = this.parse(ListSourcesCommand);
+    const {flags} = this.parse(ListSourcesCommand);
     const logger = Logger.getCliLogger({
       name: 'cli',
       level: flags.loglevel,
     });
-    const service = new CatalogService({ logger });
+    const service = new CatalogService({logger});
     const distributions = await service.listDistributions();
     this.render(distributions);
   }

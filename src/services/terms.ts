@@ -42,11 +42,11 @@ export class TermsTransformer {
     const predicate = quad.predicate.value;
     const propertyName = this.predicateToPropertyMap.get(predicate);
     if (propertyName !== undefined) {
-      const propertyValue = (this.currentTerm as any)[propertyName]; // tslint:disable-line:no-any
+      const propertyValue = (this.currentTerm as any)[propertyName]; // eslint-disable-line @typescript-eslint/no-explicit-any
       if (Array.isArray(propertyValue)) {
         propertyValue.push(quad.object);
       } else {
-        (this.currentTerm as any)[propertyName] = quad.object; // tslint:disable-line:no-any
+        (this.currentTerm as any)[propertyName] = quad.object; // eslint-disable-line @typescript-eslint/no-explicit-any
       }
     }
   }

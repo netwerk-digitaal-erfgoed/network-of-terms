@@ -1,8 +1,8 @@
 import fastify from 'fastify';
 import fastifyGql from 'fastify-gql';
 import * as Logger from '../helpers/logger';
-import { resolvers } from './resolvers';
-import { schema } from './schema';
+import {resolvers} from './resolvers';
+import {schema} from './schema';
 import fastifyCors from 'fastify-cors';
 
 async function startServer(): Promise<void> {
@@ -10,7 +10,7 @@ async function startServer(): Promise<void> {
     name: 'http',
     level: 'info',
   });
-  const server = fastify({ logger });
+  const server = fastify({logger});
   server.register(fastifyGql, {
     schema,
     resolvers,

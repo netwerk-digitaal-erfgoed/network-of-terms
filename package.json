@@ -14,9 +14,12 @@
   "dependencies": {
     "@comunica/actor-init-sparql": "1.x.x",
     "@comunica/actor-init-sparql-rdfjs": "1.x.x",
+    "@comunica/bus-query-operation": "1.x.x",
+    "@comunica/core": "1.x.x",
     "@hapi/hoek": "9.x.x",
     "@hapi/joi": "17.x.x",
     "@oclif/command": "1.x.x",
+    "@rdfjs/data-model": "1.x.x",
     "cli-ux": "5.x.x",
     "fastify": "3.x.x",
     "fastify-cors": "^4.1.0",
@@ -29,7 +32,7 @@
   },
   "devDependencies": {
     "globby": "11.x.x",
-    "gts": "1.x.x",
+    "gts": "2.x.x",
     "ts-node-dev": "1.0.0-pre.51",
     "@types/hapi__joi": "17.x.x",
     "@types/node": "12.x.x",
