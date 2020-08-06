@@ -14,6 +14,12 @@ import {URL} from 'url';
 export class Catalog {
   constructor(readonly datasets: ReadonlyArray<Dataset>) {}
 
+  public static async default(): Promise<Catalog> {
+    const directory = Path.resolve(__dirname, '../', 'catalog/');
+    const store = await fromFiles(directory);
+    return this.fromStore(store);
+  }
+
   public static async fromStore(store: RDF.Store): Promise<Catalog> {
     const query = `
       PREFIX schema: <http://schema.org/> 
