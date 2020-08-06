@@ -2,6 +2,7 @@
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
   "@id": "http://vocab.getty.edu/aat",
   "@type": "Dataset",
+  "identifier": "aat",
   "name": [
     {
       "@language": "en",
