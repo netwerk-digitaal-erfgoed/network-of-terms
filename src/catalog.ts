@@ -120,7 +120,7 @@ class InlineFiles extends Transform {
     callback: TransformCallback
   ) {
     if (quad.object.value.startsWith('file://')) {
-      const file = Path.resolve(quad.object.value.substr(7));
+      const file = Path.resolve(__dirname, '../', quad.object.value.substr(7));
       quad.object.value = await fs.promises.readFile(file, 'utf-8');
     }
 
