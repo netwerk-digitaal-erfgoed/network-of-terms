@@ -62,6 +62,10 @@ export class Catalog {
 
     return new Catalog(await promise);
   }
+
+  public getByIdentifier(identifier: string): Dataset | undefined {
+    return this.datasets.find(dataset => dataset.identifier === identifier);
+  }
 }
 
 export class Dataset {
