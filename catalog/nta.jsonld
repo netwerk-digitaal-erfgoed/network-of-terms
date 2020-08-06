@@ -2,6 +2,7 @@
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
   "@id": "http://data.bibliotheken.nl/id/dataset/persons",
   "@type": "Dataset",
+  "identifier": "nta",
   "name": [
     {
       "@language": "nl",
