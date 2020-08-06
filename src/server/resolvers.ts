@@ -1,33 +1,34 @@
-import {CatalogService, Distribution} from '../services/catalog';
 import {DistributionsService} from '../services/distributions';
 import {QueryResult} from '../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../services/terms';
+import {Dataset} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
-  const service = new CatalogService({logger: context.app.log});
-  const distributions = await service.listDistributions();
-  return distributions.map((distribution: Distribution) => {
+  return context.catalog.datasets.map((dataset: Dataset) => {
     return {
-      identifier: distribution.distributionId.value,
-      name: distribution.distributionTitle.value,
+      identifier: dataset.iri,
+      name: dataset.name,
     };
   });
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function queryTerms(object: any, args: any, context: any): Promise<any> {
-  const service = new DistributionsService({logger: context.app.log});
+  const service = new DistributionsService({
+    logger: context.app.log,
+    catalog: context.catalog,
+  });
   const results = await service.queryAll({
-    distributionIds: args.sources,
+    sources: args.sources,
     query: args.query,
   });
   return results.map((result: QueryResult) => {
     return {
       source: {
-        identifier: result.accessService.distribution.distributionId.value,
-        name: result.accessService.distribution.distributionTitle.value,
+        identifier: result.dataset.identifier,
+        name: result.dataset.name,
       },
       terms: result.terms.map((term: Term) => {
         return {

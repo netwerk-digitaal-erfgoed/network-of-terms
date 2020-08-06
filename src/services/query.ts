@@ -1,4 +1,3 @@
-import {AccessService} from './catalog';
 import {ActorInitSparql} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 import {
   Bindings,
@@ -13,34 +12,35 @@ import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from 'rdf-js';
 import {Term, TermsTransformer} from './terms';
+import {Dataset} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
-  accessService: AccessService;
+  dataset: Dataset;
   query: string;
 }
 
 const schemaConstructor = Joi.object({
   logger: Joi.object().required(),
-  accessService: Joi.object().required(),
+  dataset: Joi.object().required(),
   query: Joi.string().required(),
 });
 
 export interface QueryResult {
-  accessService: AccessService;
+  dataset: Dataset;
   terms: Term[];
 }
 
 export class QueryTermsService {
   protected logger: Pino.Logger;
-  protected accessService: AccessService;
+  protected dataset: Dataset;
   protected query: string;
   protected engine: ActorInitSparql;
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
     this.logger = args.logger;
-    this.accessService = args.accessService;
+    this.dataset = args.dataset;
     this.query = `'${args.query}'`;
     this.engine = Comunica.newEngine();
   }
@@ -53,7 +53,7 @@ export class QueryTermsService {
       sources: [
         {
           type: 'sparql', // Only supported type for now
-          value: this.accessService.endpointUrl,
+          value: this.dataset.distribution.url,
         },
       ],
       initialBindings: Bindings({
@@ -65,12 +65,12 @@ export class QueryTermsService {
 
   async run(): Promise<QueryResult> {
     this.logger.info(
-      `Querying "${this.accessService.endpointUrl}" with "${this.query}"...`
+      `Querying "${this.dataset.distribution.url}" with "${this.query}"...`
     );
     const config = this.getConfig();
     const timer = new Hoek.Bench();
     const result = (await this.engine.query(
-      this.accessService.query,
+      this.dataset.distribution.query,
       config
     )) as IActorQueryOperationOutputQuads;
 
@@ -84,10 +84,10 @@ export class QueryTermsService {
         const terms = termsTransformer.asArray();
         this.logger.info(
           `Found ${terms.length} terms matching "${this.query}" in "${
-            this.accessService.endpointUrl
+            this.dataset.distribution.url
           }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
-        resolve({accessService: this.accessService, terms});
+        resolve({dataset: this.dataset, terms});
       });
     });
   }
