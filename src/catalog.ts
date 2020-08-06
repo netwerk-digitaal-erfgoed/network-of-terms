@@ -23,7 +23,8 @@ export class Catalog {
             schema:name ?name .
           ?distribution schema:contentUrl ?distributionUrl ;
             schema:potentialAction/schema:query ?query . 
-        }`;
+        }
+        ORDER BY LCASE(?name)`;
     const result = (await newEngine().query(query, {
       sources: [
         {
