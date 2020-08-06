@@ -2,6 +2,7 @@
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
   "@id": "https://www.wikidata.org",
   "@type": "Dataset",
+  "identifier": "wikidata-entities",
   "name": [
     {
       "@language": "en",
