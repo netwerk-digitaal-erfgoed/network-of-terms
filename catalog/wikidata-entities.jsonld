@@ -12,7 +12,7 @@
   "distribution": {
     "@id": "https://www.wikidata.org/sparql",
     "@type": "DataDownload",
-    "contentUrl": "https://query.wikidata.org/sparq",
+    "contentUrl": "https://query.wikidata.org/sparql",
     "encodingFormat": "application/sparql-query",
     "potentialAction": {
       "@type": "SearchAction",
