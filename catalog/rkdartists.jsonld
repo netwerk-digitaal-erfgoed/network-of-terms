@@ -12,7 +12,7 @@
   "distribution": {
     "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
     "@type": "DataDownload",
-    "contentUrl": "http://vocab.getty.edu/sparql",
+    "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/rkd/rkdartists/services/rkdartists/sparql",
     "encodingFormat": "application/sparql-query",
     "potentialAction": {
       "@type": "SearchAction",
