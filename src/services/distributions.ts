@@ -1,7 +1,7 @@
-import { CatalogService } from './catalog';
+import {CatalogService} from './catalog';
 import * as Joi from '@hapi/joi';
 import Pino from 'pino';
-import { QueryResult, QueryTermsService } from './query';
+import {QueryResult, QueryTermsService} from './query';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
@@ -27,10 +27,7 @@ export interface QueryAllOptions {
 }
 
 const schemaQueryAll = Joi.object({
-  distributionIds: Joi.array()
-    .items(Joi.string().required())
-    .min(1)
-    .required(),
+  distributionIds: Joi.array().items(Joi.string().required()).min(1).required(),
   query: Joi.string().required(),
 });
 
@@ -41,7 +38,7 @@ export class DistributionsService {
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
     this.logger = args.logger;
-    this.catalogService = new CatalogService({ logger: args.logger });
+    this.catalogService = new CatalogService({logger: args.logger});
   }
 
   async query(options: QueryOptions): Promise<QueryResult> {
@@ -68,7 +65,7 @@ export class DistributionsService {
     const args = Joi.attempt(options, schemaQueryAll);
     const distributionIds = args.distributionIds;
     const requests = distributionIds.map((distributionId: string) =>
-      this.query({ distributionId, query: args.query })
+      this.query({distributionId, query: args.query})
     );
     return Promise.all(requests);
   }

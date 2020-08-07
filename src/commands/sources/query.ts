@@ -1,10 +1,10 @@
-import { cli } from 'cli-ux';
-import { Command, flags } from '@oclif/command';
-import { DistributionsService } from '../../services/distributions';
+import {cli} from 'cli-ux';
+import {Command, flags} from '@oclif/command';
+import {DistributionsService} from '../../services/distributions';
 import * as Logger from '../../helpers/logger';
-import { QueryResult } from '../../services/query';
+import {QueryResult} from '../../services/query';
 import * as RDF from 'rdf-js';
-import { Term } from '../../services/terms';
+import {Term} from '../../services/terms';
 
 interface Row {
   distributionTitle: string;
@@ -15,7 +15,7 @@ interface Row {
 
 export class QuerySourcesCommand extends Command {
   static description = 'Query sources for terms';
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static flags: flags.Input<any> = {
     identifiers: flags.string({
       description:
@@ -71,7 +71,7 @@ export class QuerySourcesCommand extends Command {
   }
 
   async run(): Promise<void> {
-    const { flags } = this.parse(QuerySourcesCommand);
+    const {flags} = this.parse(QuerySourcesCommand);
     const distributionIds = flags.identifiers
       .split(',')
       .map((distributionId: string) => distributionId.trim());
@@ -80,7 +80,7 @@ export class QuerySourcesCommand extends Command {
       name: 'cli',
       level: flags.loglevel,
     });
-    const service = new DistributionsService({ logger });
+    const service = new DistributionsService({logger});
     const results = await service.queryAll({
       distributionIds,
       query: flags.query,

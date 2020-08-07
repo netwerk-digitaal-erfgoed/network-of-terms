@@ -1,4 +1,4 @@
-import { ActorInitSparql } from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
+import {ActorInitSparql} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 import {
   Bindings,
   IActorQueryOperationOutputBindings,
@@ -6,13 +6,13 @@ import {
 import * as Comunica from '@comunica/actor-init-sparql-rdfjs';
 import * as Fs from 'fs';
 import * as Joi from '@hapi/joi';
-import { literal } from '@rdfjs/data-model';
-import { LoggerPino } from '../helpers/logger-pino';
+import {literal} from '@rdfjs/data-model';
+import {LoggerPino} from '../helpers/logger-pino';
 import * as Path from 'path';
 import Pino from 'pino';
 import * as RDF from 'rdf-js';
 import RdfParser from 'rdf-parse';
-import { storeStream } from 'rdf-store-stream';
+import {storeStream} from 'rdf-store-stream';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
@@ -45,14 +45,14 @@ export class CatalogService {
     this.engine = Comunica.newEngine();
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async getConfig(): Promise<any> {
     this.logger.info(`Processing sources in file "${this.catalogFile}"...`);
     const quadStream = RdfParser.parse(Fs.createReadStream(this.catalogFile), {
       path: this.catalogFile,
     });
     const store = await storeStream(quadStream);
-    const logger = new LoggerPino({ logger: this.logger });
+    const logger = new LoggerPino({logger: this.logger});
     const config = {
       log: logger,
       sources: [

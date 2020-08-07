@@ -1,4 +1,4 @@
-import { Logger } from '@comunica/core';
+import {Logger} from '@comunica/core';
 import Pino from 'pino';
 
 export interface ConstructorOptions {
@@ -13,32 +13,32 @@ export class LoggerPino extends Logger {
     this.logger = options.logger;
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   debug(message: string, data?: any): void {
     this.logger.debug(message, data);
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   error(message: string, data?: any): void {
     this.logger.error(message, data);
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fatal(message: string, data?: any): void {
     this.logger.fatal(message, data);
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   info(message: string, data?: any): void {
     this.logger.info(message, data);
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trace(message: string, data?: any): void {
     this.logger.trace(message, data);
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   warn(message: string, data?: any): void {
     this.logger.warn(message, data);
   }

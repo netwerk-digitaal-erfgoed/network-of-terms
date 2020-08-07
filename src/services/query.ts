@@ -1,5 +1,5 @@
-import { AccessService } from './catalog';
-import { ActorInitSparql } from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
+import {AccessService} from './catalog';
+import {ActorInitSparql} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 import {
   Bindings,
   IActorQueryOperationOutputQuads,
@@ -7,12 +7,12 @@ import {
 import * as Comunica from '@comunica/actor-init-sparql';
 import * as Hoek from '@hapi/hoek';
 import * as Joi from '@hapi/joi';
-import { literal } from '@rdfjs/data-model';
-import { LoggerPino } from '../helpers/logger-pino';
+import {literal} from '@rdfjs/data-model';
+import {LoggerPino} from '../helpers/logger-pino';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from 'rdf-js';
-import { Term, TermsTransformer } from './terms';
+import {Term, TermsTransformer} from './terms';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
@@ -45,9 +45,9 @@ export class QueryTermsService {
     this.engine = Comunica.newEngine();
   }
 
-  // tslint:disable-next-line:no-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected getConfig(): any {
-    const logger = new LoggerPino({ logger: this.logger });
+    const logger = new LoggerPino({logger: this.logger});
     const config = {
       log: logger,
       sources: [
@@ -87,7 +87,7 @@ export class QueryTermsService {
             this.accessService.endpointUrl
           }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
-        resolve({ accessService: this.accessService, terms });
+        resolve({accessService: this.accessService, terms});
       });
     });
   }

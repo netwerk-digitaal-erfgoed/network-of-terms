@@ -1,12 +1,12 @@
-import { CatalogService, Distribution } from '../services/catalog';
-import { DistributionsService } from '../services/distributions';
-import { QueryResult } from '../services/query';
+import {CatalogService, Distribution} from '../services/catalog';
+import {DistributionsService} from '../services/distributions';
+import {QueryResult} from '../services/query';
 import * as RDF from 'rdf-js';
-import { Term } from '../services/terms';
+import {Term} from '../services/terms';
 
-// tslint:disable-next-line:no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
-  const service = new CatalogService({ logger: context.app.log });
+  const service = new CatalogService({logger: context.app.log});
   const distributions = await service.listDistributions();
   return distributions.map((distribution: Distribution) => {
     return {
@@ -16,9 +16,9 @@ async function listSources(object: any, args: any, context: any): Promise<any> {
   });
 }
 
-// tslint:disable-next-line:no-any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function queryTerms(object: any, args: any, context: any): Promise<any> {
-  const service = new DistributionsService({ logger: context.app.log });
+  const service = new DistributionsService({logger: context.app.log});
   const results = await service.queryAll({
     distributionIds: args.sources,
     query: args.query,
