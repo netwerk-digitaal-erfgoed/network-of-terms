@@ -32,7 +32,10 @@ export class TermsTransformer {
 
   fromQuad(quad: RDF.Quad): void {
     const subject = quad.subject;
-    if (!subject.equals(this.currentTerm.id)) {
+    if (
+      this.currentTerm.id === undefined ||
+      !subject.equals(this.currentTerm.id)
+    ) {
       if (this.currentTerm.id !== undefined) {
         this.terms.push(this.currentTerm);
       }

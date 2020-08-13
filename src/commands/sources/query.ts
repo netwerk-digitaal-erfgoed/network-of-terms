@@ -5,6 +5,7 @@ import * as Logger from '../../helpers/logger';
 import {QueryResult} from '../../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../../services/terms';
+import {Catalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 interface Row {
   distributionTitle: string;
@@ -39,8 +40,7 @@ export class QuerySourcesCommand extends Command {
       return result.terms.map(
         (term: Term): Row => {
           return {
-            distributionTitle:
-              result.accessService.distribution.distributionTitle.value,
+            distributionTitle: result.dataset.distribution.url.toString(),
             termUri: term.id!.value,
             prefLabels: term.prefLabels
               .map((prefLabel: RDF.Term) => prefLabel.value)
@@ -72,7 +72,7 @@ export class QuerySourcesCommand extends Command {
 
   async run(): Promise<void> {
     const {flags} = this.parse(QuerySourcesCommand);
-    const distributionIds = flags.identifiers
+    const sources = flags.identifiers
       .split(',')
       .map((distributionId: string) => distributionId.trim());
 
@@ -80,9 +80,10 @@ export class QuerySourcesCommand extends Command {
       name: 'cli',
       level: flags.loglevel,
     });
-    const service = new DistributionsService({logger});
+    const catalog = await Catalog.default();
+    const service = new DistributionsService({logger, catalog});
     const results = await service.queryAll({
-      distributionIds,
+      sources,
       query: flags.query,
     });
     this.render(results);

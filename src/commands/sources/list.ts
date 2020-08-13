@@ -1,42 +1,28 @@
-import {CatalogService, Distribution} from '../../services/catalog';
 import {cli} from 'cli-ux';
-import {Command, flags} from '@oclif/command';
-import * as Logger from '../../helpers/logger';
+import {Command} from '@oclif/command';
+import {
+  Catalog,
+  Dataset,
+} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 export class ListSourcesCommand extends Command {
   static description = 'List queryable sources';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static flags: flags.Input<any> = {
-    loglevel: flags.string({
-      description: 'Log messages of a given level; defaults to "warn"',
-      options: ['trace', 'debug', 'info', 'warn', 'error', 'fatal'],
-      required: false,
-      default: 'warn',
-    }),
-  };
 
-  protected render(distributions: Distribution[]): void {
-    cli.table(distributions, {
+  protected render(datasets: readonly Dataset[]): void {
+    cli.table(datasets as Dataset[], {
       distributionTitle: {
         header: 'Source Name',
-        get: (distribution: Distribution) =>
-          distribution.distributionTitle.value,
+        get: (dataset: Dataset) => dataset.name,
       },
       distributionId: {
         header: 'Source ID',
-        get: (distribution: Distribution) => distribution.distributionId.value,
+        get: (dataset: Dataset) => dataset.identifier,
       },
     });
   }
 
   async run(): Promise<void> {
-    const {flags} = this.parse(ListSourcesCommand);
-    const logger = Logger.getCliLogger({
-      name: 'cli',
-      level: flags.loglevel,
-    });
-    const service = new CatalogService({logger});
-    const distributions = await service.listDistributions();
-    this.render(distributions);
+    const catalog = await Catalog.default();
+    this.render(catalog.datasets);
   }
 }
