@@ -8,7 +8,7 @@ import {Dataset} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 async function listSources(object: any, args: any, context: any): Promise<any> {
   return context.catalog.datasets.map((dataset: Dataset) => {
     return {
-      identifier: dataset.iri,
+      identifier: dataset.identifier,
       name: dataset.name,
     };
   });
