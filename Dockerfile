@@ -11,8 +11,6 @@ WORKDIR /app/
 COPY package*.json ./
 RUN npm ci
 COPY --from=build /app/build /app/build
-COPY ./configs /app/configs
-COPY ./queries /app/queries
 USER node
 CMD ["npm", "start"]
 EXPOSE 3123
