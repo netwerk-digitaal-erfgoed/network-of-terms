@@ -41,7 +41,7 @@ export class QueryTermsService {
     const args = Joi.attempt(options, schemaConstructor);
     this.logger = args.logger;
     this.dataset = args.dataset;
-    this.query = `'${args.query}'`;
+    this.query = args.query;
     this.engine = Comunica.newEngine();
   }
 
