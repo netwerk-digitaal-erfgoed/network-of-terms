@@ -2,15 +2,18 @@ import * as Joi from '@hapi/joi';
 import Pino from 'pino';
 import {QueryResult, QueryTermsService} from './query';
 import {Catalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {IActorInitSparqlArgs} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
   catalog: Catalog;
+  comunica: IActorInitSparqlArgs;
 }
 
 const schemaConstructor = Joi.object({
   logger: Joi.object().required(),
   catalog: Joi.object().required(),
+  comunica: Joi.object().required(),
 });
 
 export interface QueryOptions {
@@ -34,13 +37,15 @@ const schemaQueryAll = Joi.object({
 });
 
 export class DistributionsService {
-  protected logger: Pino.Logger;
-  protected catalog: Catalog;
+  private logger: Pino.Logger;
+  private catalog: Catalog;
+  private comunica: IActorInitSparqlArgs;
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
     this.logger = args.logger;
     this.catalog = args.catalog;
+    this.comunica = args.comunica;
   }
 
   async query(options: QueryOptions): Promise<QueryResult> {
@@ -55,6 +60,7 @@ export class DistributionsService {
 
     const queryService = new QueryTermsService({
       logger: this.logger,
+      comunica: this.comunica,
       dataset,
       query: args.query,
     });

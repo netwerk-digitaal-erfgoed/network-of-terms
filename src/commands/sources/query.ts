@@ -6,6 +6,7 @@ import {QueryResult} from '../../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../../services/terms';
 import {Catalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {newEngine} from '@comunica/actor-init-sparql';
 
 interface Row {
   distributionTitle: string;
@@ -81,7 +82,8 @@ export class QuerySourcesCommand extends Command {
       level: flags.loglevel,
     });
     const catalog = await Catalog.default();
-    const service = new DistributionsService({logger, catalog});
+    const comunica = newEngine();
+    const service = new DistributionsService({logger, catalog, comunica});
     const results = await service.queryAll({
       sources,
       query: flags.query,
