@@ -7,9 +7,14 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node_version: 12.x
+      - run: npm install
       - run: npx semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
