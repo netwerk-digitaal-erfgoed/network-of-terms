@@ -22,14 +22,14 @@ export class Catalog {
 
   public static async fromStore(store: RDF.Store): Promise<Catalog> {
     const query = `
-      PREFIX schema: <http://schema.org/> 
+      PREFIX schema: <http://schema.org/>
         SELECT * WHERE {
           ?dataset a schema:Dataset ;
             schema:distribution ?distribution ;
             schema:name ?name ;
             schema:identifier ?identifier .
           ?distribution schema:contentUrl ?distributionUrl ;
-            schema:potentialAction/schema:query ?query . 
+            schema:potentialAction/schema:query ?query .
         }
         ORDER BY LCASE(?name)`;
     const result = (await newEngine().query(query, {
@@ -93,7 +93,7 @@ function addStreamToStore(
 }
 
 export async function fromFiles(directory: string): Promise<RDF.Store> {
-  const files = fs.readdirSync(directory);
+  const files = await fs.promises.readdir(directory);
   const store = new N3.Store();
   for (const file of files) {
     const quadStream = RdfParser.parse(
