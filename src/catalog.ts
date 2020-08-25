@@ -26,9 +26,9 @@ export class Catalog {
         SELECT * WHERE {
           ?dataset a schema:Dataset ;
             schema:distribution ?distribution ;
-            schema:name ?name ;
-            schema:identifier ?identifier .
-          ?distribution schema:contentUrl ?distributionUrl ;
+            schema:name ?name .
+          ?distribution schema:encodingFormat "application/sparql-query" ;
+            schema:contentUrl ?endpointUrl ;
             schema:potentialAction/schema:query ?query .
         }
         ORDER BY LCASE(?name)`;
@@ -46,13 +46,15 @@ export class Catalog {
       result.bindingsStream.on('data', (bindings: Bindings) => {
         datasets.push(
           new Dataset(
-            new URL(bindings.get('?dataset').value),
+            new IRI(bindings.get('?dataset').value),
             bindings.get('?name').value,
-            bindings.get('?identifier').value,
-            new Distribution(
-              new URL(bindings.get('?distributionUrl').value),
-              bindings.get('?query').value
-            )
+            [
+              new SparqlDistribution(
+                new IRI(bindings.get('?distribution').value),
+                new IRI(bindings.get('?endpointUrl').value),
+                bindings.get('?query').value
+              ),
+            ]
           )
         );
       });
@@ -63,8 +65,10 @@ export class Catalog {
     return new Catalog(await promise);
   }
 
-  public getByIdentifier(identifier: string): Dataset | undefined {
-    return this.datasets.find(dataset => dataset.identifier === identifier);
+  public getDatasetByDistributionIri(iri: IRI): Dataset | undefined {
+    return this.datasets.find(
+      dataset => dataset.getDistributionByIri(iri) !== undefined
+    );
   }
 }
 
@@ -72,16 +76,30 @@ export class Dataset {
   constructor(
     readonly iri: IRI,
     readonly name: string,
-    readonly identifier: string,
-    readonly distribution: Distribution
+    readonly distributions: [Distribution]
+  ) {}
+
+  public getDistributionByIri(iri: IRI): Distribution | undefined {
+    return this.distributions.find(
+      distribution => distribution.iri.toString() === iri.toString()
+    );
+  }
+}
+
+export class SparqlDistribution {
+  constructor(
+    readonly iri: IRI,
+    readonly endpoint: IRI,
+    readonly query: string
   ) {}
 }
 
-export class Distribution {
-  constructor(readonly url: URL, readonly query: string) {}
-}
+/**
+ * A union type to be extended in the future with other distribution types.
+ */
+export type Distribution = SparqlDistribution;
 
-export type IRI = URL;
+export class IRI extends URL {}
 
 function addStreamToStore(
   store: RDF.Store,
