@@ -1,7 +1,7 @@
 import * as Joi from '@hapi/joi';
 import Pino from 'pino';
 import {QueryResult, QueryTermsService} from './query';
-import {Catalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {IActorInitSparqlArgs} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 
 export interface ConstructorOptions {
@@ -17,22 +17,22 @@ const schemaConstructor = Joi.object({
 });
 
 export interface QueryOptions {
-  source: string;
+  source: IRI;
   query: string;
 }
 
 const schemaQuery = Joi.object({
-  source: Joi.string().required(),
+  source: Joi.object().required(),
   query: Joi.string().required(),
 });
 
 export interface QueryAllOptions {
-  sources: string[];
+  sources: IRI[];
   query: string;
 }
 
 const schemaQueryAll = Joi.object({
-  sources: Joi.array().items(Joi.string().required()).min(1).required(),
+  sources: Joi.array().items(Joi.object().required()).min(1).required(),
   query: Joi.string().required(),
 });
 
@@ -51,17 +51,17 @@ export class DistributionsService {
   async query(options: QueryOptions): Promise<QueryResult> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(`Preparing to query source "${args.source}"...`);
-    const dataset = await this.catalog.getByIdentifier(args.source);
+    const dataset = await this.catalog.getDatasetByDistributionIri(args.source);
     if (dataset === undefined) {
       throw Error(
-        `Source with identifier "${args.source}" not found in catalog`
+        `Source with distribution IRI "${args.source}" not found in catalog`
       );
     }
-
+    const distribution = dataset.getDistributionByIri(args.source)!;
     const queryService = new QueryTermsService({
       logger: this.logger,
       comunica: this.comunica,
-      dataset,
+      distribution,
       query: args.query,
     });
     return queryService.run();
@@ -69,7 +69,7 @@ export class DistributionsService {
 
   async queryAll(options: QueryAllOptions): Promise<QueryResult[]> {
     const args = Joi.attempt(options, schemaQueryAll);
-    const requests = args.sources.map((source: string) =>
+    const requests = args.sources.map((source: IRI) =>
       this.query({source, query: args.query})
     );
     return Promise.all(requests);

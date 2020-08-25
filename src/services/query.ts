@@ -14,37 +14,37 @@ import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from 'rdf-js';
 import {Term, TermsTransformer} from './terms';
-import {Dataset} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {Distribution} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
-  dataset: Dataset;
+  distribution: Distribution;
   query: string;
   comunica: IActorInitSparqlArgs;
 }
 
 const schemaConstructor = Joi.object({
   logger: Joi.object().required(),
-  dataset: Joi.object().required(),
+  distribution: Joi.object().required(),
   query: Joi.string().required(),
   comunica: Joi.object().required(),
 });
 
 export interface QueryResult {
-  dataset: Dataset;
+  distribution: Distribution;
   terms: Term[];
 }
 
 export class QueryTermsService {
   protected logger: Pino.Logger;
-  protected dataset: Dataset;
+  protected distribution: Distribution;
   protected query: string;
   protected engine: ActorInitSparql;
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
     this.logger = args.logger;
-    this.dataset = args.dataset;
+    this.distribution = args.distribution;
     this.query = args.query;
     this.engine = args.comunica;
   }
@@ -57,7 +57,7 @@ export class QueryTermsService {
       sources: [
         {
           type: 'sparql', // Only supported type for now
-          value: this.dataset.distribution.url,
+          value: this.distribution.endpoint,
         },
       ],
       initialBindings: Bindings({
@@ -69,12 +69,12 @@ export class QueryTermsService {
 
   async run(): Promise<QueryResult> {
     this.logger.info(
-      `Querying "${this.dataset.distribution.url}" with "${this.query}"...`
+      `Querying "${this.distribution.endpoint}" with "${this.query}"...`
     );
     const config = this.getConfig();
     const timer = new Hoek.Bench();
     const result = (await this.engine.query(
-      this.dataset.distribution.query,
+      this.distribution.query,
       config
     )) as IActorQueryOperationOutputQuads;
 
@@ -88,10 +88,10 @@ export class QueryTermsService {
         const terms = termsTransformer.asArray();
         this.logger.info(
           `Found ${terms.length} terms matching "${this.query}" in "${
-            this.dataset.distribution.url
+            this.distribution.endpoint
           }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
-        resolve({dataset: this.dataset, terms});
+        resolve({distribution: this.distribution, terms});
       });
     });
   }
