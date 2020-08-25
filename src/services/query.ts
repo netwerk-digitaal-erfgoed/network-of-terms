@@ -1,9 +1,11 @@
-import {ActorInitSparql} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
+import {
+  ActorInitSparql,
+  IActorInitSparqlArgs,
+} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 import {
   Bindings,
   IActorQueryOperationOutputQuads,
 } from '@comunica/bus-query-operation';
-import * as Comunica from '@comunica/actor-init-sparql';
 import * as Hoek from '@hapi/hoek';
 import * as Joi from '@hapi/joi';
 import {literal} from '@rdfjs/data-model';
@@ -18,12 +20,14 @@ export interface ConstructorOptions {
   logger: Pino.Logger;
   dataset: Dataset;
   query: string;
+  comunica: IActorInitSparqlArgs;
 }
 
 const schemaConstructor = Joi.object({
   logger: Joi.object().required(),
   dataset: Joi.object().required(),
   query: Joi.string().required(),
+  comunica: Joi.object().required(),
 });
 
 export interface QueryResult {
@@ -42,7 +46,7 @@ export class QueryTermsService {
     this.logger = args.logger;
     this.dataset = args.dataset;
     this.query = args.query;
-    this.engine = Comunica.newEngine();
+    this.engine = args.comunica;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

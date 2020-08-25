@@ -19,6 +19,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
   const service = new DistributionsService({
     logger: context.app.log,
     catalog: context.catalog,
+    comunica: context.comunica,
   });
   const results = await service.queryAll({
     sources: args.sources,
