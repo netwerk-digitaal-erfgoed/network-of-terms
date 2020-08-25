@@ -2,20 +2,22 @@
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
   "@id": "https://data.cultureelerfgoed.nl/term/id/cht",
   "@type": "Dataset",
-  "identifier": "cht",
   "name": [
     {
       "@language": "nl",
       "@value": "Cultuurhistorische Thesaurus (CHT)"
     }
   ],
-  "distribution": {
-    "@type": "DataDownload",
-    "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
-    "encodingFormat": "application/sparql-query",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "query": "file://queries/cht.rq"
+  "distribution": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "query": "file://queries/cht.rq"
+      }
     }
-  }
+  ]
 }

@@ -2,21 +2,22 @@
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
   "@id": "https://data.rkd.nl/rkdartists",
   "@type": "Dataset",
-  "identifier": "rkdartists",
   "name": [
     {
       "@language": "en",
       "@value": "RKDartists"
     }
   ],
-  "distribution": {
-    "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
-    "@type": "DataDownload",
-    "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/rkd/rkdartists/services/rkdartists/sparql",
-    "encodingFormat": "application/sparql-query",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "query": "file://queries/rkdartists.rq"
+  "distribution": [
+    {
+      "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/rkd/rkdartists/services/rkdartists/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "query": "file://queries/rkdartists.rq"
+      }
     }
-  }
+  ]
 }
