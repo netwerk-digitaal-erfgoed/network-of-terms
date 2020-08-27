@@ -54,7 +54,7 @@ export class DistributionsService {
     const dataset = await this.catalog.getDatasetByDistributionIri(args.source);
     if (dataset === undefined) {
       throw Error(
-        `Source with distribution IRI "${args.source}" not found in catalog`
+        `Source with URI "${args.source}" not found`
       );
     }
     const distribution = dataset.getDistributionByIri(args.source)!;

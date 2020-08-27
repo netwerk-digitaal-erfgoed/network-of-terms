@@ -21,7 +21,7 @@ export class QuerySourcesCommand extends Command {
   static flags: flags.Input<any> = {
     distributions: flags.string({
       description:
-        'URIs of distributions to query, comma-separated, e.g. "https://www.wikidata.org/sparql,https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql"',
+        'URIs of sources to query, comma-separated, e.g. "https://www.wikidata.org/sparql,https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql"',
       required: true,
     }),
     query: flags.string({

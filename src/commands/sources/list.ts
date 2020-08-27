@@ -21,7 +21,7 @@ export class ListSourcesCommand extends Command {
         get: (distribution: DatasetDistribution) => distribution.dataset.name,
       },
       distributionId: {
-        header: 'Distribution URI',
+        header: 'Source URI',
         get: (distribution: DatasetDistribution) =>
           distribution.distribution.iri.toString(),
       },
