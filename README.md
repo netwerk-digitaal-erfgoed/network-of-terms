@@ -23,40 +23,40 @@ This command reads the catalog information in file `configs/catalog.ttl`.
 
 ```bash
 # Cultuurhistorische Thesaurus: query SPARQL endpoint
-bin/run sources:query --distributions https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets
+bin/run sources:query --uris https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets
 
 # RKDartists: query SPARQL endpoint
-bin/run sources:query --distributions https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql --query Gogh
+bin/run sources:query --uris https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql --query Gogh
 
 # RKDartists and NTA: query SPARQL endpoints simultaneously
-bin/run sources:query --distributions https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql,http://data.bibliotheken.nl/thesp/sparql --query Gogh
+bin/run sources:query --uris https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql,http://data.bibliotheken.nl/thesp/sparql --query Gogh
 
 # NTA: query SPARQL endpoint
-bin/run sources:query --distributions http://data.bibliotheken.nl/thesp/sparql --query Wieringa
-bin/run sources:query --distributions http://data.bibliotheken.nl/thesp/sparql --query "'Wier*'"
-bin/run sources:query --distributions http://data.bibliotheken.nl/thesp/sparql --query "Wieringa OR Mulisch"
-bin/run sources:query --distributions http://data.bibliotheken.nl/thesp/sparql --query "Jan AND Vries"
+bin/run sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query Wieringa
+bin/run sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query "'Wier*'"
+bin/run sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query "Wieringa OR Mulisch"
+bin/run sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query "Jan AND Vries"
 
 # NMvW: query SPARQL endpoint
-bin/run sources:query --distributions https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql --query eiland
+bin/run sources:query --uris https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql --query eiland
 
 # AAT: query SPARQL endpoint
-bin/run sources:query --distributions http://vocab.getty.edu/aat/sparql --query schilderij
-bin/run sources:query --distributions http://vocab.getty.edu/aat/sparql --query "schil*"
-bin/run sources:query --distributions http://vocab.getty.edu/aat/sparql --query "schilderij OR tekening"
-bin/run sources:query --distributions http://vocab.getty.edu/aat/sparql --query "cartoon* OR prent*"
+bin/run sources:query --uris http://vocab.getty.edu/aat/sparql --query schilderij
+bin/run sources:query --uris http://vocab.getty.edu/aat/sparql --query "schil*"
+bin/run sources:query --uris http://vocab.getty.edu/aat/sparql --query "schilderij OR tekening"
+bin/run sources:query --uris http://vocab.getty.edu/aat/sparql --query "cartoon* OR prent*"
 
 # Wikidata Entities: query SPARQL endpoint
-bin/run sources:query --distributions https://www.wikidata.org/sparql --query Rembrandt
+bin/run sources:query --uris https://www.wikidata.org/sparql --query Rembrandt
 ```
 
 Add `--loglevel` to the commands to see what's going on underneath. For example:
 
-    bin/run sources:query --distributions https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets --loglevel info
+    bin/run sources:query --uris https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets --loglevel info
 
 Search results are piped to stdout. Redirect these elsewhere for further analysis. For example:
 
-    bin/run sources:query --distributions https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets > cht.txt
+    bin/run sources:query --uris https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets > cht.txt
 
 ## Query sources via GraphQL
 

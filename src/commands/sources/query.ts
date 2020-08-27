@@ -19,7 +19,7 @@ export class QuerySourcesCommand extends Command {
   static description = 'Query sources for terms';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static flags: flags.Input<any> = {
-    distributions: flags.string({
+    uris: flags.string({
       description:
         'URIs of sources to query, comma-separated, e.g. "https://www.wikidata.org/sparql,https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql"',
       required: true,
@@ -75,7 +75,7 @@ export class QuerySourcesCommand extends Command {
 
   async run(): Promise<void> {
     const {flags} = this.parse(QuerySourcesCommand);
-    const sources = flags.distributions
+    const sources = flags.uris
       .split(',')
       .map((distributionId: string) => new IRI(distributionId.trim()));
 
