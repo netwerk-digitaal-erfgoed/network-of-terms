@@ -15,8 +15,6 @@ This experimental application is published for examination and evaluation. It is
 
 ### List queryable sources
 
-This command reads the catalog information in file `configs/catalog.ttl`.
-
     bin/run sources:list
 
 ### Query one or more sources for terms
@@ -102,7 +100,7 @@ query Terms {
 
 ```
 # Query RKDartists and NTA simultaneously
-query QueryTerms {
+query Terms {
   terms(sources: ["https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql", "http://data.bibliotheken.nl/thesp/sparql"], query: "Gogh") {
     source {
       uri

@@ -53,9 +53,7 @@ export class DistributionsService {
     this.logger.info(`Preparing to query source "${args.source}"...`);
     const dataset = await this.catalog.getDatasetByDistributionIri(args.source);
     if (dataset === undefined) {
-      throw Error(
-        `Source with URI "${args.source}" not found`
-      );
+      throw Error(`Source with URI "${args.source}" not found`);
     }
     const distribution = dataset.getDistributionByIri(args.source)!;
     const queryService = new QueryTermsService({
