@@ -1,6 +1,6 @@
 export const schema = `
   type Source {
-    identifier: ID!
+    uri: ID!
     name: String!
   }
 

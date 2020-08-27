@@ -5,11 +5,11 @@ import * as Logger from '../../helpers/logger';
 import {QueryResult} from '../../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../../services/terms';
-import {Catalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {newEngine} from '@comunica/actor-init-sparql';
 
 interface Row {
-  distributionTitle: string;
+  datasetTitle: string;
   termUri: string;
   prefLabels: string;
   altLabels: string;
@@ -19,9 +19,9 @@ export class QuerySourcesCommand extends Command {
   static description = 'Query sources for terms';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static flags: flags.Input<any> = {
-    identifiers: flags.string({
+    uris: flags.string({
       description:
-        'Identifiers of sources to query, comma-separated, e.g. "nta,rkdartists"',
+        'URIs of sources to query, comma-separated, e.g. "https://www.wikidata.org/sparql,https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql"',
       required: true,
     }),
     query: flags.string({
@@ -36,12 +36,14 @@ export class QuerySourcesCommand extends Command {
     }),
   };
 
-  protected render(results: QueryResult[]): void {
+  protected render(results: QueryResult[], catalog: Catalog): void {
     const rowsPerDistribution = results.map((result: QueryResult): Row[] => {
       return result.terms.map(
         (term: Term): Row => {
           return {
-            distributionTitle: result.dataset.distribution.url.toString(),
+            datasetTitle:
+              catalog.getDatasetByDistributionIri(result.distribution.iri)
+                ?.name ?? '',
             termUri: term.id!.value,
             prefLabels: term.prefLabels
               .map((prefLabel: RDF.Term) => prefLabel.value)
@@ -56,7 +58,7 @@ export class QuerySourcesCommand extends Command {
     const rows = ([] as Row[]).concat(...rowsPerDistribution); // Flatten array
 
     cli.table(rows, {
-      distributionTitle: {
+      datasetTitle: {
         header: 'Source Name',
       },
       termUri: {
@@ -73,9 +75,9 @@ export class QuerySourcesCommand extends Command {
 
   async run(): Promise<void> {
     const {flags} = this.parse(QuerySourcesCommand);
-    const sources = flags.identifiers
+    const sources = flags.uris
       .split(',')
-      .map((distributionId: string) => distributionId.trim());
+      .map((distributionId: string) => new IRI(distributionId.trim()));
 
     const logger = Logger.getCliLogger({
       name: 'cli',
@@ -88,6 +90,6 @@ export class QuerySourcesCommand extends Command {
       sources,
       query: flags.query,
     });
-    this.render(results);
+    this.render(results, catalog);
   }
 }
