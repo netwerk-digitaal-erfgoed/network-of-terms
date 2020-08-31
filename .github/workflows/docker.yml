@@ -7,9 +7,6 @@ on:
 #    tags:
 #      - '*'
 
-env:
-  TAG: ${GITHUB_SHA::8}
-
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -17,9 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Calculate image tag
-        id: tag
-        run: echo $TAG
+      - name: Set variables
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
 
       - name: Build and push image to GitHub Packages
         uses: docker/build-push-action@v1.1.0
@@ -29,17 +26,17 @@ jobs:
           registry: docker.pkg.github.com
           repository: netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica
           tag_with_ref: true
-          tags: ${{ github.sha }}
+          tags: ${{ steps.vars.outputs.sha_short }}
 
       - name: Pull Docker image
-        run: docker pull docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica${GITHUB_SHA::8}
+        run: docker pull docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica:${{ steps.vars.outputs.sha_short }}
 
       - uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Update deployment file
-        run: sed -i 's|<IMAGE>|docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica:'${GITHUB_SHA::8}'|' $GITHUB_WORKSPACE/config/deployment.yml
+        run: sed -i 's|<IMAGE>|docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica:'${{ steps.vars.outputs.sha_short }}'|' $GITHUB_WORKSPACE/config/deployment.yml
 
       - name: Store DigitalOcean credentials
         run: doctl kubernetes cluster kubeconfig save k8s-1-18-6-do-0-ams3-1598542210289
