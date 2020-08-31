@@ -7,12 +7,19 @@ on:
 #    tags:
 #      - '*'
 
+env:
+  TAG: ${GITHUB_SHA::8}
+
 jobs:
   build:
     runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Calculate image tag
+        id: tag
+        run: echo $TAG
 
       - name: Build and push image to GitHub Packages
         uses: docker/build-push-action@v1.1.0
@@ -22,7 +29,7 @@ jobs:
           registry: docker.pkg.github.com
           repository: netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica
           tag_with_ref: true
-          tags: ${{ github.sha::8 }}
+          tags: ${{ github.sha }}
 
       - name: Pull Docker image
         run: docker pull docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica${GITHUB_SHA::8}
