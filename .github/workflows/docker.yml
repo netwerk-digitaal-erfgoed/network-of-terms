@@ -28,10 +28,10 @@ jobs:
           tag_with_ref: true
           tags: ${{ steps.vars.outputs.sha_short }}
 
-      - name: Pull Docker image
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-          docker pull docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica:${{ steps.vars.outputs.sha_short }}
+#      - name: Pull Docker image
+#        run: |
+#          echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+#          docker pull docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica:${{ steps.vars.outputs.sha_short }}
 
       - uses: digitalocean/action-doctl@v2
         with:
@@ -45,7 +45,7 @@ jobs:
 
       - name: Deploy to DigitalOcean Kubernetes
         run: |
-          kubectl create secret docker-registry regcred --docker-server=docker.pkg.github.com --docker-username=${{ github.actor }} --docker-password=${{ secrets.GITHUB_TOKEN }}
+          kubectl create secret docker-registry regcred --docker-server=docker.pkg.github.com --docker-username=${{ github.actor }} --docker-password=${{ secrets.GITHUB_TOKEN }} --docker-email=david@ddeboer.nl
           kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
 
       - name: Verify deployment
