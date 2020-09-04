@@ -4,6 +4,7 @@ import factory from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import ValidationReport from 'rdf-validate-shacl';
 import DatasetExt from 'rdf-ext/lib/Dataset';
+import {DataFactory} from 'rdf-data-factory';
 
 describe('Dataset', () => {
   it('validates against SHACL', async () => {
@@ -25,11 +26,13 @@ describe('Dataset', () => {
 
 const listDatasets = () => fs.readdirSync('catalog/');
 
+const dataFactory = new DataFactory();
+
 const containsDatasetNode = (data: DatasetExt): boolean =>
   data.match(
     null,
-    factory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-    factory.namedNode('http://schema.org/Dataset')
+    dataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
+    dataFactory.namedNode('http://schema.org/Dataset')
   ).length > 0;
 
 const shaclValidator = async (): Promise<typeof SHACLValidator> => {
