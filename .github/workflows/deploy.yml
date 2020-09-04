@@ -1,0 +1,44 @@
+name: Build app and update Docker image
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set variables
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Build and push image to GitHub Packages
+        uses: docker/build-push-action@v1.1.0
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica
+          tag_with_ref: true
+          tags: ${{ steps.vars.outputs.sha_short }}
+
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Store DigitalOcean credentials
+        run: doctl kubernetes cluster kubeconfig save nde
+
+      # See https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
+      - name: Update deployment
+        run: |
+          kubectl set image deployment/network-of-terms-comunica network-of-terms-comunica=docker.pkg.github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica/network-of-terms-comunica:${{ steps.vars.outputs.sha_short }} --record
+
+      - name: Verify deployment
+        run: kubectl rollout status deployment/network-of-terms-comunica
