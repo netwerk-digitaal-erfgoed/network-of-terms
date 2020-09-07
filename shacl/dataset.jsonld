@@ -28,6 +28,16 @@
           "sh:nodeKind": {
             "@id": "sh:IRI"
           }
+        },
+        {
+          "sh:path": {
+            "@id": "schema:creator"
+          },
+          "sh:minCount": 1,
+          "sh:node": "schema:DistributionShape",
+          "sh:nodeKind": {
+            "@id": "sh:IRI"
+          }
         }
       ]
     },

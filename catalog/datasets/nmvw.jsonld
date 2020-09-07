@@ -8,6 +8,11 @@
       "@value": "Thesaurus Nationaal Museum van Wereldculturen"
     }
   ],
+  "creator": [
+    {
+      "@id": "http://www.wereldculturen.nl"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql",
