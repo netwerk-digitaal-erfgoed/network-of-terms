@@ -8,6 +8,11 @@
       "@value": "Nederlandse Thesaurus voor Auteursnamen (NTA)"
     }
   ],
+  "creator": [
+    {
+      "@id": "http://data.bibliotheken.nl/doc/thes/p075301482"
+    }
+  ],
   "distribution": [
     {
       "@id": "http://data.bibliotheken.nl/thesp/sparql",

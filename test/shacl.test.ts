@@ -15,7 +15,9 @@ describe('Dataset', () => {
       const jsonLdParser = new JsonLdParser();
       const data = await factory
         .dataset()
-        .import(fs.createReadStream('catalog/' + dataset).pipe(jsonLdParser));
+        .import(
+          fs.createReadStream('catalog/datasets/' + dataset).pipe(jsonLdParser)
+        );
       expect(containsDatasetNode(data)).toBe(true);
 
       const report = await validator.validate(data);
@@ -24,7 +26,7 @@ describe('Dataset', () => {
   });
 });
 
-const listDatasets = () => fs.readdirSync('catalog/');
+const listDatasets = () => fs.readdirSync('catalog/datasets');
 
 const dataFactory = new DataFactory();
 

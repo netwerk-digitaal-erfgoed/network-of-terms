@@ -8,6 +8,11 @@
       "@value": "Cultuurhistorische Thesaurus (CHT)"
     }
   ],
+  "creator": [
+    {
+      "@id": "https://www.cultureelerfgoed.nl"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",

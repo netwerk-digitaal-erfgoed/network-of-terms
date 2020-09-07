@@ -36,6 +36,7 @@ describe('Catalog', () => {
     )!;
     expect(cht).toBeInstanceOf(Dataset);
     expect(cht.name).toEqual('Cultuurhistorische Thesaurus (CHT)');
+    expect(cht.creators[0].identifier).toEqual('RCE');
   });
 
   it('can retrieve distributions by IRI', () => {
