@@ -10,6 +10,7 @@ import {Transform, TransformCallback} from 'stream';
 import Path from 'path';
 import N3 = require('n3');
 import {URL} from 'url';
+import globby from 'globby';
 
 export class Catalog {
   constructor(readonly datasets: ReadonlyArray<Dataset>) {}
@@ -25,8 +26,10 @@ export class Catalog {
       PREFIX schema: <http://schema.org/>
         SELECT * WHERE {
           ?dataset a schema:Dataset ;
-            schema:distribution ?distribution ;
-            schema:name ?name .
+            schema:name ?name ;
+            schema:creator ?creator ;
+            schema:distribution ?distribution .
+          ?creator schema:identifier ?creatorIdentifier .
           ?distribution schema:encodingFormat "application/sparql-query" ;
             schema:contentUrl ?endpointUrl ;
             schema:potentialAction/schema:query ?query .
@@ -48,6 +51,12 @@ export class Catalog {
           new Dataset(
             new IRI(bindings.get('?dataset').value),
             bindings.get('?name').value,
+            [
+              new Organization(
+                new IRI(bindings.get('?creator').value),
+                bindings.get('?creatorIdentifier').value
+              ),
+            ],
             [
               new SparqlDistribution(
                 new IRI(bindings.get('?distribution').value),
@@ -76,6 +85,7 @@ export class Dataset {
   constructor(
     readonly iri: IRI,
     readonly name: string,
+    readonly creators: [Organization],
     readonly distributions: [Distribution]
   ) {}
 
@@ -84,6 +94,10 @@ export class Dataset {
       distribution => distribution.iri.toString() === iri.toString()
     );
   }
+}
+
+export class Organization {
+  constructor(readonly iri: IRI, readonly identifier: string) {}
 }
 
 export class SparqlDistribution {
@@ -111,13 +125,12 @@ function addStreamToStore(
 }
 
 export async function fromFiles(directory: string): Promise<RDF.Store> {
-  const files = await fs.promises.readdir(directory);
+  const files = await globby([directory]);
   const store = new N3.Store();
   for (const file of files) {
-    const quadStream = RdfParser.parse(
-      fs.createReadStream(directory + '/' + file),
-      {path: file}
-    ).pipe(new InlineFiles());
+    const quadStream = RdfParser.parse(fs.createReadStream(file), {
+      path: file,
+    }).pipe(new InlineFiles());
     await addStreamToStore(store, quadStream);
   }
 

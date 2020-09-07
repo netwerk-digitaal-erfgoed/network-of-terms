@@ -1,22 +1,27 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "http://vocab.getty.edu/aat",
+  "@id": "https://www.wikidata.org",
   "@type": "Dataset",
   "name": [
     {
       "@language": "en",
-      "@value": "Art & Architecture Thesaurus (AAT)"
+      "@value": "Wikidata Entities"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.wikidata.org"
     }
   ],
   "distribution": [
     {
-      "@id": "http://vocab.getty.edu/aat/sparql",
+      "@id": "https://www.wikidata.org/sparql",
       "@type": "DataDownload",
-      "contentUrl": "http://vocab.getty.edu/sparql",
+      "contentUrl": "https://query.wikidata.org/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": {
         "@type": "SearchAction",
-        "query": "file://queries/aat.rq"
+        "query": "file://queries/wikidata-entities.rq"
       }
     }
   ]

@@ -1,0 +1,29 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@graph": [
+    {
+      "@id": "http://www.getty.edu/research/",
+      "identifier": "Getty"
+    },
+    {
+      "@id": "https://www.cultureelerfgoed.nl",
+      "identifier": "RCE"
+    },
+    {
+      "@id": "http://www.wereldculturen.nl",
+      "identifier": "NMVW"
+    },
+    {
+      "@id": "http://data.bibliotheken.nl/doc/thes/p075301482",
+      "identifier": "KB"
+    },
+    {
+      "@id": "https://rkd.nl",
+      "identifier": "RKD"
+    },
+    {
+      "@id": "https://www.wikidata.org",
+      "identifier": "Wikidata"
+    }
+  ]
+}
