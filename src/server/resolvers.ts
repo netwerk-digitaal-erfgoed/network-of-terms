@@ -10,6 +10,10 @@ async function listSources(object: any, args: any, context: any): Promise<any> {
     dataset.distributions.map(distribution => ({
       uri: distribution.iri.toString(),
       name: dataset.name,
+      creators: dataset.creators.map(creator => ({
+        uri: creator.iri.toString(),
+        identifier: creator.identifier,
+      })),
     }))
   );
 }
