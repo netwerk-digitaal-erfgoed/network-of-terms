@@ -6,7 +6,7 @@ This is the catalog of datasets that you can query through the
 The [catalog](catalog/) directory contains all datasets.
 Each is described in the [Schema.org](https://schema.org) ontology.
 
-The [queries](queries/) directory contains SPARQL queries for retrieving terms from the datasets.
+The [queries](catalog/queries/) directory contains SPARQL queries for retrieving terms from the datasets.
 
 ## Adding a dataset
 

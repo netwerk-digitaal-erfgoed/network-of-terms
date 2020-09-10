@@ -125,7 +125,8 @@ function addStreamToStore(
 }
 
 export async function fromFiles(directory: string): Promise<RDF.Store> {
-  const files = await globby([directory]);
+  // Read all files except those in the queries/ directory.
+  const files = await globby([directory, '!' + directory + '/queries']);
   const store = new N3.Store();
   for (const file of files) {
     const quadStream = RdfParser.parse(fs.createReadStream(file), {
