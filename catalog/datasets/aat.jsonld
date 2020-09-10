@@ -21,7 +21,7 @@
       "encodingFormat": "application/sparql-query",
       "potentialAction": {
         "@type": "SearchAction",
-        "query": "file://queries/aat.rq"
+        "query": "file://catalog/queries/aat.rq"
       }
     }
   ]

@@ -13,8 +13,7 @@
   "types": "build/index.d.ts",
   "files": [
     "build/",
-    "catalog/",
-    "queries/"
+    "catalog/"
   ],
   "scripts": {
     "test": "jest ${1}",
