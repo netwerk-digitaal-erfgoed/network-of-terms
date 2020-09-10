@@ -21,7 +21,7 @@
       "encodingFormat": "application/sparql-query",
       "potentialAction": {
         "@type": "SearchAction",
-        "query": "file://queries/wikidata-entities.rq"
+        "query": "file://catalog/queries/wikidata-entities.rq"
       }
     }
   ]
