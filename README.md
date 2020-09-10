@@ -68,7 +68,7 @@ http://localhost:3123/playground
 
 ### List queryable sources
 
-```
+```graphql
 query Sources {
   sources {
     name
@@ -83,7 +83,7 @@ query Sources {
 
 ### Query one or more sources for terms
 
-```
+```graphql
 # Query Cultuurhistorische Thesaurus (CHT)
 query Terms {
   terms(sources: ["https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht"], query: "fiets") {
@@ -106,7 +106,7 @@ query Terms {
 }
 ```
 
-```
+```graphql
 # Query RKDartists and NTA simultaneously
 query Terms {
   terms(sources: ["https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql", "http://data.bibliotheken.nl/thesp/sparql"], query: "Gogh") {
