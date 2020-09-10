@@ -45,15 +45,6 @@ const shaclValidator = async (): Promise<typeof SHACLValidator> => {
   return new SHACLValidator(shapes, {factory});
 };
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Matchers<R> {
-      toConform(): R;
-    }
-  }
-}
-
 expect.extend({
   toConform(report: typeof ValidationReport) {
     return {
