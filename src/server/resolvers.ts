@@ -2,19 +2,16 @@ import {DistributionsService} from '../services/distributions';
 import {QueryResult} from '../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../services/terms';
-import {Dataset, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {
+  Dataset,
+  Distribution,
+  IRI,
+} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
   return context.catalog.datasets.flatMap((dataset: Dataset) =>
-    dataset.distributions.map(distribution => ({
-      uri: distribution.iri.toString(),
-      name: dataset.name,
-      creators: dataset.creators.map(creator => ({
-        uri: creator.iri.toString(),
-        identifier: creator.identifier,
-      })),
-    }))
+    dataset.distributions.map(distribution => source(distribution, dataset))
   );
 }
 
@@ -33,12 +30,10 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
   });
   return results.map((result: QueryResult) => {
     return {
-      source: {
-        uri: result.distribution.iri,
-        name: context.catalog.getDatasetByDistributionIri(
-          result.distribution.iri
-        )?.name,
-      },
+      source: source(
+        result.distribution,
+        context.catalog.getDatasetByDistributionIri(result.distribution.iri)
+      ),
       terms: result.terms.map((term: Term) => {
         return {
           uri: term.id!.value,
@@ -56,6 +51,17 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
       }),
     };
   });
+}
+
+function source(distribution: Distribution, dataset: Dataset) {
+  return {
+    uri: distribution.iri,
+    name: dataset.name,
+    creators: dataset.creators.map(creator => ({
+      uri: creator.iri,
+      identifier: creator.identifier,
+    })),
+  };
 }
 
 export const resolvers = {
