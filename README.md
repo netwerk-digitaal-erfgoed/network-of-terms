@@ -73,6 +73,10 @@ query Sources {
   sources {
     name
     uri
+    creators {
+      uri
+      identifier
+    }
   }
 }
 ```
@@ -86,6 +90,10 @@ query Terms {
     source {
       uri
       name
+      creators {
+        uri
+        identifier
+      }
     }
     terms {
       uri
@@ -105,6 +113,10 @@ query Terms {
     source {
       uri
       name
+      creators {
+        uri
+        identifier
+      }
     }
     terms {
       uri
