@@ -18,6 +18,12 @@
         },
         {
           "sh:path": {
+            "@id": "schema:alternateName"
+          },
+          "sh:minCount": 0
+        },
+        {
+          "sh:path": {
             "@id": "schema:distribution"
           },
           "sh:minCount": 1,
@@ -34,10 +40,10 @@
             "@id": "schema:creator"
           },
           "sh:minCount": 1,
-          "sh:node": "schema:DistributionShape",
-          "sh:nodeKind": {
-            "@id": "sh:IRI"
-          }
+          "sh:class": {
+            "@id": "schema:Organization"
+          },
+          "sh:node": "schema:CreatorShape"
         }
       ]
     },
@@ -71,6 +77,27 @@
           "sh:node": {
             "@id": "schema:SearchActionShape"
           }
+        }
+      ]
+    },
+    {
+      "@id": "schema:CreatorShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:Organization"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:name"
+          },
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:alternateName"
+          },
+          "sh:minCount": 1
         }
       ]
     },

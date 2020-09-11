@@ -5,7 +5,13 @@
   "name": [
     {
       "@language": "en",
-      "@value": "Art & Architecture Thesaurus (AAT)"
+      "@value": "Art & Architecture Thesaurus"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "AAT"
     }
   ],
   "creator": [

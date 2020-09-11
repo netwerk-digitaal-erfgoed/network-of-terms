@@ -29,7 +29,9 @@ export class Catalog {
             schema:name ?name ;
             schema:creator ?creator ;
             schema:distribution ?distribution .
-          ?creator schema:identifier ?creatorIdentifier .
+          OPTIONAL { ?dataset schema:alternateName ?alternateName . }
+          ?creator schema:name ?creatorName ;  
+            schema:alternateName ?creatorAlternateName .
           ?distribution schema:encodingFormat "application/sparql-query" ;
             schema:contentUrl ?endpointUrl ;
             schema:potentialAction/schema:query ?query .
@@ -54,7 +56,8 @@ export class Catalog {
             [
               new Organization(
                 new IRI(bindings.get('?creator').value),
-                bindings.get('?creatorIdentifier').value
+                bindings.get('?creatorName').value,
+                bindings.get('?creatorAlternateName').value
               ),
             ],
             [
@@ -63,7 +66,10 @@ export class Catalog {
                 new IRI(bindings.get('?endpointUrl').value),
                 bindings.get('?query').value
               ),
-            ]
+            ],
+            bindings.get('?alternateName')
+              ? bindings.get('?alternateName').value
+              : undefined
           )
         );
       });
@@ -86,7 +92,8 @@ export class Dataset {
     readonly iri: IRI,
     readonly name: string,
     readonly creators: [Organization],
-    readonly distributions: [Distribution]
+    readonly distributions: [Distribution],
+    readonly alternateName?: string
   ) {}
 
   public getDistributionByIri(iri: IRI): Distribution | undefined {
@@ -97,7 +104,11 @@ export class Dataset {
 }
 
 export class Organization {
-  constructor(readonly iri: IRI, readonly identifier: string) {}
+  constructor(
+    readonly iri: IRI,
+    readonly name: string,
+    readonly alternateName: string
+  ) {}
 }
 
 export class SparqlDistribution {
