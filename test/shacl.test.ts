@@ -11,13 +11,24 @@ describe('Dataset', () => {
     const datasets = listDatasets();
 
     const validator = await shaclValidator();
+    const jsonLdParser = new JsonLdParser();
+    const base = await factory
+      .dataset()
+      .import(
+        fs.createReadStream('catalog/publishers.jsonld').pipe(jsonLdParser)
+      );
+
     for (const dataset of datasets) {
       const jsonLdParser = new JsonLdParser();
-      const data = await factory
-        .dataset()
-        .import(
-          fs.createReadStream('catalog/datasets/' + dataset).pipe(jsonLdParser)
-        );
+      const data = (
+        await factory
+          .dataset()
+          .import(
+            fs
+              .createReadStream('catalog/datasets/' + dataset)
+              .pipe(jsonLdParser)
+          )
+      ).addAll(base);
       expect(containsDatasetNode(data)).toBe(true);
 
       const report = await validator.validate(data);

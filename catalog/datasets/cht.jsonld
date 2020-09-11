@@ -5,7 +5,13 @@
   "name": [
     {
       "@language": "nl",
-      "@value": "Cultuurhistorische Thesaurus (CHT)"
+      "@value": "Cultuurhistorische Thesaurus"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "nl",
+      "@value": "CHT"
     }
   ],
   "creator": [

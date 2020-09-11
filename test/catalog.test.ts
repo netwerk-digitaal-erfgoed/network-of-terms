@@ -13,14 +13,13 @@ describe('Catalog', () => {
     catalog = await Catalog.default();
   });
 
-  it('can be created from files', async done => {
+  it('can be created from files', async () => {
     const store = await fromFiles('catalog/');
     const catalog = await Catalog.fromStore(store);
     expect(catalog.datasets.length).toBe(6);
     expect(catalog.datasets[0].distributions[0].query).toEqual(
       expect.stringContaining('CONSTRUCT {')
     );
-    done();
   });
 
   it('can list datasets', () => {
@@ -35,8 +34,12 @@ describe('Catalog', () => {
       new IRI('https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht')
     )!;
     expect(cht).toBeInstanceOf(Dataset);
-    expect(cht.name).toEqual('Cultuurhistorische Thesaurus (CHT)');
-    expect(cht.creators[0].identifier).toEqual('RCE');
+    expect(cht.name).toEqual('Cultuurhistorische Thesaurus');
+    expect(cht.alternateName).toEqual('CHT');
+    expect(cht.creators[0].name).toEqual(
+      'Rijksdienst voor het Cultureel Erfgoed'
+    );
+    expect(cht.creators[0].alternateName).toEqual('RCE');
   });
 
   it('can retrieve distributions by IRI', () => {
