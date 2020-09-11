@@ -3,27 +3,39 @@
   "@graph": [
     {
       "@id": "http://www.getty.edu/research/",
-      "identifier": "Getty"
+      "@type": "Organization",
+      "name": "Getty Research Institute",
+      "alternateName": "Getty"
     },
     {
       "@id": "https://www.cultureelerfgoed.nl",
-      "identifier": "RCE"
+      "@type": "Organization",
+      "name": "Rijksdienst voor het Cultureel Erfgoed",
+      "alternateName": "RCE"
     },
     {
       "@id": "http://www.wereldculturen.nl",
-      "identifier": "NMVW"
+      "@type": "Organization",
+      "name": "Stiching Nationaal Museum van Wereldculturen",
+      "alternateName": "NMVW"
     },
     {
       "@id": "http://data.bibliotheken.nl/doc/thes/p075301482",
-      "identifier": "KB"
+      "@type": "Organization",
+      "name": "Koninklijke Bibliotheek",
+      "alternateName": "KB"
     },
     {
       "@id": "https://rkd.nl",
-      "identifier": "RKD"
+      "@type": "Organization",
+      "name": "RKD – Nederlands Instituut voor Kunstgeschiedenis",
+      "alternateName": "RKD"
     },
     {
-      "@id": "https://www.wikidata.org",
-      "identifier": "Wikidata"
+      "@id": "https://www.wikidata.org/entity/Q180",
+      "@type": "Organization",
+      "name": "Wikidata",
+      "alternateName": "Wikidata"
     }
   ]
 }

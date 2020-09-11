@@ -5,7 +5,13 @@
   "name": [
     {
       "@language": "nl",
-      "@value": "Nederlandse Thesaurus voor Auteursnamen (NTA)"
+      "@value": "Nederlandse Thesaurus voor Auteursnamen"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "nl",
+      "@value": "NTA"
     }
   ],
   "creator": [
