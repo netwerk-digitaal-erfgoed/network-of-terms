@@ -8,20 +8,12 @@ CONSTRUCT {
 WHERE {
     GRAPH <http://data.bibliotheken.nl/thesp/> {
         ?uri a schema:Person .
-        {
-            ?uri rdfs:label ?label .
-            ?label <bif:contains> ?query
-        }
-        UNION
-        {
-            ?uri schema:name ?label .
-            ?label <bif:contains> ?query
-        }
-        UNION
-        {
-            ?uri schema:alternateName ?label .
-            ?label <bif:contains> ?query
-        }
+        ?uri ?predicate ?label .
+        VALUES ?predicate { rdfs:label schema:name schema:alternateName }
+
+        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+        FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+
         OPTIONAL { ?uri rdfs:label ?rdfs_label }
         OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
         OPTIONAL { ?uri schema:name ?schema_name }

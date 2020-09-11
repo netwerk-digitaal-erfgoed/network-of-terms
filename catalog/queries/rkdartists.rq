@@ -10,15 +10,12 @@ CONSTRUCT {
 WHERE {
     ?uri a ?type .
     VALUES ?type { schema:Person schema:Organization }
-    {
-        ?uri schema:name ?label .
-        ?label <bif:contains> ?query
-    }
-    UNION
-    {
-        ?uri schema:alternateName ?label .
-        ?label <bif:contains> ?query
-    }
+    ?uri ?name ?label .
+    VALUES ?name { schema:name schema:alternateName }
+
+    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+
     OPTIONAL { ?uri schema:name ?schema_name . }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName . }
     OPTIONAL { ?uri schema:description ?schema_description . }
