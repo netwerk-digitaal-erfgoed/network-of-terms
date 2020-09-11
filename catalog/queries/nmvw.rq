@@ -10,33 +10,31 @@ CONSTRUCT {
     skos:narrower ?narrower_label .
 }
 WHERE {
-  {
-      ?uri skos:prefLabel ?label .
-      ?label <bif:contains> ?query
-  }
-  UNION {
-      ?uri skos:altLabel ?label .
-      ?label <bif:contains> ?query
-  }
-  OPTIONAL {
-      ?uri skos:prefLabel ?prefLabel .
-  }
-  OPTIONAL {
-      ?uri skos:scopeNote ?scopeNote .
-  }
-  OPTIONAL {
-      ?uri skos:altLabel ?altLabel .
-  }
-  OPTIONAL {
-      ?uri skos:hiddenLabel ?hiddenLabel .
-  }
-  OPTIONAL {
-      ?uri skos:broader ?uri_broader .
-      ?uri_broader skos:prefLabel ?broader_label .
-  }
-  OPTIONAL {
-      ?uri skos:narrower ?uri_narrower .
-      ?uri_narrower skos:prefLabel ?narrower_label .
-  }
+    ?uri ?predicate ?label .
+    VALUES ?predicate {  skos:prefLabel skos:altLabel }
+
+    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+
+    OPTIONAL {
+        ?uri skos:prefLabel ?prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote .
+    }
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+    }
+    OPTIONAL {
+        ?uri skos:hiddenLabel ?hiddenLabel .
+    }
+    OPTIONAL {
+        ?uri skos:broader ?uri_broader .
+        ?uri_broader skos:prefLabel ?broader_label .
+    }
+    OPTIONAL {
+        ?uri skos:narrower ?uri_narrower .
+        ?uri_narrower skos:prefLabel ?narrower_label .
+    }
 }
 LIMIT 1000
