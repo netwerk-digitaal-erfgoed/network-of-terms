@@ -9,39 +9,41 @@ PREFIX skosxl: <http://www.w3.org/2008/05/skos-xl#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
-    skos:prefLabel ?prefLabel ;
-    skos:altLabel ?altLabel ;
-    skos:scopeNote ?scopeNote ;
-    skos:broader ?broader_label ;
-    skos:narrower ?narrower_label .
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote .
+    ?uri skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?uri skos:narrower ?narrower_uri .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
 WHERE {
-    ?uri luc:term ?query;
-    a ?type .
+    ?uri luc:term ?query ;
+        a ?type .
     ?type rdfs:subClassOf gvp:Subject .
     FILTER (?type != gvp:Subject) .
-    ?uri skosxl:prefLabel ?uri_prefLabel .
-    ?uri_prefLabel dcterms:language aat:300388256 . # Dutch (language)
-    ?uri_prefLabel skosxl:literalForm ?prefLabel .
+    ?uri skosxl:prefLabel ?prefLabel_uri .
+    ?prefLabel_uri dcterms:language aat:300388256 . # Dutch (language)
+    ?prefLabel_uri skosxl:literalForm ?prefLabel .
     OPTIONAL {
-        ?uri skosxl:altLabel ?uri_altLabel .
-        ?uri_altLabel dcterms:language aat:300388256 .
-        ?uri_altLabel skosxl:literalForm ?altLabel .
+        ?uri skosxl:altLabel ?altLabel_uri .
+        ?altLabel_uri dcterms:language aat:300388256 .
+        ?altLabel_uri skosxl:literalForm ?altLabel .
     }
     OPTIONAL {
-        ?uri gvp:broaderPreferredExtended/skosxl:prefLabel ?uri_broader .
-        ?uri_broader dcterms:language aat:300388256 . # Dutch (language)
-        ?uri_broader skosxl:literalForm ?broader_label .
+        ?uri skos:scopeNote ?scopeNote_uri .
+        ?scopeNote_uri dcterms:language aat:300388256 . # Dutch (language)
+        ?scopeNote_uri rdf:value ?scopeNote .
     }
     OPTIONAL {
-        ?uri skos:scopeNote ?uri_scopeNote .
-        ?uri_scopeNote dcterms:language aat:300388256 . # Dutch (language)
-        ?uri_scopeNote rdf:value ?scopeNote .
+        ?uri gvp:broaderPreferredExtended/skosxl:prefLabel ?broader_uri .
+        ?broader_uri dcterms:language aat:300388256 . # Dutch (language)
+        ?broader_uri skosxl:literalForm ?broader_prefLabel .
     }
     OPTIONAL {
-        ?uri skos:narrower/skosxl:prefLabel ?uri_narrower .
-        ?uri_narrower dcterms:language aat:300388256 . # Dutch (language)
-        ?uri_narrower skosxl:literalForm ?narrower_label .
+        ?uri skos:narrower/skosxl:prefLabel ?narrower_uri .
+        ?narrower_uri dcterms:language aat:300388256 . # Dutch (language)
+        ?narrower_uri skosxl:literalForm ?narrower_prefLabel .
     }
 }
 LIMIT 1000
