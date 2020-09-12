@@ -1,0 +1,18 @@
+name: QA
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node_version: 12.x
+      - run: npm install
+      - run: npm run check
+      - run: npm run compile
