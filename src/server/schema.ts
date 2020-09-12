@@ -2,12 +2,14 @@ export const schema = `
   type Source {
     uri: ID!
     name: String!
+    alternateName: String
     creators: [Creator]!
   }
 
   type Creator {
     uri: ID!
-    identifier: String!
+    name: String!
+    alternateName: String!
   }
 
   type Term {
