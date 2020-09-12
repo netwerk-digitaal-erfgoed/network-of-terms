@@ -18,7 +18,7 @@
     "@comunica/core": "^1.13.0",
     "@hapi/hoek": "9.x.x",
     "@hapi/joi": "17.x.x",
-    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "^2.1.0",
+    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "^3.0.0",
     "@oclif/command": "1.x.x",
     "@rdfjs/data-model": "^1.1.2",
     "cli-ux": "5.x.x",

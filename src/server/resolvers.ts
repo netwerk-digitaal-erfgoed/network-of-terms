@@ -57,9 +57,11 @@ function source(distribution: Distribution, dataset: Dataset) {
   return {
     uri: distribution.iri,
     name: dataset.name,
+    alternateName: dataset.alternateName,
     creators: dataset.creators.map(creator => ({
       uri: creator.iri,
-      identifier: creator.identifier,
+      name: creator.name,
+      alternateName: creator.alternateName,
     })),
   };
 }

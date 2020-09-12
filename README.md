@@ -71,11 +71,13 @@ http://localhost:3123/playground
 ```graphql
 query Sources {
   sources {
-    name
     uri
+    name
+    alternateName
     creators {
       uri
-      identifier
+      name
+      alternateName
     }
   }
 }
@@ -92,7 +94,8 @@ query Terms {
       name
       creators {
         uri
-        identifier
+        name
+        alternateName
       }
     }
     terms {
@@ -115,7 +118,8 @@ query Terms {
       name
       creators {
         uri
-        identifier
+        name
+        alternateName
       }
     }
     terms {
