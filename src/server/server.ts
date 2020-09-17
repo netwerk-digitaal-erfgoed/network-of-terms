@@ -28,6 +28,13 @@ async function startServer(): Promise<void> {
       }),
   });
   server.register(fastifyCors);
+  server.route({
+    method: 'GET',
+    url: '/',
+    handler: (req, reply) => {
+      reply.redirect('/playground');
+    },
+  });
   await server.listen(3123, '0.0.0.0');
 }
 
