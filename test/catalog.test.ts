@@ -1,7 +1,6 @@
 import {
   Catalog,
   Dataset,
-  fromFiles,
   IRI,
   SparqlDistribution,
 } from '../src/catalog';
