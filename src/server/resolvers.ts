@@ -47,11 +47,11 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
           scopeNote: term.scopeNotes.map(
             (scopeNote: RDF.Term) => scopeNote.value
           ),
-          broader: term.broader.map(related => ({
+          broader: term.broaderTerms.map(related => ({
             uri: related.id.value,
             prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
           })),
-          narrower: term.narrower.map(related => ({
+          narrower: term.narrowerTerms.map(related => ({
             uri: related.id.value,
             prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
           })),

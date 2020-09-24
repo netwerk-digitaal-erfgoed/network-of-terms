@@ -8,8 +8,8 @@ export class Term {
     readonly altLabels: RDF.Term[],
     readonly hiddenLabels: RDF.Term[],
     readonly scopeNotes: RDF.Term[],
-    readonly broader: RelatedTerm[],
-    readonly narrower: RelatedTerm[]
+    readonly broaderTerms: RelatedTerm[],
+    readonly narrowerTerms: RelatedTerm[]
   ) {}
 }
 
@@ -24,8 +24,8 @@ class SparqlResultTerm {
   altLabels: RDF.Term[] = [];
   hiddenLabels: RDF.Term[] = [];
   scopeNotes: RDF.Term[] = [];
-  broader: RDF.Term[] = [];
-  narrower: RDF.Term[] = [];
+  broaderTerms: RDF.Term[] = [];
+  narrowerTerms: RDF.Term[] = [];
 }
 
 export class TermsTransformer {
@@ -41,10 +41,10 @@ export class TermsTransformer {
     ['http://www.w3.org/2008/05/skos#hiddenLabel', 'hiddenLabels'],
     ['http://www.w3.org/2004/02/skos/core#scopeNote', 'scopeNotes'],
     ['http://www.w3.org/2008/05/skos#scopeNote', 'scopeNotes'],
-    ['http://www.w3.org/2004/02/skos/core#broader', 'broader'],
-    ['http://www.w3.org/2008/05/skos#broader', 'broader'],
-    ['http://www.w3.org/2004/02/skos/core#narrower', 'narrower'],
-    ['http://www.w3.org/2008/05/skos#narrower', 'narrower'],
+    ['http://www.w3.org/2004/02/skos/core#broader', 'broaderTerms'],
+    ['http://www.w3.org/2008/05/skos#broader', 'broaderTerms'],
+    ['http://www.w3.org/2004/02/skos/core#narrower', 'narrowerTerms'],
+    ['http://www.w3.org/2008/05/skos#narrower', 'narrowerTerms'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -86,8 +86,12 @@ export class TermsTransformer {
         term.altLabels,
         term.hiddenLabels,
         term.scopeNotes,
-        term.broader.map(iri => this.termsMap.get(iri.value) as RelatedTerm),
-        term.narrower.map(iri => this.termsMap.get(iri.value) as RelatedTerm)
+        term.broaderTerms.map(
+          iri => this.termsMap.get(iri.value) as RelatedTerm
+        ),
+        term.narrowerTerms.map(
+          iri => this.termsMap.get(iri.value) as RelatedTerm
+        )
       );
     });
   }
