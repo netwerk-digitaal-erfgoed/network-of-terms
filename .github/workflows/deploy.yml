@@ -14,9 +14,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # See https://github.com/docker/build-push-action#complete-workflow.
       - name: Set variables
         id: vars
         run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION_TAG=${GITHUB_REF#refs/tags/}
+          else
+            VERSION_TAG=latest
+          fi
+          echo "::set-output name=version_tag::${VERSION_TAG}"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           echo "::set-output name=docker_image::ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api"
 
@@ -37,7 +44,7 @@ jobs:
           push: true
           tags: |
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
-            ${{ steps.vars.outputs.docker_image }}:latest
+            ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.version_tag }}
 
       - uses: digitalocean/action-doctl@v2
         with:
