@@ -3,6 +3,8 @@ Prototype: [Network of Terms](https://www.netwerkdigitaalerfgoed.nl/en/knowledge
 
 This experimental application is published for examination and evaluation. It is not an official implementation.
 
+The application is available at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
+
 ## Build image
 
     docker-compose build --no-cache
