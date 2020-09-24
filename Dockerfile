@@ -1,11 +1,11 @@
-FROM node:12.18.2-alpine AS build
+FROM node:lts-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN NODE_ENV=production npm run compile
 
-FROM node:12.18.2-alpine
+FROM node:lts-alpine
 ENV NODE_ENV=production
 WORKDIR /app/
 COPY package*.json ./
