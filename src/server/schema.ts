@@ -18,6 +18,13 @@ export const schema = `
     altLabel: [String]!
     hiddenLabel: [String]!
     scopeNote: [String]!
+    broader: [RelatedTerm]
+    narrower: [RelatedTerm]
+  }
+  
+  type RelatedTerm {
+    uri: ID!
+    prefLabel: [String]!
   }
 
   type Terms {

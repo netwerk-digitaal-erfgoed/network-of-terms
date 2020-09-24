@@ -104,6 +104,14 @@ query Terms {
       altLabel
       hiddenLabel
       scopeNote
+      broader {
+        uri
+        prefLabel
+      }
+      narrower {
+        uri
+        prefLabel
+      }
     }
   }
 }
