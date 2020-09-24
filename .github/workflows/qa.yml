@@ -6,15 +6,14 @@ on:
       - master
 
 jobs:
-  compile:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.4.0
-      - uses: actions/setup-node@v2.5.1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
         with:
-          node-version: 16.x
-      - run: npm ci
-      - run: npm run check
-      - run: npm run compile
+          node-version: 12.x
+      - run: npm install
+      - run: npm run lint
       - run: npm test
       - run: npm run compile
