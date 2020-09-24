@@ -13,15 +13,6 @@ describe('Catalog', () => {
     catalog = await Catalog.default();
   });
 
-  it('can be created from files', async () => {
-    const store = await fromFiles('catalog/');
-    const catalog = await Catalog.fromStore(store);
-    expect(catalog.datasets.length).toBe(6);
-    expect(catalog.datasets[0].distributions[0].query).toEqual(
-      expect.stringContaining('CONSTRUCT {')
-    );
-  });
-
   it('can list datasets', () => {
     expect(catalog.datasets.length).toBe(6);
   });
