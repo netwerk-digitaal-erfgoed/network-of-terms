@@ -1,9 +1,4 @@
-import {
-  Catalog,
-  Dataset,
-  IRI,
-  SparqlDistribution,
-} from '../src/catalog';
+import {Catalog, Dataset, IRI, SparqlDistribution} from '../src/catalog';
 
 let catalog: Catalog;
 
