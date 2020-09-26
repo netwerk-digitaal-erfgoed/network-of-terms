@@ -8,9 +8,9 @@ import {
 } from '@comunica/bus-query-operation';
 import {Transform, TransformCallback} from 'stream';
 import Path from 'path';
-import N3 = require('n3');
 import {URL} from 'url';
 import globby from 'globby';
+import {storeStream} from 'rdf-store-stream';
 
 export class Catalog {
   constructor(readonly datasets: ReadonlyArray<Dataset>) {}
@@ -21,7 +21,7 @@ export class Catalog {
     return this.fromStore(store);
   }
 
-  public static async fromStore(store: RDF.Store): Promise<Catalog> {
+  public static async fromStore(store: RDF.Store[]): Promise<Catalog> {
     const query = `
       PREFIX schema: <http://schema.org/>
         SELECT * WHERE {
@@ -38,12 +38,7 @@ export class Catalog {
         }
         ORDER BY LCASE(?name)`;
     const result = (await newEngine().query(query, {
-      sources: [
-        {
-          type: 'rdfjsSource',
-          value: store,
-        },
-      ],
+      sources: store,
     })) as IActorQueryOperationOutputBindings;
 
     const promise: Promise<Dataset[]> = new Promise((resolve, reject) => {
@@ -126,27 +121,21 @@ export type Distribution = SparqlDistribution;
 
 export class IRI extends URL {}
 
-function addStreamToStore(
-  store: RDF.Store,
-  stream: RDF.Stream
-): Promise<RDF.Store> {
-  return new Promise(resolve =>
-    store.import(stream).once('end', () => resolve(store))
-  );
-}
-
-export async function fromFiles(directory: string): Promise<RDF.Store> {
+/**
+ * Return a separate RDF.Store for each catalog file because merging them into a single store
+ * causes blank nodes to be re-used instead of incremented when adding the next file.
+ */
+export async function fromFiles(directory: string): Promise<RDF.Store[]> {
   // Read all files except those in the queries/ directory.
   const files = await globby([directory, '!' + directory + '/queries']);
-  const store = new N3.Store();
-  for (const file of files) {
-    const quadStream = RdfParser.parse(fs.createReadStream(file), {
-      path: file,
-    }).pipe(new InlineFiles());
-    await addStreamToStore(store, quadStream);
-  }
-
-  return store;
+  return Promise.all(
+    files.map(file => {
+      const quadStream = RdfParser.parse(fs.createReadStream(file), {
+        path: file,
+      }).pipe(new InlineFiles());
+      return storeStream(quadStream);
+    })
+  );
 }
 
 /**
