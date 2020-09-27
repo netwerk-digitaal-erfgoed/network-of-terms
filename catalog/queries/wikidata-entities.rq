@@ -5,10 +5,12 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 
 CONSTRUCT {
-    ?item a skos:Concept ;
-    skos:prefLabel ?rdfs_label ;
-    skos:altLabel ?altLabel ;
-    skos:scopeNote ?schema_description .
+    # Wikidata seems to have a problem with the short syntax for construct queries
+    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list! 
+    ?item a skos:Concept .
+    ?item skos:prefLabel ?rdfs_label .
+    ?item skos:altLabel ?altLabel .
+    ?item skos:scopeNote ?schema_description .
 }
 WHERE {
     SERVICE wikibase:mwapi {
