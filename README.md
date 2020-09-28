@@ -1,7 +1,7 @@
 # Network of Terms Catalog
 
 This is the catalog of datasets that you can query through the
-[Network of Terms](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-comunica).
+[Network of Terms API](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api).
 
 The [catalog](catalog/) directory contains all datasets.
 Each is described in the [Schema.org](https://schema.org) ontology.
