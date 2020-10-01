@@ -1,0 +1,25 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:hiddenLabel ?hiddenLabel ;
+        skos:scopeNote ?schema_description .
+}
+WHERE {
+    ?uri a schema:MusicGroup .
+    ?uri ?predicate ?label .
+    VALUES ?predicate { skos:prefLabel skos:altLabel }
+
+    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+
+    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
+    OPTIONAL { ?uri skos:altLabel ?altLabel }
+    OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
+    OPTIONAL { ?uri schema:description ?schema_description }
+}
+LIMIT 1000
