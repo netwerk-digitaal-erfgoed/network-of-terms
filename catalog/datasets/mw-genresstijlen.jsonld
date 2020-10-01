@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb#mw-genresstijlen",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Muziek: genres en stijlen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.muziekweb.nl"
+    }
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb/sparql/Muziekweb#mw-genresstijlen",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.data.muziekweb.nl/datasets/MuziekwebOrganization/Muziekweb/services/Muziekweb/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "query": "file://catalog/queries/mw-genresstijlen.rq"
+      }
+    }
+  ]
+}

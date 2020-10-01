@@ -36,6 +36,12 @@
       "@type": "Organization",
       "name": "Wikidata",
       "alternateName": "Wikidata"
+    },
+    {
+      "@id": "https://www.muziekweb.nl",
+      "@type": "Organization",
+      "name": "Muziekweb",
+      "alternateName": "Muziekweb"
     }
   ]
 }
