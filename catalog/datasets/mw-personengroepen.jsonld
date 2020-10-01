@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb#mw-personengroepen",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Muziek: personen en groepen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.muziekweb.nl"
+    }
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb/sparql/Muziekweb#mw-personengroepen",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.data.muziekweb.nl/datasets/MuziekwebOrganization/Muziekweb/services/Muziekweb/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "query": "file://catalog/queries/mw-personengroepen.rq"
+      }
+    }
+  ]
+}
