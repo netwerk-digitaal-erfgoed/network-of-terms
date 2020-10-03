@@ -80,7 +80,12 @@ export class QueryTermsService {
 
     return new Promise((resolve, reject) => {
       const termsTransformer = new TermsTransformer();
-      result.quadStream.on('error', reject);
+      result.quadStream.on('error', (error: Error) => {
+        this.logger.error(
+          `An error occurred when querying "${this.distribution.endpoint}": ${error}`
+        );
+        resolve({distribution: this.distribution, terms: []});
+      });
       result.quadStream.on('data', (quad: RDF.Quad) =>
         termsTransformer.fromQuad(quad)
       );
