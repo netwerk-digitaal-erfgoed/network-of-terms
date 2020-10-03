@@ -12,8 +12,8 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - name: Update to latest @network-of-terms/network-of-terms-catalog
-        run: npm install @network-of-terms/network-of-terms-catalog
+      - name: Update to latest @netwerk-digitaal-erfgoed/network-of-terms-catalog
+        run: npm install @netwerk-digitaal-erfgoed/network-of-terms-catalog
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3
         with:
