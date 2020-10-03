@@ -19,3 +19,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: peter-evans/repository-dispatch@v1
+        with:
+          repository: netwerk-digitaal-erfgoed/network-of-terms-api
+          token: ${{ secrets.PAT }}
+          event-type: catalog_released
