@@ -14,9 +14,9 @@ jobs:
       - name: Update to latest @network-of-terms/network-of-terms-catalog
         run: npm install @network-of-terms/network-of-terms-catalog
       - name: Create pull request
-          uses: peter-evans/create-pull-request@v3
-          with:
-            title: 'Bump network-of-terms-catalog'
-            body: Update the Network of Terms catalog.
-            commit-message: 'Bump network-of-terms-catalog'
-            token: ${{ secrets.PAT }}
+        uses: peter-evans/create-pull-request@v3
+        with:
+          title: 'Bump network-of-terms-catalog'
+          body: Update the Network of Terms catalog.
+          commit-message: 'Bump network-of-terms-catalog'
+          token: ${{ secrets.PAT }}
