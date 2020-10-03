@@ -78,7 +78,7 @@ export class QueryTermsService {
       config
     )) as IActorQueryOperationOutputQuads;
 
-    return new Promise((resolve /*, reject */) => {
+    return new Promise(resolve => {
       const termsTransformer = new TermsTransformer();
       result.quadStream.on('error', (error: Error) => {
         this.logger.error(
