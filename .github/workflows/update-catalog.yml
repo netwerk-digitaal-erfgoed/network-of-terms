@@ -13,8 +13,6 @@ jobs:
           node-version: 12.x
       - name: Update to latest @network-of-terms/network-of-terms-catalog
         run: npm install @network-of-terms/network-of-terms-catalog
-      - run: npm run check
-      - run: npm run compile
       - name: Create pull request
           uses: peter-evans/create-pull-request@v3
           with:
