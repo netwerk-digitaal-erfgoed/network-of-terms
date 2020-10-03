@@ -1,7 +1,8 @@
 name: Update catalog
 
 on:
-  - workflow_dispatch
+  repository_dispatch:
+    types: [catalog_released]
 
 jobs:
   update:
