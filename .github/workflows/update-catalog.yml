@@ -17,7 +17,7 @@ jobs:
       - name: Create pull request
         uses: peter-evans/create-pull-request@v3
         with:
-          title: 'Bump network-of-terms-catalog'
+          title: 'feat: Bump network-of-terms-catalog'
           body: Update the Network of Terms catalog.
-          commit-message: 'Bump network-of-terms-catalog'
+          commit-message: 'feat: Bump network-of-terms-catalog'
           token: ${{ secrets.PAT }}
