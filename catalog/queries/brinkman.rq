@@ -1,3 +1,4 @@
+# do not remove this prefix - KB data uses old version of SKOS
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT { 
