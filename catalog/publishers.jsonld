@@ -14,6 +14,12 @@
       "alternateName": "RCE"
     },
     {
+      "@id": "https://www.niod.nl",
+      "@type": "Organization",
+      "name": "Instituut voor Oorlogs-, Holocaust- en Genocidestudies",
+      "alternateName": "NIOD"
+    },
+    {
       "@id": "http://www.wereldculturen.nl",
       "@type": "Organization",
       "name": "Stiching Nationaal Museum van Wereldculturen",
