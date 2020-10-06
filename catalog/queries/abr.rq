@@ -1,0 +1,55 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+  ?uri a skos:Concept ;
+  skos:prefLabel ?prefLabel ;
+  skos:altLabel ?altLabel ;
+  skos:hiddenLabel ?hiddenLabel ;
+  skos:scopeNote ?scopeNote ;
+  skos:exactMatch ?skos_exactMatch ;
+  skos:broader ?broader_uri ;
+  skos:narrower ?narrower_uri .
+
+  ?broader_uri skos:prefLabel ?broader_prefLabel .
+  
+  ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+}
+WHERE {
+  ?uri a <https://data.cultureelerfgoed.nl/vocab/id/abr#AbrConcept> .
+  ?uri ?predicate ?label .
+  VALUES ?predicate { skos:prefLabel skos:altLabel }
+  FILTER(LANG(?label) = "nl") 
+  FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+  OPTIONAL {
+    ?uri skos:prefLabel ?prefLabel .
+    FILTER(LANG(?prefLabel) = "nl") 
+  }
+  OPTIONAL {
+    ?uri skos:altLabel ?altLabel .
+    FILTER(LANG(?altLabel) = "nl") 
+  }
+  OPTIONAL {
+    ?uri skos:scopeNote ?scopeNote .
+    FILTER(LANG(?scopeNote) = "nl") 
+  }
+  OPTIONAL {
+    ?uri skos:hiddenLabel ?hiddenLabel .
+    FILTER(LANG(?hiddenLabel) = "nl") 
+  }
+  OPTIONAL {
+    ?uri skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel . 
+    FILTER(LANG(?broader_prefLabel) = "nl")
+  }
+  OPTIONAL {
+    ?uri skos:narrower ?narrower_uri .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel . 
+    FILTER(LANG(?narrower_prefLabel) = "nl")
+  }
+  OPTIONAL {
+    ?uri skos:exactMatch ?skos_exactMatch .
+  }
+}
+LIMIT 1000
+
+
