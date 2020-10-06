@@ -1,0 +1,34 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://data.cultureelerfgoed.nl/term/id/abr",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Archeologisch Basisregister"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "nl",
+      "@value": "ABR"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.cultureelerfgoed.nl"
+    }
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "query": "file://catalog/queries/abr.rq"
+      }
+    }
+  ]
+}
