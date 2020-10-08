@@ -1,4 +1,4 @@
-Prototype: [Network of Terms](https://www.netwerkdigitaalerfgoed.nl/en/knowledge-services/usable-digital-heritage/network-of-terms/) and [Comunica](https://comunica.linkeddatafragments.org/)
+Prototype: [Network of Terms](https://www.netwerkdigitaalerfgoed.nl/en/knowledge-services/usable-digital-heritage/network-of-terms/)
 ==============================
 
 This experimental application is published for examination and evaluation. It is not an official implementation.
