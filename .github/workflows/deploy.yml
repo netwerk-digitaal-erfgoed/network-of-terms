@@ -16,11 +16,7 @@ jobs:
       - name: Set variables
         id: vars
         run: |
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION_TAG=${GITHUB_REF#refs/tags/}
-          else
-            VERSION_TAG=latest
-          fi
+          VERSION_TAG=${GITHUB_REF#refs/tags/}
           echo "::set-output name=version_tag::${VERSION_TAG}"
           echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
           echo "::set-output name=docker_image::ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api"
@@ -46,6 +42,7 @@ jobs:
           tags: |
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.version_tag }}
+            ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.latest }}
 
       - uses: digitalocean/action-doctl@v2
         with:
