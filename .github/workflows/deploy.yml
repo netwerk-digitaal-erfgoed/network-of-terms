@@ -44,7 +44,7 @@ jobs:
           tags: |
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.version_tag }}
-            ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.latest }}
+            ${{ steps.vars.outputs.docker_image }}:latest
 
       - uses: digitalocean/action-doctl@v2
         with:
