@@ -9,7 +9,8 @@ export class Term {
     readonly hiddenLabels: RDF.Term[],
     readonly scopeNotes: RDF.Term[],
     readonly broaderTerms: RelatedTerm[],
-    readonly narrowerTerms: RelatedTerm[]
+    readonly narrowerTerms: RelatedTerm[],
+    readonly relatedTerms: RelatedTerm[]
   ) {}
 }
 
@@ -26,6 +27,7 @@ class SparqlResultTerm {
   scopeNotes: RDF.Term[] = [];
   broaderTerms: RDF.Term[] = [];
   narrowerTerms: RDF.Term[] = [];
+  relatedTerms: RDF.Term[] = [];
 }
 
 export class TermsTransformer {
@@ -45,6 +47,8 @@ export class TermsTransformer {
     ['http://www.w3.org/2008/05/skos#broader', 'broaderTerms'],
     ['http://www.w3.org/2004/02/skos/core#narrower', 'narrowerTerms'],
     ['http://www.w3.org/2008/05/skos#narrower', 'narrowerTerms'],
+    ['http://www.w3.org/2004/02/skos/core#related', 'relatedTerms'],
+    ['http://www.w3.org/2008/05/skos#related', 'relatedTerms'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -90,6 +94,9 @@ export class TermsTransformer {
           iri => this.termsMap.get(iri.value) as RelatedTerm
         ),
         term.narrowerTerms.map(
+          iri => this.termsMap.get(iri.value) as RelatedTerm
+        ),
+        term.relatedTerms.map(
           iri => this.termsMap.get(iri.value) as RelatedTerm
         )
       );

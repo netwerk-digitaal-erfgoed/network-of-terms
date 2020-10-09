@@ -55,6 +55,10 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
             uri: related.id.value,
             prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
           })),
+          related: term.relatedTerms.map(related => ({
+            uri: related.id.value,
+            prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+          })),
         };
       }),
     };

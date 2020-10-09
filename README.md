@@ -114,6 +114,10 @@ query Terms {
         uri
         prefLabel
       }
+      related {
+        uri
+        prefLabel
+      }
     }
   }
 }
