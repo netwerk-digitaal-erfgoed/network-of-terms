@@ -14,7 +14,7 @@ CONSTRUCT {
 
    ?broader_uri skos:prefLabel ?broader_prefLabel .
    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-   ?related_uri skos:related ?related_prefLabel .
+   ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE { 
   ?uri a skos:Concept .
