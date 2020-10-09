@@ -20,6 +20,7 @@ export const schema = `
     scopeNote: [String]!
     broader: [RelatedTerm]
     narrower: [RelatedTerm]
+    related: [RelatedTerm]
   }
   
   type RelatedTerm {
