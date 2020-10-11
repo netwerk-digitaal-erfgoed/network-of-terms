@@ -48,6 +48,12 @@
       "@type": "Organization",
       "name": "Muziekweb",
       "alternateName": "Muziekweb"
+    },
+    {
+      "@id": "https://www.muziekschatten.nl",
+      "@type": "Organization",
+      "name": "Muziekschatten",
+      "alternateName": "Stichting Omroep Muziekbibliotheek (SOM)"
     }
   ]
 }
