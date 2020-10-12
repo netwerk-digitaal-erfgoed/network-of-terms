@@ -16,7 +16,9 @@ This package is [available on NPM](https://www.npmjs.com/package/@netwerk-digita
 npm add @netwerk-digitaal-erfgoed/network-of-terms-catalog
 ```
 
-## Adding a dataset
+## Contributing
+
+### Adding a dataset
 
 * Create a `your-dataset.jsonld` file in the `catalog/` directory and add a description.
 * Create a `your-dataset.rq` in the `queries/` directory to hold the SPARQL query.
@@ -26,7 +28,31 @@ npm add @netwerk-digitaal-erfgoed/network-of-terms-catalog
   npm run test
   ```
 
-## Committing changes
+### Local development
+
+If you’d like to test your development version of the catalog inside
+a [network-of-terms-api](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api) checkout,
+you can do so by [linking](https://docs.npmjs.com/cli/link). 
+
+First, make sure you have checked out both this and the API repository:
+    
+    git clone git@github.com:netwerk-digitaal-erfgoed/network-of-terms-api.git
+    git clone git@github.com:netwerk-digitaal-erfgoed/network-of-terms-catalog.git
+
+Next, link the dependency: 
+
+    cd network-of-terms-catalog
+    npm link
+    cd ../network-of-terms-api
+    npm link @netwerk-digitaal-erfgoed/network-of-terms-catalog
+    
+After making changes to the catalog, make sure you compile them,
+so your changes are picked up in API:
+
+    cd network-of-terms-catalog
+    npm run compile    
+
+### Committing changes
 
 This repository follows [Semantic Versioning](https://semver.org). Tags and 
 [releases](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/releases) are
