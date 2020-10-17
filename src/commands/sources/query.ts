@@ -2,7 +2,7 @@ import {cli} from 'cli-ux';
 import {Command, flags} from '@oclif/command';
 import {DistributionsService} from '../../services/distributions';
 import * as Logger from '../../helpers/logger';
-import {QueryResult} from '../../services/query';
+import {QueryError, QueryResult} from '../../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../../services/terms';
 import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
@@ -38,6 +38,10 @@ export class QuerySourcesCommand extends Command {
 
   protected render(results: QueryResult[], catalog: Catalog): void {
     const rowsPerDistribution = results.map((result: QueryResult): Row[] => {
+      if (result instanceof QueryError) {
+        return [];
+      }
+
       return result.terms.map(
         (term: Term): Row => {
           return {

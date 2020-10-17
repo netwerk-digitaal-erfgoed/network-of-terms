@@ -133,23 +133,31 @@ query Terms {
         alternateName
       }
     }
-    terms {
-      uri
-      prefLabel
-      altLabel
-      hiddenLabel
-      scopeNote
-      broader {
-        uri
-        prefLabel
+    result {
+      __typename 
+      ... on Success {
+        terms {
+          uri
+          prefLabel
+          altLabel
+          hiddenLabel
+          scopeNote
+          broader {
+            uri
+            prefLabel
+          }
+          narrower {
+            uri
+            prefLabel
+          }
+          related {
+            uri
+            prefLabel
+          }
+        }
       }
-      narrower {
-        uri
-        prefLabel
-      }
-      related {
-        uri
-        prefLabel
+      ... on Error {
+        message
       }
     }
   }
@@ -169,12 +177,20 @@ query Terms {
         alternateName
       }
     }
-    terms {
-      uri
-      prefLabel
-      altLabel
-      hiddenLabel
-      scopeNote
+    result {
+      __typename
+      ... on Success {
+        terms {
+          uri
+          prefLabel
+          altLabel
+          hiddenLabel
+          scopeNote
+        }
+      }
+      ... on Error {
+        message
+      }
     }
   }
 }

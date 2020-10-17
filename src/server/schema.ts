@@ -30,11 +30,30 @@ export const schema = `
 
   type Terms {
     source: Source!
-    terms: [Term]!
+    terms: [Term]! @deprecated(reason: "Use 'result' instead")
+    result: Result!
   }
 
   type Query {
     terms(sources: [ID]!, query: String!): [Terms]
     sources: [Source]
+  }
+  
+  union Result = Success | TimeoutError | ServerError
+  
+  type Success {
+    terms: [Term]
+  }
+  
+  type TimeoutError implements Error {
+    message: String!
+  }
+  
+  type ServerError implements Error {
+    message: String!
+  }
+  
+  interface Error {
+    message: String!
   }
 `;

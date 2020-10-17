@@ -30,10 +30,23 @@ const schemaConstructor = Joi.object({
   comunica: Joi.object().required(),
 });
 
-export interface QueryResult {
-  distribution: Distribution;
-  terms: Term[];
+export type QueryResult = Success | TimeoutError | ServerError;
+
+class Result {
+  constructor(readonly distribution: Distribution) {}
 }
+
+export class Success {
+  constructor(readonly distribution: Distribution, readonly terms: Term[]) {}
+}
+
+export class QueryError extends Result {
+  constructor(readonly distribution: Distribution, readonly message: string) {
+    super(distribution);
+  }
+}
+export class TimeoutError extends QueryError {}
+export class ServerError extends QueryError {}
 
 export class QueryTermsService {
   protected logger: Pino.Logger;
@@ -52,7 +65,7 @@ export class QueryTermsService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected getConfig(): any {
     const logger = new LoggerPino({logger: this.logger});
-    const config = {
+    return {
       log: logger,
       sources: [
         {
@@ -64,18 +77,16 @@ export class QueryTermsService {
         '?query': literal(this.query),
       }),
     };
-    return config;
   }
 
   async run(): Promise<QueryResult> {
     this.logger.info(
       `Querying "${this.distribution.endpoint}" with "${this.query}"...`
     );
-    const config = this.getConfig();
     const timer = new Hoek.Bench();
     const result = (await this.engine.query(
       this.distribution.query,
-      config
+      this.getConfig()
     )) as IActorQueryOperationOutputQuads;
 
     return new Promise(resolve => {
@@ -84,7 +95,7 @@ export class QueryTermsService {
         this.logger.error(
           `An error occurred when querying "${this.distribution.endpoint}": ${error}`
         );
-        resolve({distribution: this.distribution, terms: []});
+        resolve(new ServerError(this.distribution, error.message));
       });
       result.quadStream.on('data', (quad: RDF.Quad) =>
         termsTransformer.fromQuad(quad)
@@ -96,7 +107,7 @@ export class QueryTermsService {
             this.distribution.endpoint
           }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
-        resolve({distribution: this.distribution, terms});
+        resolve(new Success(this.distribution, terms));
       });
     });
   }

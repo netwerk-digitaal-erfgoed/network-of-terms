@@ -1,5 +1,10 @@
 import {DistributionsService} from '../services/distributions';
-import {QueryResult} from '../services/query';
+import {
+  QueryError,
+  QueryResult,
+  ServerError,
+  TimeoutError,
+} from '../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../services/terms';
 import {
@@ -29,38 +34,54 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     query: args.query,
   });
   return results.map((result: QueryResult) => {
+    if (result instanceof QueryError) {
+      return {
+        source: source(
+          result.distribution,
+          context.catalog.getDatasetByDistributionIri(result.distribution.iri)
+        ),
+        result,
+        terms: [], // For BC.
+      };
+    }
+
+    const terms = result.terms.map((term: Term) => {
+      return {
+        uri: term.id!.value,
+        prefLabel: term.prefLabels.map(
+          (prefLabel: RDF.Term) => prefLabel.value
+        ),
+        altLabel: term.altLabels.map((altLabel: RDF.Term) => altLabel.value),
+        hiddenLabel: term.hiddenLabels.map(
+          (hiddenLabel: RDF.Term) => hiddenLabel.value
+        ),
+        scopeNote: term.scopeNotes.map(
+          (scopeNote: RDF.Term) => scopeNote.value
+        ),
+        broader: term.broaderTerms.map(related => ({
+          uri: related.id.value,
+          prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+        })),
+        narrower: term.narrowerTerms.map(related => ({
+          uri: related.id.value,
+          prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+        })),
+        related: term.relatedTerms.map(related => ({
+          uri: related.id.value,
+          prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+        })),
+      };
+    });
+
     return {
       source: source(
         result.distribution,
         context.catalog.getDatasetByDistributionIri(result.distribution.iri)
       ),
-      terms: result.terms.map((term: Term) => {
-        return {
-          uri: term.id!.value,
-          prefLabel: term.prefLabels.map(
-            (prefLabel: RDF.Term) => prefLabel.value
-          ),
-          altLabel: term.altLabels.map((altLabel: RDF.Term) => altLabel.value),
-          hiddenLabel: term.hiddenLabels.map(
-            (hiddenLabel: RDF.Term) => hiddenLabel.value
-          ),
-          scopeNote: term.scopeNotes.map(
-            (scopeNote: RDF.Term) => scopeNote.value
-          ),
-          broader: term.broaderTerms.map(related => ({
-            uri: related.id.value,
-            prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
-          })),
-          narrower: term.narrowerTerms.map(related => ({
-            uri: related.id.value,
-            prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
-          })),
-          related: term.relatedTerms.map(related => ({
-            uri: related.id.value,
-            prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
-          })),
-        };
-      }),
+      terms, // For BC.
+      result: {
+        terms: terms,
+      },
     };
   });
 }
@@ -82,5 +103,18 @@ export const resolvers = {
   Query: {
     sources: listSources,
     terms: queryTerms,
+  },
+  Result: {
+    resolveType(result: QueryResult) {
+      if (result instanceof TimeoutError) {
+        return 'TimeoutError';
+      }
+
+      if (result instanceof ServerError) {
+        return 'ServerError';
+      }
+
+      return 'Success';
+    },
   },
 };
