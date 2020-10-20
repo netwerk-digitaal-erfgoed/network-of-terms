@@ -30,9 +30,9 @@ const schemaConstructor = Joi.object({
   comunica: Joi.object().required(),
 });
 
-export type Result = Success | TimeoutError | ServerError;
+export type TermsResult = Terms | TimeoutError | ServerError;
 
-export class Success {
+export class Terms {
   constructor(readonly distribution: Distribution, readonly terms: Term[]) {}
 }
 
@@ -73,7 +73,7 @@ export class QueryTermsService {
     };
   }
 
-  async run(): Promise<Result> {
+  async run(): Promise<TermsResult> {
     this.logger.info(
       `Querying "${this.distribution.endpoint}" with "${this.query}"...`
     );
@@ -101,7 +101,7 @@ export class QueryTermsService {
             this.distribution.endpoint
           }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
-        resolve(new Success(this.distribution, terms));
+        resolve(new Terms(this.distribution, terms));
       });
     });
   }

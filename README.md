@@ -135,7 +135,7 @@ query Terms {
     }
     result {
       __typename 
-      ... on Success {
+      ... on Terms {
         terms {
           uri
           prefLabel
@@ -179,7 +179,7 @@ query Terms {
     }
     result {
       __typename
-      ... on Success {
+      ... on Terms {
         terms {
           uri
           prefLabel

@@ -28,20 +28,20 @@ export const schema = `
     prefLabel: [String]!
   }
 
-  type Terms {
+  type TermsQueryResult {
     source: Source!
     terms: [Term]! @deprecated(reason: "Use 'result' instead")
-    result: Result!
+    result: TermsResult!
   }
 
   type Query {
-    terms(sources: [ID]!, query: String!): [Terms]
+    terms(sources: [ID]!, query: String!): [TermsQueryResult]
     sources: [Source]
   }
   
-  union Result = Success | TimeoutError | ServerError
+  union TermsResult = Terms | TimeoutError | ServerError
   
-  type Success {
+  type Terms {
     terms: [Term]
   }
   
