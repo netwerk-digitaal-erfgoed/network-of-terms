@@ -30,23 +30,17 @@ const schemaConstructor = Joi.object({
   comunica: Joi.object().required(),
 });
 
-export type QueryResult = Success | TimeoutError | ServerError;
-
-class Result {
-  constructor(readonly distribution: Distribution) {}
-}
+export type Result = Success | TimeoutError | ServerError;
 
 export class Success {
   constructor(readonly distribution: Distribution, readonly terms: Term[]) {}
 }
 
-export class QueryError extends Result {
-  constructor(readonly distribution: Distribution, readonly message: string) {
-    super(distribution);
-  }
+export class Error {
+  constructor(readonly distribution: Distribution, readonly message: string) {}
 }
-export class TimeoutError extends QueryError {}
-export class ServerError extends QueryError {}
+export class TimeoutError extends Error {}
+export class ServerError extends Error {}
 
 export class QueryTermsService {
   protected logger: Pino.Logger;
@@ -79,7 +73,7 @@ export class QueryTermsService {
     };
   }
 
-  async run(): Promise<QueryResult> {
+  async run(): Promise<Result> {
     this.logger.info(
       `Querying "${this.distribution.endpoint}" with "${this.query}"...`
     );

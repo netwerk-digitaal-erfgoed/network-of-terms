@@ -1,10 +1,5 @@
 import {DistributionsService} from '../services/distributions';
-import {
-  QueryError,
-  QueryResult,
-  ServerError,
-  TimeoutError,
-} from '../services/query';
+import {Error, Result, ServerError, TimeoutError} from '../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../services/terms';
 import {
@@ -33,8 +28,8 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     ),
     query: args.query,
   });
-  return results.map((result: QueryResult) => {
-    if (result instanceof QueryError) {
+  return results.map((result: Result) => {
+    if (result instanceof Error) {
       return {
         source: source(
           result.distribution,
@@ -105,7 +100,7 @@ export const resolvers = {
     terms: queryTerms,
   },
   Result: {
-    resolveType(result: QueryResult) {
+    resolveType(result: Result) {
       if (result instanceof TimeoutError) {
         return 'TimeoutError';
       }
