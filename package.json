@@ -15,7 +15,7 @@
     "@comunica/actor-init-sparql": "^1.17.0",
     "@comunica/actor-init-sparql-rdfjs": "^1.18.0",
     "@comunica/bus-query-operation": "^1.17.0",
-    "@comunica/core": "^1.17.0",
+    "@comunica/core": "^1.18.0",
     "@hapi/hoek": "^9.1.0",
     "@hapi/joi": "17.x.x",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "^4.6.1",
