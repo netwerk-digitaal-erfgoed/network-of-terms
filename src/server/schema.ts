@@ -28,13 +28,32 @@ export const schema = `
     prefLabel: [String]!
   }
 
-  type Terms {
+  type TermsQueryResult {
     source: Source!
-    terms: [Term]!
+    terms: [Term]! @deprecated(reason: "Use 'result' instead")
+    result: TermsResult!
   }
 
   type Query {
-    terms(sources: [ID]!, query: String!): [Terms]
+    terms(sources: [ID]!, query: String!): [TermsQueryResult]
     sources: [Source]
+  }
+  
+  union TermsResult = Terms | TimeoutError | ServerError
+  
+  type Terms {
+    terms: [Term]
+  }
+  
+  type TimeoutError implements Error {
+    message: String!
+  }
+  
+  type ServerError implements Error {
+    message: String!
+  }
+  
+  interface Error {
+    message: String!
   }
 `;

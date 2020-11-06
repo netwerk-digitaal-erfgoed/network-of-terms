@@ -1,6 +1,6 @@
 import * as Joi from '@hapi/joi';
 import Pino from 'pino';
-import {QueryResult, QueryTermsService} from './query';
+import {TermsResult, QueryTermsService} from './query';
 import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {IActorInitSparqlArgs} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
 
@@ -48,7 +48,7 @@ export class DistributionsService {
     this.comunica = args.comunica;
   }
 
-  async query(options: QueryOptions): Promise<QueryResult> {
+  async query(options: QueryOptions): Promise<TermsResult> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(`Preparing to query source "${args.source}"...`);
     const dataset = await this.catalog.getDatasetByDistributionIri(args.source);
@@ -65,7 +65,7 @@ export class DistributionsService {
     return queryService.run();
   }
 
-  async queryAll(options: QueryAllOptions): Promise<QueryResult[]> {
+  async queryAll(options: QueryAllOptions): Promise<TermsResult[]> {
     const args = Joi.attempt(options, schemaQueryAll);
     const requests = args.sources.map((source: IRI) =>
       this.query({source, query: args.query})
