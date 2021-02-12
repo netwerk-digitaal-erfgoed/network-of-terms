@@ -1,0 +1,28 @@
+{
+    "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+    "@id": "http://data.beeldengeluid.nl/gtaa#onderwerpen",
+    "@type": "Dataset",
+    "name": [
+      {
+        "@language": "nl",
+        "@value": "GTAA Onderwerpen"
+      }
+    ],
+    "creator": [
+      {
+        "@id": "https://www.beeldengeluid.nl/"
+      }
+    ],
+    "distribution": [
+      {
+        "@id": "https://data.netwerkdigitaalerfgoed.nl/beeldengeluid/gtaa-onderwerpen/sparql",
+        "@type": "DataDownload",
+        "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/beeldengeluid/gtaa-onderwerpen/services/gtaa-onderwerpen/sparql",
+        "encodingFormat": "application/sparql-query",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/gtaa.rq"
+        }
+      }
+    ]
+  }
