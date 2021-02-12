@@ -54,6 +54,12 @@
       "@type": "Organization",
       "name": "Stichting Omroep Muziek",
       "alternateName": "SOM"
+    },
+    {
+      "@id": "https://www.beeldengeluid.nl/",
+      "@type": "Organization",
+      "name": "Nederlands Instituut voor Beeld en Geluid",
+      "alternateName": "Beeld en Geluid"
     }
   ]
 }
