@@ -9,19 +9,17 @@ CONSTRUCT {
          skos:scopeNote ?rdfs_comment .
 }
 WHERE {
-    GRAPH <http://data.bibliotheken.nl/thesp/> {
-        ?uri a schema:Person .
-        ?uri ?predicate ?label .
-        VALUES ?predicate { rdfs:label schema:name schema:alternateName foaf:name}
+    ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/persons> .
+    ?uri ?predicate ?label .
+    VALUES ?predicate { rdfs:label schema:name schema:alternateName foaf:name}
 
-        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-        FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
 
-        OPTIONAL { ?uri rdfs:label ?rdfs_label }
-        OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
-        OPTIONAL { ?uri schema:name ?schema_name }
-        OPTIONAL { ?uri foaf:name ?foaf_name }
-        OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
-   }
+    OPTIONAL { ?uri rdfs:label ?rdfs_label }
+    OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
+    OPTIONAL { ?uri schema:name ?schema_name }
+    OPTIONAL { ?uri foaf:name ?foaf_name }
+    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
 }
 LIMIT 1000
