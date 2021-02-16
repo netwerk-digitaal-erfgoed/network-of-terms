@@ -8,7 +8,7 @@ describe('Catalog', () => {
   });
 
   it('can list datasets', () => {
-    expect(catalog.datasets.length).toBe(15);
+    expect(catalog.datasets.length).toBe(17);
   });
 
   it('can retrieve datasets by IRI', () => {
@@ -28,7 +28,9 @@ describe('Catalog', () => {
   });
 
   it('can retrieve distributions by IRI', () => {
-    const distributionIri = new IRI('https://www.wikidata.org/sparql');
+    const distributionIri = new IRI(
+      'https://query.wikidata.org/sparql#entities-all'
+    );
     const wikidata = catalog.getDatasetByDistributionIri(distributionIri)!;
     const distribution = wikidata.getDistributionByIri(distributionIri)!;
     expect(distribution).toBeInstanceOf(SparqlDistribution);

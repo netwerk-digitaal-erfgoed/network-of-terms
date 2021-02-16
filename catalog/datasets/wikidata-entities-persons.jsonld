@@ -1,11 +1,11 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://www.wikidata.org",
+  "@id": "https://www.wikidata.org#entities-persons",
   "@type": "Dataset",
   "name": [
     {
-      "@language": "en",
-      "@value": "Wikidata Entities"
+      "@language": "nl",
+      "@value": "Wikidata Entiteiten - Alleen personen"      
     }
   ],
   "creator": [
@@ -15,13 +15,13 @@
   ],
   "distribution": [
     {
-      "@id": "https://www.wikidata.org/sparql",
+      "@id": "https://query.wikidata.org/sparql#entities-persons",
       "@type": "DataDownload",
       "contentUrl": "https://query.wikidata.org/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": {
         "@type": "SearchAction",
-        "query": "file://catalog/queries/wikidata-entities.rq"
+        "query": "file://catalog/queries/wikidata-entities-persons.rq"
       }
     }
   ]
