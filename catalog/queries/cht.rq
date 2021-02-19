@@ -12,12 +12,13 @@ CONSTRUCT {
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
 WHERE {
-    ?uri skos:prefLabel ?prefLabel
-    FILTER(LANG(?prefLabel) = "nl")
-    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)))
+    ?uri ?predicate ?label .
+    VALUES ?predicate { skos:prefLabel skos:altLabel }
+    FILTER(LANG(?label) = "nl")
+    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
     OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote .
-        FILTER(LANG(?scopeNote) = "nl")
+        ?uri skos:prefLabel ?prefLabel .
+        FILTER(LANG(?prefLabel) = "nl")
     }
     OPTIONAL {
         ?uri skos:altLabel ?altLabel .
@@ -26,6 +27,10 @@ WHERE {
     OPTIONAL {
         ?uri skos:hiddenLabel ?hiddenLabel .
         FILTER(LANG(?hiddenLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote .
+        FILTER(LANG(?scopeNote) = "nl")
     }
     OPTIONAL {
         ?uri skos:broader ?broader_uri .
