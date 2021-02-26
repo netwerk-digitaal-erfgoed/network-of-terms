@@ -14,7 +14,7 @@
   "dependencies": {
     "@comunica/actor-init-sparql": "^1.19.0",
     "@comunica/actor-init-sparql-rdfjs": "^1.18.0",
-    "@comunica/bus-query-operation": "^1.19.0",
+    "@comunica/bus-query-operation": "^1.19.2",
     "@comunica/core": "^1.19.0",
     "@hapi/hoek": "^9.1.0",
     "@hapi/joi": "17.x.x",
@@ -37,7 +37,7 @@
     "@types/pino": "^6.3.5",
     "@types/rdf-js": "^4.0.0",
     "globby": "11.x.x",
-    "gts": "^3.0.2",
+    "gts": "^3.1.0",
     "ts-node-dev": "^1.0.0",
     "typescript": "^4.1.2"
   },
