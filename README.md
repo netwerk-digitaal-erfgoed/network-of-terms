@@ -1,8 +1,8 @@
-Prototype: [Network of Terms](https://www.netwerkdigitaalerfgoed.nl/en/knowledge-services/usable-digital-heritage/network-of-terms/)
+Prototype: Network of Terms
 ==============================
 
 This prototype delivers a [GraphQL](https://graphql.org) API and command-line interface
-for searching the [Network of Terms](https://www.netwerkdigitaalerfgoed.nl/en/knowledge-services/usable-digital-heritage/network-of-terms/).
+for searching the Network of Terms.
 
 The application is available at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
 It is published for examination and evaluation. It is not an official implementation.
