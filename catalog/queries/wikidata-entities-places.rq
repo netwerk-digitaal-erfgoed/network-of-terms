@@ -28,11 +28,10 @@ WHERE {
         
         ?item wikibase:apiOutputItem mwapi:item .
     }
-    # We are looking for places, because there are types possible (cities, villages, etc) we filter 
-    # on subclasses (P279) of "human settlement" (Q486972).
-    ?item wdt:P31 ?instanceOf .
-    ?instanceOf wdt:P279+ wd:Q486972 .
-    
+    # We are looking for places; because there are many types possible (cities, villages, etc) we filter 
+    # on instances (P31) or subclasses (P279) of "human settlement" (Q486972)
+    ?item wdt:P31/wdt:P279* wd:Q486972 .
+
     {
       # Select places in the Netherlands (Q55)
       ?item wdt:P17 wd:Q55 .
