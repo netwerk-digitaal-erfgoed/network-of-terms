@@ -8,7 +8,7 @@ PREFIX wd: <http://www.wikidata.org/entity/>
 
 CONSTRUCT {
     # Wikidata seems to have a problem with the short syntax for construct queries
-    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list! 
+    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
     ?item a skos:Concept .
     ?item skos:prefLabel ?prefLabel .
     ?item skos:altLabel ?altLabel .
@@ -17,20 +17,18 @@ CONSTRUCT {
 WHERE {
     SERVICE wikibase:mwapi {
         bd:serviceParam wikibase:endpoint "www.wikidata.org" .
-        bd:serviceParam wikibase:api "Search" .
-        # Note: 
         # Instead of using the "EntitySearch" API we use a more generic text search option
         # To avoid noise we will filter the resultset on the occurence of the search string
         # in either prefLabel or altLabel
+        bd:serviceParam wikibase:api "Search" .
         bd:serviceParam mwapi:language "nl" .
         bd:serviceParam mwapi:srsearch ?query .
-        
         ?item wikibase:apiOutputItem mwapi:title .
     }
     # Only select instances of type "human"
     ?item wdt:P31 wd:Q5 .
-  
-    ?item rdfs:label ?prefLabel .  
+
+    ?item rdfs:label ?prefLabel .
     FILTER(LANG(?prefLabel) = "nl")
     OPTIONAL {
         ?item skos:altLabel ?altLabel .

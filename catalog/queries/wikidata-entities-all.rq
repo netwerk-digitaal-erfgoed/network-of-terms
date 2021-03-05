@@ -6,7 +6,7 @@ PREFIX wikibase: <http://wikiba.se/ontology#>
 
 CONSTRUCT {
     # Wikidata seems to have a problem with the short syntax for construct queries
-    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list! 
+    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
     ?item a skos:Concept .
     ?item skos:prefLabel ?rdfs_label .
     ?item skos:altLabel ?altLabel .
@@ -14,10 +14,10 @@ CONSTRUCT {
 }
 WHERE {
     SERVICE wikibase:mwapi {
-        bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
-        wikibase:api "EntitySearch" ;
-        mwapi:search ?query ;
-        mwapi:language "nl" .
+        bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+        bd:serviceParam wikibase:api "EntitySearch" .
+        bd:serviceParam mwapi:language "nl" .
+        bd:serviceParam mwapi:search ?query .
         ?item wikibase:apiOutputItem mwapi:item .
     }
     ?item rdfs:label ?rdfs_label .
