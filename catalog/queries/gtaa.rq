@@ -17,6 +17,8 @@ WHERE {
     ?uri ?predicate ?label .
     VALUES ?predicate { skos:prefLabel skos:altLabel }
     FILTER(LANG(?label) = "nl")
+
+    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
     FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
