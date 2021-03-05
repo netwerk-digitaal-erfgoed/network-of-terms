@@ -39,7 +39,7 @@
     "globby": "11.x.x",
     "gts": "^3.1.0",
     "ts-node-dev": "^1.0.0",
-    "typescript": "^4.1.2"
+    "typescript": "^4.2.3"
   },
   "scripts": {
     "check": "gts check",
