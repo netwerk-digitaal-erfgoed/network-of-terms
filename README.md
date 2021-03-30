@@ -77,7 +77,7 @@ bin/run sources:query --uris http://vocab.getty.edu/aat/sparql --query "schilder
 bin/run sources:query --uris http://vocab.getty.edu/aat/sparql --query "cartoon* OR prent*"
 
 # Wikidata Entities: query SPARQL endpoint
-bin/run sources:query --uris https://www.wikidata.org/sparql --query Rembrandt
+bin/run sources:query --uris https://query.wikidata.org/sparql#entities-all --query Rembrandt
 ```
 
 Add `--loglevel` to the commands to see what's going on underneath. For example:
