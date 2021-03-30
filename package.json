@@ -1,6 +1,6 @@
 {
-  "name": "network-of-terms-comunica",
-  "description": "Prototype: Network of Terms and Comunica",
+  "name": "network-of-terms-api",
+  "description": "Network of Terms",
   "version": "1.0.0",
   "bin": "./bin/run",
   "engines": {

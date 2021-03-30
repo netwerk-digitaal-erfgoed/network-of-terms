@@ -1,11 +1,8 @@
-Prototype: Network of Terms
+Network of Terms
 ==============================
 
-This prototype delivers a [GraphQL](https://graphql.org) API and command-line interface
-for searching the Network of Terms.
-
-The application is available at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
-It is published for examination and evaluation. It is not an official implementation.
+This application delivers a [GraphQL](https://graphql.org) API and command-line interface
+for searching the Network of Terms. It is available at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
 
 ## Getting started
 
@@ -19,21 +16,21 @@ If you just want to search the Network of Terms using a web interface, have a lo
 If you’re a developer and want to use the Network of Terms API in your apps,
 you can test the API and try GraphQL queries at the [API Playground](https://termennetwerk-api.netwerkdigitaalerfgoed.nl).
 
-You can connect your client apps to the [GraphQL endpoint](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/graphql).  
+You can connect your client apps to the [GraphQL endpoint](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/graphql).
 
 ### Host it yourself
 
 If you want to run the Network of Terms locally, or host it yourself, you can run our Docker image:
 
     docker run -p 3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api
-    
+
 and open http://localhost:3123 in your browser for the API Playground.
-    
+
 While this repository follows [Semantic Versioning](https://semver.org), you may want to stick to a
 [tagged version](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api/releases):
 
     docker run -p 3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api:v1.7.0
-    
+
 ### Contribute
 
 If you want to contribute to this repository, please continue reading.
@@ -134,7 +131,7 @@ query Terms {
       }
     }
     result {
-      __typename 
+      __typename
       ... on Terms {
         terms {
           uri
