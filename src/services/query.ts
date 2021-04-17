@@ -95,9 +95,7 @@ export class QueryTermsService {
         termsTransformer.fromQuad(quad)
       );
       result.quadStream.on('end', () => {
-        const terms = termsTransformer
-          .asArray()
-          .sort(alphabeticallyByPrefLabel);
+        const terms = termsTransformer.asArray().sort(alphabeticallyByLabel);
         this.logger.info(
           `Found ${terms.length} terms matching "${this.query}" in "${
             this.distribution.endpoint
@@ -109,8 +107,12 @@ export class QueryTermsService {
   }
 }
 
-const alphabeticallyByPrefLabel = (a: Term, b: Term) => {
+const alphabeticallyByLabel = (a: Term, b: Term) => {
   const prefLabelA = a.prefLabels[0]?.value ?? '';
+  const altLabelA = a.altLabels[0]?.value ?? '';
+  const sortLabelA = prefLabelA.concat(altLabelA);
   const prefLabelB = b.prefLabels[0]?.value ?? '';
-  return prefLabelA.localeCompare(prefLabelB);
+  const altLabelB = b.altLabels[0]?.value ?? '';
+  const sortLabelB = prefLabelB.concat(altLabelB);
+  return sortLabelA.localeCompare(sortLabelB);
 };
