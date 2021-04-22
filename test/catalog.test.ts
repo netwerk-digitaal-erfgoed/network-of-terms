@@ -8,7 +8,7 @@ describe('Catalog', () => {
   });
 
   it('can list datasets', () => {
-    expect(catalog.datasets.length).toBe(17);
+    expect(catalog.datasets.length).toBe(18);
   });
 
   it('can retrieve datasets by IRI', () => {

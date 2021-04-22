@@ -1,0 +1,28 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://www.wikidata.org#entities-streets",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Wikidata: straten in Nederland"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.wikidata.org/entity/Q180"
+    }
+  ],
+  "distribution": [
+    {
+      "@id": "https://query.wikidata.org/sparql#entities-streets",
+      "@type": "DataDownload",
+      "contentUrl": "https://query.wikidata.org/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "query": "file://catalog/queries/wikidata-entities-streets.rq"
+      }
+    }
+  ]
+}
