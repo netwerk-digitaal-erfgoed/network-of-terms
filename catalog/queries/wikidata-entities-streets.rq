@@ -12,6 +12,7 @@ CONSTRUCT {
     ?item a skos:Concept .
     ?item skos:prefLabel ?streetName .
     ?item skos:altLabel ?fullName .
+    ?item skos:altLabel ?altLabel .
     ?item skos:scopeNote ?description .
 }
 WHERE {
@@ -46,11 +47,15 @@ WHERE {
         ?item schema:description ?description
         FILTER(LANG(?description) = "nl")
     }
+    OPTIONAL {
+        ?item skos:altLabel ?altLabel
+        FILTER(LANG(?altLabel) = "nl")
+    }
     ?item rdfs:label ?streetName .
     ?administration rdfs:label ?administrationName .
     FILTER LANGMATCHES(LANG(?streetName),"nl")
     FILTER LANGMATCHES(LANG(?administrationName),"nl")
-    FILTER STRSTARTS(LCASE(?streetName),LCASE(?query))
+    FILTER (STRSTARTS(LCASE(?streetName),LCASE(?query))||STRSTARTS(LCASE(?altLabel),LCASE(?query)))
     BIND(
       IF(
         BOUND(?locationName),
@@ -59,6 +64,5 @@ WHERE {
       )
       as ?fullName 
     )
-    # limit the result set to matches in the prefLabels or altLabels
 }
 LIMIT 1000
