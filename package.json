@@ -28,7 +28,7 @@
     "pino": "^6.11.3",
     "pino-pretty": "^4.7.1",
     "pretty-ms": "^7.0.1",
-    "rdf-parse": "^1.6.1",
+    "rdf-parse": "^1.8.0",
     "rdf-store-stream": "^1.2.0"
   },
   "devDependencies": {
