@@ -90,9 +90,9 @@ export class TermsTransformer {
         term.altLabels,
         term.hiddenLabels,
         term.scopeNotes,
-        term.broaderTerms.reduce(this.mapRelatedTerms, []),
-        term.narrowerTerms.reduce(this.mapRelatedTerms, []),
-        term.relatedTerms.reduce(this.mapRelatedTerms, [])
+        this.mapRelatedTerms(term.broaderTerms),
+        this.mapRelatedTerms(term.narrowerTerms),
+        this.mapRelatedTerms(term.relatedTerms)
       );
     });
   }
@@ -103,13 +103,14 @@ export class TermsTransformer {
    * Related terms can be incomplete because of the SPARQL query limit (see
    * https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api/issues/36).
    */
-  private mapRelatedTerms = (acc: RelatedTerm[], iri: RDF.Term) => {
-    const relatedTerm: RelatedTerm = this.termsMap.get(
-      iri.value
-    ) as RelatedTerm;
-    if (relatedTerm) {
-      acc.push(relatedTerm);
-    }
-    return acc;
-  };
+  private mapRelatedTerms = (terms: RDF.Term[]) =>
+    terms.reduce((acc: RelatedTerm[], iri: RDF.Term) => {
+      const relatedTerm: RelatedTerm = this.termsMap.get(
+        iri.value
+      ) as RelatedTerm;
+      if (relatedTerm) {
+        acc.push(relatedTerm);
+      }
+      return acc;
+    }, []);
 }
