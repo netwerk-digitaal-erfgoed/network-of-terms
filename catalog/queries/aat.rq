@@ -36,7 +36,7 @@ WHERE {
         ?scopeNote_uri rdf:value ?scopeNote .
     }
     OPTIONAL {
-        ?uri gvp:broaderPreferredExtended/skosxl:prefLabel ?broader_uri .
+        ?uri gvp:broaderPreferred/skosxl:prefLabel ?broader_uri .
         ?broader_uri dcterms:language aat:300388256 . # Dutch (language)
         ?broader_uri skosxl:literalForm ?broader_prefLabel .
     }
