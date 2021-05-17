@@ -26,7 +26,7 @@
     "fastify-cors": "^5.1.0",
     "fastify-gql": "^5.8.2",
     "pino": "^6.11.3",
-    "pino-pretty": "^4.7.1",
+    "pino-pretty": "^4.8.0",
     "pretty-ms": "^7.0.1",
     "rdf-parse": "^1.8.0",
     "rdf-store-stream": "^1.2.0"
