@@ -12,7 +12,7 @@
     "!build/**/*.map"
   ],
   "dependencies": {
-    "@comunica/actor-init-sparql": "^1.20.0",
+    "@comunica/actor-init-sparql": "^1.21.1",
     "@comunica/actor-init-sparql-rdfjs": "^1.21.1",
     "@comunica/bus-query-operation": "^1.21.1",
     "@comunica/core": "^1.21.1",
