@@ -1,48 +1,61 @@
-# do not remove this prefix - KB data uses old version of SKOS
+# Do not remove this prefix - KB data uses old version of SKOS
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
-  ?uri a skos:Concept ;
-       skos:prefLabel ?rdfs_label ;
-       skos:altLabel ?schema_name ;
-       skos:altLabel ?schema_alternateName ;
-       skos:exactMatch ?exactMatch ;
-       skos:broader ?broader_uri ;
-       skos:related ?related_uri ;
-       skos:narrower ?narrower_uri ;
-       skos:scopeNote ?scopeNote .
-   ?broader_uri skos:prefLabel ?broader_prefLabel .
-   ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-   ?related_uri skos:prefLabel ?related_prefLabel .
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:hiddenLabel ?hiddenLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri ;
+        skos:related ?related_uri ;
+        skos:exactMatch ?exactMatch .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
     ?uri a skos:Concept .
     ?uri skos:inScheme <http://data.bibliotheken.nl/id/scheme/brinkman> .
     ?uri ?predicate ?label .
-
-    # skos:prefLabel is ignored here because its values seem to be equal to rfds:label
-    VALUES ?predicate { rdfs:label schema:name schema:alternateName }
+    VALUES ?predicate { skos:prefLabel skos:altLabel }
+    FILTER(LANG(?label) = "nl")
 
     # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
     FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
 
-    OPTIONAL { ?uri rdfs:label ?rdfs_label }
-    OPTIONAL { ?uri schema:name ?schema_name }
-    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
-    OPTIONAL { ?uri skos:exactMatch ?exactMatch }
+    OPTIONAL {
+        ?uri skos:prefLabel ?prefLabel .
+        FILTER(LANG(?prefLabel) = "nl" )
+    }
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:hiddenLabel ?hiddenLabel .
+        FILTER(LANG(?hiddenLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote .
+        FILTER(LANG(?scopeNote) = "nl")
+    }
     OPTIONAL {
         ?uri skos:broader ?broader_uri .
-        ?broader_uri rdfs:label ?broader_prefLabel .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+        FILTER(LANG(?broader_prefLabel) = "nl")
     }
     OPTIONAL {
         ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri rdfs:label ?narrower_prefLabel .
+        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+        FILTER(LANG(?narrower_prefLabel) = "nl")
     }
     OPTIONAL {
         ?uri skos:related ?related_uri .
-        ?related_uri rdfs:label ?related_prefLabel .
+        ?related_uri skos:prefLabel ?related_prefLabel .
+        FILTER(LANG(?related_prefLabel) = "nl")
     }
-    OPTIONAL { ?uri rdfs:comment ?scopeNote }
-    OPTIONAL { ?uri schema:alternateName | schema:name ?altLabel }
+    OPTIONAL { ?uri skos:exactMatch ?exactMatch }
 }
 LIMIT 1000
