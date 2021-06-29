@@ -12,7 +12,7 @@
     "!build/**/*.map"
   ],
   "dependencies": {
-    "@comunica/actor-init-sparql": "^1.21.1",
+    "@comunica/actor-init-sparql": "^1.21.3",
     "@comunica/actor-init-sparql-rdfjs": "^1.21.1",
     "@comunica/bus-query-operation": "^1.21.1",
     "@comunica/core": "^1.21.1",
@@ -33,13 +33,13 @@
   },
   "devDependencies": {
     "@types/hapi__joi": "^17.1.6",
-    "@types/node": "^15.12.2",
+    "@types/node": "^15.12.5",
     "@types/pino": "^6.3.8",
     "@types/rdf-js": "^4.0.0",
-    "globby": "^11.0.3",
+    "globby": "^11.0.4",
     "gts": "^3.1.0",
     "ts-node-dev": "^1.0.0",
-    "typescript": "^4.3.2"
+    "typescript": "^4.3.4"
   },
   "scripts": {
     "check": "gts check",
