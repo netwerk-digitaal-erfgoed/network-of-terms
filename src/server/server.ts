@@ -1,5 +1,5 @@
 import fastify from 'fastify';
-import fastifyGql from 'fastify-gql';
+import mercurius from 'mercurius';
 import * as Logger from '../helpers/logger';
 import {resolvers} from './resolvers';
 import {schema} from './schema';
@@ -15,7 +15,7 @@ async function startServer(): Promise<void> {
   const catalog = await Catalog.default();
   const comunica = await newEngine();
   const server = fastify({logger});
-  server.register(fastifyGql, {
+  server.register(mercurius, {
     schema,
     resolvers,
     graphiql: 'playground',
