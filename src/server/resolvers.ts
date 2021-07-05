@@ -27,6 +27,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
       (distributionIri: string) => new IRI(distributionIri)
     ),
     query: args.query,
+    timeoutMs: parseInt(process.env.QUERY_TIMEOUT as string) || 10000,
   });
   return results.map((result: TermsResult) => {
     if (result instanceof Error) {

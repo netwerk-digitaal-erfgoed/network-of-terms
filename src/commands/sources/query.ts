@@ -93,6 +93,7 @@ export class QuerySourcesCommand extends Command {
     const results = await service.queryAll({
       sources,
       query: flags.query,
+      timeoutMs: parseInt(process.env.QUERY_TIMEOUT as string) || 10000,
     });
     this.render(results, catalog);
   }
