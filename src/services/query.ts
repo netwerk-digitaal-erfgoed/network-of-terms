@@ -64,7 +64,7 @@ export class QueryTermsService {
       sources: [
         {
           type: 'sparql', // Only supported type for now
-          value: this.distribution.endpoint,
+          value: this.distribution.endpoint.toString(),
         },
       ],
       initialBindings: Bindings({
