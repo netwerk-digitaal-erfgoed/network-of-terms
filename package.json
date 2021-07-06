@@ -36,7 +36,7 @@
     "@types/hapi__joi": "^17.1.6",
     "@types/node": "^16.0.0",
     "@types/pino": "^6.3.8",
-    "@types/rdf-js": "^4.0.0",
+    "@types/rdf-js": "^4.0.2",
     "globby": "^11.0.4",
     "gts": "^3.1.0",
     "ts-node-dev": "^1.1.8",
