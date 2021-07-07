@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import fastify, {FastifyInstance} from 'fastify';
 import mercurius from 'mercurius';
 import * as Logger from '../helpers/logger';
 import {resolvers} from './resolvers';
@@ -6,13 +6,15 @@ import {schema} from './schema';
 import fastifyCors from 'fastify-cors';
 import {Catalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {newEngine} from '@comunica/actor-init-sparql';
+import {Server} from 'http';
 
-async function startServer(): Promise<void> {
+export async function server(
+  catalog: Catalog
+): Promise<FastifyInstance<Server>> {
   const logger = Logger.getHttpLogger({
     name: 'http',
     level: 'info',
   });
-  const catalog = await Catalog.default();
   const comunica = await newEngine();
   const server = fastify({logger});
   server.register(mercurius, {
@@ -35,12 +37,14 @@ async function startServer(): Promise<void> {
       reply.redirect('/playground');
     },
   });
-  await server.listen(3123, '0.0.0.0');
+
+  return server;
 }
 
 (async () => {
   try {
-    await startServer();
+    const httpServer = await server(await Catalog.default());
+    await httpServer.listen(3123, '0.0.0.0');
   } catch (err) {
     console.error(err);
   }
