@@ -32,7 +32,7 @@ const schemaConstructor = Joi.object({
   timeoutMs: Joi.number()
     .integer()
     .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 10000)
-    .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000)
+    .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000),
 });
 
 export type TermsResult = Terms | TimeoutError | ServerError;
