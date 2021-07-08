@@ -35,7 +35,7 @@ export const schema = `
   }
 
   type Query {
-    terms(sources: [ID]!, query: String!): [TermsQueryResult]
+    terms(sources: [ID]!, query: String!, timeoutMs: Int = 10000): [TermsQueryResult]
     sources: [Source]
   }
   

@@ -25,7 +25,7 @@ export interface QueryOptions {
 const schemaQuery = Joi.object({
   source: Joi.object().required(),
   query: Joi.string().required(),
-  timeoutMs: Joi.number().required(),
+  timeoutMs: Joi.number().integer(),
 });
 
 export interface QueryAllOptions {
@@ -37,7 +37,7 @@ export interface QueryAllOptions {
 const schemaQueryAll = Joi.object({
   sources: Joi.array().items(Joi.object().required()).min(1).required(),
   query: Joi.string().required(),
-  timeoutMs: Joi.number().required(),
+  timeoutMs: Joi.number().integer(),
 });
 
 export class DistributionsService {
