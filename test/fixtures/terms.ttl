@@ -10,4 +10,4 @@
 <https://example.com/resources/2>
     a skos:Concept ;
     skos:prefLabel "Painting" ;
-    skos:altLael "All things painted" .
+    skos:altLabel "All things painted" .
