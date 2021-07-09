@@ -26,7 +26,7 @@ describe('Server', () => {
         [
           new Organization(
             new IRI('https://example.com/organizations/1'),
-            'Organization One',
+            'Organization the First',
             'O1'
           ),
         ],
@@ -34,6 +34,25 @@ describe('Server', () => {
           new SparqlDistribution(
             new IRI('https://example.com/distributions/1'),
             new IRI('http://localhost:3000/sparql'),
+            gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
+          ),
+        ],
+        undefined
+      ),
+      new Dataset(
+        new IRI('https://example.com/datasets/endpoint-error'),
+        'Dataset the Second',
+        [
+          new Organization(
+            new IRI('https://example.com/organizations/2'),
+            'Organization the Second',
+            'O2'
+          ),
+        ],
+        [
+          new SparqlDistribution(
+            new IRI('https://example.com/distributions/endpoint-error'),
+            new IRI('http://does-not-resolve'),
             gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
           ),
         ],
@@ -60,76 +79,26 @@ describe('Server', () => {
         }
       `
     );
-    expect(body.data['sources']).toHaveLength(1);
+    expect(body.data['sources']).toHaveLength(2);
   });
 
-  it('responds to GraphQL terms query with source not found', async () => {
-    const body = await query(
-      gql`
-        query {
-          terms(
-            sources: ["https://example.com/does-not-exist"]
-            query: "something something"
-          ) {
-            source {
-              uri
-            }
-            result {
-              __typename
-              ... on Terms {
-                terms {
-                  uri
-                }
-              }
-              ... on Error {
-                message
-              }
-            }
-          }
-        }
-      `
-    );
+  it('responds to GraphQL terms query when source does not exist', async () => {
+    const body = await query(termsQuery('https://example.com/does-not-exist'));
     expect(body.errors[0].message).toEqual(
       'Source with URI "https://example.com/does-not-exist" not found'
     );
   });
 
-  it('responds to GraphQL terms query', async () => {
+  it('responds to GraphQL terms query when distribution endpoint does not resolve', async () => {
     const body = await query(
-      gql`
-        query {
-          terms(
-            sources: ["https://example.com/distributions/1"]
-            query: "something"
-          ) {
-            source {
-              uri
-              name
-              creators {
-                uri
-                name
-                alternateName
-              }
-            }
-            result {
-              __typename
-              ... on Terms {
-                terms {
-                  uri
-                  prefLabel
-                  altLabel
-                  hiddenLabel
-                  scopeNote
-                }
-              }
-              ... on Error {
-                message
-              }
-            }
-          }
-        }
-      `
+      termsQuery('https://example.com/distributions/endpoint-error')
     );
+    expect(body.data.terms).toHaveLength(1);
+    expect(body.data.terms[0].result.__typename).toEqual('ServerError');
+  });
+
+  it('responds to successful GraphQL terms query', async () => {
+    const body = await query(termsQuery('https://example.com/distributions/1'));
     expect(body.data.terms).toHaveLength(1); // One source.
     expect(body.data.terms[0].source.name).toEqual('Dataset the First');
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
@@ -155,4 +124,39 @@ async function startDistributionSparqlEndpoint(): Promise<void> {
     command: `npx comunica-sparql-file-http ${__dirname}/../fixtures/terms.ttl`,
     port: 3000,
   });
+}
+
+function termsQuery(...sources: string[]) {
+  return gql`
+    query {
+      terms(
+        sources: [${sources.map(source => `"${source}"`).join(',')}],
+        query: "something"
+      ) {
+        source {
+          uri
+          name
+          creators {
+            uri
+            name
+            alternateName
+          }
+        }
+        result {
+          __typename
+          ... on Terms {
+            terms {
+              uri
+              prefLabel
+              altLabel
+              hiddenLabel
+              scopeNote
+            }
+          }
+          ... on Error {
+            message
+          }
+        }
+      }
+    }`;
 }
