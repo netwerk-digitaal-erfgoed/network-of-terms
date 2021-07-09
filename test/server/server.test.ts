@@ -99,10 +99,10 @@ describe('Server', () => {
 
   it('responds to successful GraphQL terms query', async () => {
     const body = await query(termsQuery('https://example.com/distributions/1'));
-    expect(body.data.terms).toHaveLength(1); // One source.
+    expect(body.data.terms).toHaveLength(1); // Source.
     expect(body.data.terms[0].source.name).toEqual('Dataset the First');
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
-    expect(body.data.terms[0].result.terms).toHaveLength(2); // Two terms.
+    expect(body.data.terms[0].result.terms).toHaveLength(3); // Terms.
   });
 
   it('responds to playground requests', async () => {

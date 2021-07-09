@@ -1,13 +1,21 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-<https://example.com/resources/1>
+<https://example.com/resources/artwork>
     a skos:Concept ;
     skos:prefLabel "Nachtwacht" ;
     skos:altLabel "Nachtwacht alt" ;
     skos:scopeNote "One of the most famous Dutch paintings" ;
+    skos:hiddenLabel "Hidden label" ;
     skos:broader <https://example.com/resources/2> .
 
-<https://example.com/resources/2>
+<https://example.com/resources/painting>
     a skos:Concept ;
     skos:prefLabel "Painting" ;
-    skos:altLabel "All things painted" .
+    skos:altLabel "All things painted" ;
+    skos:broader <https://example.com/resources/art> .
+
+<https://example.com/resources/art>
+    a skos:Concept ;
+    skos:prefLabel "Art" ;
+    skos:altLabel "All things painted" ;
+    skos:narrower <https://example.com/resources/painting> .
