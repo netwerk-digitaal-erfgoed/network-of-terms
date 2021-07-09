@@ -6,12 +6,13 @@
     skos:altLabel "Nachtwacht alt" ;
     skos:scopeNote "One of the most famous Dutch paintings" ;
     skos:hiddenLabel "Hidden label" ;
-    skos:broader <https://example.com/resources/2> .
+    skos:broader <https://example.com/resources/2> ;
+    skos:ignored "Not used by Network of Terms" .
 
 <https://example.com/resources/painting>
     a skos:Concept ;
     skos:prefLabel "Painting" ;
-    skos:altLabel "All things painted" ;
+    skos:related <https://example.com/resources/art> ;
     skos:broader <https://example.com/resources/art> .
 
 <https://example.com/resources/art>
