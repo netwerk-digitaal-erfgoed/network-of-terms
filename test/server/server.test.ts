@@ -104,6 +104,14 @@ describe('Server', () => {
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(2); // Two terms.
   });
+
+  it('responds to playground requests', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/playground',
+    });
+    expect(response.statusCode).toEqual(200);
+  });
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -151,6 +159,10 @@ function termsQuery(...sources: string[]) {
               altLabel
               hiddenLabel
               scopeNote
+              broader {
+                uri
+                prefLabel
+              }
             }
           }
           ... on Error {
