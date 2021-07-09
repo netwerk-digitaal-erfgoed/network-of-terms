@@ -31,6 +31,7 @@ const schemaConstructor = Joi.object({
   comunica: Joi.object().required(),
   timeoutMs: Joi.number()
     .integer()
+    .min(1)
     .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 10000)
     .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000),
 });
