@@ -36,8 +36,7 @@ describe('Server', () => {
             new IRI('http://localhost:3000/sparql'),
             gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
           ),
-        ],
-        undefined
+        ]
       ),
       new Dataset(
         new IRI('https://example.com/datasets/endpoint-error'),
@@ -55,8 +54,7 @@ describe('Server', () => {
             new IRI('http://does-not-resolve'),
             gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
           ),
-        ],
-        undefined
+        ]
       ),
     ]);
     httpServer = await server(catalog);
