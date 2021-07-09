@@ -105,12 +105,21 @@ describe('Server', () => {
     expect(body.data.terms[0].result.terms).toHaveLength(3); // Terms.
   });
 
-  it('responds to playground requests', async () => {
+  it('responds to GraphQL playground requests', async () => {
     const response = await httpServer.inject({
       method: 'GET',
       url: '/playground',
     });
     expect(response.statusCode).toEqual(200);
+  });
+
+  it('redirects to the GraphQL playground', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/',
+    });
+    expect(response.statusCode).toEqual(302);
+    expect(response.headers.location).toEqual('/playground');
   });
 });
 
