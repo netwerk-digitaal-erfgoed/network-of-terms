@@ -1,14 +1,14 @@
 module.exports = {
   roots: ['test/'],
   preset: 'ts-jest',
-  testTimeout: 10000,
   collectCoverage: true,
+  coverageReporters: ['json-summary', 'text'],
   coverageThreshold: {
     global: {
-      lines: 80,
-      statements: 80,
-      branches: 80,
-      functions: 80,
+      lines: 93.05,
+      statements: 92.71,
+      branches: 80.36,
+      functions: 82.76,
     },
   },
 };
