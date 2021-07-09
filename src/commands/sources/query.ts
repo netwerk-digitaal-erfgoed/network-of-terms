@@ -34,6 +34,10 @@ export class QuerySourcesCommand extends Command {
       required: false,
       default: 'warn',
     }),
+    timeout: flags.integer({
+      description: 'Query timeout in ms',
+      required: false,
+    }),
   };
 
   protected render(results: TermsResult[], catalog: Catalog): void {
@@ -93,6 +97,7 @@ export class QuerySourcesCommand extends Command {
     const results = await service.queryAll({
       sources,
       query: flags.query,
+      timeoutMs: flags.timeout,
     });
     this.render(results, catalog);
   }

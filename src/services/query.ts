@@ -21,6 +21,7 @@ export interface ConstructorOptions {
   distribution: Distribution;
   query: string;
   comunica: IActorInitSparqlArgs;
+  timeoutMs: number;
 }
 
 const schemaConstructor = Joi.object({
@@ -28,6 +29,11 @@ const schemaConstructor = Joi.object({
   distribution: Joi.object().required(),
   query: Joi.string().required(),
   comunica: Joi.object().required(),
+  timeoutMs: Joi.number()
+    .integer()
+    .min(1)
+    .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 10000)
+    .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000),
 });
 
 export type TermsResult = Terms | TimeoutError | ServerError;
@@ -39,7 +45,11 @@ export class Terms {
 export class Error {
   constructor(readonly distribution: Distribution, readonly message: string) {}
 }
-export class TimeoutError extends Error {}
+export class TimeoutError extends Error {
+  constructor(readonly distribution: Distribution, timeoutMs: number) {
+    super(distribution, `Source timed out after ${timeoutMs}ms`);
+  }
+}
 export class ServerError extends Error {}
 
 export class QueryTermsService {
@@ -47,6 +57,7 @@ export class QueryTermsService {
   protected distribution: Distribution;
   protected query: string;
   protected engine: ActorInitSparql;
+  protected timeoutMs: number;
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
@@ -54,6 +65,7 @@ export class QueryTermsService {
     this.distribution = args.distribution;
     this.query = args.query;
     this.engine = args.comunica;
+    this.timeoutMs = args.timeoutMs;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,27 +95,31 @@ export class QueryTermsService {
       this.getConfig()
     )) as IActorQueryOperationOutputQuads;
 
-    return new Promise(resolve => {
-      const termsTransformer = new TermsTransformer();
-      result.quadStream.on('error', (error: Error) => {
-        this.logger.error(
-          `An error occurred when querying "${this.distribution.endpoint}": ${error}`
+    return guardTimeout(
+      new Promise(resolve => {
+        const termsTransformer = new TermsTransformer();
+        result.quadStream.on('error', (error: Error) => {
+          this.logger.error(
+            `An error occurred when querying "${this.distribution.endpoint}": ${error}`
+          );
+          resolve(new ServerError(this.distribution, error.message));
+        });
+        result.quadStream.on('data', (quad: RDF.Quad) =>
+          termsTransformer.fromQuad(quad)
         );
-        resolve(new ServerError(this.distribution, error.message));
-      });
-      result.quadStream.on('data', (quad: RDF.Quad) =>
-        termsTransformer.fromQuad(quad)
-      );
-      result.quadStream.on('end', () => {
-        const terms = termsTransformer.asArray().sort(alphabeticallyByLabels);
-        this.logger.info(
-          `Found ${terms.length} terms matching "${this.query}" in "${
-            this.distribution.endpoint
-          }" in ${PrettyMilliseconds(timer.elapsed())}`
-        );
-        resolve(new Terms(this.distribution, terms));
-      });
-    });
+        result.quadStream.on('end', () => {
+          const terms = termsTransformer.asArray().sort(alphabeticallyByLabels);
+          this.logger.info(
+            `Found ${terms.length} terms matching "${this.query}" in "${
+              this.distribution.endpoint
+            }" in ${PrettyMilliseconds(timer.elapsed())}`
+          );
+          resolve(new Terms(this.distribution, terms));
+        });
+      }),
+      this.timeoutMs,
+      new TimeoutError(this.distribution, this.timeoutMs)
+    );
   }
 }
 
@@ -116,3 +132,16 @@ const alphabeticallyByLabels = (a: Term, b: Term) => {
   const sortLabelB = prefLabelB + altLabelB;
   return sortLabelA.localeCompare(sortLabelB);
 };
+
+function guardTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+  timeoutError: TimeoutError
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise(resolve =>
+      setTimeout(resolve.bind(null, timeoutError), timeoutMs)
+    ),
+  ]) as Promise<T>;
+}
