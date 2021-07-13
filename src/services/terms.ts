@@ -31,7 +31,7 @@ class SparqlResultTerm {
 }
 
 export class TermsTransformer {
-  private termsIris: string[] = [];
+  private termsIris: Set<string> = new Set();
   private termsMap: Map<string, SparqlResultTerm> = new Map();
   private readonly predicateToPropertyMap = new Map<string, string>([
     ['http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'type'],
@@ -63,7 +63,7 @@ export class TermsTransformer {
       propertyName === 'type' &&
       quad.object.value === 'http://www.w3.org/2004/02/skos/core#Concept'
     ) {
-      this.termsIris.push(subject.value);
+      this.termsIris.add(subject.value);
     }
 
     if (propertyName !== undefined) {
@@ -80,7 +80,7 @@ export class TermsTransformer {
   }
 
   asArray(): Term[] {
-    return this.termsIris.map(iri => {
+    return [...this.termsIris].map(iri => {
       const term = this.termsMap.get(iri)!;
 
       return new Term(
