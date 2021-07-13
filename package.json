@@ -34,7 +34,7 @@
     "rdf-store-stream": "^1.2.0"
   },
   "devDependencies": {
-    "@types/hapi__joi": "^17.1.6",
+    "@types/hapi__joi": "^17.1.7",
     "@types/node": "^16.0.0",
     "@types/pino": "^6.3.8",
     "@types/rdf-js": "^4.0.2",
