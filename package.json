@@ -14,7 +14,7 @@
   "dependencies": {
     "@comunica/actor-init-sparql": "<=1.21.1",
     "@comunica/actor-init-sparql-rdfjs": "<=1.21.1",
-    "@comunica/actor-query-operation-sparql-endpoint": "<=1.21.1",
+    "@comunica/actor-query-operation-sparql-endpoint": "<=1.21.3",
     "@comunica/bus-query-operation": "^1.21.1",
     "@comunica/core": "^1.21.1",
     "@hapi/hoek": "^9.2.0",
@@ -27,7 +27,7 @@
     "fastify-cors": "^6.0.1",
     "mercurius": "^7.9.1",
     "pino": "^6.11.3",
-    "pino-pretty": "^5.1.0",
+    "pino-pretty": "^5.1.1",
     "pretty-ms": "^7.0.1",
     "rdf-js": "^4.0.2",
     "rdf-parse": "^1.8.1",
