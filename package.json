@@ -27,7 +27,7 @@
     "fastify-cors": "^6.0.1",
     "mercurius": "^7.9.1",
     "pino": "^6.11.3",
-    "pino-pretty": "^5.1.0",
+    "pino-pretty": "^5.1.1",
     "pretty-ms": "^7.0.1",
     "rdf-js": "^4.0.2",
     "rdf-parse": "^1.8.1",
@@ -36,7 +36,7 @@
   "devDependencies": {
     "@types/hapi__joi": "^17.1.6",
     "@types/node": "^16.0.0",
-    "@types/pino": "^6.3.8",
+    "@types/pino": "^6.3.9",
     "@types/rdf-js": "^4.0.2",
     "globby": "^11.0.4",
     "gts": "^3.1.0",
