@@ -18,7 +18,7 @@ async function startServer(): Promise<void> {
   server.register(mercurius, {
     schema,
     resolvers,
-    graphiql: 'playground',
+    graphiql: true,
     context: (): Promise<object> =>
       new Promise(resolve => {
         resolve({
@@ -32,7 +32,7 @@ async function startServer(): Promise<void> {
     method: 'GET',
     url: '/',
     handler: (req, reply) => {
-      reply.redirect('/playground');
+      reply.redirect('/graphiql');
     },
   });
   await server.listen(3123, '0.0.0.0');
