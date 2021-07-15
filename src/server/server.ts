@@ -35,6 +35,15 @@ async function startServer(): Promise<void> {
       reply.redirect('/graphiql');
     },
   });
+
+  // Redirect /playground to /graphiql for BC.
+  server.route({
+    method: 'GET',
+    url: '/playground',
+    handler: (req, reply) => {
+      reply.redirect(302, '/graphiql');
+    },
+  });
   await server.listen(3123, '0.0.0.0');
 }
 
