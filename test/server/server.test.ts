@@ -135,19 +135,25 @@ describe('Server', () => {
   it('responds to GraphQL playground requests', async () => {
     const response = await httpServer.inject({
       method: 'GET',
-      url: '/playground',
+      url: '/graphiql',
     });
     expect(response.statusCode).toEqual(200);
   });
 
-  it('redirects to the GraphQL playground', async () => {
-    const response = await httpServer.inject({
-      method: 'GET',
-      url: '/',
-    });
-    expect(response.statusCode).toEqual(302);
-    expect(response.headers.location).toEqual('/playground');
-  });
+  it.each([
+    ['/', 302],
+    ['/playground', 301],
+  ])(
+    '%s redirects to GraphQL playground with status code %i',
+    async (url: string, statusCode: number) => {
+      const response = await httpServer.inject({
+        method: 'GET',
+        url: url,
+      });
+      expect(response.statusCode).toEqual(statusCode);
+      expect(response.headers.location).toEqual('/graphiql');
+    }
+  );
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

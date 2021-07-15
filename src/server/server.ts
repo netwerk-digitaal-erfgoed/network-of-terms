@@ -43,7 +43,7 @@ export async function server(
     method: 'GET',
     url: '/playground',
     handler: (req, reply) => {
-      reply.redirect(302, '/graphiql');
+      reply.redirect(301, '/graphiql');
     },
   });
 
