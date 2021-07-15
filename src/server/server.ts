@@ -20,7 +20,7 @@ export async function server(
   server.register(mercurius, {
     schema,
     resolvers,
-    graphiql: 'playground',
+    graphiql: true,
     context: (): Promise<object> =>
       new Promise(resolve => {
         resolve({
@@ -34,7 +34,16 @@ export async function server(
     method: 'GET',
     url: '/',
     handler: (req, reply) => {
-      reply.redirect('/playground');
+      reply.redirect('/graphiql');
+    },
+  });
+
+  // Redirect /playground to /graphiql for BC.
+  server.route({
+    method: 'GET',
+    url: '/playground',
+    handler: (req, reply) => {
+      reply.redirect(302, '/graphiql');
     },
   });
 
