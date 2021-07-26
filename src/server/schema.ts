@@ -33,10 +33,20 @@ export const schema = `
     terms: [Term]! @deprecated(reason: "Use 'result' instead")
     result: TermsResult!
   }
+  
+# TBD: Alternative result type.
+#  type LookupResult {
+#    uri: ID!
+#    source: Source
+#    result: LookupSuccessErrorResult
+#  }
+  
+  union LookupSuccessErrorResult = Term | TimeoutError | ServerError 
 
   type Query {
     terms(sources: [ID]!, query: String!, timeoutMs: Int = 10000): [TermsQueryResult]
     sources: [Source]
+    lookup(uris: [ID]!, timeoutMs: Int = 10000): [TermsQueryResult]
   }
   
   union TermsResult = Terms | TimeoutError | ServerError

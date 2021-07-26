@@ -1,12 +1,20 @@
 import {DistributionsService} from '../services/distributions';
-import {Error, TermsResult, ServerError, TimeoutError} from '../services/query';
+import {
+  Error,
+  TermsResult,
+  ServerError,
+  TimeoutError,
+  QueryTermsService,
+} from '../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../services/terms';
 import {
+  Catalog,
   Dataset,
   Distribution,
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {LookupService} from '../lookup/lookup';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -29,12 +37,29 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     query: args.query,
     timeoutMs: args.timeoutMs,
   });
+  return resolveTermsResults(results, context.catalog);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function lookupTerms(object: any, args: any, context: any) {
+  const service = new LookupService(
+    context.catalog,
+    new QueryTermsService({comunica: context.comunica, logger: context.app.log})
+  );
+  const results = await service.lookup(
+    args.uris.map((iri: string) => new IRI(iri)),
+    args.timeoutMs
+  );
+  return resolveTermsResults(results, context.catalog);
+}
+
+function resolveTermsResults(results: TermsResult[], catalog: Catalog) {
   return results.map((result: TermsResult) => {
     if (result instanceof Error) {
       return {
         source: source(
           result.distribution,
-          context.catalog.getDatasetByDistributionIri(result.distribution.iri)
+          catalog.getDatasetByDistributionIri(result.distribution.iri)!
         ),
         result,
         terms: [], // For BC.
@@ -72,7 +97,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     return {
       source: source(
         result.distribution,
-        context.catalog.getDatasetByDistributionIri(result.distribution.iri)
+        catalog.getDatasetByDistributionIri(result.distribution.iri)!
       ),
       terms, // For BC.
       result: {
@@ -99,6 +124,7 @@ export const resolvers = {
   Query: {
     sources: listSources,
     terms: queryTerms,
+    lookup: lookupTerms,
   },
   TermsResult: {
     resolveType(result: TermsResult) {

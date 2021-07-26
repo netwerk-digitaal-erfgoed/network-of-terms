@@ -63,11 +63,8 @@ export class DistributionsService {
     const queryService = new QueryTermsService({
       logger: this.logger,
       comunica: this.comunica,
-      distribution,
-      query: args.query,
-      timeoutMs: args.timeoutMs,
     });
-    return queryService.run();
+    return queryService.search(args.query, distribution, args.timeoutMs);
   }
 
   async queryAll(options: QueryAllOptions): Promise<TermsResult[]> {
