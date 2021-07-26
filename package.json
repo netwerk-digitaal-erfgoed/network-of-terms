@@ -32,7 +32,6 @@
     "@types/n3": "^1.4.3",
     "@types/node": "^16.0.0",
     "@types/rdf-ext": "^1.3.7",
-    "@types/rdf-js": "^4.0.0",
     "gts": "^3.0.2",
     "jest": "^27.0.3",
     "jsonld-streaming-parser": "^2.1.0",
