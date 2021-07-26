@@ -101,6 +101,15 @@ export class QueryTermsService {
     timeoutMs: number,
     bindings?: Bindings
   ): Promise<TermsResult> {
+    Joi.attempt(
+      timeoutMs,
+      Joi.number()
+        .integer()
+        .min(1)
+        .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 10000)
+        .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000)
+    );
+
     this.logger.info(`Querying "${distribution.endpoint}" with "${query}"...`);
     const timer = new Hoek.Bench();
     const result = (await this.engine.query(
