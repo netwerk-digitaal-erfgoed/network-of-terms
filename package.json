@@ -27,7 +27,7 @@
     "fastify-cors": "^6.0.2",
     "mercurius": "^8.0.0",
     "pino": "^6.12.0",
-    "pino-pretty": "^5.1.1",
+    "pino-pretty": "^5.1.2",
     "pretty-ms": "^7.0.1",
     "rdf-js": "^4.0.2",
     "rdf-parse": "^1.8.1",
