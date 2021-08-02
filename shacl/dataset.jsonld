@@ -24,6 +24,15 @@
         },
         {
           "sh:path": {
+            "@id": "schema:url"
+          },
+          "sh:minCount": 1,
+          "sh:nodeKind": {
+            "@id": "sh:IRI"
+          }
+        },
+        {
+          "sh:path": {
             "@id": "schema:distribution"
           },
           "sh:minCount": 1,
@@ -70,13 +79,25 @@
           "sh:path": {
             "@id": "schema:potentialAction"
           },
-          "sh:minCount": 1,
-          "sh:class": {
-            "@id": "schema:SearchAction"
+          "sh:qualifiedValueShape": {
+            "sh:class": {
+              "@id": "schema:SearchAction"
+            }
           },
-          "sh:node": {
-            "@id": "schema:SearchActionShape"
-          }
+          "sh:qualifiedMinCount": 1,
+          "sh:qualifiedMaxCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:potentialAction"
+          },
+          "sh:qualifiedValueShape": {
+            "sh:class": {
+              "@id": "schema:FindAction"
+            }
+          },
+          "sh:qualifiedMinCount": 1,
+          "sh:qualifiedMaxCount": 1
         }
       ]
     },
@@ -102,10 +123,24 @@
       ]
     },
     {
-      "@id": "schema:SearchActionShape",
       "@type": "sh:NodeShape",
       "sh:targetClass": {
         "@id": "schema:SearchAction"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:query"
+          },
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        }
+      ]
+    },
+    {
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:FindAction"
       },
       "sh:property": [
         {

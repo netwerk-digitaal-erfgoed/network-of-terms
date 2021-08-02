@@ -19,16 +19,25 @@
       "@id": "https://www.cultureelerfgoed.nl"
     }
   ],
+  "url": [
+    "https://data.cultureelerfgoed.nl/term/id/cht/"
+  ],
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
       "@type": "DataDownload",
       "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/cht.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/cht.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/abr-cht.rq"
+        }
+      ]
     }
   ]
 }

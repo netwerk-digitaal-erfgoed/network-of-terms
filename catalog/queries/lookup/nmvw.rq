@@ -1,0 +1,41 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:hiddenLabel ?hiddenLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+}
+WHERE {
+    # For example:
+    # Klassieke Balinese Periode: <https://hdl.handle.net/20.500.11840/termmaster4914>
+    # Luxemburg: <https://hdl.handle.net/20.500.11840/termmaster17499>
+    VALUES ?uri { ?uris }
+
+    OPTIONAL {
+        ?uri skos:prefLabel ?prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+    }
+    OPTIONAL {
+        ?uri skos:hiddenLabel ?hiddenLabel .
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote .
+    }
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:narrower ?narrower_uri .
+        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    }
+}
+LIMIT 1000

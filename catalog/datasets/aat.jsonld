@@ -19,16 +19,25 @@
       "@id": "http://www.getty.edu/research/"
     }
   ],
+  "url": [
+    "http://vocab.getty.edu/aat/"
+  ],
   "distribution": [
     {
       "@id": "http://vocab.getty.edu/aat/sparql",
       "@type": "DataDownload",
       "contentUrl": "http://vocab.getty.edu/sparql",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/aat.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/aat.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/aat.rq"
+        }
+      ]
     }
   ]
 }

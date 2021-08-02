@@ -30,11 +30,13 @@ export class Catalog {
             schema:creator ?creator ;
             schema:distribution ?distribution .
           OPTIONAL { ?dataset schema:alternateName ?alternateName . }
-          ?creator schema:name ?creatorName ;  
+          ?creator schema:name ?creatorName ;
             schema:alternateName ?creatorAlternateName .
           ?distribution schema:encodingFormat "application/sparql-query" ;
             schema:contentUrl ?endpointUrl ;
-            schema:potentialAction/schema:query ?query .
+            schema:potentialAction ?potentialAction .
+          ?potentialAction a schema:SearchAction ;
+            schema:query ?query .
         }
         ORDER BY LCASE(?name)`;
     const result = (await newEngine().query(query, {

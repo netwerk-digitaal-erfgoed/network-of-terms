@@ -13,16 +13,25 @@
       "@id": "https://www.muziekweb.nl"
     }
   ],
+  "url": [
+    "https://data.muziekweb.nl/Link/"
+  ],
   "distribution": [
     {
       "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb/sparql/Muziekweb#mw-genresstijlen",
       "@type": "DataDownload",
       "contentUrl": "https://api.data.muziekweb.nl/datasets/MuziekwebOrganization/Muziekweb/services/Muziekweb/sparql",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/mw-genresstijlen.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/mw-genresstijlen.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/muziekweb.rq"
+        }
+      ]
     }
   ]
 }

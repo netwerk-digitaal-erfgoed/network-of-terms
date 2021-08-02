@@ -13,16 +13,25 @@
       "@id": "https://www.wikidata.org/entity/Q180"
     }
   ],
+  "url": [
+    "http://www.wikidata.org/entity/"
+  ],
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-persons",
       "@type": "DataDownload",
       "contentUrl": "https://query.wikidata.org/sparql",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/wikidata-entities-persons.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/wikidata-entities-persons.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/wikidata.rq"
+        }
+      ]
     }
   ]
 }
