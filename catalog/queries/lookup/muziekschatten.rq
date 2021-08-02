@@ -1,0 +1,39 @@
+PREFIX som: <http://data.muziekschatten.nl/som/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept;
+        skos:prefLabel ?schema_name;
+        skos:scopeNote ?scopeNote;
+        skos:broader ?uri_broader .
+    ?uri_broader skos:prefLabel ?broader_schema_name .
+}
+WHERE {
+    GRAPH <http://data.muziekschatten.nl/somlod/> {
+        # For example:
+        # Moderne jazz: <https://data.muziekschatten.nl/som/d781655>
+        # Jazz: <https://data.muziekschatten.nl/som/d78165>
+        VALUES ?uri { ?uris }
+
+        OPTIONAL {
+            ?uri schema:name ?schema_name .
+            FILTER(LANG(?schema_name) = "nl")
+        }
+        OPTIONAL {
+            ?uri schema:keywords ?keywords
+            BIND(CONCAT("Trefwoorden: ", ?keywords) as ?keywords_note)
+        }
+        OPTIONAL {
+          ?uri skos:broader ?uri_broader .
+          ?uri_broader schema:name ?broader_schema_name .
+          FILTER(LANG(?broader_schema_name) = "nl")
+        }
+    }
+    GRAPH <http://data.muziekschatten.nl/som/> {
+        ?uri som:BASIS "1" .
+        ?uri som:DC ?dc
+        BIND(CONCAT("Dewey: ", ?dc) as ?dewey_note)
+    }
+    BIND(CONCAT(?keywords_note, " | ", ?dewey_note) as ?scopeNote)
+}
+LIMIT 1000

@@ -1,0 +1,40 @@
+PREFIX muziekweb: <https://data.muziekweb.nl/vocab/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?rdfs_label ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:hiddenLabel ?hiddenLabel ;
+        skos:scopeNote ?rdfs_comment ;
+        skos:scopeNote ?schema_description ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+}
+WHERE {
+    # For example:
+    # Music group: <https://data.muziekweb.nl/Link/M00000034333>
+    # Music genre: <https://data.muziekweb.nl/Link/T00000000050>
+    VALUES ?uri { ?uris }
+
+    OPTIONAL { ?uri rdfs:label ?rdfs_label }
+    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
+    OPTIONAL { ?uri skos:altLabel ?altLabel }
+    OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
+    OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
+    OPTIONAL { ?uri schema:description ?schema_description }
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri rdfs:label ?broader_prefLabel
+    }
+    OPTIONAL {
+        ?uri skos:narrower ?narrower_uri .
+        ?narrower_uri rdfs:label ?narrower_prefLabel
+    }
+}
+LIMIT 1000

@@ -13,16 +13,25 @@
       "@id": "https://www.wikidata.org/entity/Q180"
     }
   ],
+  "url": [
+    "http://www.wikidata.org/entity/"
+  ],
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-all",
       "@type": "DataDownload",
       "contentUrl": "https://query.wikidata.org/sparql",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/wikidata-entities-all.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/wikidata-entities-all.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/wikidata.rq"
+        }
+      ]
     }
   ]
 }

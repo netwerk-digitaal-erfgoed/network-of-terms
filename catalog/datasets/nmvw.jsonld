@@ -13,16 +13,25 @@
       "@id": "http://www.wereldculturen.nl"
     }
   ],
+  "url": [
+    "https://hdl.handle.net/20.500.11840/"
+  ],
   "distribution": [
     {
       "@id": "https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql",
       "@type": "DataDownload",
       "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/nmvw.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/nmvw.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/nmvw.rq"
+        }
+      ]
     }
   ]
 }

@@ -19,16 +19,25 @@
       "@id": "https://www.niod.nl"
     }
   ],
+  "url": [
+    "https://data.niod.nl/WO2_Thesaurus/"
+  ],
   "distribution": [
     {
       "@id": "https://data.niod.nl/PoolParty/sparql/WO2_Thesaurus",
       "@type": "DataDownload",
       "contentUrl": "https://data.niod.nl/PoolParty/sparql/WO2_Thesaurus",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/wo2thesaurus.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/wo2thesaurus.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/wo2thesaurus.rq"
+        }
+      ]
     }
   ]
 }

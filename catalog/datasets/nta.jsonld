@@ -19,16 +19,25 @@
       "@id": "http://data.bibliotheken.nl/doc/thes/p075301482"
     }
   ],
+  "url": [
+    "http://data.bibliotheken.nl/id/thes/"
+  ],
   "distribution": [
     {
       "@id": "http://data.bibliotheken.nl/thesp/sparql",
       "@type": "DataDownload",
       "contentUrl": "http://data.bibliotheken.nl/sparql",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/nta.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/nta.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/brinkman-nta.rq"
+        }
+      ]
     }
   ]
 }
