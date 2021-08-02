@@ -1,0 +1,66 @@
+# Do not remove this prefix - KB data uses old version of SKOS
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:prefLabel ?rdfs_label ;
+        skos:altLabel ?altLabel ;
+        skos:altLabel ?schema_alternateName ;
+        skos:altLabel ?schema_name ;
+        skos:hiddenLabel ?hiddenLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:scopeNote ?schema_description ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri ;
+        skos:related ?related_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?related_uri skos:prefLabel ?related_prefLabel .
+}
+WHERE {
+    # For example:
+    # Concept in Brinkman: <http://data.bibliotheken.nl/id/thes/p317203789>
+    # Person in NTA: <http://data.bibliotheken.nl/id/thes/p06854796X>
+    VALUES ?uri { ?uris }
+
+    # For Brinkman
+    OPTIONAL {
+        ?uri skos:prefLabel ?prefLabel .
+        FILTER(LANG(?prefLabel) = "nl" )
+    }
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:hiddenLabel ?hiddenLabel .
+        FILTER(LANG(?hiddenLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote .
+        FILTER(LANG(?scopeNote) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+        FILTER(LANG(?broader_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:narrower ?narrower_uri .
+        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+        FILTER(LANG(?narrower_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:related ?related_uri .
+        ?related_uri skos:prefLabel ?related_prefLabel .
+        FILTER(LANG(?related_prefLabel) = "nl")
+    }
+
+    # For NTA
+    OPTIONAL { ?uri rdfs:label ?rdfs_label }
+    OPTIONAL { ?uri schema:name ?schema_name }
+    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+    OPTIONAL { ?uri schema:description ?schema_description }
+}
+LIMIT 1000

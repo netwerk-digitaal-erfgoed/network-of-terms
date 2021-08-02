@@ -13,16 +13,25 @@
       "@id": "https://www.beeldengeluid.nl/"
     }
   ],
+  "url": [
+    "http://data.beeldengeluid.nl/gtaa/"
+  ],
   "distribution": [
     {
       "@id": "https://data.netwerkdigitaalerfgoed.nl/beeldengeluid/gtaa-genres/sparql",
       "@type": "DataDownload",
       "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/beeldengeluid/gtaa-genres/services/gtaa-genres/sparql",
       "encodingFormat": "application/sparql-query",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "query": "file://catalog/queries/gtaa.rq"
-      }
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/gtaa.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/gtaa.rq"
+        }
+      ]
     }
   ]
 }

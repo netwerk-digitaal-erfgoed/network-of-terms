@@ -1,0 +1,51 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+    	skos:prefLabel ?rdfs_label ;
+        skos:altLabel ?altLabel ;
+    	skos:altLabel ?altLabelStreetName ;
+    	skos:scopeNote ?schema_description .
+}
+WHERE {
+    # For example:
+    # Some entity (e.g. a painting): <http://www.wikidata.org/entity/Q185255>
+    # Person: <http://www.wikidata.org/entity/Q2696551>
+    # Place: <http://www.wikidata.org/entity/Q727>
+    # Street: <http://www.wikidata.org/entity/Q19573969>
+    VALUES ?uri { ?uris }
+
+    ?uri rdfs:label ?rdfs_label .
+    FILTER(LANG(?rdfs_label) = "nl")
+
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri schema:description ?schema_description
+        FILTER(LANG(?schema_description) = "nl")
+    }
+    # For streets
+    OPTIONAL {
+        ?uri wdt:P276/rdfs:label ?locationName .
+        FILTER(LANG(?locationName) = "nl")
+    }
+    # For streets
+    OPTIONAL {
+        ?uri wdt:P131/rdfs:label ?administrationName .
+        FILTER(LANG(?administrationName) = "nl")
+    }
+    # For streets
+    BIND(
+        COALESCE(
+            IF(BOUND(?locationName), CONCAT(?rdfs_label, " (", ?locationName, ")"), 1/0),
+            IF(BOUND(?administrationName), CONCAT(?rdfs_label, " (", ?administrationName, ")"), 1/0)
+        )
+        AS ?altLabelStreetName
+    )
+}
+LIMIT 1000

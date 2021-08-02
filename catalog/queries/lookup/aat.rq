@@ -1,0 +1,49 @@
+PREFIX aat: <http://vocab.getty.edu/aat/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX gvp: <http://vocab.getty.edu/ontology#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX skosxl: <http://www.w3.org/2008/05/skos-xl#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+}
+WHERE {
+    # For example:
+    # Bicycles: <http://vocab.getty.edu/aat/300212636>
+    # Wars: <http://vocab.getty.edu/aat/300055314>
+    VALUES ?uri { ?uris }
+
+    ?uri skosxl:prefLabel ?prefLabel_uri .
+    ?prefLabel_uri dcterms:language aat:300388256 . # Dutch (language)
+    ?prefLabel_uri skosxl:literalForm ?prefLabel .
+    OPTIONAL {
+        ?uri skosxl:altLabel ?altLabel_uri .
+        ?altLabel_uri dcterms:language aat:300388256 .
+        ?altLabel_uri skosxl:literalForm ?altLabel .
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote_uri .
+        ?scopeNote_uri dcterms:language aat:300388256 . # Dutch (language)
+        ?scopeNote_uri rdf:value ?scopeNote .
+    }
+    OPTIONAL {
+        ?uri gvp:broaderPreferred/skosxl:prefLabel ?broader_uri .
+        ?broader_uri dcterms:language aat:300388256 . # Dutch (language)
+        ?broader_uri skosxl:literalForm ?broader_prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:narrower/skosxl:prefLabel ?narrower_uri .
+        ?narrower_uri dcterms:language aat:300388256 . # Dutch (language)
+        ?narrower_uri skosxl:literalForm ?narrower_prefLabel .
+    }
+}
+LIMIT 1000
