@@ -61,7 +61,8 @@ export class TermsTransformer {
     // skos:Concepts are the top-level search results, which we track in termsIris.
     if (
       propertyName === 'type' &&
-      quad.object.value === 'http://www.w3.org/2004/02/skos/core#Concept'
+      (quad.object.value === 'http://www.w3.org/2004/02/skos/core#Concept' ||
+        quad.object.value === 'http://www.w3.org/2008/05/skos#Concept')
     ) {
       this.termsIris.add(subject.value);
     }
