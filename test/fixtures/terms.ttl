@@ -10,7 +10,7 @@
     skos:ignored "Not used by Network of Terms" .
 
 <https://example.com/resources/painting>
-    a skos:Concept ;
+    a <http://www.w3.org/2008/05/skos#Concept> ;
     skos:related <https://example.com/resources/art> ;
     skos:broader <https://example.com/resources/art> .
 
