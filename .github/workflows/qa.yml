@@ -13,6 +13,6 @@ jobs:
       - uses: actions/setup-node@v2.3.0
         with:
           node-version: 12.x
-      - run: npm install
+      - run: npm ci
       - run: npm run check
       - run: npm run compile
