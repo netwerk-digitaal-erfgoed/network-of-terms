@@ -14,31 +14,31 @@ import {setup, teardown} from 'jest-dev-server';
 let httpServer: FastifyInstance<Server>;
 const catalog = new Catalog([
   new Dataset(
-    new IRI('https://example.com/datasets/1'),
-    'Dataset the First',
+    new IRI('http://vocab.getty.edu/aat'),
+    'Art & Architecture Thesaurus',
     [
       new Organization(
-        new IRI('https://example.com/organizations/1'),
-        'Organization the First',
-        'O1'
+        new IRI('http://www.getty.edu/research/'),
+        'Getty Research Institute',
+        'Getty'
       ),
     ],
     [
       new SparqlDistribution(
-        new IRI('https://example.com/distributions/1'),
+        new IRI('http://vocab.getty.edu/aat/sparql'),
         new IRI('http://localhost:3000/sparql'),
         gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
       ),
     ]
   ),
   new Dataset(
-    new IRI('https://example.com/datasets/endpoint-error'),
-    'Dataset the Second',
+    new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
+    'Cultuurhistorische Thesaurus',
     [
       new Organization(
-        new IRI('https://example.com/organizations/2'),
-        'Organization the Second',
-        'O2'
+        new IRI('https://www.cultureelerfgoed.nl'),
+        'Rijksdienst voor het Cultureel Erfgoed',
+        'RCE'
       ),
     ],
     [
@@ -50,13 +50,13 @@ const catalog = new Catalog([
     ]
   ),
   new Dataset(
-    new IRI('https://example.com/datasets/timeout'),
-    'Dataset the Second',
+    new IRI('https://data.rkd.nl/rkdartists'),
+    'RKDartists',
     [
       new Organization(
-        new IRI('https://example.com/organizations/2'),
-        'Organization the Second',
-        'O2'
+        new IRI('https://rkd.nl'),
+        'RKD – Nederlands Instituut voor Kunstgeschiedenis',
+        'RKD'
       ),
     ],
     [
@@ -116,7 +116,7 @@ describe('Server', () => {
     const body = await query(
       termsQuery(
         'https://example.com/distributions/timeout',
-        'https://example.com/distributions/1'
+        'http://vocab.getty.edu/aat/sparql'
       )
     );
     expect(body.data.terms).toHaveLength(2);
@@ -125,9 +125,11 @@ describe('Server', () => {
   });
 
   it('responds to successful GraphQL terms query', async () => {
-    const body = await query(termsQuery('https://example.com/distributions/1'));
+    const body = await query(termsQuery('http://vocab.getty.edu/aat/sparql'));
     expect(body.data.terms).toHaveLength(1); // Source.
-    expect(body.data.terms[0].source.name).toEqual('Dataset the First');
+    expect(body.data.terms[0].source.name).toEqual(
+      'Art & Architecture Thesaurus'
+    );
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(4); // Terms.
   });
