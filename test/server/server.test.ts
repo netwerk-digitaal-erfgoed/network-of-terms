@@ -94,7 +94,7 @@ describe('Server', () => {
         }
       `
     );
-    expect(body.data['sources']).toHaveLength(catalog.datasets.length);
+    expect(body.data.sources).toHaveLength(catalog.datasets.length);
   });
 
   it('responds to GraphQL terms query when source does not exist', async () => {
