@@ -199,12 +199,12 @@ query Terms {
 
 ### Look up terms by URI
 
-Use the `lookup` query to look up terms whose URIs you know (for example, because you have stored them previously):
+Use the `lookup` query to look up terms whose URIs you know (for example, because you have stored the URIs previously):
 
 ```graphql
 query {
   lookup(
-    uris: ["https://data.rkd.nl/artists/32439"],
+    uris: ["https://data.rkd.nl/artists/32439", "https://data.cultureelerfgoed.nl/term/id/cht/15e29ea3-1b4b-4fb2-b970-a0c485330384"],
   ) {
     uri
     source {
