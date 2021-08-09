@@ -117,6 +117,8 @@ query Sources {
 
 ### Query one or more sources for terms
 
+#### Query a single source
+
 ```graphql
 # Query Cultuurhistorische Thesaurus (CHT)
 query Terms {
@@ -161,6 +163,8 @@ query Terms {
 }
 ```
 
+#### Query multiple sources
+
 ```graphql
 # Query RKDartists and NTA simultaneously
 query Terms {
@@ -183,6 +187,46 @@ query Terms {
           altLabel
           hiddenLabel
           scopeNote
+        }
+      }
+      ... on Error {
+        message
+      }
+    }
+  }
+}
+```
+
+### Look up terms by URI
+
+Use the `lookup` query to look up terms whose URIs you know (for example, because you have stored them previously):
+
+```graphql
+query {
+  lookup(
+    uris: ["https://data.rkd.nl/artists/32439"],
+  ) {
+    uri
+    source {
+      uri
+      name
+      creators {
+        uri
+        name
+        alternateName
+      }
+    }        
+    result {
+      __typename
+      ... on Term {
+        uri
+        prefLabel
+        altLabel
+        hiddenLabel
+        scopeNote
+        broader {
+          uri
+          prefLabel
         }
       }
       ... on Error {
