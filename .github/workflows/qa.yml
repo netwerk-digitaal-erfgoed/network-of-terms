@@ -10,9 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
-      - uses: actions/setup-node@v2.2.0
+      - uses: actions/setup-node@v2.3.0
         with:
           node-version: 12.x
-      - run: npm install
+      - run: npm ci
       - run: npm run check
       - run: npm run compile
+      - run: npm test
