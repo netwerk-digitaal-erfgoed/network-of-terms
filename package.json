@@ -34,10 +34,18 @@
     "rdf-store-stream": "^1.2.0"
   },
   "devDependencies": {
+    "@comunica/actor-init-sparql-file": "^1.21.3",
     "@types/hapi__joi": "^17.1.7",
+    "@types/jest": "^26.0.24",
+    "@types/jest-dev-server": "^4.2.1",
     "@types/node": "^16.4.10",
     "@types/pino": "^6.3.11",
     "gts": "^3.1.0",
+    "jest": "^27.0.6",
+    "jest-coverage-thresholds-bumper": "^1.0.0",
+    "jest-dev-server": "^5.0.3",
+    "mercurius-codegen": "^1.7.0",
+    "ts-jest": "^27.0.3",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
   },
@@ -46,9 +54,10 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
-    "posttest": "npm run check",
-    "start": "node build/server/server.js",
-    "dev": "ts-node-dev src/server/server.ts",
+    "test": "jest ${1} --forceExit",
+    "posttest": "jest-coverage-thresholds-bumper --silent",
+    "start": "node build/main.js",
+    "dev": "ts-node-dev src/main.ts",
     "watch": "tsc --watch"
   },
   "oclif": {

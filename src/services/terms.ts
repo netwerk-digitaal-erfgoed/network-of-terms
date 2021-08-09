@@ -106,11 +106,9 @@ export class TermsTransformer {
    */
   private mapRelatedTerms = (terms: RDF.Term[]) =>
     terms.reduce((acc: RelatedTerm[], iri: RDF.Term) => {
-      const relatedTerm: RelatedTerm = this.termsMap.get(
-        iri.value
-      ) as RelatedTerm;
-      if (relatedTerm) {
-        acc.push(relatedTerm);
+      const term = this.termsMap.get(iri.value);
+      if (term) {
+        acc.push(new RelatedTerm(term.id, term.prefLabels));
       }
       return acc;
     }, []);
