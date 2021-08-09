@@ -76,7 +76,7 @@ export class QueryTermsService {
     timeoutMs: number
   ) {
     return this.run(
-      distribution.query,
+      distribution.searchQuery,
       distribution,
       timeoutMs,
       Bindings({'?query': literal(searchQuery)})
@@ -85,8 +85,7 @@ export class QueryTermsService {
 
   async lookup(iris: IRI[], distribution: Distribution, timeoutMs: number) {
     return this.run(
-      // TODO: insert real query here
-      'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o . VALUES ?s { ?uris } }'.replace(
+      distribution.lookupQuery.replace(
         '?uris',
         iris.map(iri => `<${iri}>`).join(', ')
       ),
