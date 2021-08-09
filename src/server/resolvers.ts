@@ -14,7 +14,12 @@ import {
   Distribution,
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
-import {LookupService} from '../lookup/lookup';
+import {
+  LookupResult,
+  LookupService,
+  LookupSuccessErrorResult,
+  SourceNotFoundError,
+} from '../lookup/lookup';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -50,7 +55,22 @@ async function lookupTerms(object: any, args: any, context: any) {
     args.uris.map((iri: string) => new IRI(iri)),
     args.timeoutMs
   );
-  return resolveTermsResults(results, context.catalog);
+
+  return results.map((result: LookupResult) => {
+    return {
+      uri: result.uri,
+      source: result.distribution
+        ? source(
+            result.distribution,
+            context.catalog.getDatasetByDistributionIri(
+              result.distribution.iri
+            )!
+          )
+        : undefined,
+      result:
+        result.result instanceof Term ? term(result.result) : result.result,
+    };
+  });
 }
 
 function resolveTermsResults(results: TermsResult[], catalog: Catalog) {
@@ -66,33 +86,7 @@ function resolveTermsResults(results: TermsResult[], catalog: Catalog) {
       };
     }
 
-    const terms = result.terms.map((term: Term) => {
-      return {
-        uri: term.id!.value,
-        prefLabel: term.prefLabels.map(
-          (prefLabel: RDF.Term) => prefLabel.value
-        ),
-        altLabel: term.altLabels.map((altLabel: RDF.Term) => altLabel.value),
-        hiddenLabel: term.hiddenLabels.map(
-          (hiddenLabel: RDF.Term) => hiddenLabel.value
-        ),
-        scopeNote: term.scopeNotes.map(
-          (scopeNote: RDF.Term) => scopeNote.value
-        ),
-        broader: term.broaderTerms.map(related => ({
-          uri: related.id.value,
-          prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
-        })),
-        narrower: term.narrowerTerms.map(related => ({
-          uri: related.id.value,
-          prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
-        })),
-        related: term.relatedTerms.map(related => ({
-          uri: related.id.value,
-          prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
-        })),
-      };
-    });
+    const terms = result.terms.map(term);
 
     return {
       source: source(
@@ -105,6 +99,30 @@ function resolveTermsResults(results: TermsResult[], catalog: Catalog) {
       },
     };
   });
+}
+
+function term(term: Term) {
+  return {
+    uri: term.id!.value,
+    prefLabel: term.prefLabels.map((prefLabel: RDF.Term) => prefLabel.value),
+    altLabel: term.altLabels.map((altLabel: RDF.Term) => altLabel.value),
+    hiddenLabel: term.hiddenLabels.map(
+      (hiddenLabel: RDF.Term) => hiddenLabel.value
+    ),
+    scopeNote: term.scopeNotes.map((scopeNote: RDF.Term) => scopeNote.value),
+    broader: term.broaderTerms.map(related => ({
+      uri: related.id.value,
+      prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+    })),
+    narrower: term.narrowerTerms.map(related => ({
+      uri: related.id.value,
+      prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+    })),
+    related: term.relatedTerms.map(related => ({
+      uri: related.id.value,
+      prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+    })),
+  };
 }
 
 function source(distribution: Distribution, dataset: Dataset) {
@@ -137,6 +155,23 @@ export const resolvers = {
       }
 
       return 'Terms';
+    },
+  },
+  LookupSuccessErrorResult: {
+    resolveType(result: LookupSuccessErrorResult) {
+      if (result instanceof TimeoutError) {
+        return 'TimeoutError';
+      }
+
+      if (result instanceof ServerError) {
+        return 'ServerError';
+      }
+
+      if (result instanceof SourceNotFoundError) {
+        return 'SourceNotFoundError';
+      }
+
+      return 'Term';
     },
   },
 };

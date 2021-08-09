@@ -5,10 +5,10 @@ module.exports = {
   coverageReporters: ['json-summary', 'text'],
   coverageThreshold: {
     global: {
-      lines: 95.36,
-      statements: 94.97,
-      branches: 98.36,
-      functions: 88.71,
+      lines: 96.28,
+      statements: 95.97,
+      branches: 98.77,
+      functions: 91.25,
     },
   },
 };

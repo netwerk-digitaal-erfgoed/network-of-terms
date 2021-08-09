@@ -87,7 +87,7 @@ export class QueryTermsService {
     return this.run(
       distribution.lookupQuery.replace(
         '?uris',
-        iris.map(iri => `<${iri}>`).join(', ')
+        iris.map(iri => `<${iri}>`).join(' ')
       ),
       distribution,
       timeoutMs
