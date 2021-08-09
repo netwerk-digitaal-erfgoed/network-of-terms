@@ -22,23 +22,27 @@ export class Catalog {
   }
 
   public static async fromStore(store: RDF.Store[]): Promise<Catalog> {
+    // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
+    const properties =
+      '?dataset ?name ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?alternateName';
     const query = `
       PREFIX schema: <http://schema.org/>
-        SELECT * WHERE {
+        SELECT ${properties} (GROUP_CONCAT(?url) as ?url) WHERE {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
             schema:creator ?creator ;
-            schema:distribution ?distribution .
+            schema:distribution ?distribution ;
+            schema:url ?url .
           OPTIONAL { ?dataset schema:alternateName ?alternateName . }
           ?creator schema:name ?creatorName ;
             schema:alternateName ?creatorAlternateName .
           ?distribution schema:encodingFormat "application/sparql-query" ;
             schema:contentUrl ?endpointUrl ;
-            schema:potentialAction ?potentialAction .
-          ?potentialAction a schema:SearchAction ;
-            schema:query ?query .
+            schema:potentialAction 
+                [a schema:SearchAction ; schema:query ?searchQuery ] ,
+                [a schema:FindAction ; schema:query ?lookupQuery ] .
         }
-        ORDER BY LCASE(?name)`;
+        GROUP BY ${properties}`;
     const result = (await newEngine().query(query, {
       sources: store,
     })) as IActorQueryOperationOutputBindings;
@@ -50,6 +54,10 @@ export class Catalog {
           new Dataset(
             new IRI(bindings.get('?dataset').value),
             bindings.get('?name').value,
+            bindings
+              .get('?url')
+              .value.split(' ') // The single value is space-delineated.
+              .map(url => new IRI(url)),
             [
               new Organization(
                 new IRI(bindings.get('?creator').value),
@@ -61,12 +69,11 @@ export class Catalog {
               new SparqlDistribution(
                 new IRI(bindings.get('?distribution').value),
                 new IRI(bindings.get('?endpointUrl').value),
-                bindings.get('?query').value
+                bindings.get('?searchQuery').value,
+                bindings.get('?lookupQuery').value
               ),
             ],
-            bindings.get('?alternateName')
-              ? bindings.get('?alternateName').value
-              : undefined
+            bindings.get('?alternateName')?.value
           )
         );
       });
@@ -82,12 +89,21 @@ export class Catalog {
       dataset => dataset.getDistributionByIri(iri) !== undefined
     );
   }
+
+  public getDatasetByTermIri(iri: IRI): Dataset | undefined {
+    return this.datasets.find(dataset =>
+      dataset.termsPrefixes.some(termPrefix =>
+        iri.toString().startsWith(termPrefix.toString())
+      )
+    );
+  }
 }
 
 export class Dataset {
   constructor(
     readonly iri: IRI,
     readonly name: string,
+    readonly termsPrefixes: IRI[],
     readonly creators: [Organization],
     readonly distributions: [Distribution],
     readonly alternateName?: string
@@ -112,7 +128,8 @@ export class SparqlDistribution {
   constructor(
     readonly iri: IRI,
     readonly endpoint: IRI,
-    readonly query: string
+    readonly searchQuery: string,
+    readonly lookupQuery: string
   ) {}
 }
 
