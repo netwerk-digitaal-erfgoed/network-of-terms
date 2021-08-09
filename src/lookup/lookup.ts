@@ -78,7 +78,6 @@ export class LookupService {
       return acc;
     }, new Map<Dataset, TermsResult>());
 
-    // We must return distibution.IRI and dataset
     return iris.map(iri => {
       const dataset = irisToDataset.get(iri);
       if (dataset === undefined) {
@@ -88,12 +87,10 @@ export class LookupService {
         };
       }
 
-      const terms = datasetToTerms.get(dataset)!;
-
       return {
         uri: iri,
         distribution: dataset.distributions[0],
-        result: result(terms, iri),
+        result: result(datasetToTerms.get(dataset)!, iri),
       };
     });
   }
