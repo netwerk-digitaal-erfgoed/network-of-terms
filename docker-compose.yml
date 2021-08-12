@@ -12,4 +12,4 @@ services:
       - /app/node_modules
     ports:
       - 3123:3123
-    entrypoint: /bin/sh -c 'node_modules/.bin/ts-node-dev src/server/server.ts'
+    entrypoint: npm run dev
