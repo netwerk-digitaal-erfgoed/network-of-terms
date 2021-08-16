@@ -1,39 +1,79 @@
-PREFIX som: <http://data.muziekschatten.nl/som/>
+PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX som: <http://data.muziekschatten.nl/som/>
 
 CONSTRUCT {
-    ?uri a skos:Concept;
-        skos:prefLabel ?schema_name;
-        skos:scopeNote ?scopeNote;
+    ?uri a skos:Concept ;
+        skos:prefLabel ?schema_name ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?schema_alternateName ;
+        skos:scopeNote ?scopeNote ;
+        skos:scopeNote ?schema_hasOccupation ;
         skos:broader ?uri_broader .
     ?uri_broader skos:prefLabel ?broader_schema_name .
 }
 WHERE {
-    GRAPH <http://data.muziekschatten.nl/somlod/> {
-        # For example:
-        # Moderne jazz: <https://data.muziekschatten.nl/som/d781655>
-        # Jazz: <https://data.muziekschatten.nl/som/d78165>
-        VALUES ?uri { ?uris }
+    # For example:
+    # Subject: <https://data.muziekschatten.nl/som/d781655>
+    # Subject: <https://data.muziekschatten.nl/som/d78165>
+    # Person: <https://data.muziekschatten.nl/som/b7bc6d966287e0f0e0f491752ff65ba5>
+    # Person: <https://data.muziekschatten.nl/som/4275e51d7d94b224928da9b7707a170a>
+    VALUES ?uri { ?uris }
 
-        OPTIONAL {
-            ?uri schema:name ?schema_name .
-            FILTER(LANG(?schema_name) = "nl")
-        }
-        OPTIONAL {
-            ?uri schema:keywords ?keywords
-            BIND(CONCAT("Trefwoorden: ", ?keywords) as ?keywords_note)
-        }
-        OPTIONAL {
-          ?uri skos:broader ?uri_broader .
-          ?uri_broader schema:name ?broader_schema_name .
-          FILTER(LANG(?broader_schema_name) = "nl")
-        }
+    OPTIONAL {
+        ?uri schema:name ?schema_name .
+        FILTER(LANG(?schema_name) = "nl")
     }
-    GRAPH <http://data.muziekschatten.nl/som/> {
-        ?uri som:BASIS "1" .
-        ?uri som:DC ?dc
-        BIND(CONCAT("Dewey: ", ?dc) as ?dewey_note)
+
+    # For subjects
+    OPTIONAL {
+        ?uri a skos:Concept
+        OPTIONAL {
+            ?uri skos:broader ?uri_broader .
+            ?uri_broader schema:name ?broader_schema_name .
+            FILTER(LANG(?broader_schema_name) = "nl")
+        }
+        OPTIONAL {
+            ?uri schema:keywords ?schema_keywords
+        }
+        OPTIONAL {
+            ?uri som:DC ?dc
+        }
+        BIND(
+            COALESCE(
+                IF(BOUND(?schema_keywords) && BOUND(?dc), CONCAT("Trefwoorden: ", ?schema_keywords, " | ", "Dewey: ", ?dc), ?noScopeNote),
+                IF(BOUND(?schema_keywords), CONCAT("Trefwoorden: ", ?schema_keywords), ?noScopeNote),
+                IF(BOUND(?dc), CONCAT("Dewey: ", ?dc), ?noScopeNote)
+            ) AS ?scopeNote
+        )
     }
-    BIND(CONCAT(?keywords_note, " | ", ?dewey_note) as ?scopeNote)
+
+    # For persons
+    OPTIONAL {
+        ?uri a schema:Person
+        OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+        OPTIONAL { ?uri schema:hasOccupation ?schema_hasOccupation }
+        OPTIONAL { ?uri schema:familyName ?schema_familyName }
+        OPTIONAL { ?uri schema:givenName ?schema_givenName }
+        BIND(
+            COALESCE(
+                IF(BOUND(?schema_familyName) && BOUND(?schema_givenName), CONCAT(?schema_familyName, ", ", ?schema_givenName), ?noName),
+                ?schema_familyName,
+                ?schema_givenName,
+                ?schema_name # Fallback
+            ) AS ?name
+        )
+        OPTIONAL { ?uri som:GDAT ?som_birthYear }
+        OPTIONAL { ?uri som:SDAT ?som_deathYear }
+        BIND(
+            COALESCE(
+                IF(BOUND(?som_birthYear) && BOUND(?som_deathYear), CONCAT(?som_birthYear, "-", ?som_deathYear), ?noDate),
+                IF(BOUND(?som_birthYear), CONCAT(?som_birthYear, "-"), ?noDate),
+                IF(BOUND(?som_deathYear), CONCAT("-", ?som_deathYear), ?noDate),
+                ""
+            ) AS ?dates
+        )
+        BIND(CONCAT(?name, IF(?dates != "", CONCAT(" (", ?dates, ")"), "")) AS ?prefLabel)
+    }
 }
 LIMIT 1000

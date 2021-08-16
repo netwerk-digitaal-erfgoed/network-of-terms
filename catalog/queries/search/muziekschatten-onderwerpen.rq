@@ -1,41 +1,45 @@
-PREFIX som: <http://data.muziekschatten.nl/som/>
+PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX som: <http://data.muziekschatten.nl/som/>
 
 CONSTRUCT {
-  ?uri a skos:Concept;
-       skos:prefLabel ?schema_name;
-       skos:scopeNote ?scopeNote;
-       skos:broader ?uri_broader .
-  ?uri_broader skos:prefLabel ?broader_schema_name .
+    ?uri a skos:Concept;
+        skos:prefLabel ?schema_name;
+        skos:scopeNote ?scopeNote;
+        skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_schema_name .
 }
 WHERE {
-    GRAPH <http://data.muziekschatten.nl/somlod/> {
-        ?uri a skos:Concept .
-        ?uri ?predicate ?label .
-        VALUES ?predicate { schema:name schema:keywords }
+    ?uri a skos:Concept .
+    ?uri ?predicate ?label .
+    VALUES ?predicate { schema:name schema:keywords }
 
-        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-        FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
 
-        OPTIONAL {
-            ?uri schema:name ?schema_name .
-            FILTER (langMatches(lang(?schema_name), "nl"))
-        }
-        OPTIONAL {
-            ?uri schema:keywords ?keywords
-            BIND(CONCAT("Trefwoorden: ",?keywords ) as ?keywords_note)
-        }
-        OPTIONAL {
-          ?uri skos:broader ?uri_broader .
-          ?uri_broader schema:name ?broader_schema_name .
-          FILTER (langMatches(lang(?broader_schema_name),"nl"))
-        }
+    OPTIONAL {
+        ?uri schema:name ?schema_name .
+        FILTER(LANG(?schema_name) = "nl")
     }
-    GRAPH <http://data.muziekschatten.nl/som/> {
-        ?uri som:BASIS "1" .
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri schema:name ?broader_schema_name .
+        FILTER(LANG(?broader_schema_name) = "nl")
+    }
+    OPTIONAL {
+        ?uri schema:keywords ?schema_keywords
+    }
+    OPTIONAL {
         ?uri som:DC ?dc
-        BIND(CONCAT("Dewey: ",?dc) as ?dewey_note)
     }
-    BIND( CONCAT(?keywords_note," | ",?dewey_note) as ?scopeNote)
+    BIND(
+        COALESCE(
+            IF(BOUND(?schema_keywords) && BOUND(?dc), CONCAT("Trefwoorden: ", ?schema_keywords, " | ", "Dewey: ", ?dc), ?noScopeNote),
+            IF(BOUND(?schema_keywords), CONCAT("Trefwoorden: ", ?schema_keywords), ?noScopeNote),
+            IF(BOUND(?dc), CONCAT("Dewey: ", ?dc), ?noScopeNote)
+        ) AS ?scopeNote
+    )
+
+    ?uri som:BASIS "1" .
 }
 LIMIT 1000
