@@ -33,6 +33,8 @@ WHERE {
 
     ?uri ?predicate ?label .
     VALUES ?predicate { schema:name schema:alternateName }
+
+    # A 'FILTER (<bif:contains>, ...)' currently does not work due to https://github.com/comunica/comunica/issues/844
     ?label <bif:contains> ?query .
 
     OPTIONAL { ?uri schema:name ?schema_name }
