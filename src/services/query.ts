@@ -91,7 +91,7 @@ export class QueryTermsService {
     );
     const timer = new Hoek.Bench();
     const result = (await this.engine.query(
-      this.distribution.query,
+      this.distribution.searchQuery,
       this.getConfig()
     )) as IActorQueryOperationOutputQuads;
 
