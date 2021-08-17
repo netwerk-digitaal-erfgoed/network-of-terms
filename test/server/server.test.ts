@@ -16,6 +16,7 @@ const catalog = new Catalog([
   new Dataset(
     new IRI('http://vocab.getty.edu/aat'),
     'Art & Architecture Thesaurus',
+    [],
     [
       new Organization(
         new IRI('http://www.getty.edu/research/'),
@@ -27,13 +28,15 @@ const catalog = new Catalog([
       new SparqlDistribution(
         new IRI('http://vocab.getty.edu/aat/sparql'),
         new IRI('http://localhost:3000/sparql'),
-        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
+        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`,
+        ''
       ),
     ]
   ),
   new Dataset(
     new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
     'Cultuurhistorische Thesaurus',
+    [],
     [
       new Organization(
         new IRI('https://www.cultureelerfgoed.nl'),
@@ -45,13 +48,15 @@ const catalog = new Catalog([
       new SparqlDistribution(
         new IRI('https://example.com/distributions/endpoint-error'),
         new IRI('http://does-not-resolve'),
-        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
+        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`,
+        ''
       ),
     ]
   ),
   new Dataset(
     new IRI('https://data.rkd.nl/rkdartists'),
     'RKDartists',
+    [],
     [
       new Organization(
         new IRI('https://rkd.nl'),
@@ -63,7 +68,8 @@ const catalog = new Catalog([
       new SparqlDistribution(
         new IRI('https://example.com/distributions/timeout'),
         new IRI('https://httpbin.org/delay/3'),
-        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
+        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`,
+        ''
       ),
     ]
   ),
