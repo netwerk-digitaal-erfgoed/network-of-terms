@@ -7,8 +7,10 @@ describe('Catalog', () => {
     catalog = await Catalog.default();
   });
 
-  it('can list datasets', () => {
-    expect(catalog.datasets.length).toBe(19);
+  it('lists datasets in alphabetical order', () => {
+    expect(catalog.datasets.length).toBeGreaterThan(3);
+    const datasetNames = catalog.datasets.map(dataset => dataset.name);
+    expect([...datasetNames].sort()).toEqual(datasetNames);
   });
 
   it('can retrieve datasets by IRI', () => {
