@@ -9,3 +9,5 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      - dependency-name: "@netwerk-digitaal-erfgoed/network-of-terms-catalog" # Done with release in update-catalog.yml.
