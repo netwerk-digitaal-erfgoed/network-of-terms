@@ -42,7 +42,8 @@ export class Catalog {
                 [a schema:SearchAction ; schema:query ?searchQuery ] ,
                 [a schema:FindAction ; schema:query ?lookupQuery ] .
         }
-        GROUP BY ${properties}`;
+        GROUP BY ${properties}
+        ORDER BY LCASE(?name)`;
     const result = (await newEngine().query(query, {
       sources: store,
     })) as IActorQueryOperationOutputBindings;
