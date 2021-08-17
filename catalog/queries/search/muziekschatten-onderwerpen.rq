@@ -14,8 +14,8 @@ WHERE {
     ?uri ?predicate ?label .
     VALUES ?predicate { schema:name schema:keywords }
 
-    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+    # A 'FILTER (<bif:contains>, ...)' currently does not work due to https://github.com/comunica/comunica/issues/844
+    ?label <bif:contains> ?query .
 
     OPTIONAL {
         ?uri schema:name ?schema_name .
