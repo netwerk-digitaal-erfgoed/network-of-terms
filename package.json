@@ -28,7 +28,7 @@
   "author": "Netwerk Digitaal Erfgoed",
   "license": "MIT",
   "devDependencies": {
-    "@types/jest": "^26.0.7",
+    "@types/jest": "^27.0.1",
     "@types/n3": "^1.4.3",
     "@types/node": "^16.0.0",
     "@types/rdf-ext": "^1.3.7",
