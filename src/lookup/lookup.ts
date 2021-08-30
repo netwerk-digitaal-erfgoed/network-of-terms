@@ -14,23 +14,29 @@ import {
 } from '../services/query';
 import {Term} from '../services/terms';
 
-export type LookupResult = {
+export type LookupQueryResult = {
   uri: IRI;
-  distribution?: Distribution;
-  result?: LookupSuccessErrorResult;
+  distribution: SourceResult;
+  result: LookupResult;
 };
 
-export type LookupSuccessErrorResult =
-  | Term
-  | TimeoutError
-  | ServerError
-  | SourceNotFoundError;
+export type SourceResult = Distribution | SourceNotFoundError;
+
+export type LookupResult = Term | NotFoundError | TimeoutError | ServerError;
 
 export class SourceNotFoundError {
   readonly message: string;
 
   constructor(readonly iri: IRI) {
-    this.message = `No source found for term with IRI ${iri}`;
+    this.message = `No source found that can provide term with URI ${iri}`;
+  }
+}
+
+export class NotFoundError {
+  readonly message: string;
+
+  constructor(readonly iri: IRI) {
+    this.message = `No term found with URI ${iri}`;
   }
 }
 
@@ -40,7 +46,10 @@ export class LookupService {
     private queryService: QueryTermsService
   ) {}
 
-  public async lookup(iris: IRI[], timeoutMs: number): Promise<LookupResult[]> {
+  public async lookup(
+    iris: IRI[],
+    timeoutMs: number
+  ): Promise<LookupQueryResult[]> {
     const irisToDataset = iris.reduce((acc, iri) => {
       const dataset = this.catalog.getDatasetByTermIri(iri);
       if (dataset) {
@@ -83,7 +92,8 @@ export class LookupService {
       if (dataset === undefined) {
         return {
           uri: iri,
-          result: new SourceNotFoundError(iri),
+          distribution: new SourceNotFoundError(iri),
+          result: new NotFoundError(iri),
         };
       }
 
@@ -96,13 +106,13 @@ export class LookupService {
   }
 }
 
-function result(
-  result: TermsResult,
-  iri: IRI
-): LookupSuccessErrorResult | undefined {
+function result(result: TermsResult, iri: IRI): LookupResult {
   if (result instanceof Error) {
     return result;
   }
 
-  return result.terms.find(term => term.id.value === iri.toString());
+  return (
+    result.terms.find(term => term.id.value === iri.toString()) ??
+    new NotFoundError(iri)
+  );
 }

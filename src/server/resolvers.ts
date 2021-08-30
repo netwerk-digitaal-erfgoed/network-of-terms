@@ -13,12 +13,15 @@ import {
   Dataset,
   Distribution,
   IRI,
+  SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {
+  LookupQueryResult,
   LookupResult,
   LookupService,
-  LookupSuccessErrorResult,
+  NotFoundError,
   SourceNotFoundError,
+  SourceResult,
 } from '../lookup/lookup';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,17 +59,18 @@ async function lookupTerms(object: any, args: any, context: any) {
     args.timeoutMs
   );
 
-  return results.map((result: LookupResult) => {
+  return results.map((result: LookupQueryResult) => {
     return {
       uri: result.uri,
-      source: result.distribution
-        ? source(
-            result.distribution,
-            context.catalog.getDatasetByDistributionIri(
-              result.distribution.iri
-            )!
-          )
-        : undefined,
+      source:
+        result.distribution instanceof SparqlDistribution
+          ? source(
+              result.distribution,
+              context.catalog.getDatasetByDistributionIri(
+                result.distribution.iri
+              )!
+            )
+          : result.distribution,
       result:
         result.result instanceof Term ? term(result.result) : result.result,
     };
@@ -157,18 +161,27 @@ export const resolvers = {
       return 'Terms';
     },
   },
-  LookupSuccessErrorResult: {
-    resolveType(result: LookupSuccessErrorResult) {
+  SourceResult: {
+    resolveType(result: SourceResult) {
+      if (result instanceof SourceNotFoundError) {
+        return 'SourceNotFoundError';
+      }
+
+      return 'Source';
+    },
+  },
+  LookupResult: {
+    resolveType(result: LookupResult) {
+      if (result instanceof NotFoundError) {
+        return 'NotFoundError';
+      }
+
       if (result instanceof TimeoutError) {
         return 'TimeoutError';
       }
 
       if (result instanceof ServerError) {
         return 'ServerError';
-      }
-
-      if (result instanceof SourceNotFoundError) {
-        return 'SourceNotFoundError';
       }
 
       return 'Term';

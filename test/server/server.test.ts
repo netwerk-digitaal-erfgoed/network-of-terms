@@ -162,14 +162,16 @@ describe('Server', () => {
       'https://example.com/resources/iri-does-not-exist-in-dataset'
     );
     expect(termNotFound.source.name).toEqual('Art & Architecture Thesaurus');
-    expect(termNotFound.result).toBeNull();
+    expect(termNotFound.result.__typename).toEqual('NotFoundError');
 
     const sourceNotFound = body.data.lookup[2];
-    expect(sourceNotFound.uri).toEqual('https://example.com/does-not-exist');
-    expect(sourceNotFound.source).toBeNull();
-    expect(sourceNotFound.result.__typename).toEqual('SourceNotFoundError');
+    expect(sourceNotFound.source.__typename).toEqual('SourceNotFoundError');
+    expect(sourceNotFound.source.message).toEqual(
+      'No source found that can provide term with URI https://example.com/does-not-exist'
+    );
+    expect(sourceNotFound.result.__typename).toEqual('NotFoundError');
     expect(sourceNotFound.result.message).toEqual(
-      'No source found for term with IRI https://example.com/does-not-exist'
+      'No term found with URI https://example.com/does-not-exist'
     );
 
     const serverError = body.data.lookup[3];
@@ -275,12 +277,19 @@ function lookupQuery(...iris: string[]) {
       ) {
         uri
         source {
-          uri
-          name
-          creators {
+          __typename
+          ... on Source {
             uri
             name
-            alternateName
+            creators {
+              uri
+              name
+              alternateName
+            }
+          }
+          ... on Error {
+            __typename
+            message
           }
         }        
         result {

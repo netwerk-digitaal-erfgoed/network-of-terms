@@ -208,16 +208,21 @@ query {
   ) {
     uri
     source {
-      uri
-      name
-      creators {
+      ... on Source {
         uri
         name
-        alternateName
+        creators {
+          uri
+          name
+          alternateName
+        }
+      }
+      ... on Error {
+        __typename
+        message
       }
     }        
     result {
-      __typename
       ... on Term {
         uri
         prefLabel
