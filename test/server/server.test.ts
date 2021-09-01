@@ -16,7 +16,7 @@ const catalog = new Catalog([
   new Dataset(
     new IRI('http://vocab.getty.edu/aat'),
     'Art & Architecture Thesaurus',
-    [],
+    [new IRI('https://example.com/resources/')],
     [
       new Organization(
         new IRI('http://www.getty.edu/research/'),
@@ -29,14 +29,14 @@ const catalog = new Catalog([
         new IRI('http://vocab.getty.edu/aat/sparql'),
         new IRI('http://localhost:3000/sparql'),
         gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`,
-        ''
+        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o. VALUES ?s { ?uris } }`
       ),
     ]
   ),
   new Dataset(
     new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
     'Cultuurhistorische Thesaurus',
-    [],
+    [new IRI('https://data.cultureelerfgoed.nl/term/id/cht/')],
     [
       new Organization(
         new IRI('https://www.cultureelerfgoed.nl'),
@@ -49,14 +49,14 @@ const catalog = new Catalog([
         new IRI('https://example.com/distributions/endpoint-error'),
         new IRI('http://does-not-resolve'),
         gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`,
-        ''
+        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
       ),
     ]
   ),
   new Dataset(
     new IRI('https://data.rkd.nl/rkdartists'),
     'RKDartists',
-    [],
+    [new IRI('https://data.rkd.nl/artists/')],
     [
       new Organization(
         new IRI('https://rkd.nl'),
@@ -69,7 +69,7 @@ const catalog = new Catalog([
         new IRI('https://example.com/distributions/timeout'),
         new IRI('https://httpbin.org/delay/3'),
         gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`,
-        ''
+        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`
       ),
     ]
   ),
@@ -138,6 +138,51 @@ describe('Server', () => {
     );
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(4); // Terms.
+  });
+
+  it('responds to GraphQL lookup query', async () => {
+    const body = await query(
+      lookupQuery(
+        'https://example.com/resources/art',
+        'https://example.com/resources/iri-does-not-exist-in-dataset',
+        'https://example.com/does-not-exist',
+        'https://data.cultureelerfgoed.nl/term/id/cht/server-error',
+        'https://data.rkd.nl/artists/timeout'
+      )
+    );
+
+    const term = body.data.lookup[0];
+    expect(term.uri).toEqual('https://example.com/resources/art');
+    expect(term.source.name).toEqual('Art & Architecture Thesaurus');
+    expect(term.result.__typename).toEqual('Term');
+    expect(term.result.uri).toEqual('https://example.com/resources/art');
+
+    const termNotFound = body.data.lookup[1];
+    expect(termNotFound.uri).toEqual(
+      'https://example.com/resources/iri-does-not-exist-in-dataset'
+    );
+    expect(termNotFound.source.name).toEqual('Art & Architecture Thesaurus');
+    expect(termNotFound.result.__typename).toEqual('NotFoundError');
+
+    const sourceNotFound = body.data.lookup[2];
+    expect(sourceNotFound.source.__typename).toEqual('SourceNotFoundError');
+    expect(sourceNotFound.source.message).toEqual(
+      'No source found that can provide term with URI https://example.com/does-not-exist'
+    );
+    expect(sourceNotFound.result.__typename).toEqual('NotFoundError');
+    expect(sourceNotFound.result.message).toEqual(
+      'No term found with URI https://example.com/does-not-exist'
+    );
+
+    const serverError = body.data.lookup[3];
+    expect(serverError.uri).toEqual(
+      'https://data.cultureelerfgoed.nl/term/id/cht/server-error'
+    );
+    expect(serverError.result.__typename).toEqual('ServerError');
+
+    const timeoutError = body.data.lookup[4];
+    expect(timeoutError.uri).toEqual('https://data.rkd.nl/artists/timeout');
+    expect(timeoutError.result.__typename).toEqual('TimeoutError');
   });
 
   it('responds to GraphQL playground requests', async () => {
@@ -214,6 +259,50 @@ function termsQuery(...sources: string[]) {
                 uri
                 prefLabel
               }
+            }
+          }
+          ... on Error {
+            message
+          }
+        }
+      }
+    }`;
+}
+function lookupQuery(...iris: string[]) {
+  return gql`
+    query {
+      lookup(
+        uris: [${iris.map(iri => `"${iri}"`).join(',')}],
+        timeoutMs: 1000
+      ) {
+        uri
+        source {
+          __typename
+          ... on Source {
+            uri
+            name
+            creators {
+              uri
+              name
+              alternateName
+            }
+          }
+          ... on Error {
+            __typename
+            message
+          }
+        }        
+        result {
+          __typename
+          ... on Term {
+            uri
+            prefLabel
+            altLabel
+            hiddenLabel
+            scopeNote
+            broader {
+              uri
+              prefLabel
             }
           }
           ... on Error {

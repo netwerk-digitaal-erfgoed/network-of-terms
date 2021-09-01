@@ -14,26 +14,19 @@ import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from 'rdf-js';
 import {Term, TermsTransformer} from './terms';
-import {Distribution} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {
+  Distribution,
+  IRI,
+} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
-  distribution: Distribution;
-  query: string;
   comunica: IActorInitSparqlArgs;
-  timeoutMs: number;
 }
 
 const schemaConstructor = Joi.object({
   logger: Joi.object().required(),
-  distribution: Joi.object().required(),
-  query: Joi.string().required(),
   comunica: Joi.object().required(),
-  timeoutMs: Joi.number()
-    .integer()
-    .min(1)
-    .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 10000)
-    .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000),
 });
 
 export type TermsResult = Terms | TimeoutError | ServerError;
@@ -53,46 +46,74 @@ export class TimeoutError extends Error {
 export class ServerError extends Error {}
 
 export class QueryTermsService {
-  protected logger: Pino.Logger;
-  protected distribution: Distribution;
-  protected query: string;
-  protected engine: ActorInitSparql;
-  protected timeoutMs: number;
+  private readonly logger: Pino.Logger;
+  private readonly engine: ActorInitSparql;
 
   constructor(options: ConstructorOptions) {
     const args = Joi.attempt(options, schemaConstructor);
     this.logger = args.logger;
-    this.distribution = args.distribution;
-    this.query = args.query;
     this.engine = args.comunica;
-    this.timeoutMs = args.timeoutMs;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected getConfig(): any {
+  protected getConfig(distribution: Distribution, bindings?: Bindings): any {
     const logger = new LoggerPino({logger: this.logger});
     return {
       log: logger,
       sources: [
         {
           type: 'sparql', // Only supported type for now
-          value: this.distribution.endpoint.toString(),
+          value: distribution.endpoint.toString(),
         },
       ],
-      initialBindings: Bindings({
-        '?query': literal(this.query),
-      }),
+      initialBindings: bindings,
     };
   }
 
-  async run(): Promise<TermsResult> {
-    this.logger.info(
-      `Querying "${this.distribution.endpoint}" with "${this.query}"...`
+  async search(
+    searchQuery: string,
+    distribution: Distribution,
+    timeoutMs: number
+  ) {
+    return this.run(
+      distribution.searchQuery,
+      distribution,
+      timeoutMs,
+      Bindings({'?query': literal(searchQuery)})
     );
+  }
+
+  async lookup(iris: IRI[], distribution: Distribution, timeoutMs: number) {
+    return this.run(
+      distribution.lookupQuery.replace(
+        '?uris',
+        iris.map(iri => `<${iri}>`).join(' ')
+      ),
+      distribution,
+      timeoutMs
+    );
+  }
+
+  async run(
+    query: string,
+    distribution: Distribution,
+    timeoutMs: number,
+    bindings?: Bindings
+  ): Promise<TermsResult> {
+    Joi.attempt(
+      timeoutMs,
+      Joi.number()
+        .integer()
+        .min(1)
+        .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 10000)
+        .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000)
+    );
+
+    this.logger.info(`Querying "${distribution.endpoint}" with "${query}"...`);
     const timer = new Hoek.Bench();
     const result = (await this.engine.query(
-      this.distribution.searchQuery,
-      this.getConfig()
+      query,
+      this.getConfig(distribution, bindings)
     )) as IActorQueryOperationOutputQuads;
 
     return guardTimeout(
@@ -100,25 +121,25 @@ export class QueryTermsService {
         const termsTransformer = new TermsTransformer();
         result.quadStream.on('error', (error: Error) => {
           this.logger.error(
-            `An error occurred when querying "${this.distribution.endpoint}": ${error}`
+            `An error occurred when querying "${distribution.endpoint}": ${error}`
           );
-          resolve(new ServerError(this.distribution, error.message));
+          resolve(new ServerError(distribution, error.message));
         });
-        result.quadStream.on('data', (quad: RDF.Quad) =>
-          termsTransformer.fromQuad(quad)
-        );
+        result.quadStream.on('data', (quad: RDF.Quad) => {
+          termsTransformer.fromQuad(quad);
+        });
         result.quadStream.on('end', () => {
           const terms = termsTransformer.asArray().sort(alphabeticallyByLabels);
           this.logger.info(
-            `Found ${terms.length} terms matching "${this.query}" in "${
-              this.distribution.endpoint
+            `Found ${terms.length} terms matching "${query}" in "${
+              distribution.endpoint
             }" in ${PrettyMilliseconds(timer.elapsed())}`
           );
-          resolve(new Terms(this.distribution, terms));
+          resolve(new Terms(distribution, terms));
         });
       }),
-      this.timeoutMs,
-      new TimeoutError(this.distribution, this.timeoutMs)
+      timeoutMs,
+      new TimeoutError(distribution, timeoutMs)
     );
   }
 }

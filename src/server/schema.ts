@@ -31,17 +31,10 @@ export const schema = `
     narrower: [RelatedTerm]
     related: [RelatedTerm]
   }
-  
+
   type RelatedTerm {
     uri: ID!
     prefLabel: [String]!
-  }
-
-  type TermsQueryResult {
-    "The term source that provides the terms."
-    source: Source!
-    terms: [Term]! @deprecated(reason: "Use 'result' instead")
-    result: TermsResult!
   }
 
   type Query {
@@ -59,14 +52,45 @@ export const schema = `
     
     "List all sources that can be queried for terms."
     sources: [Source]
+    
+    "Look up terms by their URI."
+    lookup(
+      "List of term URIs."
+      uris: [ID]!,
+      
+      "Timeout period in milliseconds that we wait for sources to respond."
+      timeoutMs: Int = 10000
+    ): [LookupQueryResult]
   }
-  
+
+  type TermsQueryResult {
+    "The term source that provides the terms."
+    source: Source!
+    terms: [Term]! @deprecated(reason: "Use 'result' instead")
+    result: TermsResult!
+  }
+
   union TermsResult = Terms | TimeoutError | ServerError
-  
+
   type Terms {
     terms: [Term]
   }
-  
+
+  type LookupQueryResult {
+    "The term’s URI."
+    uri: ID!
+
+    "The term source that provides the term or an error if no source could be found."
+    source: SourceResult!
+    
+    "The term if the lookup succeeded; an error otherwise." 
+    result: LookupResult!
+  }
+
+  union SourceResult = Source | SourceNotFoundError
+
+  union LookupResult = Term | NotFoundError | TimeoutError | ServerError  
+
   """
   The term source failed to respond within the timeout period.
   """ 
@@ -80,7 +104,21 @@ export const schema = `
   type ServerError implements Error {
     message: String!
   }
-  
+
+  """
+  No source could be found that can provide the term.
+  """
+  type SourceNotFoundError implements Error {
+    message: String!
+  }
+
+  """
+  The term could not be found.
+  """
+  type NotFoundError implements Error {
+    message: String!
+  }
+
   interface Error {
     message: String!
   }

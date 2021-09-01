@@ -117,9 +117,11 @@ query Sources {
 
 ### Query one or more sources for terms
 
+#### Query a single source
+
 ```graphql
 # Query Cultuurhistorische Thesaurus (CHT)
-query Terms {
+query {
   terms(sources: ["https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht"], query: "fiets") {
     source {
       uri
@@ -161,9 +163,11 @@ query Terms {
 }
 ```
 
+#### Query multiple sources
+
 ```graphql
 # Query RKDartists and NTA simultaneously
-query Terms {
+query {
   terms(sources: ["https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql", "http://data.bibliotheken.nl/thesp/sparql"], query: "Gogh") {
     source {
       uri
@@ -186,6 +190,52 @@ query Terms {
         }
       }
       ... on Error {
+        message
+      }
+    }
+  }
+}
+```
+
+### Look up terms by URI
+
+Use the `lookup` query to look up terms whose URIs you know (for example, because you have stored the URIs previously):
+
+```graphql
+query {
+  lookup(
+    uris: ["https://data.rkd.nl/artists/32439", "https://data.cultureelerfgoed.nl/term/id/cht/15e29ea3-1b4b-4fb2-b970-a0c485330384"],
+  ) {
+    uri
+    source {
+      ... on Source {
+        uri
+        name
+        creators {
+          uri
+          name
+          alternateName
+        }
+      }
+      ... on Error {
+        __typename
+        message
+      }
+    }        
+    result {
+      ... on Term {
+        uri
+        prefLabel
+        altLabel
+        hiddenLabel
+        scopeNote
+        broader {
+          uri
+          prefLabel
+        }
+      }
+      ... on Error {
+        __typename
         message
       }
     }
