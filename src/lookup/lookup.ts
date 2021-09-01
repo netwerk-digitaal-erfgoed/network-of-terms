@@ -66,11 +66,8 @@ export class LookupService {
       new Map<Dataset, IRI[]>()
     );
 
-    const lookups = <Promise<TermsResult>[]>[];
-    datasetToIris.forEach((iris, dataset) =>
-      lookups.push(
-        this.queryService.lookup(iris, dataset.distributions[0], timeoutMs)
-      )
+    const lookups = [...datasetToIris].map(([dataset, _iri]) =>
+      this.queryService.lookup(iris, dataset.distributions[0], timeoutMs)
     );
 
     const termsPerSource: (
