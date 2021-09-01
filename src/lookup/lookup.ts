@@ -66,7 +66,7 @@ export class LookupService {
       new Map<Dataset, IRI[]>()
     );
 
-    const lookups = [...datasetToIris].map(([dataset, _iri]) =>
+    const lookups = [...datasetToIris].map(([dataset]) =>
       this.queryService.lookup(iris, dataset.distributions[0], timeoutMs)
     );
 
