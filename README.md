@@ -235,6 +235,7 @@ query {
         }
       }
       ... on Error {
+        __typename
         message
       }
     }
