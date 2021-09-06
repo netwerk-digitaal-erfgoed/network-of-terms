@@ -30,7 +30,7 @@
     "pino-pretty": "^6.0.0",
     "pretty-ms": "^7.0.1",
     "rdf-js": "^4.0.2",
-    "rdf-parse": "^1.8.1",
+    "rdf-parse": "^1.9.1",
     "rdf-store-stream": "^1.3.0"
   },
   "devDependencies": {
