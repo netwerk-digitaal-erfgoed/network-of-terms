@@ -47,7 +47,7 @@
     "mercurius-codegen": "^3.0.0",
     "ts-jest": "^27.0.5",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.3"
   },
   "scripts": {
     "check": "gts check",
