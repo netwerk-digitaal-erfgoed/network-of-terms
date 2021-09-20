@@ -19,7 +19,8 @@ CONSTRUCT {
 }
 WHERE {
     ?uri luc:term ?query ;
-        a ?type .
+        a ?type ;
+        void:inDataset <http://vocab.getty.edu/dataset/aat>  .
     ?type rdfs:subClassOf gvp:Subject .
     FILTER (?type != gvp:Subject) .
     ?uri skosxl:prefLabel ?prefLabel_uri .
