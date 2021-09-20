@@ -26,7 +26,7 @@
     "nde"
   ],
   "author": "Netwerk Digitaal Erfgoed",
-  "license": "MIT",
+  "license": "EUPL",
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@types/n3": "^1.4.3",
