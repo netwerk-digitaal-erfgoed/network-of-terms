@@ -1,10 +1,10 @@
 module.exports = {
   roots: ['test/'],
   preset: 'ts-jest',
-  testTimeout: 20000,
+  testTimeout: 30000,
   globals: {
     'ts-jest': {
-      tsConfig: 'tsconfig.test.json',
+      tsconfig: 'tsconfig.test.json',
     },
   },
 };
