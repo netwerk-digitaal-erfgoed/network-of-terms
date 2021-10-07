@@ -12,10 +12,10 @@ CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
-        skos:scopeNote ?scopeNote .
-    ?uri skos:broader ?broader_uri .
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
-    ?uri skos:narrower ?narrower_uri .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
 WHERE {
@@ -29,7 +29,7 @@ WHERE {
     ?prefLabel_uri skosxl:literalForm ?prefLabel .
     OPTIONAL {
         ?uri skosxl:altLabel ?altLabel_uri .
-        ?altLabel_uri dcterms:language aat:300388256 .
+        ?altLabel_uri dcterms:language aat:300388256 . # Dutch (language)
         ?altLabel_uri skosxl:literalForm ?altLabel .
     }
     OPTIONAL {
@@ -38,14 +38,16 @@ WHERE {
         ?scopeNote_uri rdf:value ?scopeNote .
     }
     OPTIONAL {
-        ?uri gvp:broaderPreferred/skosxl:prefLabel ?broader_uri .
-        ?broader_uri dcterms:language aat:300388256 . # Dutch (language)
-        ?broader_uri skosxl:literalForm ?broader_prefLabel .
+        ?uri gvp:broaderPreferred ?broader_uri .
+        ?broader_uri skosxl:prefLabel ?broader_uri_skosxl .
+        ?broader_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
+        ?broader_uri_skosxl skosxl:literalForm ?broader_prefLabel .
     }
     OPTIONAL {
-        ?uri skos:narrower/skosxl:prefLabel ?narrower_uri .
-        ?narrower_uri dcterms:language aat:300388256 . # Dutch (language)
-        ?narrower_uri skosxl:literalForm ?narrower_prefLabel .
+        ?uri skos:narrower ?narrower_uri .
+        ?narrower_uri skosxl:prefLabel ?narrower_uri_skosxl .
+        ?narrower_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
+        ?narrower_uri_skosxl skosxl:literalForm ?narrower_prefLabel .
     }
 }
 LIMIT 1000
