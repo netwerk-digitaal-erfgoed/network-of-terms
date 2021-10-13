@@ -1,0 +1,43 @@
+PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri ;
+        skos:related ?related_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel . 
+    ?related_uri skos:prefLabel ?related_prefLabel .
+}
+WHERE {
+    #For example:
+    # Water: http://eurovoc.europa.eu/597
+    VALUES ?uri { ?uris }
+    OPTIONAL {
+        ?uri skos:prefLabel ?prefLabel .
+        FILTER(LANG(?prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+        FILTER(LANG(?broader_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:narrower ?narrower_uri .
+        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+        FILTER(LANG(?narrower_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:related ?related_uri .
+        ?related_uri skos:prefLabel ?related_prefLabel .
+        FILTER(LANG(?related_prefLabel) = "nl")
+    }
+}
+LIMIT 1000
