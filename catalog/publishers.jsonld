@@ -60,6 +60,12 @@
       "@type": "Organization",
       "name": "Nederlands Instituut voor Beeld en Geluid",
       "alternateName": "Beeld en Geluid"
+    },
+    {
+      "@id": "https://op.europa.eu/",
+      "@type": "Organization",
+      "name": "Bureau voor publicaties van de Europese Unie",
+      "alternateName": "Europese Unie"
     }
   ]
 }
