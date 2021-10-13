@@ -9,8 +9,10 @@ describe('Catalog', () => {
 
   it('lists datasets in alphabetical order', () => {
     expect(catalog.datasets.length).toBeGreaterThan(3);
-    const datasetNames = catalog.datasets.map(dataset => dataset.name);
-    expect([...datasetNames].sort()).toEqual(datasetNames);
+    const datasetNames = catalog.datasets.map(dataset =>
+      dataset.name.toLowerCase()
+    );
+    expect(datasetNames).toEqual([...datasetNames].sort());
   });
 
   it('can retrieve datasets by IRI', () => {

@@ -5,13 +5,7 @@
   "name": [
     {
       "@language": "nl",
-      "@value": "Thesaurus Tweede Wereldoorlog Nederland"
-    }
-  ],
-  "alternateName": [
-    {
-      "@language": "nl",
-      "@value": "WO2 Thesaurus"
+      "@value": "WO2-thesaurus"
     }
   ],
   "creator": [

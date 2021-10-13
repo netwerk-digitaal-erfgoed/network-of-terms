@@ -38,7 +38,7 @@ export class Catalog {
             schema:alternateName ?creatorAlternateName .
           ?distribution schema:encodingFormat "application/sparql-query" ;
             schema:contentUrl ?endpointUrl ;
-            schema:potentialAction 
+            schema:potentialAction
                 [a schema:SearchAction ; schema:query ?searchQuery ] ,
                 [a schema:FindAction ; schema:query ?lookupQuery ] .
         }
