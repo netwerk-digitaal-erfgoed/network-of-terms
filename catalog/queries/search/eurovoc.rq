@@ -1,6 +1,5 @@
-PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-
+PREFIX eurovoc: <http://eurovoc.europa.eu/schema#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -14,10 +13,14 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel . 
 }
 WHERE {
+    ?uri a eurovoc:ThesaurusConcept .
     ?uri ?predicate ?label .
     VALUES ?predicate { skos:prefLabel skos:altLabel }
     FILTER(LANG(?label) = "nl")
-    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+    # The http://publications.europa.eu/webapi/rdf/sparql endpoint
+    # is based on Virtuoso but it looks like fulltext search support
+    # is not enabled therefore fallback to the standard CONTAINS function 
+    FILTER (CONTAINS(LCASE(STR(?label)),LCASE(?query)))
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl")
