@@ -18,9 +18,9 @@
   ],
   "distribution": [
     {
-      "@id": "https://data.netwerkdigitaalerfgoed.nl/NDE/eurovoc/sparql",
+      "@id": "http://publications.europa.eu/webapi/rdf/sparql#eurovoc",
       "@type": "DataDownload",
-      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/NDE/eurovoc/services/eurovoc/sparql",
+      "contentUrl": "http://publications.europa.eu/webapi/rdf/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
