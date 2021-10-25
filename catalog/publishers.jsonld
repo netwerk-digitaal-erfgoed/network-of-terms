@@ -66,6 +66,12 @@
       "@type": "Organization",
       "name": "Bureau voor publicaties van de Europese Unie",
       "alternateName": "Europese Unie"
+    },
+    {
+      "@id": "https://www.adamnet.nl",
+      "@type": "Organization",
+      "name": "Stichting AdamNet",
+      "alternateName": "AdamNet"
     }
   ]
 }
