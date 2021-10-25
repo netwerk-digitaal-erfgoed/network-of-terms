@@ -1,0 +1,27 @@
+PREFIX hg: <http://rdf.histograph.io/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX void: <http://rdfs.org/ns/void#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote .
+}
+WHERE {
+    ?uri void:inDataset <https://data.adamlink.nl/adamnet/geography/> .
+    ?uri a hg:Street .
+    ?uri ?predicate ?label .
+    VALUES ?predicate { skos:prefLabel skos:altLabel }
+
+    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+
+    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
+    OPTIONAL { ?uri skos:altLabel ?altLabel }
+    OPTIONAL {
+        ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
+        BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+    }
+}
+LIMIT 1000
