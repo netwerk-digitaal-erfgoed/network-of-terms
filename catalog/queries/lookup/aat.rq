@@ -11,6 +11,7 @@ CONSTRUCT {
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote ;
+        rdfs:seeAlso ?rdfs_seeAlso ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
@@ -34,6 +35,9 @@ WHERE {
         ?uri skos:scopeNote ?scopeNote_uri .
         ?scopeNote_uri dcterms:language aat:300388256 . # Dutch (language)
         ?scopeNote_uri rdf:value ?scopeNote .
+    }
+    OPTIONAL {
+        ?uri rdfs:seeAlso ?rdfs_seeAlso
     }
     OPTIONAL {
         ?uri gvp:broaderPreferred ?broader_uri .
