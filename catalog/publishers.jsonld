@@ -68,12 +68,6 @@
       "alternateName": "Europese Unie"
     },
     {
-      "@id": "https://ihlia.nl/",
-      "@type": "Organization",
-      "name": "IHLIA is de erfgoedorganisatie op het gebied van lhbti*",
-      "alternateName": "IHLIA"
-    },
-    {
       "@id": "https://www.adamnet.nl",
       "@type": "Organization",
       "name": "Stichting AdamNet",
