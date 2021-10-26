@@ -1,0 +1,45 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?comment .
+    ?uri skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?uri skos:narrower ?narrower_uri .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?uri skos:related ?related_uri .
+    ?related_uri skos:prefLabel ?related_prefLabel .    
+}
+WHERE {
+  # the vocabulary has no language labels, all text is default in English
+  ?uri a skos:Concept ;
+      ?predicate ?label .
+  VALUES ?predicate { skos:prefLabel skos:altLabel }
+  FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+  OPTIONAL {
+     ?uri skos:prefLabel ?prefLabel .
+  }
+  OPTIONAL {
+     ?uri  skos:altLabel ?altLabel
+  }
+  OPTIONAL {
+     ?uri  rdfs:comment ?comment
+  }
+  OPTIONAL {
+     ?uri skos:broader ?broader_uri .
+     ?broader_uri skos:prefLabel ?broader_prefLabel .
+  }
+  OPTIONAL {
+     ?uri skos:narrower ?narrower_uri .
+     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+  }
+  OPTIONAL {
+     ?uri skos:related ?related_uri .
+     ?related_uri skos:prefLabel ?related_prefLabel .
+  }
+}
+LIMIT 1000
