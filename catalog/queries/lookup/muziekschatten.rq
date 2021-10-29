@@ -20,6 +20,9 @@ WHERE {
     # Person: <https://data.muziekschatten.nl/som/4275e51d7d94b224928da9b7707a170a>
     VALUES ?uri { ?uris }
 
+    ?uri a ?type .
+    VALUES ?type { skos:Concept schema:Person } .
+
     OPTIONAL {
         ?uri schema:name ?schema_name .
         FILTER(LANG(?schema_name) = "nl")

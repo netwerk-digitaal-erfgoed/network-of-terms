@@ -17,6 +17,8 @@ WHERE {
     # Luxemburg: <https://hdl.handle.net/20.500.11840/termmaster17499>
     VALUES ?uri { ?uris }
 
+    ?uri a skos:Concept .
+
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
     }
