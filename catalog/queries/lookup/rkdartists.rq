@@ -15,6 +15,9 @@ WHERE {
     # Vincent van Gogh: <https://data.rkd.nl/artists/32439>
     VALUES ?uri { ?uris }
 
+    ?uri a ?type .
+    VALUES ?type { schema:Person schema:Organization } .
+
     OPTIONAL { ?uri schema:name ?schema_name . }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName . }
     OPTIONAL { ?uri schema:description ?schema_description . }

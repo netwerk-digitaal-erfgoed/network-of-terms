@@ -18,6 +18,8 @@ WHERE {
     # Organization: <https://data.niod.nl/WO2_Thesaurus/corporaties/5610>
     VALUES ?uri { ?uris }
 
+    ?uri a skos:Concept .
+
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl")
