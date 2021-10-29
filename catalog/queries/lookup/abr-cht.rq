@@ -16,6 +16,9 @@ WHERE {
     # Aardewerk: <https://data.cultureelerfgoed.nl/term/id/abr/71e411bf-8645-4420-98a4-b8746574b002>
     # Aardewerk: <https://data.cultureelerfgoed.nl/term/id/cht/dfbf8107-09f9-49c9-8118-8e79b7613723>
     VALUES ?uri { ?uris }
+
+    ?uri a skos:Concept .
+
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl")

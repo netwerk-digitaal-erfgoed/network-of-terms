@@ -9,13 +9,16 @@ CONSTRUCT {
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
-    ?narrower_uri skos:prefLabel ?narrower_prefLabel . 
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
     #For example:
     # Water: http://eurovoc.europa.eu/597
     VALUES ?uri { ?uris }
+
+    ?uri a skos:Concept .
+
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl")
