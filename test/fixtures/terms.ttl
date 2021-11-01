@@ -1,4 +1,5 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 <https://example.com/resources/artwork>
     a skos:Concept ;
@@ -7,7 +8,8 @@
     skos:scopeNote "One of the most famous Dutch paintings" ;
     skos:hiddenLabel "Hidden label" ;
     skos:broader <https://example.com/resources/2> ;
-    skos:ignored "Not used by Network of Terms" .
+    skos:ignored "Not used by Network of Terms" ;
+    rdfs:seeAlso <https://example.com/html/artwork> .
 
 <https://example.com/resources/painting>
     a <http://www.w3.org/2008/05/skos#Concept> ;

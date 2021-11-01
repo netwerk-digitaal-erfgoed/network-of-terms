@@ -9,7 +9,7 @@ for searching the Network of Terms. It is available at https://termennetwerk-api
 ### Web interface
 
 If you just want to search the Network of Terms using a web interface, have a look at our
-[demonstrator](https://termennetwerk.netwerkdigitaalerfgoed.nl).
+[demonstrator](https://termennetwerk.netwerkdigitaalerfgoed.nl), a web interface on top of this API.
 
 ### GraphQL endpoint
 
@@ -141,6 +141,7 @@ query {
           altLabel
           hiddenLabel
           scopeNote
+          seeAlso
           broader {
             uri
             prefLabel
@@ -187,6 +188,7 @@ query {
           altLabel
           hiddenLabel
           scopeNote
+          seeAlso
         }
       }
       ... on Error {
@@ -229,6 +231,7 @@ query {
         altLabel
         hiddenLabel
         scopeNote
+        seeAlso
         broader {
           uri
           prefLabel

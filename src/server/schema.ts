@@ -27,6 +27,7 @@ export const schema = `
     altLabel: [String]!
     hiddenLabel: [String]!
     scopeNote: [String]!
+    seeAlso: [String]!
     broader: [RelatedTerm]
     narrower: [RelatedTerm]
     related: [RelatedTerm]

@@ -5,9 +5,10 @@ export class Term {
     readonly id: RDF.Term,
     readonly type: RDF.Term | undefined,
     readonly prefLabels: RDF.Term[],
-    readonly altLabels: RDF.Term[],
-    readonly hiddenLabels: RDF.Term[],
-    readonly scopeNotes: RDF.Term[],
+    readonly altLabels: RDF.Literal[],
+    readonly hiddenLabels: RDF.Literal[],
+    readonly scopeNotes: RDF.Literal[],
+    readonly seeAlso: RDF.NamedNode[],
     readonly broaderTerms: RelatedTerm[],
     readonly narrowerTerms: RelatedTerm[],
     readonly relatedTerms: RelatedTerm[]
@@ -22,9 +23,10 @@ class SparqlResultTerm {
   constructor(readonly id: RDF.Term) {}
   type: RDF.Term | undefined = undefined;
   prefLabels: RDF.Term[] = [];
-  altLabels: RDF.Term[] = [];
-  hiddenLabels: RDF.Term[] = [];
-  scopeNotes: RDF.Term[] = [];
+  altLabels: RDF.Literal[] = [];
+  hiddenLabels: RDF.Literal[] = [];
+  scopeNotes: RDF.Literal[] = [];
+  seeAlso: RDF.NamedNode[] = [];
   broaderTerms: RDF.Term[] = [];
   narrowerTerms: RDF.Term[] = [];
   relatedTerms: RDF.Term[] = [];
@@ -35,6 +37,7 @@ export class TermsTransformer {
   private termsMap: Map<string, SparqlResultTerm> = new Map();
   private readonly predicateToPropertyMap = new Map<string, string>([
     ['http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'type'],
+    ['http://www.w3.org/2000/01/rdf-schema#seeAlso', 'seeAlso'],
     ['http://www.w3.org/2004/02/skos/core#prefLabel', 'prefLabels'],
     ['http://www.w3.org/2008/05/skos#prefLabel', 'prefLabels'],
     ['http://www.w3.org/2004/02/skos/core#altLabel', 'altLabels'],
@@ -91,6 +94,7 @@ export class TermsTransformer {
         term.altLabels,
         term.hiddenLabels,
         term.scopeNotes,
+        term.seeAlso,
         this.mapRelatedTerms(term.broaderTerms),
         this.mapRelatedTerms(term.narrowerTerms),
         this.mapRelatedTerms(term.relatedTerms)
