@@ -95,9 +95,11 @@ export class TermsTransformer {
         term.hiddenLabels,
         term.scopeNotes,
         term.seeAlso,
-        this.mapRelatedTerms(term.broaderTerms),
-        this.mapRelatedTerms(term.narrowerTerms),
-        this.mapRelatedTerms(term.relatedTerms)
+        this.mapRelatedTerms(term.broaderTerms).sort(alphabeticallyByPrefLabel),
+        this.mapRelatedTerms(term.narrowerTerms).sort(
+          alphabeticallyByPrefLabel
+        ),
+        this.mapRelatedTerms(term.relatedTerms).sort(alphabeticallyByPrefLabel)
       );
     });
   }
@@ -117,3 +119,9 @@ export class TermsTransformer {
       return acc;
     }, []);
 }
+
+const alphabeticallyByPrefLabel = (a: RelatedTerm, b: RelatedTerm) => {
+  const prefLabelA = a.prefLabels[0]?.value ?? '';
+  const prefLabelB = b.prefLabels[0]?.value ?? '';
+  return prefLabelA.localeCompare(prefLabelB);
+};
