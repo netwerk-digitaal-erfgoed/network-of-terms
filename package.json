@@ -33,7 +33,7 @@
     "rdf-store-stream": "^1.3.0"
   },
   "devDependencies": {
-    "@comunica/actor-init-sparql-file": "^1.22.2",
+    "@comunica/actor-init-sparql-file": "^1.22.3",
     "@types/hapi__joi": "^17.1.7",
     "@types/jest": "^27.0.2",
     "@types/jest-dev-server": "^5.0.0",
