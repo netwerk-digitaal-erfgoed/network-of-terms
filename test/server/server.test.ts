@@ -137,13 +137,18 @@ describe('Server', () => {
       'Art & Architecture Thesaurus'
     );
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
-    expect(body.data.terms[0].result.terms).toHaveLength(4); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
 
-    const painting = body.data.terms[0].result.terms.find(
+    const artwork = body.data.terms[0].result.terms.find(
       (term: {uri: string}) =>
         term.uri === 'https://example.com/resources/artwork'
     );
-    expect(painting.seeAlso).toEqual(['https://example.com/html/artwork']);
+    expect(artwork.seeAlso).toEqual(['https://example.com/html/artwork']);
+
+    const relatedPrefLabels = artwork.related.map(
+      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
+    );
+    expect(relatedPrefLabels).toEqual(['', 'Art', 'Rembrandt']); // Sorted alphabetically.
   });
 
   it('responds to GraphQL lookup query', async () => {
@@ -263,6 +268,10 @@ function termsQuery(...sources: string[]) {
               scopeNote
               seeAlso
               broader {
+                uri
+                prefLabel
+              }
+              related {
                 uri
                 prefLabel
               }

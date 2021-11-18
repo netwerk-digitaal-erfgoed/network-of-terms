@@ -8,6 +8,9 @@
     skos:scopeNote "One of the most famous Dutch paintings" ;
     skos:hiddenLabel "Hidden label" ;
     skos:broader <https://example.com/resources/2> ;
+    skos:related <https://example.com/resources/painter> ,
+        <https://example.com/resources/painting> ,
+        <https://example.com/resources/art> ;
     skos:ignored "Not used by Network of Terms" ;
     rdfs:seeAlso <https://example.com/html/artwork> .
 
@@ -15,6 +18,10 @@
     a <http://www.w3.org/2008/05/skos#Concept> ;
     skos:related <https://example.com/resources/art> ;
     skos:broader <https://example.com/resources/art> .
+
+<https://example.com/resources/painter>
+    a <http://www.w3.org/2008/05/skos#Concept> ;
+    skos:prefLabel "Rembrandt" .
 
 <https://example.com/resources/art>
     a skos:Concept ;
