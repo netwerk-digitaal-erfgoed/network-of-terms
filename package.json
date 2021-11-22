@@ -39,7 +39,7 @@
     "@types/hapi__joi": "^17.1.7",
     "@types/jest": "^27.0.2",
     "@types/jest-dev-server": "^5.0.0",
-    "@types/node": "^16.11.7",
+    "@types/node": "^16.11.9",
     "@types/pino": "^7.0.5",
     "gts": "^3.1.0",
     "jest": "^27.3.1",
