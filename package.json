@@ -44,7 +44,7 @@
     "gts": "^3.1.0",
     "jest": "^27.3.1",
     "jest-coverage-thresholds-bumper": "^1.0.1",
-    "jest-dev-server": "^6.0.0",
+    "jest-dev-server": "^6.0.2",
     "mercurius-codegen": "^3.2.0",
     "ts-jest": "^27.0.7",
     "ts-node-dev": "^1.1.8",
