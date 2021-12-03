@@ -18,6 +18,7 @@ import {
   Distribution,
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {queryVariants} from '../search/query-variants';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
@@ -79,7 +80,15 @@ export class QueryTermsService {
       distribution.searchQuery,
       distribution,
       timeoutMs,
-      Bindings({'?query': literal(searchQuery)})
+      Bindings(
+        [...queryVariants(searchQuery)].reduce(
+          (record: Record<string, RDF.Term>, [k, v]) => {
+            record[k] = literal(v);
+            return record;
+          },
+          {}
+        )
+      )
     );
   }
 
