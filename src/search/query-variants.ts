@@ -1,8 +1,25 @@
-export const queryVariants = (query: string) =>
-  new Map([
-    ['?query', stringQuery(query)],
-    ['?booleanQuery', booleanQuery(stringQuery(query))],
-  ]);
+export enum SearchQueryType {
+  RAW = 'raw',
+  SMART = 'smart',
+  DEPRECATED = 'deprecated',
+}
+
+export function queryVariants(query: string, type: SearchQueryType) {
+  switch (type) {
+    case SearchQueryType.RAW:
+      return new Map([
+        ['?query', query],
+        ['?booleanQuery', query],
+      ]);
+    case SearchQueryType.SMART:
+      return new Map([
+        ['?query', stringQuery(query)],
+        ['?booleanQuery', booleanQuery(stringQuery(query))],
+      ]);
+    case SearchQueryType.DEPRECATED:
+      return new Map([['?query', query]]);
+  }
+}
 
 export const stringQuery = (query: string) =>
   query.toLowerCase().replace(/\s+/g, ' ').trim();

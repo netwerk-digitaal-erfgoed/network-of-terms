@@ -3,6 +3,7 @@ import Pino from 'pino';
 import {QueryTermsService, TermsResult} from './query';
 import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {IActorInitSparqlArgs} from '@comunica/actor-init-sparql/lib/ActorInitSparql-browser';
+import {SearchQueryType} from '../search/query-variants';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
@@ -19,24 +20,28 @@ const schemaConstructor = Joi.object({
 export interface QueryOptions {
   source: IRI;
   query: string;
+  queryType: SearchQueryType;
   timeoutMs: number;
 }
 
 const schemaQuery = Joi.object({
   source: Joi.object().required(),
   query: Joi.string().required(),
+  queryType: Joi.string().required(),
   timeoutMs: Joi.number().integer(),
 });
 
 export interface QueryAllOptions {
   sources: IRI[];
   query: string;
+  queryType: SearchQueryType;
   timeoutMs: number;
 }
 
 const schemaQueryAll = Joi.object({
   sources: Joi.array().items(Joi.object().required()).min(1).required(),
   query: Joi.string().required(),
+  queryType: Joi.string().required(),
   timeoutMs: Joi.number().integer(),
 });
 
@@ -64,13 +69,23 @@ export class DistributionsService {
       logger: this.logger,
       comunica: this.comunica,
     });
-    return queryService.search(args.query, distribution, args.timeoutMs);
+    return queryService.search(
+      args.query,
+      args.queryType,
+      distribution,
+      args.timeoutMs
+    );
   }
 
   async queryAll(options: QueryAllOptions): Promise<TermsResult[]> {
     const args = Joi.attempt(options, schemaQueryAll);
     const requests = args.sources.map((source: IRI) =>
-      this.query({source, query: args.query, timeoutMs: args.timeoutMs})
+      this.query({
+        source,
+        query: args.query,
+        queryType: args.queryType,
+        timeoutMs: args.timeoutMs,
+      })
     );
     return Promise.all(requests);
   }

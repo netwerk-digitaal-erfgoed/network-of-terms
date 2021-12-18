@@ -46,6 +46,8 @@ export const schema = `
       
       "A literal search query, for example \`Rembrandt\`."
       query: String!,
+      
+      type: QueryType = DEPRECATED
 
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000
@@ -90,7 +92,13 @@ export const schema = `
 
   union SourceResult = Source | SourceNotFoundError
 
-  union LookupResult = Term | NotFoundError | TimeoutError | ServerError  
+  union LookupResult = Term | NotFoundError | TimeoutError | ServerError
+  
+  enum QueryType {
+    DEPRECATED
+    SMART
+    RAW
+  }    
 
   """
   The term source failed to respond within the timeout period.
