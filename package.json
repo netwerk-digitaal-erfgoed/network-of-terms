@@ -42,7 +42,7 @@
     "@types/node": "^17.0.1",
     "@types/pino": "^7.0.5",
     "gts": "^3.1.0",
-    "jest": "^27.4.4",
+    "jest": "^27.4.5",
     "jest-coverage-thresholds-bumper": "^1.0.1",
     "jest-dev-server": "^6.0.3",
     "mercurius-codegen": "^3.2.0",
