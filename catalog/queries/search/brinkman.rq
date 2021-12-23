@@ -22,8 +22,18 @@ WHERE {
     VALUES ?predicate { skos:prefLabel skos:altLabel }
     FILTER(LANG(?label) = "nl")
 
-    # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-    FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+    {
+        FILTER(?booleanQuery)
+        ?uri ?predicate ?label .
+        ?label <bif:contains> ?booleanQuery .
+    } UNION {
+        # BC support.
+        BIND(?booleanQuery as ?b)
+        FILTER(!BOUND(?b))
+        ?uri ?predicate ?label .
+        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+        FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")))
+    }
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
