@@ -46,8 +46,9 @@ export const schema = `
       
       "A literal search query, for example \`Rembrandt\`."
       query: String!,
-      
-      type: QueryType = DEPRECATED
+
+      "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."      
+      queryMode: QueryMode = DEPRECATED
 
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000
@@ -64,6 +65,20 @@ export const schema = `
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000
     ): [LookupQueryResult]
+  }
+  
+  """
+  The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources.
+  """
+  enum QueryMode {
+    "This mode is only for backwards-compatibility. Switch to \`SMART\` mode for forwards-compatbility."
+    DEPRECATED @deprecated(reason: "This mode will be removed in the future. Use \`SMART\` instead.")
+    
+    "Connect search query words with a boolean AND operator and optimise query input for term sources."
+    SMART
+    
+    "Send the unaltered query input to the term sources. For advanced users that want to have full control over the value of the SPARQL parameter."
+    RAW
   }
 
   type TermsQueryResult {
@@ -85,28 +100,22 @@ export const schema = `
 
     "The term source that provides the term or an error if no source could be found."
     source: SourceResult!
-    
-    "The term if the lookup succeeded; an error otherwise." 
+
+    "The term if the lookup succeeded; an error otherwise."
     result: LookupResult!
   }
 
   union SourceResult = Source | SourceNotFoundError
 
   union LookupResult = Term | NotFoundError | TimeoutError | ServerError
-  
-  enum QueryType {
-    DEPRECATED
-    SMART
-    RAW
-  }    
 
   """
   The term source failed to respond within the timeout period.
-  """ 
+  """
   type TimeoutError implements Error {
     message: String!
   }
-  
+
   """
   The term source responded with an error.
   """

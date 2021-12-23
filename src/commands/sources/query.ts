@@ -7,6 +7,7 @@ import * as RDF from 'rdf-js';
 import {Term} from '../../services/terms';
 import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {newEngine} from '@comunica/actor-init-sparql';
+import {QueryMode} from '../../search/query-mode';
 
 interface Row {
   datasetTitle: string;
@@ -28,6 +29,13 @@ export class QuerySourcesCommand extends Command {
       description: 'Query, e.g. "Gogh" or "fiets"',
       required: true,
     }),
+    queryMode: flags.enum({
+      description:
+        'The mode in which the literal search query (`query`) is interpreted before it is sent to the term sources.',
+      options: Object.keys(QueryMode),
+      required: true,
+      default: 'SMART',
+    }),
     loglevel: flags.string({
       description: 'Log messages of a given level; defaults to "warn"',
       options: ['trace', 'debug', 'info', 'warn', 'error', 'fatal'],
@@ -37,10 +45,12 @@ export class QuerySourcesCommand extends Command {
     timeout: flags.integer({
       description: 'Query timeout in ms',
       required: false,
+      default: 10000,
     }),
   };
 
   protected render(results: TermsResult[], catalog: Catalog): void {
+    console.log('results', results);
     const rowsPerDistribution = results.map((result: TermsResult): Row[] => {
       if (result instanceof Error) {
         return [];
@@ -97,6 +107,7 @@ export class QuerySourcesCommand extends Command {
     const results = await service.queryAll({
       sources,
       query: flags.query,
+      queryMode: QueryMode[flags.queryMode as keyof typeof QueryMode],
       timeoutMs: flags.timeout,
     });
     this.render(results, catalog);

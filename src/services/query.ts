@@ -18,7 +18,7 @@ import {
   Distribution,
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
-import {queryVariants, SearchQueryType} from '../search/query-variants';
+import {QueryMode, queryVariants} from '../search/query-mode';
 
 export interface ConstructorOptions {
   logger: Pino.Logger;
@@ -73,7 +73,7 @@ export class QueryTermsService {
 
   async search(
     searchQuery: string,
-    queryType: SearchQueryType,
+    queryMode: QueryMode,
     distribution: Distribution,
     timeoutMs: number
   ) {
@@ -82,7 +82,7 @@ export class QueryTermsService {
       distribution,
       timeoutMs,
       Bindings(
-        [...queryVariants(searchQuery, queryType)].reduce(
+        [...queryVariants(searchQuery, queryMode)].reduce(
           (record: Record<string, RDF.Term>, [k, v]) => {
             record[k] = literal(v);
             return record;

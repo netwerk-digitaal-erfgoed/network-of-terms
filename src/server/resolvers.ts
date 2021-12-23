@@ -23,7 +23,7 @@ import {
   SourceNotFoundError,
   SourceResult,
 } from '../lookup/lookup';
-import {SearchQueryType} from '../search/query-variants';
+import {QueryMode} from '../search/query-mode';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -44,7 +44,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
       (distributionIri: string) => new IRI(distributionIri)
     ),
     query: args.query,
-    queryType: SearchQueryType[args.type as keyof typeof SearchQueryType],
+    queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     timeoutMs: args.timeoutMs,
   });
   return resolveTermsResults(results, context.catalog);
