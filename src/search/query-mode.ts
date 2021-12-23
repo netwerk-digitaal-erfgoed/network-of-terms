@@ -24,9 +24,10 @@ export function queryVariants(query: string, type: QueryMode) {
 const stringQuery = (query: string) =>
   query.toLowerCase().replace(/\s+/g, ' ').trim();
 
-const booleanQuery = (query: string) => join(quote(split(escape(query))));
+const booleanQuery = (query: string) =>
+  join(quote(filterStopWords(split(escape(query)))));
 
-const escape = (query: string) => query.replace("'", "\\'");
+const escape = (query: string) => query.replace(/'/g, "\\'");
 
 const split = (query: string) => query.split(/\s+/);
 
@@ -35,6 +36,9 @@ const split = (query: string) => query.split(/\s+/);
  */
 const quote = (queryParts: string[]) =>
   queryParts.map(part => (isBooleanOperator(part) ? part : `'${part}'`));
+
+const filterStopWords = (queryParts: string[]) =>
+  queryParts.filter(part => part !== '&');
 
 /**
  * Join query parts with boolean AND if they are not yet connected with a boolean.

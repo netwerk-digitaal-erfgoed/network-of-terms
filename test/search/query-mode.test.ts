@@ -38,10 +38,22 @@ describe('Search query', () => {
   });
 
   it('escapes quotation marks', () => {
-    expect(queryVariants("Rex Stewart's Big Eight", QueryMode.SMART)).toEqual(
+    expect(queryVariants("Rex Stewart's 'Big' Eight", QueryMode.SMART)).toEqual(
       new Map([
-        ['?query', "rex stewart's big eight"],
-        ['?booleanQuery', "'rex' AND 'stewart\\'s' AND 'big' AND 'eight'"],
+        ['?query', "rex stewart's 'big' eight"],
+        [
+          '?booleanQuery',
+          "'rex' AND 'stewart\\'s' AND '\\'big\\'' AND 'eight'",
+        ],
+      ])
+    );
+  });
+
+  it('removes stop words', () => {
+    expect(queryVariants('Sammy Dowds & Leslie', QueryMode.SMART)).toEqual(
+      new Map([
+        ['?query', 'sammy dowds & leslie'],
+        ['?booleanQuery', "'sammy' AND 'dowds' AND 'leslie'"],
       ])
     );
   });
