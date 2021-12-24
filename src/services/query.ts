@@ -77,7 +77,6 @@ export class QueryTermsService {
     distribution: Distribution,
     timeoutMs: number
   ) {
-    console.log(...queryVariants(searchQuery, queryMode));
     return this.run(
       distribution.searchQuery,
       distribution,
