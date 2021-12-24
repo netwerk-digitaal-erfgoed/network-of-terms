@@ -15,12 +15,12 @@ WHERE {
     ?uri a muziekweb:Genre .
 
     {
-        FILTER(?booleanQuery)
+        FILTER(?virtuosoQuery)
         ?uri rdfs:label ?rdfs_label .
-        ?rdfs_label <bif:contains> ?booleanQuery .
+        ?rdfs_label <bif:contains> ?virtuosoQuery .
     } UNION {
         # BC support.
-        BIND(?booleanQuery as ?b)
+        BIND(?virtuosoQuery as ?b)
         FILTER(!BOUND(?b))
         ?uri rdfs:label ?rdfs_label .
         # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.

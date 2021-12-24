@@ -13,12 +13,12 @@ WHERE {
     VALUES ?predicate { rdfs:label schema:name schema:alternateName }
 
     {
-        FILTER(?booleanQuery)
+        FILTER(?virtuosoQuery)
         ?uri ?predicate ?label .
-        ?label <bif:contains> ?booleanQuery .
+        ?label <bif:contains> ?virtuosoQuery .
     } UNION {
         # BC support.
-        BIND(?booleanQuery as ?b)
+        BIND(?virtuosoQuery as ?b)
         FILTER(!BOUND(?b))
         ?uri ?predicate ?label .
         # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
