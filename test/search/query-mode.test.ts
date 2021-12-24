@@ -5,7 +5,7 @@ describe('Search query', () => {
     expect(queryVariants('test', QueryMode.SMART)).toEqual(
       new Map([
         ['?query', 'test'],
-        ['?booleanQuery', "'test'"],
+        ['?virtuosoQuery', "'test'"],
       ])
     );
   });
@@ -14,7 +14,7 @@ describe('Search query', () => {
     expect(queryVariants('Dr. H. Colijnstraat', QueryMode.SMART)).toEqual(
       new Map([
         ['?query', 'dr. h. colijnstraat'],
-        ['?booleanQuery', "'dr.' AND 'h.' AND 'colijnstraat'"],
+        ['?virtuosoQuery', "'dr.' AND 'h.' AND 'colijnstraat'"],
       ])
     );
   });
@@ -23,7 +23,7 @@ describe('Search query', () => {
     expect(queryVariants('   a   b  c  ', QueryMode.SMART)).toEqual(
       new Map([
         ['?query', 'a b c'],
-        ['?booleanQuery', "'a' AND 'b' AND 'c'"],
+        ['?virtuosoQuery', "'a' AND 'b' AND 'c'"],
       ])
     );
   });
@@ -32,7 +32,7 @@ describe('Search query', () => {
     expect(queryVariants('a AND b c or d', QueryMode.SMART)).toEqual(
       new Map([
         ['?query', 'a and b c or d'],
-        ['?booleanQuery', "'a' and 'b' AND 'c' or 'd'"],
+        ['?virtuosoQuery', "'a' and 'b' AND 'c' or 'd'"],
       ])
     );
   });
@@ -42,7 +42,7 @@ describe('Search query', () => {
       new Map([
         ['?query', "rex stewart's 'big' eight"],
         [
-          '?booleanQuery',
+          '?virtuosoQuery',
           "'rex' AND 'stewart\\'s' AND '\\'big\\'' AND 'eight'",
         ],
       ])
@@ -53,7 +53,7 @@ describe('Search query', () => {
     expect(queryVariants('Sammy Dowds & Leslie', QueryMode.SMART)).toEqual(
       new Map([
         ['?query', 'sammy dowds & leslie'],
-        ['?booleanQuery', "'sammy' AND 'dowds' AND 'leslie'"],
+        ['?virtuosoQuery', "'sammy' AND 'dowds' AND 'leslie'"],
       ])
     );
   });
@@ -62,7 +62,7 @@ describe('Search query', () => {
     expect(queryVariants("Rex Stewart's Big Eight", QueryMode.RAW)).toEqual(
       new Map([
         ['?query', "Rex Stewart's Big Eight"],
-        ['?booleanQuery', "Rex Stewart's Big Eight"],
+        ['?virtuosoQuery', "Rex Stewart's Big Eight"],
       ])
     );
   });

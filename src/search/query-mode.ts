@@ -9,12 +9,12 @@ export function queryVariants(query: string, type: QueryMode) {
     case QueryMode.RAW:
       return new Map([
         ['?query', query],
-        ['?booleanQuery', query],
+        ['?virtuosoQuery', query],
       ]);
     case QueryMode.SMART:
       return new Map([
         ['?query', stringQuery(query)],
-        ['?booleanQuery', booleanQuery(stringQuery(query))],
+        ['?virtuosoQuery', virtuosoQuery(stringQuery(query))],
       ]);
     case QueryMode.DEPRECATED:
       return new Map([['?query', query]]);
@@ -24,7 +24,7 @@ export function queryVariants(query: string, type: QueryMode) {
 const stringQuery = (query: string) =>
   query.toLowerCase().replace(/\s+/g, ' ').trim();
 
-const booleanQuery = (query: string) =>
+const virtuosoQuery = (query: string) =>
   join(quote(filterStopWords(split(escape(query)))));
 
 const escape = (query: string) => query.replace(/'/g, "\\'");
