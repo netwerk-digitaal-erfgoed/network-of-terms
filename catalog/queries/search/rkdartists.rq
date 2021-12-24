@@ -22,8 +22,10 @@ WHERE {
         ?label <bif:contains> ?virtuosoQuery .
     } UNION {
         # BC support.
-        BIND(?virtuosoQuery as ?b)
-        FILTER(!BOUND(?b))
+        # The RKD Virtuoso endpoint needs isLiteral() rather than !BOUND() because the latter still matches, throwing an
+        # error for queries with diacritics.
+        FILTER(!isLiteral(?virtuosoQuery))
+
         ?uri ?predicate ?label .
         # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
         FILTER (<bif:contains> (?label,
