@@ -2,7 +2,7 @@ import {QueryMode, queryVariants} from '../../src/search/query-mode';
 
 describe('Search query', () => {
   it('transforms simple query', () => {
-    expect(queryVariants('test', QueryMode.SMART)).toEqual(
+    expect(queryVariants('test', QueryMode.OPTIMIZED)).toEqual(
       new Map([
         ['?query', 'test'],
         ['?virtuosoQuery', "'test'"],
@@ -11,7 +11,7 @@ describe('Search query', () => {
   });
 
   it('transforms multiple word query', () => {
-    expect(queryVariants('Dr. H. Colijnstraat', QueryMode.SMART)).toEqual(
+    expect(queryVariants('Dr. H. Colijnstraat', QueryMode.OPTIMIZED)).toEqual(
       new Map([
         ['?query', 'dr. h. colijnstraat'],
         ['?virtuosoQuery', "'dr.' AND 'h.' AND 'colijnstraat'"],
@@ -20,7 +20,7 @@ describe('Search query', () => {
   });
 
   it('trims whitespaces', () => {
-    expect(queryVariants('   a   b  c  ', QueryMode.SMART)).toEqual(
+    expect(queryVariants('   a   b  c  ', QueryMode.OPTIMIZED)).toEqual(
       new Map([
         ['?query', 'a b c'],
         ['?virtuosoQuery', "'a' AND 'b' AND 'c'"],
@@ -29,7 +29,7 @@ describe('Search query', () => {
   });
 
   it('skips already present boolean operators', () => {
-    expect(queryVariants('a AND b c or d', QueryMode.SMART)).toEqual(
+    expect(queryVariants('a AND b c or d', QueryMode.OPTIMIZED)).toEqual(
       new Map([
         ['?query', 'a and b c or d'],
         ['?virtuosoQuery', "'a' and 'b' AND 'c' or 'd'"],
@@ -38,7 +38,9 @@ describe('Search query', () => {
   });
 
   it('escapes quotation marks', () => {
-    expect(queryVariants("Rex Stewart's 'Big' Eight", QueryMode.SMART)).toEqual(
+    expect(
+      queryVariants("Rex Stewart's 'Big' Eight", QueryMode.OPTIMIZED)
+    ).toEqual(
       new Map([
         ['?query', "rex stewart's 'big' eight"],
         [
@@ -50,7 +52,7 @@ describe('Search query', () => {
   });
 
   it('removes stop words', () => {
-    expect(queryVariants('Sammy Dowds & Leslie', QueryMode.SMART)).toEqual(
+    expect(queryVariants('Sammy Dowds & Leslie', QueryMode.OPTIMIZED)).toEqual(
       new Map([
         ['?query', 'sammy dowds & leslie'],
         ['?virtuosoQuery', "'sammy' AND 'dowds' AND 'leslie'"],

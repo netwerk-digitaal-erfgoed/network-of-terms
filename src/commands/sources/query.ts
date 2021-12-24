@@ -34,7 +34,7 @@ export class QuerySourcesCommand extends Command {
         'The mode in which the literal search query (`query`) is interpreted before it is sent to the term sources.',
       options: Object.keys(QueryMode),
       required: true,
-      default: 'SMART',
+      default: 'OPTIMIZED',
     }),
     loglevel: flags.string({
       description: 'Log messages of a given level; defaults to "warn"',

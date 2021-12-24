@@ -1,6 +1,6 @@
 export enum QueryMode {
   RAW = 'raw',
-  SMART = 'smart',
+  OPTIMIZED = 'optimized',
   DEPRECATED = 'deprecated',
 }
 
@@ -11,7 +11,7 @@ export function queryVariants(query: string, type: QueryMode) {
         ['?query', query],
         ['?virtuosoQuery', query],
       ]);
-    case QueryMode.SMART:
+    case QueryMode.OPTIMIZED:
       return new Map([
         ['?query', stringQuery(query)],
         ['?virtuosoQuery', virtuosoQuery(stringQuery(query))],

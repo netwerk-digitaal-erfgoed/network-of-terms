@@ -125,7 +125,7 @@ query {
   terms(
     sources: ["https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht"],
     query: "fiets",
-    queryMode: SMART   # Forwards-compatible query type.
+    queryMode: OPTIMIZED   # Forwards-compatible query type.
   ) {
     source {
       uri
@@ -176,7 +176,7 @@ query {
   terms(
     sources: ["https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql", "http://data.bibliotheken.nl/thesp/sparql"],
     query: "Gogh",
-    queryMode: SMART   # Forwards-compatible query type.
+    queryMode: OPTIMIZED   # Forwards-compatible query type.
   ) {
     source {
       uri
