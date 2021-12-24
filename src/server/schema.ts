@@ -74,7 +74,7 @@ export const schema = `
     "This mode is only for backwards-compatibility. Switch to \`SMART\` mode for forwards-compatbility."
     DEPRECATED @deprecated(reason: "This mode will be removed in the future. Use \`SMART\` instead.")
     
-    "Connect search query words with a boolean AND operator and optimise query input for term sources."
+    "Optimize search query input for term sources. This will become the default."
     SMART
     
     "Send the unaltered query input to the term sources. For advanced users that want to have full control over the search query sent to the term sources."
