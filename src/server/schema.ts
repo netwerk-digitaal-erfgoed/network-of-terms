@@ -77,7 +77,7 @@ export const schema = `
     "Connect search query words with a boolean AND operator and optimise query input for term sources."
     SMART
     
-    "Send the unaltered query input to the term sources. For advanced users that want to have full control over the value of the SPARQL parameter."
+    "Send the unaltered query input to the term sources. For advanced users that want to have full control over the search query sent to the term sources."
     RAW
   }
 
