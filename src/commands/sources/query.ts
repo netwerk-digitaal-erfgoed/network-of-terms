@@ -50,7 +50,6 @@ export class QuerySourcesCommand extends Command {
   };
 
   protected render(results: TermsResult[], catalog: Catalog): void {
-    console.log('results', results);
     const rowsPerDistribution = results.map((result: TermsResult): Row[] => {
       if (result instanceof Error) {
         return [];
