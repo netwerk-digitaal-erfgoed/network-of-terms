@@ -1,10 +1,10 @@
 import {DistributionsService} from '../services/distributions';
 import {
   Error,
-  TermsResult,
-  ServerError,
-  TimeoutError,
   QueryTermsService,
+  ServerError,
+  TermsResult,
+  TimeoutError,
 } from '../services/query';
 import * as RDF from 'rdf-js';
 import {Term} from '../services/terms';
@@ -23,6 +23,7 @@ import {
   SourceNotFoundError,
   SourceResult,
 } from '../lookup/lookup';
+import {QueryMode} from '../search/query-mode';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -43,6 +44,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
       (distributionIri: string) => new IRI(distributionIri)
     ),
     query: args.query,
+    queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     timeoutMs: args.timeoutMs,
   });
   return resolveTermsResults(results, context.catalog);
