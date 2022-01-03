@@ -37,7 +37,7 @@
     "@comunica/actor-init-sparql-file": "^1.22.3",
     "@comunica/actor-query-operation-service": "^1.22.3",
     "@types/hapi__joi": "^17.1.8",
-    "@types/jest": "^27.0.3",
+    "@types/jest": "^27.4.0",
     "@types/jest-dev-server": "^5.0.0",
     "@types/node": "^17.0.7",
     "@types/pino": "^7.0.5",
