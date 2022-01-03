@@ -13,6 +13,10 @@ CONSTRUCT {
 }
 WHERE {
     ?uri ?predicate ?label .
+    # Exclude terms from the 'Technische Lijsten', a concept scheme with terms that should only be used by NOB
+    FILTER NOT EXISTS {
+        ?uri skos:inScheme <https://data.niod.nl/WO2_Thesaurus/11183>
+    }
     VALUES ?predicate { skos:prefLabel skos:altLabel }
     FILTER(LANG(?label) = "nl")
     FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
