@@ -7,8 +7,8 @@ import {
   IActorQueryOperationOutputQuads,
 } from '@comunica/bus-query-operation';
 import * as Hoek from '@hapi/hoek';
-import * as Joi from '@hapi/joi';
-import {literal} from '@rdfjs/data-model';
+import Joi from 'joi';
+import factory from '@rdfjs/data-model';
 import {LoggerPino} from '../helpers/logger-pino';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
@@ -84,7 +84,7 @@ export class QueryTermsService {
       Bindings(
         [...queryVariants(searchQuery, queryMode)].reduce(
           (record: Record<string, RDF.Term>, [k, v]) => {
-            record[k] = literal(v);
+            record[k] = factory.literal(v);
             return record;
           },
           {}
