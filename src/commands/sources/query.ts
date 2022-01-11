@@ -1,5 +1,5 @@
 import {cli} from 'cli-ux';
-import {Command, flags} from '@oclif/command';
+import {Command, Flags} from '@oclif/core';
 import {DistributionsService} from '../../services/distributions';
 import * as Logger from '../../helpers/logger';
 import {Error, TermsResult} from '../../services/query';
@@ -9,7 +9,7 @@ import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {newEngine} from '@comunica/actor-init-sparql';
 import {QueryMode} from '../../search/query-mode';
 
-interface Row {
+interface Row extends Record<string, unknown> {
   datasetTitle: string;
   termUri: string;
   prefLabels: string;
@@ -19,30 +19,30 @@ interface Row {
 export class QuerySourcesCommand extends Command {
   static description = 'Query sources for terms';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static flags: flags.Input<any> = {
-    uris: flags.string({
+  static flags = {
+    uris: Flags.string({
       description:
         'URIs of sources to query, comma-separated, e.g. "https://www.wikidata.org/sparql,https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql"',
       required: true,
     }),
-    query: flags.string({
+    query: Flags.string({
       description: 'Query, e.g. "Gogh" or "fiets"',
       required: true,
     }),
-    queryMode: flags.enum({
+    queryMode: Flags.enum({
       description:
         'The mode in which the literal search query (`query`) is interpreted before it is sent to the term sources.',
       options: Object.keys(QueryMode),
       required: true,
       default: 'OPTIMIZED',
     }),
-    loglevel: flags.string({
+    loglevel: Flags.string({
       description: 'Log messages of a given level; defaults to "warn"',
       options: ['trace', 'debug', 'info', 'warn', 'error', 'fatal'],
       required: false,
       default: 'warn',
     }),
-    timeout: flags.integer({
+    timeout: Flags.integer({
       description: 'Query timeout in ms',
       required: false,
       default: 10000,
@@ -72,7 +72,7 @@ export class QuerySourcesCommand extends Command {
     });
     const rows = ([] as Row[]).concat(...rowsPerDistribution); // Flatten array
 
-    cli.table(rows, {
+    cli.table<Row>(rows, {
       datasetTitle: {
         header: 'Source Name',
       },
@@ -89,7 +89,7 @@ export class QuerySourcesCommand extends Command {
   }
 
   async run(): Promise<void> {
-    const {flags} = this.parse(QuerySourcesCommand);
+    const {flags} = await this.parse(QuerySourcesCommand);
     const sources = flags.uris
       .split(',')
       .map((distributionId: string) => new IRI(distributionId.trim()));
