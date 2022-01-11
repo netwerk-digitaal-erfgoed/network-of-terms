@@ -55,22 +55,20 @@ export class QuerySourcesCommand extends Command {
         return [];
       }
 
-      return result.terms.map(
-        (term: Term): Row => {
-          return {
-            datasetTitle:
-              catalog.getDatasetByDistributionIri(result.distribution.iri)
-                ?.name ?? '',
-            termUri: term.id!.value,
-            prefLabels: term.prefLabels
-              .map((prefLabel: RDF.Term) => prefLabel.value)
-              .join(' / '),
-            altLabels: term.altLabels
-              .map((altLabel: RDF.Term) => altLabel.value)
-              .join(' / '),
-          };
-        }
-      );
+      return result.terms.map((term: Term): Row => {
+        return {
+          datasetTitle:
+            catalog.getDatasetByDistributionIri(result.distribution.iri)
+              ?.name ?? '',
+          termUri: term.id!.value,
+          prefLabels: term.prefLabels
+            .map((prefLabel: RDF.Term) => prefLabel.value)
+            .join(' / '),
+          altLabels: term.altLabels
+            .map((altLabel: RDF.Term) => altLabel.value)
+            .join(' / '),
+        };
+      });
     });
     const rows = ([] as Row[]).concat(...rowsPerDistribution); // Flatten array
 

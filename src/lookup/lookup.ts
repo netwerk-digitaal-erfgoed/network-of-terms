@@ -70,11 +70,8 @@ export class LookupService {
       this.queryService.lookup(iris, dataset.distributions[0], timeoutMs)
     );
 
-    const termsPerSource: (
-      | Terms
-      | TimeoutError
-      | ServerError
-    )[] = await Promise.all(lookups);
+    const termsPerSource: (Terms | TimeoutError | ServerError)[] =
+      await Promise.all(lookups);
 
     const datasetToTerms = termsPerSource.reduce((acc, result: TermsResult) => {
       const dataset = this.catalog.getDatasetByDistributionIri(
