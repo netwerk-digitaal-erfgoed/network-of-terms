@@ -1,5 +1,5 @@
 import {cli} from 'cli-ux';
-import {Command} from '@oclif/command';
+import {Command} from '@oclif/core';
 import {
   Catalog,
   Dataset,
