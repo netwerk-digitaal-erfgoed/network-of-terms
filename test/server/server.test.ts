@@ -235,7 +235,7 @@ async function query(query: string): Promise<any> {
 
 async function startDistributionSparqlEndpoint(): Promise<void> {
   await setup({
-    command: `npx comunica-sparql-file-http ${__dirname}/../fixtures/terms.ttl`,
+    command: `npx comunica-sparql-file-http ${process.cwd()}/test/fixtures/terms.ttl`,
     port: 3000,
   });
 }
