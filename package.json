@@ -23,7 +23,7 @@
     "@oclif/core": "^1.1.2",
     "@rdfjs/data-model": "^2.0.0",
     "cli-ux": "^6.0.8",
-    "fastify": "^3.25.3",
+    "fastify": "^3.27.0",
     "fastify-cors": "^6.0.2",
     "joi": "^17.5.0",
     "mercurius": "^9.1.0",
