@@ -31,11 +31,19 @@ WHERE {
     # Require the presence of this property for quality purposes
     ?uri som:NDEREC ?nderec .
 
-    ?uri ?predicate ?label .
-    VALUES ?predicate { schema:name schema:alternateName }
-
-    # A 'FILTER (<bif:contains>, ...)' currently does not work due to https://github.com/comunica/comunica/issues/844
-    ?label <bif:contains> ?query .
+    {
+        FILTER(?virtuosoQuery)
+        ?uri ?predicate ?label .
+        VALUES ?predicate { schema:name schema:alternateName }
+        ?label <bif:contains> ?virtuosoQuery .
+    } UNION {
+        # BC support.
+        BIND(?virtuosoQuery as ?b)
+        FILTER(!BOUND(?b))
+        ?uri ?predicate ?label .
+        VALUES ?predicate { schema:name schema:alternateName }
+        ?label <bif:contains> ?query .
+    }
 
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName }

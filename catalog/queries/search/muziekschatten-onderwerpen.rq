@@ -11,11 +11,20 @@ CONSTRUCT {
 }
 WHERE {
     ?uri a skos:Concept .
-    ?uri ?predicate ?label .
-    VALUES ?predicate { schema:name schema:keywords }
 
-    # A 'FILTER (<bif:contains>, ...)' currently does not work due to https://github.com/comunica/comunica/issues/844
-    ?label <bif:contains> ?query .
+    {
+        FILTER(?virtuosoQuery)
+        ?uri ?predicate ?label .
+        VALUES ?predicate { schema:name schema:keywords }
+        ?label <bif:contains> ?virtuosoQuery .
+    } UNION {
+        # BC support.
+        BIND(?virtuosoQuery as ?b)
+        FILTER(!BOUND(?b))
+        ?uri ?predicate ?label .
+        VALUES ?predicate { schema:name schema:keywords }
+        ?label <bif:contains> ?query .
+    }
 
     OPTIONAL {
         ?uri schema:name ?schema_name .
