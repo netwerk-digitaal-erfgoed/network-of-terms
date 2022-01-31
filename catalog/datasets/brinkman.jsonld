@@ -35,7 +35,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/brinkman-nta.rq"
+          "query": "file://catalog/queries/lookup/brinkman-nta-stcn.rq"
         }
       ]
     }

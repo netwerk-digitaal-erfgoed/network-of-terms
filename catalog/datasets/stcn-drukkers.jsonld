@@ -1,17 +1,11 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "http://data.bibliotheken.nl/id/dataset/persons",
+  "@id": "http://data.bibliotheken.nl/id/dataset/stcn/printers",
   "@type": "Dataset",
   "name": [
     {
       "@language": "nl",
-      "@value": "Nederlandse Thesaurus van Auteursnamen"
-    }
-  ],
-  "alternateName": [
-    {
-      "@language": "nl",
-      "@value": "NTA"
+      "@value": "STCN: drukkers"
     }
   ],
   "creator": [
@@ -24,14 +18,14 @@
   ],
   "distribution": [
     {
-      "@id": "http://data.bibliotheken.nl/thesp/sparql",
+      "@id": "http://data.bibliotheken.nl/thes/drukkers/sparql",
       "@type": "DataDownload",
-      "contentUrl": "http://data.bibliotheken.nl/sparql",
+      "contentUrl": "https://data.bibliotheken.nl/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/nta.rq"
+          "query": "file://catalog/queries/search/stcn-drukkers.rq"
         },
         {
           "@type": "FindAction",

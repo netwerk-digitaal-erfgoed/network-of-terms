@@ -1,0 +1,24 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX void: <http://rdfs.org/ns/void#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?rdfs_label ;
+        skos:altLabel ?schema_name ;
+        skos:altLabel ?schema_alternateName ;
+        skos:scopeNote ?schema_description .
+}
+WHERE {
+    ?uri foaf:isPrimaryTopicOf/void:inDataset <http://data.bibliotheken.nl/id/dataset/stcn> ;
+        schema:additionalType <http://www.productontology.org/id/Printer_%28publishing%29> ;   # Select printers.
+        rdfs:label ?rdfs_label .
+
+    ?uri ?predicate ?label .
+    VALUES ?predicate { rdfs:label schema:name schema:alternateName }
+    ?label <bif:contains> ?virtuosoQuery .
+
+    OPTIONAL { ?uri schema:name ?schema_name }
+    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+    OPTIONAL { ?uri schema:description ?schema_description }
+}
+LIMIT 1000
