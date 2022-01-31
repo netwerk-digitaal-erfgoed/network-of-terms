@@ -23,10 +23,11 @@ WHERE {
     # For example:
     # Concept in Brinkman: <http://data.bibliotheken.nl/id/thes/p317203789>
     # Person in NTA: <http://data.bibliotheken.nl/id/thes/p06854796X>
+    # Organization in STCN: <http://data.bibliotheken.nl/id/thes/p075537222>
     VALUES ?uri { ?uris }
 
     ?uri a ?type .
-    VALUES ?type { skos:Concept schema:Person } .
+    VALUES ?type { skos:Concept schema:Person schema:Organization } .
 
     # For Brinkman
     OPTIONAL {
