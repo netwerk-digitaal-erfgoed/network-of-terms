@@ -40,7 +40,7 @@
     "@comunica/actor-query-operation-service": "^1.22.3",
     "@types/jest": "^27.4.0",
     "@types/jest-dev-server": "^5.0.0",
-    "@types/node": "^17.0.10",
+    "@types/node": "^17.0.13",
     "@types/pino": "^7.0.5",
     "@types/rdfjs__data-model": "^2.0.0",
     "gts": "^3.1.0",
