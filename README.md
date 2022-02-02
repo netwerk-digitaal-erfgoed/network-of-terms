@@ -1,8 +1,20 @@
 Network of Terms
-==============================
+================
 
 This application delivers a [GraphQL](https://graphql.org) API and command-line interface
 for searching the Network of Terms. It is available at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
+
+The Network is a **search engine for finding terms** in terminology sources (such as thesauri,
+classification systems and reference lists).
+
+Given a textual search query, the Network of Terms searches one or more terminology sources in
+**real-time** and returns matching terms, including their labels and URIs. The Network of Terms
+offers a **simple search interface**, **handles errors** gracefully in case a source does not
+respond well and **harmonizes the results** to the SKOS data model.
+
+The Network of Terms is intended for managers of heritage information that want to improve the
+findability of their information by assigning terms from terminology sources that are used by the
+institutions in the [Dutch Digital Heritage Network](https://netwerkdigitaalerfgoed.nl).
 
 ## Getting started
 
