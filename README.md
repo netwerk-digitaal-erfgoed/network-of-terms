@@ -34,14 +34,14 @@ You can connect your client apps to the [GraphQL endpoint](https://termennetwerk
 
 If you want to run the Network of Terms locally, or host it yourself, you can run our Docker image:
 
-    docker run -p 3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api
+    docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api
 
 and open http://localhost:3123 in your browser for the API Playground.
 
 While this repository follows [Semantic Versioning](https://semver.org), you may want to stick to a
 [tagged version](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api/releases):
 
-    docker run -p 3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api:v1.7.0
+    docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api:v1.7.0
 
 ### Contribute
 
