@@ -44,7 +44,7 @@
     "@types/pino": "^7.0.5",
     "@types/rdfjs__data-model": "^2.0.0",
     "gts": "^3.1.0",
-    "jest": "^27.4.7",
+    "jest": "^27.5.0",
     "jest-coverage-thresholds-bumper": "^1.1.0",
     "jest-dev-server": "^6.0.3",
     "mercurius-codegen": "^3.3.0",
