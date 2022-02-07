@@ -4,9 +4,10 @@ import * as Logger from '../helpers/logger';
 import {resolvers} from './resolvers';
 import {schema} from './schema';
 import fastifyCors from 'fastify-cors';
-import {Catalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {newEngine} from '@comunica/actor-init-sparql';
 import {Server} from 'http';
+import {findManifest} from '../reconciliation/manifest';
 
 export async function server(
   catalog: Catalog
@@ -45,6 +46,16 @@ export async function server(
     handler: (req, reply) => {
       reply.redirect(301, '/graphiql');
     },
+  });
+
+  server.get<{Params: {'*': string}}>('/reconciliation/*', (request, reply) => {
+    const sourceUri = request.params['*'];
+    const manifest = findManifest(new IRI(sourceUri), catalog);
+    if (manifest) {
+      reply.send(manifest);
+    } else {
+      reply.code(404).send();
+    }
   });
 
   return server;
