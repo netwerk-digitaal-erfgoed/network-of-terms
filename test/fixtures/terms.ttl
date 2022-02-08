@@ -16,6 +16,7 @@
 
 <https://example.com/resources/painting>
     a <http://www.w3.org/2008/05/skos#Concept> ;
+    skos:altLabel "painted things" ;
     skos:related <https://example.com/resources/art> ;
     skos:broader <https://example.com/resources/art> .
 

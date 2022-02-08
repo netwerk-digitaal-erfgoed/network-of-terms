@@ -12,16 +12,13 @@ export class ServiceManifest {
 
 export function findManifest(
   distributionIri: IRI,
-  catalog: Catalog
+  catalog: Catalog,
+  reconciliationServices: string[]
 ): ServiceManifest | undefined {
   const source = catalog.getDatasetByDistributionIri(distributionIri);
-  if (source && reconciliationIris.includes(distributionIri.toString())) {
+  if (source && reconciliationServices.includes(distributionIri.toString())) {
     return new ServiceManifest(source.name, source.iri);
   }
 
   return undefined;
 }
-
-const reconciliationIris = [
-  'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql', // Start with a single reconciliation source.
-];
