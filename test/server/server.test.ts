@@ -240,7 +240,7 @@ describe('Server', () => {
   it('returns reconciliation service manifest', async () => {
     const response = await httpServer.inject({
       method: 'GET',
-      url: '/reconciliation/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      url: '/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
     });
     expect(response.statusCode).toEqual(200);
   });
@@ -248,7 +248,7 @@ describe('Server', () => {
   it('returns 404 if reconciliation service does not exist', async () => {
     const response = await httpServer.inject({
       method: 'GET',
-      url: '/reconciliation/http://nope.com',
+      url: '/reconcile/http://nope.com',
     });
     expect(response.statusCode).toEqual(404);
 
@@ -323,7 +323,7 @@ async function reconciliationQuery(
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    url: `/reconciliation/${reconciliationUrl}`,
+    url: `/reconcile/${reconciliationUrl}`,
     payload: new URLSearchParams([
       ['queries', JSON.stringify(query)],
     ]).toString(),

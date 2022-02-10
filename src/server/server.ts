@@ -54,7 +54,7 @@ export async function server(
     },
   });
 
-  server.get<{Params: {'*': string}}>('/reconciliation/*', (request, reply) => {
+  server.get<{Params: {'*': string}}>('/reconcile/*', (request, reply) => {
     const distributionIri = new IRI(request.params['*']);
     const manifest = findManifest(
       distributionIri,
@@ -69,7 +69,7 @@ export async function server(
   });
 
   server.post<{Params: {'*': string}; Body: {queries: string}}>(
-    '/reconciliation/*',
+    '/reconcile/*',
     async (request, reply) => {
       const distributionIri = new IRI(request.params['*']);
       const manifest = findManifest(
