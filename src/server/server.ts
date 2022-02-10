@@ -6,23 +6,27 @@ import {schema} from './schema';
 import fastifyCors from 'fastify-cors';
 import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {newEngine} from '@comunica/actor-init-sparql';
-import {Server} from 'http';
+import {IncomingMessage, Server} from 'http';
 import {findManifest} from '../reconciliation/manifest';
 import formBodyPlugin from 'fastify-formbody';
 import {QueryTermsService} from '../services/query';
 import {reconciliationQuery} from '../reconciliation/query';
+import {LookupService} from '../lookup/lookup';
+import {preview} from '../reconciliation/preview';
 
 export async function server(
   catalog: Catalog,
   reconciliationServices: string[]
-): Promise<FastifyInstance<Server>> {
+): Promise<FastifyInstance<Server, customRequest>> {
   const logger = Logger.getHttpLogger({
     name: 'http',
     level: 'info',
   });
   const comunica = await newEngine();
   const queryTermsService = new QueryTermsService({comunica, logger});
-  const server = fastify({logger});
+  const lookupService = new LookupService(catalog, queryTermsService);
+
+  const server = fastify<Server, customRequest>({logger});
   server.register(mercurius, {
     schema,
     resolvers,
@@ -37,6 +41,13 @@ export async function server(
   });
   server.register(fastifyCors);
   server.register(formBodyPlugin);
+  server.decorateRequest('previewUrl', '');
+  server.addHook('onRequest', (request, reply, done) => {
+    request.raw.previewUrl =
+      request.protocol + '://' + request.hostname + '/preview/{{id}}';
+    done();
+  });
+
   server.route({
     method: 'GET',
     url: '/',
@@ -59,7 +70,8 @@ export async function server(
     const manifest = findManifest(
       distributionIri,
       catalog,
-      reconciliationServices
+      reconciliationServices,
+      request.raw.previewUrl
     );
     if (manifest === undefined) {
       reply.code(404).send();
@@ -75,7 +87,8 @@ export async function server(
       const manifest = findManifest(
         distributionIri,
         catalog,
-        reconciliationServices
+        reconciliationServices,
+        request.raw.previewUrl
       );
       if (manifest === undefined) {
         reply.code(404).send();
@@ -96,5 +109,16 @@ export async function server(
     }
   );
 
+  server.get<{Params: {'*': string}}>('/preview/*', async (request, reply) => {
+    const termIri = new IRI(request.params['*']);
+    const [lookupResult] = await lookupService.lookup([termIri], 10000);
+
+    reply.type('text/html').send(preview(lookupResult));
+  });
+
   return server;
+}
+
+export interface customRequest extends IncomingMessage {
+  previewUrl: string;
 }

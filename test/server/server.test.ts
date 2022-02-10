@@ -7,12 +7,12 @@ import {
   Organization,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
-import {server} from '../../src/server/server';
+import {customRequest, server} from '../../src/server/server';
 import {gql} from 'mercurius-codegen';
 import {setup, teardown} from 'jest-dev-server';
 import {ReconciliationQueryBatch} from '../../build/reconciliation/query';
 
-let httpServer: FastifyInstance<Server>;
+let httpServer: FastifyInstance<Server, customRequest>;
 const catalog = new Catalog([
   new Dataset(
     new IRI('https://data.rkd.nl/rkdartists'),
@@ -30,16 +30,43 @@ const catalog = new Catalog([
         new IRI('https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'),
         new IRI('http://localhost:3000/sparql'),
         gql`
+          PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
           CONSTRUCT { 
             ?s ?p ?o 
           }
           WHERE { 
             ?s ?p ?o ;
               ?labelPredicate ?label .
-            VALUES ?labelPredicate { <http://www.w3.org/2004/02/skos/core#prefLabel> <http://www.w3.org/2004/02/skos/core#altLabel> }
+            VALUES ?labelPredicate { skos:prefLabel skos:altLabel }
             FILTER (regex(?label, ?query, "i"))
           }`,
-        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o. VALUES ?s { ?uris } }`
+        gql`
+          PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+          CONSTRUCT {
+            ?s ?p ?o ;
+              skos:broader ?broader_uri ;
+              skos:narrower ?narrower_uri ;
+              skos:related ?related_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+            ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+            ?related_uri skos:prefLabel ?related_prefLabel .
+          } 
+          WHERE { 
+            ?s ?p ?o.
+            VALUES ?s { ?uris }
+            OPTIONAL { 
+              ?s skos:broader ?broader_uri.
+              ?broader_uri skos:prefLabel ?broader_prefLabel. 
+            } 
+            OPTIONAL { 
+              ?s skos:narrower ?narrower_uri.
+              ?narrower_uri skos:prefLabel ?narrower_prefLabel. 
+            } 
+            OPTIONAL { 
+              ?s skos:related ?related_uri.
+              ?related_uri skos:prefLabel ?related_prefLabel. 
+            } 
+          }`
       ),
     ]
   ),
@@ -276,11 +303,49 @@ describe('Server', () => {
     expect(results.q3.result).toEqual([]); // No results.
   });
 
-  it('handles source timeouts', async () => {
+  it('handles source timeouts for reconciliation requests', async () => {
     const response = await reconciliationQuery(
       'https://example.com/distributions/endpoint-error'
     );
     expect(response.statusCode).toEqual(200);
+  });
+
+  it('shows HTML term preview', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/artwork',
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.headers['content-type']).toEqual('text/html');
+    expect(response.body).toMatch('<h1>Nachtwacht</h1>');
+    expect(response.body).toMatch('One of the most famous Dutch paintings');
+    expect(response.body).toMatch(
+      '<dt>Alternatieve labels</dt><dd>Nachtwacht alt</dd>'
+    );
+    expect(response.body).toMatch(
+      new RegExp(
+        '<dt>Gerelateerde termen</dt>\\s*<dd>Art &#8226; Rembrandt</dd>'
+      )
+    );
+  });
+
+  it('shows HTML term preview if term has no altLabels', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/painter',
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.headers['content-type']).toEqual('text/html');
+  });
+
+  it('shows empty HTML term preview if term is not found', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/does-not-exist',
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.headers['content-type']).toEqual('text/html');
+    expect(response.body).toEqual('Niet gevonden');
   });
 });
 
