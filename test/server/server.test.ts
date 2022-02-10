@@ -10,25 +10,35 @@ import {
 import {server} from '../../src/server/server';
 import {gql} from 'mercurius-codegen';
 import {setup, teardown} from 'jest-dev-server';
+import {ReconciliationQueryBatch} from '../../build/reconciliation/query';
 
 let httpServer: FastifyInstance<Server>;
 const catalog = new Catalog([
   new Dataset(
-    new IRI('http://vocab.getty.edu/aat'),
-    'Art & Architecture Thesaurus',
+    new IRI('https://data.rkd.nl/rkdartists'),
+    'RKDartists',
     [new IRI('https://example.com/resources/')],
     [
       new Organization(
-        new IRI('http://www.getty.edu/research/'),
-        'Getty Research Institute',
-        'Getty'
+        new IRI('https://rkd.nl'),
+        'RKD – Nederlands Instituut voor Kunstgeschiedenis',
+        'RKD'
       ),
     ],
     [
       new SparqlDistribution(
-        new IRI('http://vocab.getty.edu/aat/sparql'),
+        new IRI('https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'),
         new IRI('http://localhost:3000/sparql'),
-        gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }`,
+        gql`
+          CONSTRUCT { 
+            ?s ?p ?o 
+          }
+          WHERE { 
+            ?s ?p ?o ;
+              ?labelPredicate ?label .
+            VALUES ?labelPredicate { <http://www.w3.org/2004/02/skos/core#prefLabel> <http://www.w3.org/2004/02/skos/core#altLabel> }
+            FILTER (regex(?label, ?query, "i"))
+          }`,
         gql`CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o. VALUES ?s { ?uris } }`
       ),
     ]
@@ -54,14 +64,14 @@ const catalog = new Catalog([
     ]
   ),
   new Dataset(
-    new IRI('https://data.rkd.nl/rkdartists'),
-    'RKDartists',
-    [new IRI('https://data.rkd.nl/artists/')],
+    new IRI('http://vocab.getty.edu/aat'),
+    'Art & Architecture Thesaurus',
+    [new IRI('http://vocab.getty.edu/aat/')],
     [
       new Organization(
-        new IRI('https://rkd.nl'),
-        'RKD – Nederlands Instituut voor Kunstgeschiedenis',
-        'RKD'
+        new IRI('http://www.getty.edu/research/'),
+        'Getty Research Institute',
+        'Getty'
       ),
     ],
     [
@@ -80,7 +90,10 @@ describe('Server', () => {
   });
   beforeAll(async () => {
     await startDistributionSparqlEndpoint();
-    httpServer = await server(catalog);
+    httpServer = await server(catalog, [
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      'https://example.com/distributions/endpoint-error',
+    ]);
   });
 
   it('responds to GraphQL sources query', async () => {
@@ -104,7 +117,9 @@ describe('Server', () => {
   });
 
   it('responds to GraphQL terms query when source does not exist', async () => {
-    const body = await query(termsQuery('https://example.com/does-not-exist'));
+    const body = await query(
+      termsQuery(['https://example.com/does-not-exist'])
+    );
     expect(body.errors[0].message).toEqual(
       'Source with URI "https://example.com/does-not-exist" not found'
     );
@@ -112,7 +127,7 @@ describe('Server', () => {
 
   it('responds to GraphQL terms query when distribution endpoint does not resolve', async () => {
     const body = await query(
-      termsQuery('https://example.com/distributions/endpoint-error')
+      termsQuery(['https://example.com/distributions/endpoint-error'])
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('ServerError');
@@ -120,10 +135,10 @@ describe('Server', () => {
 
   it('reports timeout errors', async () => {
     const body = await query(
-      termsQuery(
+      termsQuery([
         'https://example.com/distributions/timeout',
-        'http://vocab.getty.edu/aat/sparql'
-      )
+        'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      ])
     );
     expect(body.data.terms).toHaveLength(2);
     expect(body.data.terms[0].result.__typename).toEqual('TimeoutError');
@@ -131,11 +146,14 @@ describe('Server', () => {
   });
 
   it('responds to successful GraphQL terms query', async () => {
-    const body = await query(termsQuery('http://vocab.getty.edu/aat/sparql'));
-    expect(body.data.terms).toHaveLength(1); // Source.
-    expect(body.data.terms[0].source.name).toEqual(
-      'Art & Architecture Thesaurus'
+    const body = await query(
+      termsQuery(
+        ['https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'],
+        '.*'
+      )
     );
+    expect(body.data.terms).toHaveLength(1); // Source.
+    expect(body.data.terms[0].source.name).toEqual('RKDartists');
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
 
@@ -158,13 +176,13 @@ describe('Server', () => {
         'https://example.com/resources/iri-does-not-exist-in-dataset',
         'https://example.com/does-not-exist',
         'https://data.cultureelerfgoed.nl/term/id/cht/server-error',
-        'https://data.rkd.nl/artists/timeout'
+        'http://vocab.getty.edu/aat/timeout'
       )
     );
 
     const term = body.data.lookup[0];
     expect(term.uri).toEqual('https://example.com/resources/art');
-    expect(term.source.name).toEqual('Art & Architecture Thesaurus');
+    expect(term.source.name).toEqual('RKDartists');
     expect(term.result.__typename).toEqual('Term');
     expect(term.result.uri).toEqual('https://example.com/resources/art');
 
@@ -172,7 +190,7 @@ describe('Server', () => {
     expect(termNotFound.uri).toEqual(
       'https://example.com/resources/iri-does-not-exist-in-dataset'
     );
-    expect(termNotFound.source.name).toEqual('Art & Architecture Thesaurus');
+    expect(termNotFound.source.name).toEqual('RKDartists');
     expect(termNotFound.result.__typename).toEqual('NotFoundError');
 
     const sourceNotFound = body.data.lookup[2];
@@ -192,7 +210,7 @@ describe('Server', () => {
     expect(serverError.result.__typename).toEqual('ServerError');
 
     const timeoutError = body.data.lookup[4];
-    expect(timeoutError.uri).toEqual('https://data.rkd.nl/artists/timeout');
+    expect(timeoutError.uri).toEqual('http://vocab.getty.edu/aat/timeout');
     expect(timeoutError.result.__typename).toEqual('TimeoutError');
   });
 
@@ -218,6 +236,52 @@ describe('Server', () => {
       expect(response.headers.location).toEqual('/graphiql');
     }
   );
+
+  it('returns reconciliation service manifest', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+    });
+    expect(response.statusCode).toEqual(200);
+  });
+
+  it('returns 404 if reconciliation service does not exist', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/reconcile/http://nope.com',
+    });
+    expect(response.statusCode).toEqual(404);
+
+    // This distribution exists, but does not have reconciliation enabled.
+    const notFoundResponse = await reconciliationQuery(
+      'https://example.com/distributions/timeout'
+    );
+    expect(notFoundResponse.statusCode).toEqual(404);
+  });
+
+  it('responds to successful reconciliation API requests', async () => {
+    const response = await reconciliationQuery(
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
+    );
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(results.q1.result).toEqual([
+      {
+        id: 'https://example.com/resources/artwork',
+        name: 'Nachtwacht',
+        score: 1,
+        description: 'Nachtwacht alt',
+      },
+    ]);
+    expect(results.q3.result).toEqual([]); // No results.
+  });
+
+  it('handles source timeouts', async () => {
+    const response = await reconciliationQuery(
+      'https://example.com/distributions/endpoint-error'
+    );
+    expect(response.statusCode).toEqual(200);
+  });
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -240,12 +304,38 @@ async function startDistributionSparqlEndpoint(): Promise<void> {
   });
 }
 
-function termsQuery(...sources: string[]) {
+async function reconciliationQuery(
+  reconciliationUrl: string,
+  query: ReconciliationQueryBatch = {
+    q1: {
+      query: 'nachtwacht',
+    },
+    q2: {
+      query: 'Art',
+    },
+    q3: {
+      query: 'This yields no results',
+    },
+  }
+) {
+  return httpServer.inject({
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    url: `/reconcile/${reconciliationUrl}`,
+    payload: new URLSearchParams([
+      ['queries', JSON.stringify(query)],
+    ]).toString(),
+  });
+}
+
+function termsQuery(sources: string[], query = 'nachtwacht') {
   return gql`
     query {
       terms(
         sources: [${sources.map(source => `"${source}"`).join(',')}],
-        query: "something"
+        query: "${query}"
         timeoutMs: 1000
       ) {
         source {
@@ -284,6 +374,7 @@ function termsQuery(...sources: string[]) {
       }
     }`;
 }
+
 function lookupQuery(...iris: string[]) {
   return gql`
     query {
