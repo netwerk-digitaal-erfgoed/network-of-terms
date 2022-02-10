@@ -21,7 +21,7 @@ export async function server(
     level: 'info',
   });
   const comunica = await newEngine();
-  const queryTermsService = new QueryTermsService({comunica, logger: logger});
+  const queryTermsService = new QueryTermsService({comunica, logger});
   const server = fastify({logger});
   server.register(mercurius, {
     schema,
