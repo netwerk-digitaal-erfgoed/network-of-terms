@@ -34,7 +34,7 @@ export async function reconciliationQuery(
         result: terms.map(term => ({
           id: term.id.value.toString(),
           name: term.prefLabels.map(label => label.value).join(' • '), // Join similarly to network-of-terms-demo.
-          score: 1, // Hard-coded score for now because scoring will have to be done client-side.
+          score: 1, // Hard-coded score for now because scoring will have to be done on our side because no scores are returned from the sources.
           description: term.altLabels.map(label => label.value).join(' • '),
         })),
       };
