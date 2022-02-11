@@ -1,0 +1,156 @@
+{
+  "@context": {
+    "schema": "http://schema.org/",
+    "sh": "http://www.w3.org/ns/shacl#"
+  },
+  "@graph": [
+    {
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:Dataset"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:name"
+          },
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:alternateName"
+          },
+          "sh:minCount": 0
+        },
+        {
+          "sh:path": {
+            "@id": "schema:url"
+          },
+          "sh:minCount": 1,
+          "sh:nodeKind": {
+            "@id": "sh:IRI"
+          }
+        },
+        {
+          "sh:path": {
+            "@id": "schema:distribution"
+          },
+          "sh:minCount": 1,
+          "sh:class": {
+            "@id": "schema:DataDownload"
+          },
+          "sh:node": "schema:DistributionShape",
+          "sh:nodeKind": {
+            "@id": "sh:IRI"
+          }
+        },
+        {
+          "sh:path": {
+            "@id": "schema:creator"
+          },
+          "sh:minCount": 1,
+          "sh:class": {
+            "@id": "schema:Organization"
+          },
+          "sh:node": "schema:CreatorShape"
+        }
+      ]
+    },
+    {
+      "@id": "schema:DistributionShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:DataDownload"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:contentUrl"
+          },
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:encodingFormat"
+          },
+          "sh:hasValue": "application/sparql-query"
+        },
+        {
+          "sh:path": {
+            "@id": "schema:potentialAction"
+          },
+          "sh:qualifiedValueShape": {
+            "sh:class": {
+              "@id": "schema:SearchAction"
+            }
+          },
+          "sh:qualifiedMinCount": 1,
+          "sh:qualifiedMaxCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:potentialAction"
+          },
+          "sh:qualifiedValueShape": {
+            "sh:class": {
+              "@id": "schema:FindAction"
+            }
+          },
+          "sh:qualifiedMinCount": 1,
+          "sh:qualifiedMaxCount": 1
+        }
+      ]
+    },
+    {
+      "@id": "schema:CreatorShape",
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:Organization"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:name"
+          },
+          "sh:minCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:alternateName"
+          },
+          "sh:minCount": 1
+        }
+      ]
+    },
+    {
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:SearchAction"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:query"
+          },
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        }
+      ]
+    },
+    {
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:FindAction"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:query"
+          },
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://data.niod.nl/WO2_Thesaurus",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "WO2-thesaurus"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.niod.nl"
+    }
+  ],
+  "url": [
+    "https://data.niod.nl/WO2_Thesaurus/"
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.niod.nl/PoolParty/sparql/WO2_Thesaurus",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.niod.nl/PoolParty/sparql/WO2_Thesaurus",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/wo2thesaurus.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/wo2thesaurus.rq"
+        }
+      ]
+    }
+  ]
+}

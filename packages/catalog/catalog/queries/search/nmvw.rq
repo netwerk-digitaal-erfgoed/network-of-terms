@@ -1,0 +1,52 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:hiddenLabel ?hiddenLabel ;
+        skos:scopeNote ?scopeNote .
+    ?uri skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?uri skos:narrower ?narrower_uri .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+}
+WHERE {
+    ?uri ?predicate ?label .
+    VALUES ?predicate { skos:prefLabel skos:altLabel }
+
+    {
+        FILTER(?virtuosoQuery)
+        ?uri ?predicate ?label .
+        ?label <bif:contains> ?virtuosoQuery .
+    } UNION {
+        # BC support.
+        BIND(?virtuosoQuery as ?b)
+        FILTER(!BOUND(?b))
+        ?uri ?predicate ?label .
+        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+        FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")) )
+    }
+
+    OPTIONAL {
+        ?uri skos:prefLabel ?prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote .
+    }
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+    }
+    OPTIONAL {
+        ?uri skos:hiddenLabel ?hiddenLabel .
+    }
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:narrower ?narrower_uri .
+        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    }
+}
+LIMIT 1000

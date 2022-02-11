@@ -1,0 +1,44 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX mwapi: <https://www.mediawiki.org/ontology#API/>
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+
+CONSTRUCT {
+    # Wikidata seems to have a problem with the short syntax for construct queries
+    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
+    ?item a skos:Concept .
+    ?item skos:prefLabel ?prefLabel .
+    ?item skos:altLabel ?altLabel .
+    ?item skos:scopeNote ?description .
+}
+WHERE {
+    SERVICE wikibase:mwapi {
+        bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+        # Instead of using the "EntitySearch" API we use a more generic text search option
+        # To avoid noise we will filter the resultset on the occurence of the search string
+        # in either prefLabel or altLabel
+        bd:serviceParam wikibase:api "Search" .
+        bd:serviceParam mwapi:language "nl" .
+        bd:serviceParam mwapi:srsearch ?query .
+        ?item wikibase:apiOutputItem mwapi:title .
+    }
+    # Only select instances of type "human"
+    ?item wdt:P31 wd:Q5 .
+
+    ?item rdfs:label ?prefLabel .
+    FILTER(LANG(?prefLabel) = "nl")
+    OPTIONAL {
+        ?item skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl"||LANG(?altLabel) = "en")
+    }
+    OPTIONAL {
+        ?item schema:description ?description
+        FILTER(LANG(?description) = "nl")
+    }
+    # limit the result set to matches in the prefLabels or altLabels
+    FILTER(CONTAINS(LCASE(?prefLabel),LCASE(?query))||CONTAINS(LCASE(?altLabel),LCASE(?query)))
+}
+LIMIT 1000

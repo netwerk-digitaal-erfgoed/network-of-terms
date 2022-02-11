@@ -1,0 +1,68 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX mwapi: <https://www.mediawiki.org/ontology#API/>
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+
+CONSTRUCT {
+    # Wikidata seems to have a problem with the short syntax for construct queries
+    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
+    ?item a skos:Concept .
+    ?item skos:prefLabel ?streetName .
+    ?item skos:altLabel ?fullName .
+    ?item skos:altLabel ?altLabel .
+    ?item skos:scopeNote ?description .
+}
+WHERE {
+    SERVICE wikibase:mwapi {
+        bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+        # The search seems to be done with a "starts with" function,
+        # where by default the English pref and alt labels are searched.
+        # Setting the required language to something else than "en"
+        # results in an additional search in the pref and alt labels for this language.
+        bd:serviceParam wikibase:api "EntitySearch" .
+        bd:serviceParam mwapi:language "nl" .
+        bd:serviceParam mwapi:search ?query .
+        ?item wikibase:apiOutputItem mwapi:item .
+    }
+    {
+      # select Streets
+      ?item wdt:P31 wd:Q79007 
+    }
+    UNION 
+    {
+      # select Squares
+      ?item wdt:P31 wd:Q174782
+    }
+    ?item wdt:P17 wd:Q55 .
+    ?item wdt:P131 ?administration .
+    OPTIONAL {
+      ?item wdt:P276 ?location .
+      ?location rdfs:label ?locationName .
+      FILTER LANGMATCHES(LANG(?locationName),"nl")
+    }
+    OPTIONAL {
+        ?item schema:description ?description
+        FILTER(LANG(?description) = "nl")
+    }
+    OPTIONAL {
+        ?item skos:altLabel ?altLabel
+        FILTER(LANG(?altLabel) = "nl")
+    }
+    ?item rdfs:label ?streetName .
+    ?administration rdfs:label ?administrationName .
+    FILTER LANGMATCHES(LANG(?streetName),"nl")
+    FILTER LANGMATCHES(LANG(?administrationName),"nl")
+    FILTER (STRSTARTS(LCASE(?streetName),LCASE(?query))||STRSTARTS(LCASE(?altLabel),LCASE(?query)))
+    BIND(
+      IF(
+        BOUND(?locationName),
+          CONCAT(?streetName," (",?locationName,")"),
+          CONCAT(?streetName," (",?administrationName,")")
+      )
+      as ?fullName 
+    )
+}
+LIMIT 1000

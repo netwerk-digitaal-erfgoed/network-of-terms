@@ -1,0 +1,77 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@graph": [
+    {
+      "@id": "http://www.getty.edu/research/",
+      "@type": "Organization",
+      "name": "Getty Research Institute",
+      "alternateName": "Getty"
+    },
+    {
+      "@id": "https://www.cultureelerfgoed.nl",
+      "@type": "Organization",
+      "name": "Rijksdienst voor het Cultureel Erfgoed",
+      "alternateName": "RCE"
+    },
+    {
+      "@id": "https://www.niod.nl",
+      "@type": "Organization",
+      "name": "Instituut voor Oorlogs-, Holocaust- en Genocidestudies",
+      "alternateName": "NIOD"
+    },
+    {
+      "@id": "http://www.wereldculturen.nl",
+      "@type": "Organization",
+      "name": "Stiching Nationaal Museum van Wereldculturen",
+      "alternateName": "NMVW"
+    },
+    {
+      "@id": "http://data.bibliotheken.nl/doc/thes/p075301482",
+      "@type": "Organization",
+      "name": "Koninklijke Bibliotheek",
+      "alternateName": "KB"
+    },
+    {
+      "@id": "https://rkd.nl",
+      "@type": "Organization",
+      "name": "RKD – Nederlands Instituut voor Kunstgeschiedenis",
+      "alternateName": "RKD"
+    },
+    {
+      "@id": "https://www.wikidata.org/entity/Q180",
+      "@type": "Organization",
+      "name": "Wikidata",
+      "alternateName": "Wikidata"
+    },
+    {
+      "@id": "https://www.muziekweb.nl",
+      "@type": "Organization",
+      "name": "Muziekweb",
+      "alternateName": "Muziekweb"
+    },
+    {
+      "@id": "https://www.omroepmuziek.nl",
+      "@type": "Organization",
+      "name": "Stichting Omroep Muziek",
+      "alternateName": "SOM"
+    },
+    {
+      "@id": "https://www.beeldengeluid.nl/",
+      "@type": "Organization",
+      "name": "Nederlands Instituut voor Beeld en Geluid",
+      "alternateName": "Beeld en Geluid"
+    },
+    {
+      "@id": "https://op.europa.eu/",
+      "@type": "Organization",
+      "name": "Bureau voor publicaties van de Europese Unie",
+      "alternateName": "Europese Unie"
+    },
+    {
+      "@id": "https://www.adamnet.nl",
+      "@type": "Organization",
+      "name": "Stichting AdamNet",
+      "alternateName": "AdamNet"
+    }
+  ]
+}

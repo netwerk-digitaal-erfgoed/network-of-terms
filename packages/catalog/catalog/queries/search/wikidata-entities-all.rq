@@ -1,0 +1,34 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX mwapi: <https://www.mediawiki.org/ontology#API/>
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+
+CONSTRUCT {
+    # Wikidata seems to have a problem with the short syntax for construct queries
+    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
+    ?item a skos:Concept .
+    ?item skos:prefLabel ?rdfs_label .
+    ?item skos:altLabel ?altLabel .
+    ?item skos:scopeNote ?schema_description .
+}
+WHERE {
+    SERVICE wikibase:mwapi {
+        bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+        bd:serviceParam wikibase:api "EntitySearch" .
+        bd:serviceParam mwapi:language "nl" .
+        bd:serviceParam mwapi:search ?query .
+        ?item wikibase:apiOutputItem mwapi:item .
+    }
+    ?item rdfs:label ?rdfs_label .
+    FILTER(LANG(?rdfs_label) = "nl")
+    OPTIONAL {
+        ?item skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl")
+    }
+    OPTIONAL {
+        ?item schema:description ?schema_description
+        FILTER(LANG(?schema_description) = "nl")
+    }
+}
+LIMIT 1000

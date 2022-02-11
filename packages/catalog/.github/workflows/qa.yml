@@ -1,0 +1,19 @@
+name: QA
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.4.0
+      - uses: actions/setup-node@v2.5.1
+        with:
+          node-version: 14.x
+      - run: npm install
+      - run: npm run check
+      - run: npm test
+      - run: npm run compile

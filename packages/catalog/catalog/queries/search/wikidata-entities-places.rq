@@ -1,0 +1,67 @@
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX mwapi: <https://www.mediawiki.org/ontology#API/>
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wd: <http://www.wikidata.org/entity/>
+
+CONSTRUCT {
+    # Wikidata seems to have a problem with the short syntax for construct queries
+    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
+    ?item a skos:Concept .
+    ?item skos:prefLabel ?prefLabel .
+    ?item skos:altLabel ?altLabel .
+    ?item skos:scopeNote ?schema_description .
+}
+WHERE {
+    SERVICE wikibase:mwapi {
+        bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+        # The search seems to be done with a "starts with" function,
+        # where by default the English pref and alt labels are searched.
+        # Setting the required language to something else than "en"
+        # results in an additional search in the pref and alt labels for this language.
+        bd:serviceParam wikibase:api "EntitySearch" .
+        bd:serviceParam mwapi:language "nl" .
+        bd:serviceParam mwapi:search ?query .
+        ?item wikibase:apiOutputItem mwapi:item .
+    }
+    # We are looking for places; because there are many types possible (cities, villages, etc) we filter
+    # on instances (P31) or subclasses (P279) of "human settlement" (Q486972)
+    ?item wdt:P31/wdt:P279* wd:Q486972 .
+
+    {
+        # Select places in the Netherlands (Q55)
+        ?item wdt:P17 wd:Q55 .
+
+        # Filter out Dutch municipalities
+        FILTER NOT EXISTS { ?item wdt:P31 wd:Q2039348 }
+    }
+    UNION {
+        # Select places in Belgium
+        ?item wdt:P17 wd:Q31 .
+
+        # Filter out Belgian municipalities
+        FILTER NOT EXISTS { ?item wdt:P31 wd:Q493522}
+    }
+
+    # Filter out agglomerations
+    FILTER NOT EXISTS { ?item wdt:P31 wd:Q159313 }
+
+    # Filter out neighborhoods
+    FILTER NOT EXISTS { ?item wdt:P31 wd:Q123705 }
+
+    ?item rdfs:label ?prefLabel .
+
+    # select only the Dutch pref/altLabels and description
+    FILTER(LANG(?prefLabel) = "nl")
+    OPTIONAL {
+        ?item skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl")
+    }
+    OPTIONAL {
+        ?item schema:description ?schema_description
+        FILTER(LANG(?schema_description) = "nl")
+    }
+}
+LIMIT 1000

@@ -1,0 +1,54 @@
+PREFIX schema: <http://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX som: <http://data.muziekschatten.nl/som/>
+
+CONSTRUCT {
+    ?uri a skos:Concept;
+        skos:prefLabel ?schema_name;
+        skos:scopeNote ?scopeNote;
+        skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_schema_name .
+}
+WHERE {
+    ?uri a skos:Concept .
+
+    {
+        FILTER(?virtuosoQuery)
+        ?uri ?predicate ?label .
+        VALUES ?predicate { schema:name schema:keywords }
+        ?label <bif:contains> ?virtuosoQuery .
+    } UNION {
+        # BC support.
+        BIND(?virtuosoQuery as ?b)
+        FILTER(!BOUND(?b))
+        ?uri ?predicate ?label .
+        VALUES ?predicate { schema:name schema:keywords }
+        ?label <bif:contains> ?query .
+    }
+
+    OPTIONAL {
+        ?uri schema:name ?schema_name .
+        FILTER(LANG(?schema_name) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri schema:name ?broader_schema_name .
+        FILTER(LANG(?broader_schema_name) = "nl")
+    }
+    OPTIONAL {
+        ?uri schema:keywords ?schema_keywords
+    }
+    OPTIONAL {
+        ?uri som:DC ?dc
+    }
+    BIND(
+        COALESCE(
+            IF(BOUND(?schema_keywords) && BOUND(?dc), CONCAT("Trefwoorden: ", ?schema_keywords, " | ", "Dewey: ", ?dc), ?noScopeNote),
+            IF(BOUND(?schema_keywords), CONCAT("Trefwoorden: ", ?schema_keywords), ?noScopeNote),
+            IF(BOUND(?dc), CONCAT("Dewey: ", ?dc), ?noScopeNote)
+        ) AS ?scopeNote
+    )
+
+    ?uri som:BASIS "1" .
+}
+LIMIT 1000
