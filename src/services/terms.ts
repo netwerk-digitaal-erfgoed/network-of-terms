@@ -4,7 +4,7 @@ export class Term {
   constructor(
     readonly id: RDF.Term,
     readonly type: RDF.Term | undefined,
-    readonly prefLabels: RDF.Term[],
+    readonly prefLabels: RDF.Literal[],
     readonly altLabels: RDF.Literal[],
     readonly hiddenLabels: RDF.Literal[],
     readonly scopeNotes: RDF.Literal[],
@@ -16,13 +16,13 @@ export class Term {
 }
 
 export class RelatedTerm {
-  constructor(readonly id: RDF.Term, readonly prefLabels: RDF.Term[]) {}
+  constructor(readonly id: RDF.Term, readonly prefLabels: RDF.Literal[]) {}
 }
 
 class SparqlResultTerm {
   constructor(readonly id: RDF.Term) {}
   type: RDF.Term | undefined = undefined;
-  prefLabels: RDF.Term[] = [];
+  prefLabels: RDF.Literal[] = [];
   altLabels: RDF.Literal[] = [];
   hiddenLabels: RDF.Literal[] = [];
   scopeNotes: RDF.Literal[] = [];

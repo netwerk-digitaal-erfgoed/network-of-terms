@@ -6,7 +6,8 @@
     "outDir": "build",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "resolveJsonModule": true
   },
   "include": [
     "src/",
