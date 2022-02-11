@@ -2,8 +2,9 @@ import {LookupQueryResult} from '../lookup/lookup';
 import {RelatedTerm, Term} from '../services/terms';
 import {Literal} from 'rdf-js';
 import {escapeHtml} from '@hapi/hoek';
+import {locale} from '../server/server';
 
-export function preview(lookupResult: LookupQueryResult) {
+export function preview(lookupResult: LookupQueryResult, locale: locale) {
   const term = lookupResult.result;
   if (term instanceof Term) {
     return `<html>
@@ -21,17 +22,20 @@ export function preview(lookupResult: LookupQueryResult) {
       <dl>
         ${
           term.altLabels.length > 0
-            ? `<dt>Alternatieve labels</dt><dd>${literal(term.altLabels)}</dd>`
+            ? `<dt>${locale.altLabels}</dt><dd>${literal(term.altLabels)}</dd>`
             : ''
         }
-        ${relatedTerms('Bredere termen', term.broaderTerms)}
-        ${relatedTerms('Nauwere termen', term.narrowerTerms)}
-        ${relatedTerms('Gerelateerde termen', term.relatedTerms)}
+        ${relatedTerms(locale.broader, term.broaderTerms)}
+        ${relatedTerms(locale.narrower, term.narrowerTerms)}
+        ${relatedTerms(locale.related, term.relatedTerms)}
       </dl>
+      </p><a target="_blank" href="https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=${
+        term.id.value
+      }">${locale.view}</a>
   </body>
   </html>`;
   } else {
-    return 'Niet gevonden';
+    return locale.notFound;
   }
 }
 

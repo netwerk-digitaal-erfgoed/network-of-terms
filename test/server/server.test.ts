@@ -320,12 +320,10 @@ describe('Server', () => {
     expect(response.body).toMatch('<h1>Nachtwacht</h1>');
     expect(response.body).toMatch('One of the most famous Dutch paintings');
     expect(response.body).toMatch(
-      '<dt>Alternatieve labels</dt><dd>Nachtwacht alt</dd>'
+      '<dt>Alternative labels</dt><dd>Nachtwacht alt</dd>'
     );
     expect(response.body).toMatch(
-      new RegExp(
-        '<dt>Gerelateerde termen</dt>\\s*<dd>Art &#8226; Rembrandt</dd>'
-      )
+      new RegExp('<dt>Related terms</dt>\\s*<dd>Art &#8226; Rembrandt</dd>')
     );
   });
 
@@ -333,9 +331,30 @@ describe('Server', () => {
     const response = await httpServer.inject({
       method: 'GET',
       url: '/preview/https://example.com/resources/painter',
+      headers: {
+        'accept-language': 'de', // Should default to en.
+      },
     });
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
+    expect(response.body).toMatch('View at Network of Terms');
+  });
+
+  it('translates HTML preview', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/artwork',
+      headers: {
+        'accept-language': 'nl',
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.headers['content-type']).toEqual('text/html');
+    expect(response.body).toMatch(
+      new RegExp(
+        '<dt>Gerelateerde termen</dt>\\s*<dd>Art &#8226; Rembrandt</dd>'
+      )
+    );
   });
 
   it('shows empty HTML term preview if term is not found', async () => {
@@ -345,7 +364,7 @@ describe('Server', () => {
     });
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
-    expect(response.body).toEqual('Niet gevonden');
+    expect(response.body).toEqual('Not found');
   });
 });
 

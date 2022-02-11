@@ -4,6 +4,7 @@ import * as Logger from '../helpers/logger';
 import {resolvers} from './resolvers';
 import {schema} from './schema';
 import fastifyCors from 'fastify-cors';
+import fastifyAccepts from 'fastify-accepts';
 import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {newEngine} from '@comunica/actor-init-sparql';
 import {IncomingMessage, Server} from 'http';
@@ -13,6 +14,8 @@ import {QueryTermsService} from '../services/query';
 import {reconciliationQuery} from '../reconciliation/query';
 import {LookupService} from '../lookup/lookup';
 import {preview} from '../reconciliation/preview';
+import en from '../locales/en.json';
+import nl from '../locales/nl.json';
 
 export async function server(
   catalog: Catalog,
@@ -25,6 +28,7 @@ export async function server(
   const comunica = await newEngine();
   const queryTermsService = new QueryTermsService({comunica, logger});
   const lookupService = new LookupService(catalog, queryTermsService);
+  const locales: {nl: locale; en: locale} = {nl, en};
 
   const server = fastify<Server, customRequest>({logger});
   server.register(mercurius, {
@@ -41,6 +45,7 @@ export async function server(
   });
   server.register(fastifyCors);
   server.register(formBodyPlugin);
+  server.register(fastifyAccepts);
   server.decorateRequest('previewUrl', '');
   server.addHook('onRequest', (request, reply, done) => {
     request.raw.previewUrl =
@@ -110,10 +115,11 @@ export async function server(
   );
 
   server.get<{Params: {'*': string}}>('/preview/*', async (request, reply) => {
+    const language = (request.language(['en', 'nl']) || 'en') as 'nl' | 'en';
     const termIri = new IRI(request.params['*']);
     const [lookupResult] = await lookupService.lookup([termIri], 10000);
 
-    reply.type('text/html').send(preview(lookupResult));
+    reply.type('text/html').send(preview(lookupResult, locales[language]));
   });
 
   return server;
@@ -122,3 +128,5 @@ export async function server(
 export interface customRequest extends IncomingMessage {
   previewUrl: string;
 }
+
+export type locale = typeof en;
