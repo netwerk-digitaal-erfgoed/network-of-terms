@@ -1,72 +1,25 @@
 {
-  "name": "network-of-terms-api",
-  "description": "Network of Terms",
-  "version": "1.0.0",
-  "type": "module",
-  "bin": "./bin/run",
-  "engines": {
-    "node": ">=16.0.0"
-  },
   "private": true,
-  "files": [
-    "build",
-    "!build/**/*.map"
+  "workspaces": [
+    "./packages/*"
   ],
-  "dependencies": {
-    "@comunica/actor-init-sparql": "^1.22.3",
-    "@comunica/actor-query-operation-sparql-endpoint": "^1.22.2",
-    "@comunica/bus-query-operation": "^1.22.0",
-    "@comunica/core": "^1.22.0",
-    "@hapi/hoek": "^9.2.1",
-    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "^5.6.1",
-    "@oclif/command": "^1.8.16",
-    "@oclif/core": "^1.2.1",
-    "@rdfjs/data-model": "^2.0.0",
-    "cli-ux": "^6.0.8",
-    "fastify": "^3.27.1",
-    "fastify-accepts": "^2.1.0",
-    "fastify-cors": "^6.0.2",
-    "fastify-formbody": "^5.2.0",
-    "joi": "^17.6.0",
-    "mercurius": "^9.2.0",
-    "pino": "^7.6.5",
-    "pino-pretty": "^7.5.1",
-    "pretty-ms": "^7.0.1",
-    "rdf-js": "^4.0.2",
-    "rdf-parse": "^1.9.1",
-    "rdf-store-stream": "^1.3.0"
-  },
+  "type": "module",
   "devDependencies": {
-    "@comunica/actor-http-node-fetch": "^1.22.3",
-    "@comunica/actor-init-sparql-file": "^1.22.3",
-    "@comunica/actor-query-operation-service": "^1.22.3",
-    "@types/accepts": "^1.3.5",
-    "@types/jest": "^27.4.0",
-    "@types/jest-dev-server": "^5.0.0",
-    "@types/node": "^17.0.15",
-    "@types/rdfjs__data-model": "^2.0.1",
+    "@types/node": "^17.0.17",
     "gts": "^3.1.0",
-    "jest": "^27.5.0",
+    "jest": "^27.5.1",
     "jest-coverage-thresholds-bumper": "^1.1.0",
-    "jest-dev-server": "^6.0.3",
-    "mercurius-codegen": "^3.3.0",
     "ts-jest": "^27.1.3",
-    "ts-node-dev": "^1.1.8",
-    "tsc-watch": "^4.6.0",
     "typescript": "^4.5.5"
   },
   "scripts": {
+    "compile": "npm run compile --workspaces",
     "check": "gts check",
-    "clean": "gts clean",
-    "compile": "tsc",
     "fix": "gts fix",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --forceExit",
-    "posttest": "jest-coverage-thresholds-bumper --silent",
-    "start": "node --experimental-specifier-resolution=node build/main.js",
-    "dev": "tsc-watch --onSuccess 'npm run start'",
-    "watch": "tsc --watch"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --no-cache",
+    "posttest": "jest-coverage-thresholds-bumper --silent"
   },
-  "oclif": {
-    "commands": "./build/commands"
+  "engines": {
+    "node": ">=16.0.0"
   }
 }

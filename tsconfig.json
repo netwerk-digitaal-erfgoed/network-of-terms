@@ -3,13 +3,13 @@
   "compilerOptions": {
     "lib": ["ES2020"],
     "module": "ES2020",
-    "outDir": "build",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true
-  },
-  "include": [
-    "src/",
-  ]
+    "resolveJsonModule": true,
+    "declaration": true,
+    "paths": {
+      "@netwerk-digitaal-erfgoed/*": ["./packages/*/src"]
+    }
+  }
 }

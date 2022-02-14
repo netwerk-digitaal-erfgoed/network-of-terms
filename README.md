@@ -1,20 +1,16 @@
-Network of Terms
-================
+# Network of Terms
 
-This application delivers a [GraphQL](https://graphql.org) API and command-line interface
-for searching the Network of Terms. It is available at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
-
-The Network is a **search engine for finding terms** in terminology sources (such as thesauri,
-classification systems and reference lists).
+The Network is a **search engine for finding terms** in terminology sources (such as thesauri, classification systems
+and reference lists).
 
 Given a textual search query, the Network of Terms searches one or more terminology sources in
-**real-time** and returns matching terms, including their labels and URIs. The Network of Terms
-offers a **simple search interface**, **handles errors** gracefully in case a source does not
-respond well and **harmonizes the results** to the SKOS data model.
+**real-time** and returns matching terms, including their labels and URIs. The Network of Terms offers a **simple search
+interface**, **handles errors** gracefully in case a source does not respond well and **harmonizes the results** to the
+SKOS data model.
 
-The Network of Terms is intended for managers of heritage information that want to improve the
-findability of their information by assigning terms from terminology sources that are used by the
-institutions in the [Dutch Digital Heritage Network](https://netwerkdigitaalerfgoed.nl).
+The Network of Terms is intended for managers of heritage information that want to improve the findability of their
+information by assigning terms from terminology sources that are used by the institutions in
+the [Dutch Digital Heritage Network](https://netwerkdigitaalerfgoed.nl).
 
 ## Getting started
 
@@ -23,245 +19,22 @@ institutions in the [Dutch Digital Heritage Network](https://netwerkdigitaalerfg
 If you just want to search the Network of Terms using a web interface, have a look at our
 [demonstrator](https://termennetwerk.netwerkdigitaalerfgoed.nl), a web interface on top of this API.
 
-### GraphQL endpoint
+### Packages
 
-If you’re a developer and want to use the Network of Terms API in your apps,
-you can test the API and try GraphQL queries at the [API Playground](https://termennetwerk-api.netwerkdigitaalerfgoed.nl).
+This repository contains the following packages:
 
-You can connect your client apps to the [GraphQL endpoint](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/graphql).
+- [network-of-terms-catalog](packages/network-of-terms-catalog): the catalog of terminology sources in the Network of
+  Terms that can be queried;
+- [network-of-terms-cli](packages/network-of-terms-cli): query the Network of Terms from the command line;
+- [network-of-terms-graphql](packages/network-of-terms-graphql): a GraphQL query API to find terms;
+- [network-of-terms-query](packages/network-of-terms-query): core query logic which executes the queries to terminology
+  sources;
+- [network-of-terms-reconciliation](packages/network-of-terms-reconciliation): a Reconciliation API for matching strings
+  against terms with URIs.
 
-### Host it yourself
 
-If you want to run the Network of Terms locally, or host it yourself, you can run our Docker image:
+## Running the tests
 
-    docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api
-
-and open http://localhost:3123 in your browser for the API Playground.
-
-While this repository follows [Semantic Versioning](https://semver.org), you may want to stick to a
-[tagged version](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api/releases):
-
-    docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-api:v1.7.0
-
-### Contribute
-
-If you want to contribute to this repository, please continue reading.
-
-## Build image
-
-    docker-compose build --no-cache
-
-## Query sources via CLI
-
-### Logon to container
-
-    docker-compose run --rm --entrypoint /bin/sh node
-
-### List queryable sources
-
-    bin/run.js sources:list
-
-### Query one or more sources for terms
-
-```bash
-# Cultuurhistorische Thesaurus: query SPARQL endpoint
-bin/run.js sources:query --uris https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets
-
-# RKDartists: query SPARQL endpoint
-bin/run.js sources:query --uris https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql --query Gogh
-
-# RKDartists and NTA: query SPARQL endpoints simultaneously
-bin/run.js sources:query --uris https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql,http://data.bibliotheken.nl/thesp/sparql --query Gogh
-
-# NTA: query SPARQL endpoint
-bin/run.js sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query Wieringa
-bin/run.js sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query "'Wier*'"
-bin/run.js sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query "Wieringa OR Mulisch"
-bin/run.js sources:query --uris http://data.bibliotheken.nl/thesp/sparql --query "Jan AND Vries"
-
-# NMvW: query SPARQL endpoint
-bin/run.js sources:query --uris https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql --query eiland
-
-# AAT: query SPARQL endpoint
-bin/run.js sources:query --uris http://vocab.getty.edu/aat/sparql --query schilderij
-bin/run.js sources:query --uris http://vocab.getty.edu/aat/sparql --query "schil*"
-bin/run.js sources:query --uris http://vocab.getty.edu/aat/sparql --query "schilderij OR tekening"
-bin/run.js sources:query --uris http://vocab.getty.edu/aat/sparql --query "cartoon* OR prent*"
-
-# Wikidata Entities: query SPARQL endpoint
-bin/run.js sources:query --uris https://query.wikidata.org/sparql#entities-all --query Rembrandt
-```
-
-Add `--loglevel` to the commands to see what's going on underneath. For example:
-
-    bin/run.js sources:query --uris https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets --loglevel info
-
-Search results are piped to stdout. Redirect these elsewhere for further analysis. For example:
-
-    bin/run.js sources:query --uris https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht --query fiets > cht.txt
-
-## Query sources via GraphQL
-
-### Start server
-
-    docker-compose up --build
-
-### Open the GraphQL editor
-
-http://localhost:3123/graphiql
-
-### List queryable sources
-
-```graphql
-query Sources {
-  sources {
-    uri
-    name
-    alternateName
-    creators {
-      uri
-      name
-      alternateName
-    }
-  }
-}
-```
-
-### Query one or more sources for terms
-
-#### Query a single source
-
-```graphql
-# Query Cultuurhistorische Thesaurus (CHT)
-query {
-  terms(
-    sources: ["https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht"],
-    query: "fiets",
-    queryMode: OPTIMIZED   # Forwards-compatible query type.
-  ) {
-    source {
-      uri
-      name
-      creators {
-        uri
-        name
-        alternateName
-      }
-    }
-    result {
-      __typename
-      ... on Terms {
-        terms {
-          uri
-          prefLabel
-          altLabel
-          hiddenLabel
-          scopeNote
-          seeAlso
-          broader {
-            uri
-            prefLabel
-          }
-          narrower {
-            uri
-            prefLabel
-          }
-          related {
-            uri
-            prefLabel
-          }
-        }
-      }
-      ... on Error {
-        message
-      }
-    }
-  }
-}
-```
-
-#### Query multiple sources
-
-```graphql
-# Query RKDartists and NTA simultaneously
-query {
-  terms(
-    sources: ["https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql", "http://data.bibliotheken.nl/thesp/sparql"],
-    query: "Gogh",
-    queryMode: OPTIMIZED   # Forwards-compatible query type.
-  ) {
-    source {
-      uri
-      name
-      creators {
-        uri
-        name
-        alternateName
-      }
-    }
-    result {
-      __typename
-      ... on Terms {
-        terms {
-          uri
-          prefLabel
-          altLabel
-          hiddenLabel
-          scopeNote
-          seeAlso
-        }
-      }
-      ... on Error {
-        message
-      }
-    }
-  }
-}
-```
-
-### Look up terms by URI
-
-Use the `lookup` query to look up terms whose URIs you know (for example, because you have stored the URIs previously):
-
-```graphql
-query {
-  lookup(
-    uris: ["https://data.rkd.nl/artists/32439", "https://data.cultureelerfgoed.nl/term/id/cht/15e29ea3-1b4b-4fb2-b970-a0c485330384"],
-  ) {
-    uri
-    source {
-      ... on Source {
-        uri
-        name
-        creators {
-          uri
-          name
-          alternateName
-        }
-      }
-      ... on Error {
-        __typename
-        message
-      }
-    }        
-    result {
-      ... on Term {
-        uri
-        prefLabel
-        altLabel
-        hiddenLabel
-        scopeNote
-        seeAlso
-        broader {
-          uri
-          prefLabel
-        }
-      }
-      ... on Error {
-        __typename
-        message
-      }
-    }
-  }
-}
-```
+For simplicity and because we have integration tests (versus full unit tests for each package) we want to combine
+coverage for all tests.
+TODO: For coverage reasons, we run all the tests
