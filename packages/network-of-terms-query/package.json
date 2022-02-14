@@ -1,0 +1,53 @@
+{
+  "name": "@netwerk-digitaal-erfgoed/network-of-terms-query",
+  "version": "0.0.0-semantically-released",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
+    "compile": "npm run clean && tsc -b tsconfig.build.json",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1}",
+    "posttest": "jest-coverage-thresholds-bumper --silent"
+  },
+  "files": [
+    "build/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
+  },
+  "author": "",
+  "license": "EUPL-1.2",
+  "bugs": {
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
+  },
+  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
+  "keywords": [],
+  "description": "Engine for querying sources in the Network of Terms",
+  "dependencies": {
+    "@comunica/actor-init-sparql": "^1.22.3",
+    "@comunica/actor-query-operation-sparql-endpoint": "^1.22.2",
+    "@comunica/bus-query-operation": "^1.22.0",
+    "@comunica/core": "^1.22.0",
+    "@hapi/hoek": "^9.2.1",
+    "@rdfjs/data-model": "^2.0.0",
+    "joi": "^17.6.0",
+    "pino": "^7.6.5",
+    "pino-pretty": "^7.5.1",
+    "pretty-ms": "^7.0.1",
+    "rdf-js": "^4.0.2",
+    "rdf-parse": "^1.9.1",
+    "rdf-store-stream": "^1.3.0"
+  },
+  "devDependencies": {
+    "@comunica/actor-http-node-fetch": "^1.22.3",
+    "@comunica/actor-init-sparql-file": "^1.22.3",
+    "@comunica/actor-query-operation-service": "^1.22.3",
+    "jest-dev-server": "^6.0.3",
+    "ts-jest": "^27.1.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

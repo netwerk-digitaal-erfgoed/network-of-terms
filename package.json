@@ -1,56 +1,29 @@
 {
-  "name": "@netwerk-digitaal-erfgoed/network-of-terms-catalog",
-  "version": "1.0.1",
-  "description": "Catalog of Network of Terms datasets",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog"
+  "name": "network-of-terms",
+  "private": true,
+  "workspaces": [
+    "./packages/*"
+  ],
+  "type": "module",
+  "devDependencies": {
+    "@qiwi/multi-semantic-release": "^3.17.1",
+    "@types/node": "^17.0.17",
+    "gts": "^3.1.0",
+    "jest": "^27.5.1",
+    "jest-coverage-thresholds-bumper": "^1.1.0",
+    "ts-jest": "^27.1.3",
+    "typescript": "^4.5.5"
+  },
+  "scripts": {
+    "clean": "npm run clean --workspaces",
+    "compile": "npm run compile --workspaces",
+    "check": "gts check",
+    "fix": "gts fix",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --no-cache",
+    "posttest": "jest-coverage-thresholds-bumper --silent",
+    "release": "multi-semantic-release"
   },
   "engines": {
-    "node": ">=11.14.0"
-  },
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
-  "files": [
-    "build/",
-    "catalog/"
-  ],
-  "scripts": {
-    "test": "jest ${1}",
-    "check": "gts check",
-    "clean": "gts clean",
-    "compile": "tsc",
-    "fix": "gts fix"
-  },
-  "keywords": [
-    "nde"
-  ],
-  "author": "Netwerk Digitaal Erfgoed",
-  "license": "EUPL",
-  "devDependencies": {
-    "@types/jest": "^27.0.1",
-    "@types/n3": "^1.4.3",
-    "@types/node": "^17.0.0",
-    "@types/rdf-ext": "^1.3.7",
-    "gts": "^3.0.2",
-    "jest": "^27.0.3",
-    "jsonld-streaming-parser": "^2.1.0",
-    "rdf-data-factory": "^1.0.1",
-    "rdf-ext": "^1.3.0",
-    "rdf-validate-shacl": "^0.4.0",
-    "ts-jest": "^27.0.2",
-    "typescript": "^4.0.5"
-  },
-  "bugs": {
-    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/issues"
-  },
-  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog#readme",
-  "dependencies": {
-    "@comunica/actor-init-sparql-rdfjs": "^1.17.0",
-    "@comunica/bus-query-operation": "^1.17.0",
-    "globby": "<12.0.0",
-    "rdf-js": "^4.0.2",
-    "rdf-parse": "^1.5.0",
-    "rdf-store-stream": "^1.1.0"
+    "node": ">=16.0.0"
   }
 }

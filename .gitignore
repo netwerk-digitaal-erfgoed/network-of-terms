@@ -1,3 +1,9 @@
-build
-node_modules
-package-lock.json
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
+*.env
+npm-debug.log
+build/
+coverage/
+node_modules/
+tsconfig.build.tsbuildinfo

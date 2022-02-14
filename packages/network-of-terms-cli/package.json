@@ -1,0 +1,35 @@
+{
+  "name": "@netwerk-digitaal-erfgoed/network-of-terms-cli",
+  "private": true,
+  "type": "module",
+  "description": "Query the Network of Terms from the command line",
+  "scripts": {
+    "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
+    "compile": "npm run clean && tsc -b tsconfig.build.json"
+  },
+  "bin": {
+    "network-of-terms": "bin/run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "EUPL-1.2",
+  "bugs": {
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
+  },
+  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
+  "dependencies": {
+    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
+    "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
+    "@oclif/command": "^1.8.16",
+    "@oclif/core": "^1.3.3",
+    "cli-ux": "^6.0.9",
+    "rdf-js": "^4.0.2"
+  },
+  "oclif": {
+    "commands": "./build"
+  }
+}

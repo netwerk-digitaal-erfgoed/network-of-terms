@@ -1,62 +1,42 @@
-# Network of Terms Catalog
+# Network of Terms
 
-This is the catalog of datasets that you can query through the
-[Network of Terms API](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api).
+The Network of Terms is a **search engine for finding terms** in terminology sources (such as thesauri, classification
+systems and reference lists).
 
-The [catalog](catalog/) directory contains all datasets.
-Each is described in the [Schema.org](https://schema.org) ontology.
+Given a textual search query, the Network of Terms searches one or more terminology sources in
+**real-time** and returns matching terms, including their labels and URIs. The Network of Terms offers a **simple search
+interface**, **handles errors** gracefully in case a source does not respond well and **harmonizes the results** to the
+SKOS data model.
 
-The [queries](catalog/queries/) directory contains SPARQL queries for retrieving terms from the datasets.
+The Network of Terms is intended for managers of heritage information that want to improve the findability of their
+information by assigning terms from terminology sources that are used by the institutions in
+the [Dutch Digital Heritage Network](https://netwerkdigitaalerfgoed.nl).
 
-## Installation
+## Getting started
 
-This package is [available on NPM](https://www.npmjs.com/package/@netwerk-digitaal-erfgoed/network-of-terms-catalog):
+### Web interface
+
+If you just want to search the Network of Terms using a web interface, have a look at our
+[demonstrator](https://termennetwerk.netwerkdigitaalerfgoed.nl), a web interface on top of this API.
+
+### Packages
+
+This repository contains the following packages:
+
+- [network-of-terms-catalog](packages/network-of-terms-catalog): the catalog of terminology sources in the Network of
+  Terms that can be queried;
+- [network-of-terms-cli](packages/network-of-terms-cli): query the Network of Terms from the command line;
+- [network-of-terms-graphql](packages/network-of-terms-graphql): a GraphQL API to find terms;
+- [network-of-terms-query](packages/network-of-terms-query): core query logic which executes the queries to terminology
+  sources;
+- [network-of-terms-reconciliation](packages/network-of-terms-reconciliation): a Reconciliation Service API for matching
+- strings against terms with URIs.
+
+## Running the tests
+
+For simplicity and because we have integration tests (versus separate unit tests for each package) we want to combine
+coverage for all tests. To run the tests:
 
 ```
-npm add @netwerk-digitaal-erfgoed/network-of-terms-catalog
+npm run test
 ```
-
-## Contributing
-
-### Adding a dataset
-
-* Create a `your-dataset.jsonld` file in the `catalog/` directory and add a description.
-* Create a `your-dataset.rq` in the `queries/` directory to hold the SPARQL query.
-* Run the tests to make sure your dataset description conforms to the [dataset SHACL](shacl/dataset.jsonld):
-  ```
-  npm install
-  npm run test
-  ```
-
-### Local development
-
-If you’d like to test your development version of the catalog inside
-a [network-of-terms-api](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api) checkout,
-you can do so by [linking](https://docs.npmjs.com/cli/link). 
-
-First, make sure you have checked out both this and the API repository:
-    
-    git clone git@github.com:netwerk-digitaal-erfgoed/network-of-terms-api.git
-    git clone git@github.com:netwerk-digitaal-erfgoed/network-of-terms-catalog.git
-
-Next, link the dependency: 
-
-    cd network-of-terms-catalog
-    npm link
-    cd ../network-of-terms-api
-    npm link @netwerk-digitaal-erfgoed/network-of-terms-catalog
-    
-After making changes to the catalog, make sure you compile them,
-so your changes are picked up in API:
-
-    cd network-of-terms-catalog
-    npm run compile    
-
-### Committing changes
-
-This repository follows [Semantic Versioning](https://semver.org). Tags and 
-[releases](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/releases) are
-[created automatically](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/blob/master/.github/workflows/release.yml)
-based on commit messages. 
-So please make sure to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#summary)
-when committing changes.
