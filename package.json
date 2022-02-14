@@ -28,7 +28,7 @@
     "fastify-cors": "^6.0.2",
     "fastify-formbody": "^5.2.0",
     "joi": "^17.6.0",
-    "mercurius": "^9.2.0",
+    "mercurius": "^9.3.2",
     "pino": "^7.6.5",
     "pino-pretty": "^7.5.1",
     "pretty-ms": "^7.0.1",
