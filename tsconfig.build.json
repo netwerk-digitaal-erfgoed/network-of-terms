@@ -1,0 +1,17 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "target": "es2018",
+    "lib": [
+      "ES2020"
+    ],
+    "module": "ES2020",
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "declaration": true
+  }
+}
