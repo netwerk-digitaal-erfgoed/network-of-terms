@@ -1,5 +1,6 @@
 # Network of Terms Catalog
 
+
 This is the catalog of datasets that you can query through the
 [Network of Terms API](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-api).
 
