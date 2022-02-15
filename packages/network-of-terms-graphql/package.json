@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@hapi/hoek": "^9.2.1",
-    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "^5.6.1",
+    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "^5.0.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "^1.0.0",
     "@rdfjs/data-model": "^2.0.0",
     "fastify": "^3.27.1",
@@ -30,8 +30,8 @@
   },
   "scripts": {
     "check": "gts check",
-    "clean": "gts clean",
-    "compile": "rm -rf build/* && tsc",
+    "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
+    "compile": "npm run clean && tsc -b tsconfig.build.json",
     "fix": "gts fix",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --forceExit",
     "posttest": "jest-coverage-thresholds-bumper --silent",

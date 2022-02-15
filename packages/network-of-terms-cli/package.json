@@ -4,7 +4,8 @@
   "type": "module",
   "description": "",
   "scripts": {
-    "compile": "rm -rf build/* && tsc"
+    "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
+    "compile": "npm run clean && tsc -b tsconfig.build.json"
   },
   "bin": {
     "network-of-terms": "bin/run"

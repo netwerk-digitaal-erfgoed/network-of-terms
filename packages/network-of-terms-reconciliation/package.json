@@ -1,5 +1,6 @@
 {
   "name": "@netwerk-digitaal-erfgoed/network-of-terms-reconciliation",
+  "version": "0.0.0-semantically-released",
   "description": "A Reconciliation API for the Network of Terms",
   "author": "Netwerk Digitaal Erfgoed",
   "bugs": {
@@ -29,7 +30,8 @@
     "url": "git+https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
   },
   "scripts": {
-    "compile": "rm -rf build/* && tsc",
+    "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
+    "compile": "npm run clean && tsc -b tsconfig.build.json",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --forceExit",
     "posttest": "jest-coverage-thresholds-bumper --silent",
     "start": "node --experimental-specifier-resolution=node build/main.js",

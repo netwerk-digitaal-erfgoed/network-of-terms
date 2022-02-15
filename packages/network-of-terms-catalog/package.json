@@ -17,8 +17,8 @@
   ],
   "scripts": {
     "check": "gts check",
-    "clean": "gts clean",
-    "compile": "rm -rf build/* && tsc",
+    "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
+    "compile": "npm run clean && tsc -b tsconfig.build.json",
     "fix": "gts fix",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --forceExit",
     "posttest": "jest-coverage-thresholds-bumper --silent"

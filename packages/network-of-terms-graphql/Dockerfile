@@ -1,6 +1,8 @@
+ARG PACKAGE_DIR
 FROM node:lts-alpine AS build
 WORKDIR /app
-COPY package*.json ./
+COPY package-lock.json ./
+COPY $PACKAGE_DIR/package.json ./
 RUN npm ci
 COPY . .
 RUN NODE_ENV=production npm run compile
@@ -8,7 +10,8 @@ RUN NODE_ENV=production npm run compile
 FROM node:lts-alpine
 ENV NODE_ENV=production
 WORKDIR /app/
-COPY package*.json ./
+COPY package-lock.json ./
+COPY $PACKAGE_DIR/package.json ./
 RUN npm ci
 COPY --from=build /app/build /app/build
 USER node

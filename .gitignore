@@ -6,3 +6,4 @@ npm-debug.log
 build/
 coverage/
 node_modules/
+tsconfig.build.tsbuildinfo

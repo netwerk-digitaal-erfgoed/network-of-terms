@@ -5,7 +5,8 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
-    "compile": "rm -rf build/* && tsc",
+    "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
+    "compile": "npm run clean && tsc -b tsconfig.build.json",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1}",
     "posttest": "jest-coverage-thresholds-bumper --silent"
   },

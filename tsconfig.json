@@ -1,15 +1,9 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
+  "extends": "./tsconfig.build.json",
   "compilerOptions": {
-    "lib": ["ES2020"],
-    "module": "ES2020",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "declaration": true,
     "paths": {
+      // This is necessary for the tests to find local packages and for compilation to work in any order of packages.
       "@netwerk-digitaal-erfgoed/*": ["./packages/*/src"]
     }
-  }
+  },
 }
