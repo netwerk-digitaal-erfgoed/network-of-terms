@@ -13,6 +13,7 @@
     "typescript": "^4.5.5"
   },
   "scripts": {
+    "clean": "npm run clean --workspaces",
     "compile": "npm run compile --workspaces",
     "check": "gts check",
     "fix": "gts fix",
