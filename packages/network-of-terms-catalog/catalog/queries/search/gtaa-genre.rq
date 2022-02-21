@@ -21,6 +21,7 @@ WHERE {
     
     ?uri ?predicate ?label .
     VALUES ?predicate { skos:prefLabel skos:altLabel }
+    FILTER(CONTAINS(?label, ?query))
     FILTER(LANG(?label) = "nl")
 
     OPTIONAL {

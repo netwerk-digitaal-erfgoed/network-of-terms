@@ -14,10 +14,7 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    VALUES ?conceptscheme {
-        <http://data.beeldengeluid.nl/gtaa/Genre>
-    }
-    ?uri skos:inScheme ?conceptscheme .
+    ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/Genre> .
 
     VALUES ?uri { ?uris }
 
