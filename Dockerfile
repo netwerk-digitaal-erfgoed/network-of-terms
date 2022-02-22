@@ -1,3 +1,4 @@
+LABEL org.opencontainers.image.source = "https://github.com/netwerk-digitaal-erfgoed/network-of-terms"
 FROM node:lts-alpine AS build
 ARG PACKAGE_DIR
 WORKDIR /app
