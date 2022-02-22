@@ -1,17 +1,15 @@
 name: Build app and update Docker image
 
 on:
-  push:
-    tags:
-      # Only deploy the following apps:
-      - '@netwerk-digitaal-erfgoed/network-of-terms-graphql@*'
-      - '@netwerk-digitaal-erfgoed/network-of-terms-reconciliation@*'
-#  release:
-#    types: [created]
+  # Use the release event because push events are not triggered for commits tagged with more than three tags:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push.
+  release:
+    types: [created]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-graphql') || startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-reconciliation')
 
     steps:
       - uses: actions/checkout@v2.4.0
