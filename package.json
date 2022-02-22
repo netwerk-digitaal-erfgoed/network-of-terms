@@ -21,7 +21,7 @@
     "fix": "gts fix",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --no-cache",
     "posttest": "jest-coverage-thresholds-bumper --silent",
-    "release": "multi-semantic-release"
+    "release": "npx multi-semantic-release"
   },
   "engines": {
     "node": ">=16.0.0"
