@@ -2,6 +2,9 @@
   "name": "@netwerk-digitaal-erfgoed/network-of-terms-query",
   "version": "0.0.0-semantically-released",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
