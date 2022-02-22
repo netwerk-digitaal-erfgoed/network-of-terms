@@ -31,8 +31,6 @@
     "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
     "compile": "npm run clean && tsc --build tsconfig.build.json",
     "fix": "gts fix",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --forceExit",
-    "posttest": "jest-coverage-thresholds-bumper --silent",
     "start": "node --experimental-specifier-resolution=node build/main.js",
     "dev": "tsc-watch --build tsconfig.build.json --onSuccess 'npm run start'",
     "watch": "tsc --watch"

@@ -20,9 +20,7 @@
     "check": "gts check",
     "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
     "compile": "npm run clean && tsc --build tsconfig.build.json",
-    "fix": "gts fix",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1} --forceExit",
-    "posttest": "jest-coverage-thresholds-bumper --silent"
+    "fix": "gts fix"
   },
   "keywords": [
     "nde"
