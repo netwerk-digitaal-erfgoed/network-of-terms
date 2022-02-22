@@ -30,7 +30,7 @@ This repository contains the following packages:
 - [network-of-terms-query](packages/network-of-terms-query): core query logic which executes the queries to terminology
   sources;
 - [network-of-terms-reconciliation](packages/network-of-terms-reconciliation): a Reconciliation Service API for matching
-- strings against terms with URIs.
+  strings against terms with URIs.
 
 ## Running the tests
 
