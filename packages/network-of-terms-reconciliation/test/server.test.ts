@@ -4,9 +4,9 @@ import {customRequest, server} from '../src/server';
 import {teardown} from 'jest-dev-server';
 import {ReconciliationQueryBatch} from '../src/query';
 import {
-  testCatalog,
   startDistributionSparqlEndpoint,
-} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+  testCatalog,
+} from '../../network-of-terms-query/src/server-test';
 
 let httpServer: FastifyInstance<Server, customRequest>;
 const catalog = testCatalog(3001);
