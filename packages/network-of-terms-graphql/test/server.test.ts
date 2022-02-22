@@ -5,7 +5,7 @@ import {teardown} from 'jest-dev-server';
 import {
   startDistributionSparqlEndpoint,
   testCatalog,
-} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+} from '../../network-of-terms-query/src/server-test';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3000);
