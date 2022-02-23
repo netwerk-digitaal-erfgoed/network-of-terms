@@ -1,20 +1,16 @@
 # Network of Terms Catalog
 
-This is the catalog of datasets that you can query through the
+This is the catalog of terminology sources that can be queried through the
 [Network of Terms](https://github.com/netwerk-digitaal-erfgoed/network-of-terms).
 
-The [catalog](catalog/) directory contains all datasets.
+The [catalog](catalog) directory contains all datasets.
 Each is described in the [Schema.org](https://schema.org) ontology.
 
-The [queries](catalog/queries/) directory contains SPARQL queries for retrieving terms from the datasets.
+The [queries](catalog/queries) directory contains SPARQL queries for retrieving terms from the datasets. There are
+two types of queries:
 
-## Installation
-
-This package is [available on NPM](https://www.npmjs.com/package/@netwerk-digitaal-erfgoed/network-of-terms-catalog):
-
-```
-npm add @netwerk-digitaal-erfgoed/network-of-terms-catalog
-```
+- [search queries](catalog/queries/search) find terms matching a textual string query input;
+- [lookup queries](catalog/queries/lookup) retrieve a single term based on its URI.
 
 ## Contributing
 
@@ -23,17 +19,7 @@ npm add @netwerk-digitaal-erfgoed/network-of-terms-catalog
 * Create a `your-dataset.jsonld` file in the `catalog/` directory and add a description.
 * Create a `your-dataset.rq` file in the `queries/search` directory and add your SPARQL search query. A SPARQL
   lookup goes into the `queries/lookup` directory.
-* Run the tests to make sure your dataset description conforms to the [dataset SHACL](shacl/dataset.jsonld):
-  ```
-  npm install
-  npm run test
-  ```
-
-### Committing changes
-
-This repository follows [Semantic Versioning](https://semver.org). Tags and 
-[releases](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/releases) are
-[created automatically](https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/blob/master/.github/workflows/release.yml)
-based on commit messages. 
-So please make sure to follow the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#summary)
-when committing changes.
+* [Run the tests](../../docs/tests.md) to make sure your dataset description conforms to the
+  [dataset SHACL](shacl/dataset.jsonld).
+* To try your queries locally, you can
+  [run the GraphQL API](../network-of-terms-graphql/README.md#for-network-of-terms-developers) with your catalog.

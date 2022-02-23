@@ -17,7 +17,8 @@ the [Dutch Digital Heritage Network](https://netwerkdigitaalerfgoed.nl).
 ### Web interface
 
 If you just want to search the Network of Terms using a web interface, have a look at our
-[demonstrator](https://termennetwerk.netwerkdigitaalerfgoed.nl), a web interface on top of this API.
+[demonstrator](https://termennetwerk.netwerkdigitaalerfgoed.nl), a web interface on top of the
+[GraphQL API](packages/network-of-terms-graphql/).
 
 ### Packages
 
@@ -31,12 +32,3 @@ This repository contains the following packages:
   sources;
 - [network-of-terms-reconciliation](packages/network-of-terms-reconciliation): a Reconciliation Service API for matching
   strings against terms with URIs.
-
-## Running the tests
-
-For simplicity and because we have integration tests (versus separate unit tests for each package) we want to combine
-coverage for all tests. To run the tests:
-
-```
-npm run test
-```

@@ -1,41 +1,44 @@
 # Network of Terms GraphQL API
 
-This application delivers a [GraphQL](https://graphql.org) API for searching the Network of Terms. It is available
-at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
+This application delivers a [GraphQL](https://graphql.org) API for searching the Network of Terms.
 
-### GraphQL endpoint
+## For users
 
-If you’re a developer and want to use the Network of Terms GraphQL API in your apps,
-you can test the API and try GraphQL queries at the [API Playground](https://termennetwerk-api.netwerkdigitaalerfgoed.nl).
+If you want to try the Network of Terms GraphQL API, have a look at the GraphQL playground at
+https://termennetwerk-api.netwerkdigitaalerfgoed.nl/graphiql.
 
-You can connect your client apps to the [GraphQL endpoint](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/graphql).
+For the Network of Terms web interface, see http://termennetwerk.netwerkdigitaalerfgoed.nl.
 
-### Host it yourself
+## For application developers
 
-If you want to run the Network of Terms locally, or host it yourself, you can run our Docker image:
+If you’re a developer and want to use the Network of Terms GraphQL API in your apps, you can connect your apps to the
+endpoint at https://termennetwerk-api.netwerkdigitaalerfgoed.nl/graphql.
+
+To try out queries, have a look at the GraphQL playground at https://termennetwerk-api.netwerkdigitaalerfgoed.nl.
+
+If you want to run the application locally, or host it yourself, you can use our
+[Docker image](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/pkgs/container/network-of-terms-graphql):
 
     docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-graphql
 
-and open http://localhost:3123 in your browser for the API Playground.
+and open http://localhost:3123 in your browser for the GraphQL Playground. See below for some example queries.
 
-While this repository follows [Semantic Versioning](https://semver.org), you may want to stick to a
-[tagged version](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/releases):
+## For Network of Terms developers
 
-    docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-graphql:v1.7.0
+If you want to make changes to the Network of Terms code or catalog, the best way to get started is to run the 
+application locally using node:
 
-### Contribute
-
-If you want to contribute to this repository, please continue reading.
-
-## Query sources via GraphQL
-
-### Start server
-
+    git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
+    cd network-of-terms    
+    npm install
+    cd packages/network-of-terms-graphql
     npm run dev
 
-### Open the GraphQL editor
+and open http://localhost:3123 in your browser for the GraphQL Playground. See below for some example queries.
 
-http://localhost:3123/graphiql
+See [Running the tests](../../docs/tests.md) for more information about this repository’s test suite.
+
+## GraphQL queries
 
 ### List queryable sources
 
