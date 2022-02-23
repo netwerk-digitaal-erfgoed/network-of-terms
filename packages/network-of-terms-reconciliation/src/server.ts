@@ -6,8 +6,8 @@ import {findManifest} from './manifest';
 import formBodyPlugin from 'fastify-formbody';
 import {reconciliationQuery} from './query';
 import {preview} from './preview';
-import en from './locales/en.json';
-import nl from './locales/nl.json';
+import en from './locales/en.json' assert {type: 'json'};
+import nl from './locales/nl.json' assert {type: 'json'};
 import {
   QueryTermsService,
   LookupService,
