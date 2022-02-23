@@ -3,6 +3,17 @@
 This package is a [Reconciliation Service API](https://reconciliation-api.github.io/specs/latest/)
 for the [Network of Terms](http://github.com/netwerk-digitaal-erfgoed/network-of-terms).
 
+## For developers
+
+Run the application locally using Node:
+
+```
+https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
+npm install
+cd packages/network-of-terms-reconciliation
+npm run dev
+```
+
 ## Docker
 
 If you want to run the Reconciliation Service API locally, or host it yourself, you can run our Docker image:
