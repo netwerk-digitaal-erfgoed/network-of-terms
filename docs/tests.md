@@ -7,6 +7,6 @@ code coverage for all tests. To run the tests, first clone the repository and in
     cd network-of-terms
     npm install
 
-Then run the test’s from the repository’s root directory:
+Then run the tests from the repository’s root directory:
 
     npm run test
