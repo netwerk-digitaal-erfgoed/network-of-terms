@@ -1,4 +1,3 @@
-LABEL org.opencontainers.image.source = "https://github.com/netwerk-digitaal-erfgoed/network-of-terms"
 FROM node:lts-alpine AS build
 ARG PACKAGE_DIR
 WORKDIR /app
@@ -16,6 +15,7 @@ COPY . .
 RUN NODE_ENV=production npm run compile --workspace $PACKAGE_DIR
 
 FROM node:lts-alpine
+LABEL org.opencontainers.image.source = "https://github.com/netwerk-digitaal-erfgoed/network-of-terms"
 ARG PACKAGE_DIR
 ENV NODE_ENV=production
 WORKDIR /app/
