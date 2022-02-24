@@ -1,0 +1,37 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "http://data.beeldengeluid.nl/gtaa/Classificatie",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "GTAA Classificatie"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.beeldengeluid.nl/"
+    }
+  ],
+  "url": [
+    "http://data.beeldengeluid.nl/gtaa/Classicatie"
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.beeldengeluid.nl/id/datadownload/0027",
+      "@type": "DataDownload",
+      "contentUrl": "https://gtaa.apis.beeldengeluid.nl/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/gtaa-classificatie.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/gtaa-classificatie.rq"
+        }
+      ]
+    }
+  ]
+}

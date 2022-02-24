@@ -16,7 +16,7 @@ CONSTRUCT {
 }
 WHERE {
     {
-        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/Genre> .
+        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/OnderwerpenBenG> .
         ?uri ?predicate ?label ;
             justskos:status ?status .
         VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
@@ -29,7 +29,7 @@ WHERE {
     }
     UNION
     {
-        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/Genre> .
+        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/OnderwerpenBenG> .
         ?uri ?predicate ?label ;
             justskos:status ?status .
         VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }

@@ -1,5 +1,4 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX justskos: <http://justskos.org/ns/core#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -15,36 +14,11 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    {
-        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/Genre> .
-        ?uri ?predicate ?label ;
-            justskos:status ?status .
-        VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-        FILTER(LANG(?label) = "nl")
-        FILTER(?status IN ('approved', 'candidate'))
+    ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/GeografischeNamen> .
 
-        # single word query, match case insensitive
-        FILTER regex(?query, "^[^ ]+$")
-        FILTER CONTAINS(LCASE(?label), LCASE(?query))
-    }
-    UNION
-    {
-        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/Genre> .
-        ?uri ?predicate ?label ;
-            justskos:status ?status .
-        VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-        FILTER(LANG(?label) = "nl")
-        FILTER(?status IN ('approved', 'candidate'))
-        
-        # double word query, whitespace separator
-        FILTER REGEX(?query, "^([^ ]+)[ ]+([^ ]+)$")
+    VALUES ?uri { ?uris }
 
-        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$1") AS ?term1)
-        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$2") AS ?term2)
-
-        # search case insensitive using an AND construct for the query terms
-        FILTER( CONTAINS(LCASE(?label), LCASE(?term1)) && CONTAINS(LCASE(?label), LCASE(?term2)) )
-    }
+    ?uri a skos:Concept .
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
