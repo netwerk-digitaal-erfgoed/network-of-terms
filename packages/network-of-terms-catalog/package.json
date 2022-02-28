@@ -44,7 +44,7 @@
     "@comunica/actor-init-sparql-rdfjs": "^1.17.0",
     "@comunica/bus-query-operation": "^1.17.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "globby": "<12.0.0",
+    "globby": "<14.0.0",
     "rdf-js": "^4.0.2",
     "rdf-parse": "^1.5.0",
     "rdf-store-stream": "^1.1.0"
