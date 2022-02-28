@@ -24,7 +24,8 @@ If you want to run the application locally, or host it yourself, you can use our
 
     docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-reconciliation
 
-If you want to make changes to the application, run it locally using Node:
+If you want to make changes to the application, run it locally using Node (or in a 
+[Docker container](../../docs/docker.md)):
 
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
     cd network-of-terms
@@ -33,6 +34,6 @@ If you want to make changes to the application, run it locally using Node:
     npm run dev
 
 In both cases, Reconciliation endpoints will be available at `http://localhost:3123/reconcile/{distribution URI}`, for
-example http://localhost:3123/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql. 
+example http://localhost:3123/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql.
 
 See [Running the tests](../../docs/tests.md) for more information about this repository’s test suite.
