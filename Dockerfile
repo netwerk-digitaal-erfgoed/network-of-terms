@@ -22,7 +22,7 @@ WORKDIR /app/
 
 # Install production dependencies only.
 COPY $PACKAGE_DIR/package.json ./
-RUN npm install --only production
+RUN npm install --only production && npm cache clean --force
 
 # Copy build artifacts.
 COPY --from=build /app/$PACKAGE_DIR/build ./build
