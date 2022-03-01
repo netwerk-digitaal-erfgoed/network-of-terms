@@ -47,6 +47,8 @@
     "@comunica/actor-http-node-fetch": "^1.22.3",
     "@comunica/actor-init-sparql-file": "^1.22.3",
     "@comunica/actor-query-operation-service": "^1.22.3",
+    "@jest/globals": "^27.5.1",
+    "asynciterator": "^3.3.0",
     "jest-dev-server": "^6.0.3",
     "ts-jest": "^27.1.3"
   },
