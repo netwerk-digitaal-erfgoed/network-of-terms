@@ -64,6 +64,7 @@ export class DistributionsService {
     return queryService.search(
       args.query,
       args.queryMode,
+      dataset,
       distribution,
       args.timeoutMs
     );
