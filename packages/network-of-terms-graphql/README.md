@@ -26,7 +26,7 @@ and open http://localhost:3123 in your browser for the GraphQL Playground. See b
 ## For Network of Terms developers
 
 If you want to make changes to the Network of Terms code or catalog, the best way to get started is to run the 
-application locally using node:
+application locally using Node (or in a [Docker container](../../docs/docker.md)):
 
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
     cd network-of-terms    

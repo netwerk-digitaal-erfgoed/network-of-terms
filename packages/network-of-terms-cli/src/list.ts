@@ -14,7 +14,7 @@ type DatasetDistribution = {
 export class ListSourcesCommand extends Command {
   static description = 'List queryable sources';
 
-  protected render(distributions: readonly DatasetDistribution[]): void {
+  private render(distributions: readonly DatasetDistribution[]): void {
     cli.table(distributions as DatasetDistribution[], {
       distributionTitle: {
         header: 'Source Name',

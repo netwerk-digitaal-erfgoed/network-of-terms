@@ -1,6 +1,5 @@
 import {cli} from 'cli-ux';
 import {Command, Flags} from '@oclif/core';
-import * as RDF from 'rdf-js';
 import {
   Catalog,
   DistributionsService,
@@ -22,7 +21,7 @@ interface Row extends Record<string, unknown> {
 
 export class QuerySourcesCommand extends Command {
   static description = 'Query sources for terms';
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   static flags = {
     uris: Flags.string({
       description:
@@ -53,7 +52,7 @@ export class QuerySourcesCommand extends Command {
     }),
   };
 
-  protected render(results: TermsResult[], catalog: Catalog): void {
+  private render(results: TermsResult[], catalog: Catalog): void {
     const rowsPerDistribution = results.map((result: TermsResult): Row[] => {
       if (result instanceof Error) {
         return [];
@@ -66,11 +65,9 @@ export class QuerySourcesCommand extends Command {
               ?.name ?? '',
           termUri: term.id!.value,
           prefLabels: term.prefLabels
-            .map((prefLabel: RDF.Term) => prefLabel.value)
+            .map(prefLabel => prefLabel.value)
             .join(' / '),
-          altLabels: term.altLabels
-            .map((altLabel: RDF.Term) => altLabel.value)
-            .join(' / '),
+          altLabels: term.altLabels.map(altLabel => altLabel.value).join(' / '),
         };
       });
     });

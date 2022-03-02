@@ -18,8 +18,8 @@ export async function reconciliationQuery(
   catalog: Catalog,
   queryTermsService: QueryTermsService
 ): Promise<ReconciliationResultBatch> {
-  const distribution =
-    catalog.getDatasetByDistributionIri(distributionIri)!.distributions[0];
+  const dataset = catalog.getDatasetByDistributionIri(distributionIri)!;
+  const distribution = dataset.distributions[0];
 
   return await Object.entries(query).reduce(
     async (
@@ -30,6 +30,7 @@ export async function reconciliationQuery(
       const termsResult = await queryTermsService.search(
         queryString,
         QueryMode.OPTIMIZED,
+        dataset,
         distribution,
         10000
       );
