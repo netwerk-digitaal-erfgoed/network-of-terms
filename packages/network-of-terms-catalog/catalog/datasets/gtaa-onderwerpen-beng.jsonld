@@ -14,7 +14,7 @@
     }
   ],
   "url": [
-    "http://data.beeldengeluid.nl/gtaa/OnderwerpenBenG"
+    "http://data.beeldengeluid.nl/gtaa/"
   ],
   "distribution": [
     {
@@ -29,7 +29,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/gtaa-onderwerpen-beng.rq"
+          "query": "file://catalog/queries/lookup/gtaa.rq"
         }
       ]
     }

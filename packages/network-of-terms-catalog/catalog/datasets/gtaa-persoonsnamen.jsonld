@@ -14,7 +14,7 @@
     }
   ],
   "url": [
-    "http://data.beeldengeluid.nl/gtaa/Persoonsnamen"
+    "http://data.beeldengeluid.nl/gtaa/"
   ],
   "distribution": [
     {
@@ -29,7 +29,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/gtaa-persoonsnamen.rq"
+          "query": "file://catalog/queries/lookup/gtaa.rq"
         }
       ]
     }
