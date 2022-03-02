@@ -1,6 +1,6 @@
 export default {
   preset: 'ts-jest/presets/default-esm',
-  testTimeout: 30000,
+  testTimeout: 60000,
   extensionsToTreatAsEsm: ['.ts'],
   globals: {
     'ts-jest': {
