@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "http://data.beeldengeluid.nl/gtaa#onderwerpen",
+  "@id": "http://data.beeldengeluid.nl/gtaa/Onderwerpen",
   "@type": "Dataset",
   "name": [
     {
@@ -18,9 +18,9 @@
   ],
   "distribution": [
     {
-      "@id": "https://data.netwerkdigitaalerfgoed.nl/beeldengeluid/gtaa-onderwerpen/sparql",
+      "@id": "https://data.beeldengeluid.nl/id/datadownload/0031",
       "@type": "DataDownload",
-      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/beeldengeluid/gtaa-onderwerpen/services/gtaa-onderwerpen/sparql",
+      "contentUrl": "https://gtaa.apis.beeldengeluid.nl/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {

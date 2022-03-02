@@ -8,7 +8,7 @@
     "compile": "npm run clean && tsc -b tsconfig.build.json"
   },
   "bin": {
-    "network-of-terms": "bin/run"
+    "network-of-terms-cli": "./bin/run"
   },
   "repository": {
     "type": "git",
@@ -20,14 +20,12 @@
   "bugs": {
     "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
   },
-  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
+  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/tree/master/packages/network-of-terms-cli#readme",
   "dependencies": {
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "@oclif/command": "^1.8.16",
-    "@oclif/core": "^1.3.3",
-    "cli-ux": "^6.0.9",
-    "rdf-js": "^4.0.2"
+    "@oclif/core": "^1.3.5",
+    "cli-ux": "^6.0.9"
   },
   "oclif": {
     "commands": "./build"

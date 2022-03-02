@@ -10,12 +10,14 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.4.0
-      - uses: actions/setup-node@v2.5.1
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.x
       - run: npm ci
       - run: npm run compile
       - run: npm run release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use a personal access token (PAT) so we can trigger downstream workflows (deploy.yml).
+          # See https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow.
+          GITHUB_TOKEN: ${{ secrets.PAT }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

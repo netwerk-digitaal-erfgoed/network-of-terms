@@ -13,7 +13,7 @@ import * as RDF from 'rdf-js';
 import {Term, TermsTransformer} from './terms';
 import {QueryMode, queryVariants} from './search/query-mode';
 import {newEngine} from '@comunica/actor-init-sparql';
-import {Distribution, IRI} from './catalog';
+import {Dataset, Distribution, IRI} from './catalog';
 
 export type TermsResult = Terms | TimeoutError | ServerError;
 
@@ -60,22 +60,24 @@ export class QueryTermsService {
   async search(
     searchQuery: string,
     queryMode: QueryMode,
+    dataset: Dataset,
     distribution: Distribution,
     timeoutMs: number
   ) {
+    const bindings = [...queryVariants(searchQuery, queryMode)].reduce(
+      (record: Record<string, RDF.Term>, [k, v]) => {
+        record[k] = factory.literal(v);
+        return record;
+      },
+      {}
+    );
+    bindings['?datasetUri'] = factory.namedNode(dataset.iri.toString());
+
     return this.run(
       distribution.searchQuery,
       distribution,
       timeoutMs,
-      Bindings(
-        [...queryVariants(searchQuery, queryMode)].reduce(
-          (record: Record<string, RDF.Term>, [k, v]) => {
-            record[k] = factory.literal(v);
-            return record;
-          },
-          {}
-        )
-      )
+      Bindings(bindings)
     );
   }
 

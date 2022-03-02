@@ -8,7 +8,7 @@ import {
 } from '@comunica/bus-query-operation';
 import {Transform, TransformCallback} from 'stream';
 import {resolve, dirname} from 'path';
-import globby from 'globby';
+import {globby} from 'globby';
 import {storeStream} from 'rdf-store-stream';
 import {
   Catalog,

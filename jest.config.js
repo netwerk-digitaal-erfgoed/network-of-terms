@@ -1,6 +1,6 @@
 export default {
   preset: 'ts-jest/presets/default-esm',
-  testTimeout: 30000,
+  testTimeout: 60000,
   extensionsToTreatAsEsm: ['.ts'],
   globals: {
     'ts-jest': {
@@ -15,8 +15,8 @@ export default {
   ],
   coverageThreshold: {
     global: {
-      lines: 88.05,
-      statements: 87.93,
+      lines: 88.14,
+      statements: 88.02,
       branches: 92.08,
       functions: 85.71,
     },

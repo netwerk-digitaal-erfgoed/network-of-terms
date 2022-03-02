@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  node:
+    image: node:lts-alpine
+    volumes:
+      - .:/app
+    ports:
+      - "3123:3123"
+    working_dir: /app
+    command: sh
