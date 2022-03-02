@@ -68,4 +68,4 @@ jobs:
           kubectl set image deployment/${{ steps.vars.outputs.package_name }} app=${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }} --record
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/${{ steps.vars.outputs.package_name }}
+        run: kubectl rollout status deployment/${{ steps.vars.outputs.package_name }} --timeout=30s
