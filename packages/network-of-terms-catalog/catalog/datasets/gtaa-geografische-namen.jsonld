@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "http://data.beeldengeluid.nl/gtaa#geografische-namen",
+  "@id": "http://data.beeldengeluid.nl/gtaa/GeografischeNamen",
   "@type": "Dataset",
   "name": [
     {
@@ -18,9 +18,9 @@
   ],
   "distribution": [
     {
-      "@id": "https://data.netwerkdigitaalerfgoed.nl/beeldengeluid/gtaa-geografischenamen/sparql",
+      "@id": "https://data.beeldengeluid.nl/id/datadownload/0029",
       "@type": "DataDownload",
-      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/beeldengeluid/gtaa-geografischenamen/services/gtaa-geografischenamen/sparql",
+      "contentUrl": "https://gtaa.apis.beeldengeluid.nl/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {

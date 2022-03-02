@@ -16,10 +16,9 @@ CONSTRUCT {
 }
 WHERE {
     {
-        ?uri skos:inScheme ?datasetUri .
-        ?uri ?predicate ?label ;
+        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/Persoonsnamen> .
+        ?uri skos:prefLabel|skos:altLabel|skos:hiddenLabel ?label ;
             justskos:status ?status .
-        VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
         FILTER(LANG(?label) = "nl")
         FILTER(?status IN ('approved', 'candidate'))
 
@@ -27,24 +26,25 @@ WHERE {
         FILTER regex(?query, "^[^ ]+$")
         FILTER CONTAINS(LCASE(?label), LCASE(?query))
     }
-    UNION
-    {
-        ?uri skos:inScheme ?datasetUri .
-        ?uri ?predicate ?label ;
-            justskos:status ?status .
-        VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-        FILTER(LANG(?label) = "nl")
-        FILTER(?status IN ('approved', 'candidate'))
-
-        # double word query, whitespace separator
-        FILTER REGEX(?query, "^([^ ]+)[ ]+([^ ]+)$")
-
-        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$1") AS ?term1)
-        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$2") AS ?term2)
-
-        # search case insensitive using an AND construct for the query terms
-        FILTER( CONTAINS(LCASE(?label), LCASE(?term1)) && CONTAINS(LCASE(?label), LCASE(?term2)) )
-    }
+# commented because of timeouts
+#    UNION
+#    {
+#        ?uri skos:inScheme <http://data.beeldengeluid.nl/gtaa/Persoonsnamen> .
+#        ?uri ?predicate ?label ;
+#            justskos:status ?status .
+#        VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
+#        FILTER(LANG(?label) = "nl")
+#        FILTER(?status IN ('approved', 'candidate'))
+#        
+#        # double word query, whitespace separator
+#        FILTER REGEX(?query, "^([^ ]+)[ ]+([^ ]+)$")
+#
+#        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$1") AS ?term1)
+#        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$2") AS ?term2)
+#
+#        # search case insensitive using an AND construct for the query terms
+#        FILTER( CONTAINS(LCASE(?label), LCASE(?term1)) && CONTAINS(LCASE(?label), LCASE(?term2)) )
+#    }
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
@@ -78,4 +78,4 @@ WHERE {
         FILTER(LANG(?related_prefLabel) = "nl")
     }
 }
-LIMIT 1000
+LIMIT 10 

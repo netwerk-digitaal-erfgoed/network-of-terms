@@ -14,10 +14,7 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    # For example:
-    # Concept: <http://data.beeldengeluid.nl/gtaa/25109>
-    # Geographical name: <http://data.beeldengeluid.nl/gtaa/33511>
-    # Genre: <http://data.beeldengeluid.nl/gtaa/30115>
+
     VALUES ?uri { ?uris }
 
     ?uri a skos:Concept .
