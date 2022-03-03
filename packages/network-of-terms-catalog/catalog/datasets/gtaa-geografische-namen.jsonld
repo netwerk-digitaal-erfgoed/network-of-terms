@@ -20,7 +20,7 @@
     {
       "@id": "https://data.beeldengeluid.nl/id/datadownload/0029",
       "@type": "DataDownload",
-      "contentUrl": "https://gtaa.apis.beeldengeluid.nl/sparql",
+      "contentUrl": "https://$GTAA_CREDENTIALS@gtaa.apis.beeldengeluid.nl/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
