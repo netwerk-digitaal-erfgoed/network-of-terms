@@ -1,4 +1,8 @@
-import {Catalog, IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import {
+  Catalog,
+  Feature,
+  IRI,
+} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 export class ServiceManifest {
   public readonly versions = ['0.1', '0.2'];
@@ -21,11 +25,15 @@ export class ServiceManifest {
 export function findManifest(
   distributionIri: IRI,
   catalog: Catalog,
-  reconciliationServices: string[],
   hostname: string
 ): ServiceManifest | undefined {
   const source = catalog.getDatasetByDistributionIri(distributionIri);
-  if (source && reconciliationServices.includes(distributionIri.toString())) {
+  if (
+    source &&
+    source
+      .getDistributionByIri(distributionIri)
+      ?.hasFeature(Feature.RECONCILIATION)
+  ) {
     return new ServiceManifest(source.name, source.iri, hostname);
   }
 

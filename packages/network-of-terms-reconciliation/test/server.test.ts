@@ -16,10 +16,7 @@ describe('Server', () => {
   });
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3001);
-    httpServer = await server(catalog, [
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
-      'https://example.com/distributions/endpoint-error',
-    ]);
+    httpServer = await server(catalog);
   });
 
   it('returns reconciliation service manifest', async () => {

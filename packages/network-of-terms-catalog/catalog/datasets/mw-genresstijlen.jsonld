@@ -30,6 +30,13 @@
         {
           "@type": "FindAction",
           "query": "file://catalog/queries/lookup/muziekweb.rq"
+        },
+        {
+          "@type": "Action",
+          "actionApplication": {
+            "@id": "https://reconciliation-api.github.io/specs/latest/",
+            "@type": "SoftwareApplication"
+          }
         }
       ]
     }

@@ -1,6 +1,7 @@
 import {
   Catalog,
   Dataset,
+  Feature,
   IRI,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -67,6 +68,13 @@ describe('Catalog', () => {
     );
     expect(rkd).toBeInstanceOf(Dataset);
     expect(rkd?.iri).toEqual(new IRI('https://data.rkd.nl/rkdartists'));
+  });
+
+  it('retrieves distributions providing feature', () => {
+    const reconciliationApis = catalog.getDistributionsProvidingFeature(
+      Feature.RECONCILIATION
+    );
+    expect(reconciliationApis[0].features).toContain(Feature.RECONCILIATION);
   });
 
   it('substitutes credentials from environment variables', async () => {

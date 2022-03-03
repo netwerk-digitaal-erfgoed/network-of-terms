@@ -16,6 +16,17 @@ export class Catalog {
       )
     );
   }
+
+  public getDistributionsProvidingFeature(feature: Feature): Distribution[] {
+    return this.datasets.reduce<Distribution[]>((acc, dataset) => {
+      return [
+        ...acc,
+        ...dataset.distributions.filter(distribution =>
+          distribution.features.includes(feature)
+        ),
+      ];
+    }, []);
+  }
 }
 
 export class Dataset {
@@ -48,8 +59,13 @@ export class SparqlDistribution {
     readonly iri: IRI,
     readonly endpoint: IRI,
     readonly searchQuery: string,
-    readonly lookupQuery: string
+    readonly lookupQuery: string,
+    readonly features: Feature[] = []
   ) {}
+
+  public hasFeature(feature: Feature) {
+    return this.features.includes(feature);
+  }
 }
 
 /**
@@ -58,3 +74,7 @@ export class SparqlDistribution {
 export type Distribution = SparqlDistribution;
 
 export class IRI extends URL {}
+
+export enum Feature {
+  RECONCILIATION = 'https://reconciliation-api.github.io/specs/latest/',
+}
