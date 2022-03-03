@@ -7,7 +7,7 @@ import {
   IActorQueryOperationOutputBindings,
 } from '@comunica/bus-query-operation';
 import {Transform, TransformCallback} from 'stream';
-import {resolve, dirname} from 'path';
+import {dirname, resolve} from 'path';
 import {globby} from 'globby';
 import {storeStream} from 'rdf-store-stream';
 import {
@@ -100,18 +100,19 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
 export async function fromFiles(directory: string): Promise<RDF.Store[]> {
   // Read all files except those in the queries/ directory.
   const files = await globby([directory, '!' + directory + '/queries']);
-  return Promise.all(
-    files.map(file => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const quadStream = (rdfParser.default ?? RdfParser)
-        .parse(fs.createReadStream(file), {
-          path: file,
-        })
-        .pipe(new InlineFiles());
-      return storeStream(quadStream);
+  return Promise.all(files.map(fromFile));
+}
+
+export async function fromFile(file: string): Promise<RDF.Store> {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const quadStream = (rdfParser.default ?? RdfParser)
+    .parse(fs.createReadStream(file), {
+      path: file,
     })
-  );
+    .pipe(new InlineFiles())
+    .pipe(new SubstituteCredentialsFromEnvironmentVariables());
+  return storeStream(quadStream);
 }
 
 /**
@@ -134,6 +135,34 @@ class InlineFiles extends Transform {
         quad.object.value.substr(7)
       );
       quad.object.value = await fs.promises.readFile(file, 'utf-8');
+    }
+
+    this.push(quad, encoding);
+
+    callback();
+  }
+}
+
+/**
+ * An RDF.Quad transform that replaces $ENV_VAR variables in schema:contentUrl objects with the value of the environment
+ * value with the same name.
+ */
+class SubstituteCredentialsFromEnvironmentVariables extends Transform {
+  private regex = new RegExp('\\$(.+)(?=@)');
+  constructor() {
+    super({objectMode: true});
+  }
+
+  async _transform(
+    quad: RDF.Quad,
+    encoding: BufferEncoding,
+    callback: TransformCallback
+  ) {
+    if (quad.predicate.value === 'http://schema.org/contentUrl') {
+      quad.object.value = quad.object.value.replace(
+        this.regex,
+        (match, envVar) => process.env[envVar] ?? ''
+      );
     }
 
     this.push(quad, encoding);
