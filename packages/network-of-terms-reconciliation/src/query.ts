@@ -3,8 +3,10 @@ import {
   IRI,
   QueryMode,
   QueryTermsService,
+  Term,
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import leven from 'leven';
 
 /**
  * Fan out reconciliation query batch to terminology source queries.
@@ -36,18 +38,40 @@ export async function reconciliationQuery(
       );
       const terms = termsResult instanceof Terms ? termsResult.terms : [];
       results[queryId] = {
-        result: terms.map(term => ({
-          id: term.id.value.toString(),
-          name: term.prefLabels.map(label => label.value).join(' • '), // Join similarly to network-of-terms-demo.
-          score: 1, // Hard-coded score for now because scoring will have to be done on our side because no scores are returned from the sources.
-          description: term.altLabels.map(label => label.value).join(' • '),
-        })),
+        result: terms
+          .map(term => ({
+            id: term.id.value.toString(),
+            name: term.prefLabels.map(label => label.value).join(' • '), // Join similarly to network-of-terms-demo.
+            score: score(queryString, term),
+            description: term.altLabels.map(label => label.value).join(' • '),
+          }))
+          .sort((a, b) => b.score - a.score),
       };
       return results;
     },
     Promise.resolve({})
   );
 }
+
+/**
+ * Calculate score for term based on case-insensitive Levenshtein distance between the query string and the term’s
+ * prefLabels.
+ */
+const score = (queryString: string, term: Term): number => {
+  if (term.prefLabels.length === 0) {
+    return 0;
+  }
+
+  return (
+    1 /
+    term.prefLabels.reduce(
+      (distance, prefLabel) =>
+        distance +
+        leven(queryString.toLowerCase(), prefLabel.value.toLowerCase()),
+      1
+    )
+  );
+};
 
 export type ReconciliationQueryBatch = {[key: string]: {query: string}};
 

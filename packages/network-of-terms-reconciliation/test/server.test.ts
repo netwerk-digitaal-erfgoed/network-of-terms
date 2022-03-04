@@ -58,6 +58,11 @@ describe('Server', () => {
         description: 'Nachtwacht alt',
       },
     ]);
+
+    // Results must be sorted by score in decreasing order.
+    expect(results.q2.result).toHaveLength(2);
+    expect(results.q2.result[0].score).toBeCloseTo(0.14);
+    expect(results.q2.result[1].score).toEqual(0);
     expect(results.q3.result).toEqual([]); // No results.
   });
 
@@ -133,7 +138,7 @@ async function reconciliationQuery(
       query: 'nachtwacht',
     },
     q2: {
-      query: 'Art',
+      query: 'Things',
     },
     q3: {
       query: 'This yields no results',
