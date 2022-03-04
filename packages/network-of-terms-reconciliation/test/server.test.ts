@@ -61,6 +61,25 @@ describe('Server', () => {
     expect(results.q3.result).toEqual([]); // No results.
   });
 
+  it('limits reconciliation API results', async () => {
+    const response = await reconciliationQuery(
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      {
+        q1: {
+          query: 'art',
+        },
+        q2: {
+          query: 'art',
+          limit: 1,
+        },
+      }
+    );
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(results.q1.result).toHaveLength(2);
+    expect(results.q2.result).toHaveLength(1);
+  });
+
   it('handles source timeouts for reconciliation requests', async () => {
     const response = await reconciliationQuery(
       'https://example.com/distributions/endpoint-error'

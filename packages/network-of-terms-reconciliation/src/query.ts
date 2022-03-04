@@ -21,10 +21,10 @@ export async function reconciliationQuery(
   const dataset = catalog.getDatasetByDistributionIri(distributionIri)!;
   const distribution = dataset.distributions[0];
 
-  return await Object.entries(query).reduce(
+  return Object.entries(query).reduce(
     async (
       resultsPromise: Promise<ReconciliationResultBatch>,
-      [queryId, {query: queryString}]
+      [queryId, {query: queryString, limit}]
     ) => {
       const results = await resultsPromise;
       const termsResult = await queryTermsService.search(
@@ -36,7 +36,7 @@ export async function reconciliationQuery(
       );
       const terms = termsResult instanceof Terms ? termsResult.terms : [];
       results[queryId] = {
-        result: terms.map(term => ({
+        result: terms.slice(0, limit).map(term => ({
           id: term.id.value.toString(),
           name: term.prefLabels.map(label => label.value).join(' • '), // Join similarly to network-of-terms-demo.
           score: 1, // Hard-coded score for now because scoring will have to be done on our side because no scores are returned from the sources.
@@ -49,7 +49,12 @@ export async function reconciliationQuery(
   );
 }
 
-export type ReconciliationQueryBatch = {[key: string]: {query: string}};
+export type ReconciliationQueryBatch = {
+  [key: string]: {
+    query: string;
+    limit?: number;
+  };
+};
 
 export type ReconciliationResultBatch = {
   [key: string]: {result: ReconciliationCandidate[]};
