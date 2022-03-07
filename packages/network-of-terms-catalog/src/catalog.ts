@@ -1,15 +1,12 @@
 import fs from 'fs';
 import rdfParser from 'rdf-parse';
 import * as RDF from 'rdf-js';
-import {newEngine} from '@comunica/actor-init-sparql-rdfjs';
-import {
-  Bindings,
-  IActorQueryOperationOutputBindings,
-} from '@comunica/bus-query-operation';
+import {QueryEngine} from '@comunica/query-sparql-rdfjs';
 import {Transform, TransformCallback} from 'stream';
 import {dirname, resolve} from 'path';
 import {globby} from 'globby';
 import {storeStream} from 'rdf-store-stream';
+import {Bindings} from '@comunica/types';
 import {
   Catalog,
   Dataset,
@@ -52,42 +49,42 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
         }
         GROUP BY ${properties}
         ORDER BY LCASE(?name)`;
-  const result = (await newEngine().query(query, {
+  const bindingsStream = await new QueryEngine().queryBindings(query, {
     sources: store,
-  })) as IActorQueryOperationOutputBindings;
+  });
 
   const promise: Promise<Dataset[]> = new Promise((resolve, reject) => {
     const datasets: Dataset[] = [];
-    result.bindingsStream.on('data', (bindings: Bindings) => {
+    bindingsStream.on('data', (bindings: Bindings) => {
       datasets.push(
         new Dataset(
-          new IRI(bindings.get('?dataset').value),
-          bindings.get('?name').value,
+          new IRI(bindings.get('dataset').value),
+          bindings.get('name').value,
           bindings
-            .get('?url')
+            .get('url')
             .value.split(' ') // The single value is space-delineated.
-            .map(url => new IRI(url)),
+            .map((url: string) => new IRI(url)),
           [
             new Organization(
-              new IRI(bindings.get('?creator').value),
-              bindings.get('?creatorName').value,
-              bindings.get('?creatorAlternateName').value
+              new IRI(bindings.get('creator').value),
+              bindings.get('creatorName').value,
+              bindings.get('creatorAlternateName').value
             ),
           ],
           [
             new SparqlDistribution(
-              new IRI(bindings.get('?distribution').value),
-              new IRI(bindings.get('?endpointUrl').value),
-              bindings.get('?searchQuery').value,
-              bindings.get('?lookupQuery').value
+              new IRI(bindings.get('distribution').value),
+              new IRI(bindings.get('endpointUrl').value),
+              bindings.get('searchQuery').value,
+              bindings.get('lookupQuery').value
             ),
           ],
-          bindings.get('?alternateName')?.value
+          bindings.get('alternateName')?.value
         )
       );
     });
-    result.bindingsStream.on('end', () => resolve(datasets));
-    result.bindingsStream.on('error', () => reject);
+    bindingsStream.on('end', () => resolve(datasets));
+    bindingsStream.on('error', () => reject);
   });
 
   return new Catalog(await promise);

@@ -4,8 +4,8 @@ describe('Search query', () => {
   it('transforms simple query', () => {
     expect(queryVariants('test', QueryMode.OPTIMIZED)).toEqual(
       new Map([
-        ['?query', 'test'],
-        ['?virtuosoQuery', "'test'"],
+        ['query', 'test'],
+        ['virtuosoQuery', "'test'"],
       ])
     );
   });
@@ -13,8 +13,8 @@ describe('Search query', () => {
   it('transforms multiple word query', () => {
     expect(queryVariants('Dr. H. Colijnstraat', QueryMode.OPTIMIZED)).toEqual(
       new Map([
-        ['?query', 'dr. h. colijnstraat'],
-        ['?virtuosoQuery', "'dr.' AND 'h.' AND 'colijnstraat'"],
+        ['query', 'dr. h. colijnstraat'],
+        ['virtuosoQuery', "'dr.' AND 'h.' AND 'colijnstraat'"],
       ])
     );
   });
@@ -22,8 +22,8 @@ describe('Search query', () => {
   it('trims whitespaces', () => {
     expect(queryVariants('   a   b  c  ', QueryMode.OPTIMIZED)).toEqual(
       new Map([
-        ['?query', 'a b c'],
-        ['?virtuosoQuery', "'a' AND 'b' AND 'c'"],
+        ['query', 'a b c'],
+        ['virtuosoQuery', "'a' AND 'b' AND 'c'"],
       ])
     );
   });
@@ -31,8 +31,8 @@ describe('Search query', () => {
   it('skips already present boolean operators', () => {
     expect(queryVariants('a AND b c or d', QueryMode.OPTIMIZED)).toEqual(
       new Map([
-        ['?query', 'a and b c or d'],
-        ['?virtuosoQuery', "'a' and 'b' AND 'c' or 'd'"],
+        ['query', 'a and b c or d'],
+        ['virtuosoQuery', "'a' and 'b' AND 'c' or 'd'"],
       ])
     );
   });
@@ -42,9 +42,9 @@ describe('Search query', () => {
       queryVariants("Rex Stewart's 'Big' Eight", QueryMode.OPTIMIZED)
     ).toEqual(
       new Map([
-        ['?query', "rex stewart's 'big' eight"],
+        ['query', "rex stewart's 'big' eight"],
         [
-          '?virtuosoQuery',
+          'virtuosoQuery',
           "'rex' AND 'stewart\\'s' AND '\\'big\\'' AND 'eight'",
         ],
       ])
@@ -54,8 +54,8 @@ describe('Search query', () => {
   it('removes stop words', () => {
     expect(queryVariants('Sammy Dowds & Leslie', QueryMode.OPTIMIZED)).toEqual(
       new Map([
-        ['?query', 'sammy dowds & leslie'],
-        ['?virtuosoQuery', "'sammy' AND 'dowds' AND 'leslie'"],
+        ['query', 'sammy dowds & leslie'],
+        ['virtuosoQuery', "'sammy' AND 'dowds' AND 'leslie'"],
       ])
     );
   });
@@ -63,8 +63,8 @@ describe('Search query', () => {
   it('keeps raw queries unchanged', () => {
     expect(queryVariants("Rex Stewart's Big Eight", QueryMode.RAW)).toEqual(
       new Map([
-        ['?query', "Rex Stewart's Big Eight"],
-        ['?virtuosoQuery', "Rex Stewart's Big Eight"],
+        ['query', "Rex Stewart's Big Eight"],
+        ['virtuosoQuery', "Rex Stewart's Big Eight"],
       ])
     );
   });
