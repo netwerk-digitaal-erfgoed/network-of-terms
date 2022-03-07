@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog#readme",
   "dependencies": {
-    "@comunica/actor-init-sparql-rdfjs": "^1.17.0",
+    "@comunica/actor-init-sparql-rdfjs": "^2.0.1",
     "@comunica/bus-query-operation": "^1.17.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "globby": "^13.1.1",
