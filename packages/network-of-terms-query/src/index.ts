@@ -6,6 +6,6 @@ export * from './search/query-mode';
 export * from './distributions';
 export * from './helpers/logger';
 
-import {newEngine} from '@comunica/actor-init-sparql';
+import {QueryEngine} from '@comunica/query-sparql';
 
-export const comunica = newEngine();
+export const comunica = new QueryEngine();
