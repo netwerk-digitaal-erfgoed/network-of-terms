@@ -1,4 +1,4 @@
-import {ActorInitSparql} from '@comunica/actor-init-sparql';
+import {QueryEngine} from '@comunica/query-sparql';
 import Joi from 'joi';
 import Pino from 'pino';
 import {QueryTermsService, TermsResult} from './query';
@@ -37,12 +37,12 @@ const schemaQueryAll = Joi.object({
 export class DistributionsService {
   private logger: Pino.Logger;
   private catalog: Catalog;
-  private comunica: ActorInitSparql;
+  private comunica: QueryEngine;
 
   constructor(options: {
     logger: Pino.Logger;
     catalog: Catalog;
-    comunica?: ActorInitSparql;
+    comunica?: QueryEngine;
   }) {
     this.logger = options.logger;
     this.catalog = options.catalog;
