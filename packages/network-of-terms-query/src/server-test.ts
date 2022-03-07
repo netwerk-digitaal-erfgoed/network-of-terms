@@ -122,5 +122,6 @@ export async function startDistributionSparqlEndpoint(
       fileURLToPath(import.meta.url)
     )}/../test/fixtures/terms.ttl -p ${port}`,
     port,
+    launchTimeout: 10000,
   });
 }

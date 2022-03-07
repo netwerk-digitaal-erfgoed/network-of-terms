@@ -8,16 +8,16 @@ export function queryVariants(query: string, type: QueryMode) {
   switch (type) {
     case QueryMode.RAW:
       return new Map([
-        ['?query', query],
-        ['?virtuosoQuery', query],
+        ['query', query],
+        ['virtuosoQuery', query],
       ]);
     case QueryMode.OPTIMIZED:
       return new Map([
-        ['?query', stringQuery(query)],
-        ['?virtuosoQuery', virtuosoQuery(stringQuery(query))],
+        ['query', stringQuery(query)],
+        ['virtuosoQuery', virtuosoQuery(stringQuery(query))],
       ]);
     case QueryMode.DEPRECATED:
-      return new Map([['?query', query]]);
+      return new Map([['query', query]]);
   }
 }
 
