@@ -31,7 +31,7 @@
   "dependencies": {
     "@comunica/actor-init-sparql": "^1.22.3",
     "@comunica/actor-query-operation-sparql-endpoint": "^1.22.2",
-    "@comunica/bus-query-operation": "^1.22.0",
+    "@comunica/bus-query-operation": "^2.0.1",
     "@comunica/core": "^1.22.0",
     "@hapi/hoek": "^9.2.1",
     "@rdfjs/data-model": "^2.0.0",
