@@ -12,7 +12,7 @@ jobs:
     if: startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-graphql') || startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-reconciliation')
 
     steps:
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
 
       # https://github.com/dhoulb/multi-semantic-release#git-tags tags packages `@scope/package-name@version`.
       - uses: actions-ecosystem/action-regex-match@v2.0.2
