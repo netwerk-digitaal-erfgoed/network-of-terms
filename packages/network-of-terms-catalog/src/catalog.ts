@@ -47,7 +47,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
             schema:potentialAction
                 [a schema:SearchAction ; schema:query ?searchQuery ] ,
                 [a schema:FindAction ; schema:query ?lookupQuery ] .
-            OPTIONAL { ?distribution schema:potentialAction [ schema:actionApplication ?features ] . } 
+            OPTIONAL { ?distribution schema:potentialAction [ schema:target [ schema:actionApplication ?features ] ]. } 
         }
         GROUP BY ${properties}
         ORDER BY LCASE(?name)`;

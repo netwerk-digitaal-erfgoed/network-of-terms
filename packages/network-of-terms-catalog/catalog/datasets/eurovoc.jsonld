@@ -33,9 +33,12 @@
         },
         {
           "@type": "Action",
-          "actionApplication": {
-            "@id": "https://reconciliation-api.github.io/specs/latest/",
-            "@type": "SoftwareApplication"
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            }
           }
         }
       ]
