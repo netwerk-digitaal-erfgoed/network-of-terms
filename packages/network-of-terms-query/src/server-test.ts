@@ -1,4 +1,11 @@
-import {Catalog, Dataset, IRI, Organization, SparqlDistribution} from './index';
+import {
+  Catalog,
+  Dataset,
+  Feature,
+  IRI,
+  Organization,
+  SparqlDistribution,
+} from './index';
 import {setup} from 'jest-dev-server';
 import {dirname} from 'path';
 import {fileURLToPath} from 'url';
@@ -59,7 +66,8 @@ export const testCatalog = (port: number) =>
               ?s skos:related ?related_uri.
               ?related_uri skos:prefLabel ?related_prefLabel. 
             } 
-          }`
+          }`,
+          [Feature.RECONCILIATION]
         ),
       ]
     ),
@@ -79,7 +87,8 @@ export const testCatalog = (port: number) =>
           new IRI('https://example.com/distributions/endpoint-error'),
           new IRI('http://does-not-resolve'),
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
-          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+          [Feature.RECONCILIATION]
         ),
       ]
     ),

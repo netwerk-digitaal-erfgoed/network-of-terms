@@ -9,18 +9,17 @@ import {preview} from './preview';
 import en from './locales/en.json';
 import nl from './locales/nl.json';
 import {
-  QueryTermsService,
-  LookupService,
   Catalog,
   getHttpLogger,
   IRI,
+  LookupService,
+  QueryTermsService,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import jsonSchema from './json-schema/reconciliation-query.json';
 import {parse} from 'querystring';
 
 export async function server(
-  catalog: Catalog,
-  reconciliationServices: string[]
+  catalog: Catalog
 ): Promise<FastifyInstance<Server, customRequest>> {
   const logger = getHttpLogger({
     name: 'http',
@@ -46,7 +45,6 @@ export async function server(
     const manifest = findManifest(
       distributionIri,
       catalog,
-      reconciliationServices,
       request.raw.previewUrl
     );
     if (manifest === undefined) {
@@ -68,7 +66,6 @@ export async function server(
       const manifest = findManifest(
         distributionIri,
         catalog,
-        reconciliationServices,
         request.raw.previewUrl
       );
       if (manifest === undefined) {

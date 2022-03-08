@@ -30,6 +30,16 @@
         {
           "@type": "FindAction",
           "query": "file://catalog/queries/lookup/adamlink-straten.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            }
+          }
         }
       ]
     }
