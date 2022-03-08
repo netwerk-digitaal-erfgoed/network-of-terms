@@ -4,7 +4,7 @@ import fastifyAccepts from 'fastify-accepts';
 import {IncomingMessage, Server} from 'http';
 import {findManifest} from './manifest';
 import formBodyPlugin from 'fastify-formbody';
-import {reconciliationQuery} from './query';
+import {reconciliationQuery, ReconciliationQueryBatch} from './query';
 import {preview} from './preview';
 import en from './locales/en.json';
 import nl from './locales/nl.json';
@@ -15,6 +15,8 @@ import {
   getHttpLogger,
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import jsonSchema from './json-schema/reconciliation-query.json';
+import {parse} from 'querystring';
 
 export async function server(
   catalog: Catalog,
@@ -30,7 +32,7 @@ export async function server(
 
   const server = fastify<Server, customRequest>({logger});
   server.register(fastifyCors);
-  server.register(formBodyPlugin);
+  server.register(formBodyPlugin, {parser});
   server.register(fastifyAccepts);
   server.decorateRequest('previewUrl', '');
   server.addHook('onRequest', (request, reply, done) => {
@@ -54,8 +56,13 @@ export async function server(
     reply.send(manifest);
   });
 
-  server.post<{Params: {'*': string}; Body: {queries: string}}>(
+  server.post<{Params: {'*': string}; Body: ReconciliationQueryBatch}>(
     '/reconcile/*',
+    {
+      schema: {
+        body: jsonSchema,
+      },
+    },
     async (request, reply) => {
       const distributionIri = new IRI(request.params['*']);
       const manifest = findManifest(
@@ -69,13 +76,10 @@ export async function server(
         return;
       }
 
-      // Reconciliation queries are JSON-encoded in a x-www-form-urlencoded ‘queries’ parameter.
-      const queryBatch = JSON.parse(request.body['queries']);
-
       reply.send(
         await reconciliationQuery(
           distributionIri,
-          queryBatch,
+          request.body,
           catalog,
           queryTermsService
         )
@@ -99,3 +103,11 @@ export interface customRequest extends IncomingMessage {
 }
 
 export type locale = typeof en;
+
+/**
+ * Reconciliation queries are JSON-encoded in a x-www-form-urlencoded ‘queries’ parameter, so unpack that parameter.
+ */
+const parser = (string: string) => {
+  const parsed = parse(string);
+  return JSON.parse(parsed['queries'] as string);
+};
