@@ -58,6 +58,43 @@ describe('Server', () => {
     expect(results.q3.result).toEqual([]); // No results.
   });
 
+  it('limits reconciliation API results', async () => {
+    const response = await reconciliationQuery(
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      {
+        q1: {
+          query: 'art',
+        },
+        q2: {
+          query: 'art',
+          limit: 1,
+        },
+      }
+    );
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(results.q1.result).toHaveLength(2);
+    expect(results.q2.result).toHaveLength(1);
+  });
+
+  it('validates reconciliation requests', async () => {
+    const response = await reconciliationQuery(
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      {
+        q1: {
+          query: 'art',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore string on purpose where a number should be.
+          limit: 'not a valid a limit',
+        },
+      }
+    );
+    expect(response.statusCode).toEqual(400);
+    expect(JSON.parse(response.body).message).toEqual(
+      "body['q1'].limit should be integer"
+    );
+  });
+
   it('handles source timeouts for reconciliation requests', async () => {
     const response = await reconciliationQuery(
       'https://example.com/distributions/endpoint-error'

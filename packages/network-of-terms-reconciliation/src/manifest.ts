@@ -7,6 +7,12 @@ import {
 export class ServiceManifest {
   public readonly versions = ['0.1', '0.2'];
   public readonly schemaSpace = 'http://www.w3.org/2004/02/skos/core#Concept';
+  public readonly defaultTypes = [
+    {
+      id: this.schemaSpace,
+      name: 'Concept',
+    },
+  ];
   public readonly preview;
 
   constructor(
