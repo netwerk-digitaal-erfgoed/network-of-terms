@@ -5,7 +5,7 @@ export class ServiceManifest {
   public readonly schemaSpace = 'http://www.w3.org/2004/02/skos/core#Concept';
   public readonly defaultTypes = [
     {
-      id: 'http://www.w3.org/2004/02/skos/core#Concept',
+      id: this.schemaSpace,
       name: 'Concept',
     },
   ];
