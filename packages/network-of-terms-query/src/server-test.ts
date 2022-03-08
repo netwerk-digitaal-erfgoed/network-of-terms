@@ -30,7 +30,7 @@ export const testCatalog = (port: number) =>
           WHERE { 
             ?s ?p ?o ;
               ?labelPredicate ?label .
-            VALUES ?labelPredicate { skos:prefLabel skos:altLabel }
+            VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
             FILTER (regex(?label, ?query, "i"))
           }`,
           `

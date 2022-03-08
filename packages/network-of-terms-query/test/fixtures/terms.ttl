@@ -6,7 +6,7 @@
     skos:prefLabel "Nachtwacht" ;
     skos:altLabel "Nachtwacht alt" ;
     skos:scopeNote "One of the most famous Dutch paintings" ;
-    skos:hiddenLabel "Hidden label" ;
+    skos:hiddenLabel "art" ;
     skos:broader <https://example.com/resources/2> ;
     skos:related <https://example.com/resources/painter> ,
         <https://example.com/resources/painting> ,
