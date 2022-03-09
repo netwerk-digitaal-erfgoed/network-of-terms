@@ -56,22 +56,22 @@ export async function reconciliationQuery(
 
 /**
  * Calculate score for term based on case-insensitive Levenshtein distance between the query string and the term’s
- * prefLabels.
+ * prefLabels, on a scale of 0–100 percentage match.
  */
 const score = (queryString: string, term: Term): number => {
   if (term.prefLabels.length === 0) {
     return 0;
   }
 
-  return (
-    1 /
-    term.prefLabels.reduce(
-      (distance, prefLabel) =>
-        distance +
-        leven(queryString.toLowerCase(), prefLabel.value.toLowerCase()),
-      1
-    )
+  const distance = term.prefLabels.reduce(
+    (distance, prefLabel) =>
+      distance -
+      leven(queryString.toLowerCase(), prefLabel.value.toLowerCase()) /
+        Math.max(queryString.length, prefLabel.value.length),
+    1
   );
+
+  return Math.round((distance + Number.EPSILON) * 10000) / 100; // Return percentage match rounded to two decimals.
 };
 
 export type ReconciliationQueryBatch = {

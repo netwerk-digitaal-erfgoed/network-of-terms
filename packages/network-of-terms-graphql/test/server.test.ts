@@ -88,7 +88,7 @@ describe('Server', () => {
     const relatedPrefLabels = artwork.related.map(
       ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
     );
-    expect(relatedPrefLabels).toEqual(['', 'Art', 'Rembrandt']); // Sorted alphabetically.
+    expect(relatedPrefLabels).toEqual(['', 'All things art', 'Rembrandt']); // Sorted alphabetically.
   });
 
   it('responds to GraphQL lookup query', async () => {

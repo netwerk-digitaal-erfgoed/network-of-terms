@@ -26,8 +26,8 @@
 
 <https://example.com/resources/art>
     a skos:Concept ;
-    skos:prefLabel "Art" ;
-    skos:altLabel "All things art" ;
+    skos:prefLabel "All things art" ;
+    skos:altLabel "Art" ;
     skos:narrower <https://example.com/resources/artwork> .
 
 <https://example.com/resources/alphabet>

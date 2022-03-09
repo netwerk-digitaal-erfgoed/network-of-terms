@@ -51,15 +51,15 @@ describe('Server', () => {
       {
         id: 'https://example.com/resources/artwork',
         name: 'Nachtwacht',
-        score: 1,
+        score: 100,
         description: 'Nachtwacht alt',
       },
     ]);
 
     // Results must be sorted by score in decreasing order.
     expect(results.q2.result).toHaveLength(2);
-    expect(results.q2.result[0].score).toBeCloseTo(0.14);
-    expect(results.q2.result[1].score).toEqual(0);
+    expect(results.q2.result[0].score).toEqual(42.86); // Match of ‘things’ in ‘All things art’.
+    expect(results.q2.result[1].score).toEqual(0); // Result has no prefLabel.
     expect(results.q3.result).toEqual([]); // No results.
   });
 
@@ -120,7 +120,9 @@ describe('Server', () => {
       '<dt>Alternative labels</dt><dd>Nachtwacht alt</dd>'
     );
     expect(response.body).toMatch(
-      new RegExp('<dt>Related terms</dt>\\s*<dd>Art &#8226; Rembrandt</dd>')
+      new RegExp(
+        '<dt>Related terms</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>'
+      )
     );
   });
 
@@ -149,7 +151,7 @@ describe('Server', () => {
     expect(response.headers['content-type']).toEqual('text/html');
     expect(response.body).toMatch(
       new RegExp(
-        '<dt>Gerelateerde termen</dt>\\s*<dd>Art &#8226; Rembrandt</dd>'
+        '<dt>Gerelateerde termen</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>'
       )
     );
   });
