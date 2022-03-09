@@ -3,10 +3,9 @@ import {
   IRI,
   QueryMode,
   QueryTermsService,
-  Term,
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import leven from 'leven';
+import {score} from './score';
 
 /**
  * Fan out reconciliation query batch to terminology source queries.
@@ -53,26 +52,6 @@ export async function reconciliationQuery(
     Promise.resolve({})
   );
 }
-
-/**
- * Calculate score for term based on case-insensitive Levenshtein distance between the query string and the term’s
- * prefLabels, on a scale of 0–100 percentage match.
- */
-const score = (queryString: string, term: Term): number => {
-  if (term.prefLabels.length === 0) {
-    return 0;
-  }
-
-  const distance = term.prefLabels.reduce(
-    (distance, prefLabel) =>
-      distance -
-      leven(queryString.toLowerCase(), prefLabel.value.toLowerCase()) /
-        Math.max(queryString.length, prefLabel.value.length),
-    1
-  );
-
-  return Math.round((distance + Number.EPSILON) * 10000) / 100; // Return percentage match rounded to two decimals.
-};
 
 export type ReconciliationQueryBatch = {
   [key: string]: {

@@ -47,6 +47,7 @@ describe('Server', () => {
     );
     expect(response.statusCode).toEqual(200);
     const results = JSON.parse(response.body);
+
     expect(results.q1.result).toEqual([
       {
         id: 'https://example.com/resources/artwork',
@@ -58,8 +59,13 @@ describe('Server', () => {
 
     // Results must be sorted by score in decreasing order.
     expect(results.q2.result).toHaveLength(2);
-    expect(results.q2.result[0].score).toEqual(42.86); // Match of ‘things’ in ‘All things art’.
-    expect(results.q2.result[1].score).toEqual(0); // Result has no prefLabel.
+    expect(results.q2.result[0].name).toEqual('All things art');
+    expect(results.q2.result[0].score).toEqual(42.86); // Match of ‘things’ in prefLabel ‘All things art’.
+    expect(results.q2.result[1].description).toEqual(
+      'painted things that can be beautiful'
+    ); // Result has no prefLabel.
+    expect(results.q2.result[1].score).toEqual(16.67); // Match of ‘things’ in altLabel ‘painted things that can be beautiful’.
+
     expect(results.q3.result).toEqual([]); // No results.
   });
 
