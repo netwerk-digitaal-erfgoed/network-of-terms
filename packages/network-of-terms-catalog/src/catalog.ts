@@ -10,6 +10,7 @@ import {Bindings} from '@comunica/types';
 import {
   Catalog,
   Dataset,
+  Feature,
   IRI,
   Organization,
   SparqlDistribution,
@@ -32,7 +33,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
     '?dataset ?name ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?alternateName';
   const query = `
       PREFIX schema: <http://schema.org/>
-        SELECT ${properties} (GROUP_CONCAT(?url) as ?url) WHERE {
+        SELECT ${properties} (GROUP_CONCAT(?url) as ?url) (COALESCE(GROUP_CONCAT(?features), "") as ?features) WHERE {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
             schema:creator ?creator ;
@@ -46,6 +47,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
             schema:potentialAction
                 [a schema:SearchAction ; schema:query ?searchQuery ] ,
                 [a schema:FindAction ; schema:query ?lookupQuery ] .
+            OPTIONAL { ?distribution schema:potentialAction [ schema:target [ schema:actionApplication ?features ] ]. } 
         }
         GROUP BY ${properties}
         ORDER BY LCASE(?name)`;
@@ -76,7 +78,13 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
               new IRI(bindings.get('distribution').value),
               new IRI(bindings.get('endpointUrl').value),
               bindings.get('searchQuery').value,
-              bindings.get('lookupQuery').value
+              bindings.get('lookupQuery').value,
+              bindings
+                .get('features')
+                .value.split(' ')
+                .filter((feature: string) =>
+                  Object.values(Feature).includes(feature as Feature)
+                ) as Feature[]
             ),
           ],
           bindings.get('alternateName')?.value

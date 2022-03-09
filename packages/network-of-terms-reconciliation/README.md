@@ -12,7 +12,7 @@ If you want to use the Reconciliation Service API, configure one of the availabl
 
 - [RKDartists](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql)
 - [CHT](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht)
-- (more services will become available later).
+- (and so on for the other sources).
 
 Note that the Network of Terms provides Reconciliation endpoints only for terminology sources that do not provide such
 endpoints themselves.

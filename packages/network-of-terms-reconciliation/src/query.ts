@@ -23,10 +23,10 @@ export async function reconciliationQuery(
   const dataset = catalog.getDatasetByDistributionIri(distributionIri)!;
   const distribution = dataset.distributions[0];
 
-  return await Object.entries(query).reduce(
+  return Object.entries(query).reduce(
     async (
       resultsPromise: Promise<ReconciliationResultBatch>,
-      [queryId, {query: queryString}]
+      [queryId, {query: queryString, limit}]
     ) => {
       const results = await resultsPromise;
       const termsResult = await queryTermsService.search(
@@ -45,7 +45,8 @@ export async function reconciliationQuery(
             score: score(queryString, term),
             description: term.altLabels.map(label => label.value).join(' • '),
           }))
-          .sort((a, b) => b.score - a.score),
+          .sort((a, b) => b.score - a.score)
+          .slice(0, limit),
       };
       return results;
     },
@@ -73,7 +74,12 @@ const score = (queryString: string, term: Term): number => {
   );
 };
 
-export type ReconciliationQueryBatch = {[key: string]: {query: string}};
+export type ReconciliationQueryBatch = {
+  [key: string]: {
+    query: string;
+    limit?: number;
+  };
+};
 
 export type ReconciliationResultBatch = {
   [key: string]: {result: ReconciliationCandidate[]};
