@@ -14,7 +14,7 @@
     "fastify": "^3.27.3",
     "fastify-cors": "^6.0.3",
     "joi": "^17.6.0",
-    "mercurius": "^9.3.3",
+    "mercurius": "^9.3.5",
     "rdf-js": "^4.0.2"
   },
   "devDependencies": {
