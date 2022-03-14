@@ -6,7 +6,7 @@
   ],
   "type": "module",
   "devDependencies": {
-    "@qiwi/multi-semantic-release": "^5.0.0",
+    "@qiwi/multi-semantic-release": "^6.0.2",
     "@types/node": "^17.0.21",
     "gts": "^3.1.0",
     "jest": "^27.5.1",
