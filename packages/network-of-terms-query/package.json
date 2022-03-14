@@ -31,11 +31,11 @@
   "dependencies": {
     "@comunica/bindings-factory": "^2.0.1",
     "@comunica/data-factory": "^2.0.1",
-    "@comunica/query-sparql": "^2.0.6",
+    "@comunica/query-sparql": "^2.1.0",
     "@hapi/hoek": "^9.2.1",
     "@rdfjs/data-model": "^2.0.0",
     "joi": "^17.6.0",
-    "pino": "^7.8.0",
+    "pino": "^7.8.1",
     "pino-pretty": "^7.5.3",
     "pretty-ms": "^7.0.1",
     "rdf-data-factory": "^1.1.0",
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@comunica/core": "^2.0.1",
-    "@comunica/query-sparql-file": "^2.0.6",
+    "@comunica/query-sparql-file": "^2.1.0",
     "@jest/globals": "^27.5.1",
     "asynciterator": "^3.3.0",
     "jest-dev-server": "^6.0.3"
