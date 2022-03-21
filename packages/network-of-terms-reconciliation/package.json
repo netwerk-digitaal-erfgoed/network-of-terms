@@ -10,7 +10,7 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "fastify": "^3.27.4",
-    "fastify-accepts": "^2.1.0",
+    "fastify-accepts": "^2.2.0",
     "fastify-cors": "^6.0.3",
     "fastify-formbody": "^5.2.0",
     "leven": "^4.0.0",
