@@ -1,4 +1,5 @@
 import {
+  Dataset,
   LookupQueryResult,
   RelatedTerm,
   Term,
@@ -7,7 +8,11 @@ import {Literal} from 'rdf-js';
 import {escapeHtml} from '@hapi/hoek';
 import {locale} from './server';
 
-export function preview(lookupResult: LookupQueryResult, locale: locale) {
+export function preview(
+  lookupResult: LookupQueryResult,
+  source: Dataset,
+  locale: locale
+) {
   const term = lookupResult.result;
   if (term instanceof Term) {
     return `<html>
@@ -31,6 +36,8 @@ export function preview(lookupResult: LookupQueryResult, locale: locale) {
         ${relatedTerms(locale.broader, term.broaderTerms)}
         ${relatedTerms(locale.narrower, term.narrowerTerms)}
         ${relatedTerms(locale.related, term.relatedTerms)}
+        <dt>${locale.source}</dt>
+        <dd>${source.name} (${source.creators[0]?.alternateName})</dd>
       </dl>
       </p><a target="_blank" href="https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=${
         term.id.value

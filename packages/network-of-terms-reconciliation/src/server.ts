@@ -88,8 +88,13 @@ export async function server(
     const language = (request.language(['en', 'nl']) || 'en') as 'nl' | 'en';
     const termIri = new IRI(request.params['*']);
     const [lookupResult] = await lookupService.lookup([termIri], 10000);
+    const source = catalog.getDatasetByDistributionIri(
+      lookupResult.distribution.iri
+    )!;
 
-    reply.type('text/html').send(preview(lookupResult, locales[language]));
+    reply
+      .type('text/html')
+      .send(preview(lookupResult, source, locales[language]));
   });
 
   return server;
