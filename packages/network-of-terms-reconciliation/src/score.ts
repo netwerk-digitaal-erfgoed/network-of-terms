@@ -8,27 +8,23 @@ import RDF from 'rdf-js';
  */
 export const score = (searchString: string, term: Term): number => {
   // Score both prefLabels and altLabels and return the highest score.
-  return Math.max(
-    calculateMatchingScore(searchString.toLowerCase(), term.prefLabels),
-    calculateMatchingScore(searchString.toLowerCase(), term.altLabels)
-  );
+  return calculateMatchingScore(searchString.toLowerCase(), [
+    ...term.prefLabels,
+    ...term.altLabels,
+  ]);
 };
 
 const calculateMatchingScore = (
   searchString: string,
   literals: RDF.Literal[]
 ): number => {
-  if (literals.length === 0) {
-    return 0;
-  }
-
-  const distance = literals.reduce(
-    (distance, literal) =>
-      distance -
+  const scores = literals.map(
+    literal =>
+      1 -
       leven(searchString.toLowerCase(), literal.value.toLowerCase()) /
-        Math.max(searchString.length, literal.value.length),
-    1
+        Math.max(searchString.length, literal.value.length)
   );
+  const maxScore = Math.max(...scores);
 
-  return Math.round((distance + Number.EPSILON) * 10000) / 100; // Return percentage match rounded to two decimals.
+  return Math.round((maxScore + Number.EPSILON) * 10000) / 100; // Return percentage match rounded to two decimals.
 };
