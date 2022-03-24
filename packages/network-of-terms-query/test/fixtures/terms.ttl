@@ -16,7 +16,9 @@
 
 <https://example.com/resources/painting>
     a <http://www.w3.org/2008/05/skos#Concept> ;
-    skos:altLabel "painted things that can be beautiful" ;
+    skos:altLabel
+        "painted things that can be beautiful",
+        "another altLabel" ;
     skos:related <https://example.com/resources/art> ;
     skos:broader <https://example.com/resources/art> .
 
