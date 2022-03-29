@@ -35,8 +35,8 @@
     "@hapi/hoek": "^9.2.1",
     "@rdfjs/data-model": "^2.0.0",
     "joi": "^17.6.0",
-    "pino": "^7.9.1",
-    "pino-pretty": "^7.5.4",
+    "pino": "^7.9.2",
+    "pino-pretty": "^7.6.0",
     "pretty-ms": "^7.0.1",
     "rdf-data-factory": "^1.1.0",
     "rdf-js": "^4.0.2",
@@ -46,7 +46,7 @@
     "@comunica/core": "^2.0.1",
     "@comunica/query-sparql-file": "^2.1.0",
     "@jest/globals": "^27.5.1",
-    "asynciterator": "^3.3.0",
+    "asynciterator": "^3.4.0",
     "jest-dev-server": "^6.0.3"
   },
   "engines": {
