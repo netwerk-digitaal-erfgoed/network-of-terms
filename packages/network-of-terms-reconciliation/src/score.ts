@@ -1,30 +1,28 @@
 import {Term} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import leven from 'leven';
-import RDF from 'rdf-js';
+import {cosine} from 'string-comparison';
 
 /**
- * Calculate score for term based on case-insensitive Levenshtein distance between the search string and the term’s
- * prefLabels and altLabels, on a scale of 0–100 percentage match.
+ * Calculate score for term based on case-insensitive cosine similarity, ignoring punctuation, between the search string
+ * and the term’s prefLabels and altLabels, on a scale of 0–100 percentage match.
  */
 export const score = (searchString: string, term: Term): number => {
-  // Score both prefLabels and altLabels and return the highest score.
-  return calculateMatchingScore(searchString.toLowerCase(), [
-    ...term.prefLabels,
-    ...term.altLabels,
-  ]);
+  return calculateMatchingScore(
+    searchString.toLowerCase(),
+    [...term.prefLabels, ...term.altLabels].map(literal => literal.value)
+  );
 };
 
-const calculateMatchingScore = (
+export const calculateMatchingScore = (
   searchString: string,
-  literals: RDF.Literal[]
+  againstStrings: string[]
 ): number => {
-  const scores = literals.map(
-    literal =>
-      1 -
-      leven(searchString.toLowerCase(), literal.value.toLowerCase()) /
-        Math.max(searchString.length, literal.value.length)
+  const normalizedSearchString = normalize(searchString);
+  const scores = againstStrings.map(againstString =>
+    cosine.similarity(normalizedSearchString, normalize(againstString))
   );
   const maxScore = Math.max(...scores);
 
   return Math.round((maxScore + Number.EPSILON) * 10000) / 100; // Return percentage match rounded to two decimals.
 };
+
+const normalize = (string: string) => string.replace(/[,.]/g, '');
