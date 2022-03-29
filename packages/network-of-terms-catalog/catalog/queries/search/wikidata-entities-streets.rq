@@ -5,43 +5,37 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 CONSTRUCT {
-    # Wikidata seems to have a problem with the short syntax for construct queries
-    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
-    ?item a skos:Concept .
-    ?item skos:prefLabel ?streetName .
-    ?item skos:altLabel ?fullName .
-    ?item skos:altLabel ?altLabel .
-    ?item skos:scopeNote ?description .
+    ?item a skos:Concept ;
+        skos:prefLabel ?streetName ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?description .
 }
 WHERE {
     SERVICE wikibase:mwapi {
         bd:serviceParam wikibase:endpoint "www.wikidata.org" .
-        # The search seems to be done with a "starts with" function,
-        # where by default the English pref and alt labels are searched.
-        # Setting the required language to something else than "en"
-        # results in an additional search in the pref and alt labels for this language.
-        bd:serviceParam wikibase:api "EntitySearch" .
+        bd:serviceParam wikibase:api "Search" .
         bd:serviceParam mwapi:language "nl" .
-        bd:serviceParam mwapi:search ?query .
-        ?item wikibase:apiOutputItem mwapi:item .
+        bd:serviceParam mwapi:srsearch ?query .
+        ?item wikibase:apiOutputItem mwapi:title .
     }
     {
-      # select Streets
-      ?item wdt:P31 wd:Q79007 
+        # select Streets
+        ?item wdt:P31 wd:Q79007
     }
-    UNION 
+    UNION
     {
-      # select Squares
-      ?item wdt:P31 wd:Q174782
+        # select Squares
+        ?item wdt:P31 wd:Q174782
     }
     ?item wdt:P17 wd:Q55 .
     ?item wdt:P131 ?administration .
     OPTIONAL {
-      ?item wdt:P276 ?location .
-      ?location rdfs:label ?locationName .
-      FILTER LANGMATCHES(LANG(?locationName),"nl")
+        ?item wdt:P276 ?location .
+        ?location rdfs:label ?locationName .
+        FILTER LANGMATCHES(LANG(?locationName),"nl")
     }
     OPTIONAL {
         ?item schema:description ?description
@@ -55,14 +49,17 @@ WHERE {
     ?administration rdfs:label ?administrationName .
     FILTER LANGMATCHES(LANG(?streetName),"nl")
     FILTER LANGMATCHES(LANG(?administrationName),"nl")
-    FILTER (STRSTARTS(LCASE(?streetName),LCASE(?query))||STRSTARTS(LCASE(?altLabel),LCASE(?query)))
+
+    # Some streets come with altLabel ‘Street name (Place name)’. For those that don’t, construct the altLabel manually.
     BIND(
-      IF(
-        BOUND(?locationName),
-          CONCAT(?streetName," (",?locationName,")"),
-          CONCAT(?streetName," (",?administrationName,")")
-      )
-      as ?fullName 
+        COALESCE(
+            ?altLabel,
+            IF(
+                BOUND(?locationName),
+                CONCAT(?streetName," (",?locationName,")"),
+                CONCAT(?streetName," (",?administrationName,")")
+            )
+        ) as ?altLabel
     )
 }
 LIMIT 1000
