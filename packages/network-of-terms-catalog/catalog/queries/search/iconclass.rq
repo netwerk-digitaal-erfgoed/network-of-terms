@@ -1,0 +1,33 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri ;
+        skos:related ?related_uri .
+
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?related_uri skos:prefLabel ?related_prefLabel .
+}
+WHERE {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel .
+
+    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)))
+
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:narrower ?narrower_uri .
+        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:related ?related_uri .
+        ?narrower_uri skos:prefLabel ?related_prefLabel .
+    }
+}
+LIMIT 1000

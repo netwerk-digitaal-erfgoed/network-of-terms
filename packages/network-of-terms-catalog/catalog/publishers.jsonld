@@ -72,6 +72,12 @@
       "@type": "Organization",
       "name": "Stichting AdamNet",
       "alternateName": "AdamNet"
+    },
+    {
+      "@id": "https://henrivandewaalfoundation.org",
+      "@type": "Organization",
+      "name": "Henri van de Waal Foundation",
+      "alternateName": "Henri van de Waal"
     }
   ]
 }
