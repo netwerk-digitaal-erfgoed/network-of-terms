@@ -15,7 +15,7 @@ WHERE {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel .
 
-    FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)))
+    ?uri <http://iconclass.org/search> ?query .
 
     OPTIONAL {
         ?uri skos:broader ?broader_uri .
