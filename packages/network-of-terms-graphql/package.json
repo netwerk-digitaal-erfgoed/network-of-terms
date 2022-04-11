@@ -23,7 +23,7 @@
     "jest-dev-server": "^6.0.3",
     "mercurius-codegen": "^3.3.1",
     "ts-node-dev": "^1.1.8",
-    "tsc-watch": "^5.0.2"
+    "tsc-watch": "^5.0.3"
   },
   "scripts": {
     "check": "gts check",
