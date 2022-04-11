@@ -35,7 +35,7 @@
     "@hapi/hoek": "^9.2.1",
     "@rdfjs/data-model": "^2.0.0",
     "joi": "^17.6.0",
-    "pino": "^7.9.2",
+    "pino": "^7.10.0",
     "pino-pretty": "^7.6.1",
     "pretty-ms": "^7.0.1",
     "rdf-data-factory": "^1.1.0",
