@@ -10,7 +10,7 @@
     "@hapi/hoek": "^9.2.1",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "@rdfjs/data-model": "^2.0.0",
+    "@rdfjs/data-model": "^2.0.1",
     "fastify": "^3.27.4",
     "fastify-cors": "^6.0.3",
     "joi": "^17.6.0",
