@@ -7,6 +7,7 @@ export const schema = `
     name: String!
     alternateName: String
     creators: [Creator]!
+    features: [Feature]!
   }
 
   """
@@ -17,6 +18,20 @@ export const schema = `
     name: String!
     alternateName: String!
   }
+  
+  """
+  A feature available for a source.
+  """
+  type Feature {
+    type: FeatureType!
+    url: ID!
+  }
+  
+  enum FeatureType {
+    "Reconciliation Service API"
+    RECONCILIATION
+  }
+
 
   """
   A description of a concept or entity, expressed in the SKOS vocabulary, used to describe objects.

@@ -4,6 +4,8 @@ import {
   Distribution,
   DistributionsService,
   Error,
+  Feature,
+  FeatureType,
   IRI,
   LookupQueryResult,
   LookupResult,
@@ -137,6 +139,14 @@ function source(distribution: Distribution, dataset: Dataset) {
       name: creator.name,
       alternateName: creator.alternateName,
     })),
+    features: distribution.features.map((feature: Feature) => {
+      return {
+        type: Object.entries(FeatureType).find(
+          ([_, val]) => val === feature.type
+        )?.[0],
+        url: feature.url.toString(),
+      };
+    }),
   };
 }
 
