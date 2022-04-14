@@ -2,6 +2,7 @@ import {
   Catalog,
   Dataset,
   Feature,
+  FeatureType,
   IRI,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -72,9 +73,17 @@ describe('Catalog', () => {
 
   it('retrieves distributions providing feature', () => {
     const reconciliationApis = catalog.getDistributionsProvidingFeature(
-      Feature.RECONCILIATION
+      FeatureType.RECONCILIATION
     );
-    expect(reconciliationApis[0].features).toContain(Feature.RECONCILIATION);
+    expect(reconciliationApis[0].features).toContainEqual(
+      new Feature(
+        FeatureType.RECONCILIATION,
+        new URL(
+          'https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/' +
+            reconciliationApis[0].iri
+        )
+      )
+    );
   });
 
   it('substitutes credentials from environment variables', async () => {
