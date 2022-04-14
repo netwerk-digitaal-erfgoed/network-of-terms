@@ -11,11 +11,14 @@ import {
   Catalog,
   Dataset,
   Feature,
+  FeatureType,
   IRI,
   Organization,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {fileURLToPath} from 'url';
+import {DataFactory} from 'rdf-data-factory';
+import {BindingsFactory} from '@comunica/bindings-factory';
 
 export async function defaultCatalog(): Promise<Catalog> {
   const directory = resolve(
@@ -30,10 +33,10 @@ export async function defaultCatalog(): Promise<Catalog> {
 export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
   // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
   const properties =
-    '?dataset ?name ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?alternateName';
+    '?dataset ?name ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName';
   const query = `
       PREFIX schema: <http://schema.org/>
-        SELECT ${properties} (GROUP_CONCAT(?url) as ?url) (COALESCE(GROUP_CONCAT(?features), "") as ?features) WHERE {
+        SELECT ${properties} (GROUP_CONCAT(?url) as ?url)  WHERE {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
             schema:creator ?creator ;
@@ -47,12 +50,19 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
             schema:potentialAction
                 [a schema:SearchAction ; schema:query ?searchQuery ] ,
                 [a schema:FindAction ; schema:query ?lookupQuery ] .
-            OPTIONAL { ?distribution schema:potentialAction [ schema:target [ schema:actionApplication ?features ] ]. } 
+            OPTIONAL { 
+                ?distribution schema:potentialAction/schema:target ?entryPoint .
+                ?entryPoint schema:actionApplication ?reconciliationIri ;
+                    schema:urlTemplate ?reconciliationUrlTemplate .
+            } 
         }
         GROUP BY ${properties}
         ORDER BY LCASE(?name)`;
   const bindingsStream = await new QueryEngine().queryBindings(query, {
     sources: store,
+    initialBindings: bindingsFactory.fromRecord({
+      reconciliationIri: dataFactory.namedNode(FeatureType.RECONCILIATION),
+    }),
   });
 
   const promise: Promise<Dataset[]> = new Promise((resolve, reject) => {
@@ -79,12 +89,23 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
               new IRI(bindings.get('endpointUrl').value),
               bindings.get('searchQuery').value,
               bindings.get('lookupQuery').value,
-              bindings
-                .get('features')
-                .value.split(' ')
-                .filter((feature: string) =>
-                  Object.values(Feature).includes(feature as Feature)
-                ) as Feature[]
+              [
+                ...(bindings.has('reconciliationUrlTemplate')
+                  ? [
+                      new Feature(
+                        FeatureType.RECONCILIATION,
+                        new URL(
+                          bindings
+                            .get('reconciliationUrlTemplate')
+                            .value.replace(
+                              '{distribution}',
+                              bindings.get('distribution').value
+                            )
+                        )
+                      ),
+                    ]
+                  : []),
+              ]
             ),
           ],
           bindings.get('alternateName')?.value
@@ -175,3 +196,6 @@ class SubstituteCredentialsFromEnvironmentVariables extends Transform {
     callback();
   }
 }
+
+const dataFactory = new DataFactory();
+const bindingsFactory = new BindingsFactory(dataFactory);
