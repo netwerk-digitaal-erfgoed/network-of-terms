@@ -53,6 +53,10 @@ query Sources {
       name
       alternateName
     }
+    features {
+      type
+      url
+    }
   }
 }
 ```

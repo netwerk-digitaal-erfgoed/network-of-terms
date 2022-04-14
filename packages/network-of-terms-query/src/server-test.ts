@@ -71,7 +71,7 @@ export const testCatalog = (port: number) =>
           [
             new Feature(
               FeatureType.RECONCILIATION,
-              new URL('https://example.com/reconcile')
+              new URL('https://example.com/reconcile/rkd')
             ),
           ]
         ),
@@ -97,7 +97,7 @@ export const testCatalog = (port: number) =>
           [
             new Feature(
               FeatureType.RECONCILIATION,
-              new URL('https://example.com/reconcile')
+              new URL('https://example.com/reconcile/cht')
             ),
           ]
         ),

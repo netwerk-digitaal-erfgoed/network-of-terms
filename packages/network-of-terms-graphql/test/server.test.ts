@@ -31,11 +31,22 @@ describe('Server', () => {
               name
               alternateName
             }
+            features {
+              type
+              url
+            }
           }
         }
       `
     );
     expect(body.data.sources).toHaveLength(catalog.datasets.length);
+    expect(body.data.sources[0].uri).toEqual(
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
+    );
+    expect(body.data.sources[0].features).toContainEqual({
+      type: 'RECONCILIATION',
+      url: 'https://example.com/reconcile/rkd',
+    });
   });
 
   it('responds to GraphQL terms query when source does not exist', async () => {
