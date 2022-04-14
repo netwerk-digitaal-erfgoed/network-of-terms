@@ -2,6 +2,7 @@ import {
   Catalog,
   Dataset,
   Feature,
+  FeatureType,
   IRI,
   Organization,
   SparqlDistribution,
@@ -67,7 +68,12 @@ export const testCatalog = (port: number) =>
               ?related_uri skos:prefLabel ?related_prefLabel. 
             } 
           }`,
-          [Feature.RECONCILIATION]
+          [
+            new Feature(
+              FeatureType.RECONCILIATION,
+              new URL('https://example.com/reconcile')
+            ),
+          ]
         ),
       ]
     ),
@@ -88,7 +94,12 @@ export const testCatalog = (port: number) =>
           new IRI('http://does-not-resolve'),
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
-          [Feature.RECONCILIATION]
+          [
+            new Feature(
+              FeatureType.RECONCILIATION,
+              new URL('https://example.com/reconcile')
+            ),
+          ]
         ),
       ]
     ),

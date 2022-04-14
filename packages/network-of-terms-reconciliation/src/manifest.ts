@@ -1,6 +1,6 @@
 import {
   Catalog,
-  Feature,
+  FeatureType,
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
@@ -38,7 +38,7 @@ export function findManifest(
     source &&
     source
       .getDistributionByIri(distributionIri)
-      ?.hasFeature(Feature.RECONCILIATION)
+      ?.hasFeature(FeatureType.RECONCILIATION)
   ) {
     return new ServiceManifest(source.name, source.iri, hostname);
   }
