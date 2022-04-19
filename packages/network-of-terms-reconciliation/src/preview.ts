@@ -4,7 +4,7 @@ import {
   RelatedTerm,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {Literal} from 'rdf-js';
+import {Literal} from '@rdfjs/types';
 import {escapeHtml} from '@hapi/hoek';
 import {locale} from './server';
 

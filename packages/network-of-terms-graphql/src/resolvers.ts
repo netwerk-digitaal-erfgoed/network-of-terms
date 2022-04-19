@@ -20,7 +20,7 @@ import {
   TermsResult,
   TimeoutError,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import * as RDF from 'rdf-js';
+import * as RDF from '@rdfjs/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {

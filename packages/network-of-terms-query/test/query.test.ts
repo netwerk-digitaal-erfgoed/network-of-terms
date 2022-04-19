@@ -3,7 +3,7 @@ import {IRI, QueryMode, QueryTermsService} from '../src';
 import {QueryEngine} from '@comunica/query-sparql';
 import {ArrayIterator} from 'asynciterator';
 import {jest} from '@jest/globals';
-import RDF from 'rdf-js';
+import RDF from '@rdfjs/types';
 
 describe('Query', () => {
   it('passes dataset IRI query parameter to Comunica', async () => {
