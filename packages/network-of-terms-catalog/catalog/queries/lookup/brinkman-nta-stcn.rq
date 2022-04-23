@@ -1,6 +1,7 @@
 PREFIX schema: <http://schema.org/>
 # Do not remove this prefix - KB data uses old version of SKOS
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX void: <http://rdfs.org/ns/void#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -14,7 +15,8 @@ CONSTRUCT {
         skos:scopeNote ?schema_description ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
-        skos:related ?related_uri .
+        skos:related ?related_uri ;
+        skos:inScheme ?datasetUri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
@@ -28,6 +30,10 @@ WHERE {
 
     ?uri a ?type .
     VALUES ?type { skos:Concept schema:Person schema:Organization } .
+
+    ?uri schema:mainEntityOfPage/schema:isPartOf | foaf:isPrimaryTopicOf/void:inDataset ?datasetUriRaw .
+    # In the future, KB will split off the STCN printers dataset from the main STCN dataset. In the meantime, we have to translate the latter into the former.
+    BIND(IF(?datasetUriRaw = <http://data.bibliotheken.nl/id/dataset/stcn>, <http://data.bibliotheken.nl/id/dataset/stcn/printers>, ?datasetUriRaw) as ?datasetUri) .
 
     # For Brinkman
     OPTIONAL {

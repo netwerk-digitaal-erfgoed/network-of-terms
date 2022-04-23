@@ -47,7 +47,8 @@ export const testCatalog = (port: number) =>
             ?s ?p ?o ;
               skos:broader ?broader_uri ;
               skos:narrower ?narrower_uri ;
-              skos:related ?related_uri .
+              skos:related ?related_uri ;
+              skos:inScheme <https://data.rkd.nl/rkdartists> .
             ?broader_uri skos:prefLabel ?broader_prefLabel .
             ?narrower_uri skos:prefLabel ?narrower_prefLabel .
             ?related_uri skos:prefLabel ?related_prefLabel .

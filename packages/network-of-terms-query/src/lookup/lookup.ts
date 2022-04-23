@@ -48,14 +48,17 @@ export class LookupService {
     const irisToDataset = iris.reduce((acc, iri) => {
       const dataset = this.catalog.getDatasetByTermIri(iri);
       if (dataset) {
-        acc.set(iri, dataset);
+        acc.set(iri.toString(), dataset);
       }
       return acc;
-    }, new Map<IRI, Dataset>());
+    }, new Map<string, Dataset>());
 
     const datasetToIris = [...irisToDataset].reduce(
       (datasetMap, [iri, dataset]) => {
-        datasetMap.set(dataset, [...(datasetMap.get(dataset) ?? []), iri]);
+        datasetMap.set(dataset, [
+          ...(datasetMap.get(dataset) ?? []),
+          new IRI(iri),
+        ]);
         return datasetMap;
       },
       new Map<Dataset, IRI[]>()
@@ -69,15 +72,36 @@ export class LookupService {
       await Promise.all(lookups);
 
     const datasetToTerms = termsPerSource.reduce((acc, result: TermsResult) => {
-      const dataset = this.catalog.getDatasetByDistributionIri(
+      let dataset = this.catalog.getDatasetByDistributionIri(
         result.distribution.iri
       )!;
-      acc.set(dataset, result);
+      if (result instanceof Terms) {
+        const termsResult =
+          (acc.get(dataset) as Terms) ?? new Terms(result.distribution, []);
+        for (const term of result.terms) {
+          if (term.datasetIri !== undefined) {
+            const termsDataset = this.catalog.getDatasetByIri(
+              new IRI(term.datasetIri.value)
+            );
+            if (termsDataset !== undefined) {
+              dataset = termsDataset;
+              irisToDataset.set(term.id.value, dataset);
+            }
+          }
+          termsResult.terms.push(term);
+        }
+        acc.set(dataset, termsResult);
+      } else {
+        const dataset = this.catalog.getDatasetByDistributionIri(
+          result.distribution.iri
+        )!;
+        acc.set(dataset, result);
+      }
       return acc;
     }, new Map<Dataset, TermsResult>());
 
     return iris.map(iri => {
-      const dataset = irisToDataset.get(iri);
+      const dataset = irisToDataset.get(iri.toString());
       if (dataset === undefined) {
         return {
           uri: iri,
