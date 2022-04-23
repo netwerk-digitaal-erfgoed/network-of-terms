@@ -60,11 +60,11 @@ describe('Server', () => {
     // Results must be sorted by score in decreasing order.
     expect(results.q2.result).toHaveLength(2);
     expect(results.q2.result[0].name).toEqual('All things art');
-    expect(results.q2.result[0].score).toEqual(81.65); // Match of ‘things’ in prefLabel ‘All things art’.
+    expect(results.q2.result[0].score).toEqual(62.5); // Match of ‘things’ in prefLabel ‘All things art’.
     expect(results.q2.result[1].description).toEqual(
       'painted things that can be beautiful • another altLabel'
     ); // Result has no prefLabel.
-    expect(results.q2.result[1].score).toEqual(63.25); // Match of ‘things’ in altLabel ‘painted things that can be beautiful’.
+    expect(results.q2.result[1].score).toEqual(28.57); // Match of ‘things’ in altLabel ‘painted things that can be beautiful’.
 
     expect(results.q3.result).toEqual([]); // No results.
   });

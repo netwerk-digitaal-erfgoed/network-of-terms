@@ -15,8 +15,8 @@ export default {
   ],
   coverageThreshold: {
     global: {
-      lines: 89.12,
-      statements: 89.06,
+      lines: 89.07,
+      statements: 89.04,
       branches: 91.35,
       functions: 87.2,
     },
