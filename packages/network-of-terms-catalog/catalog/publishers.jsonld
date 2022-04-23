@@ -72,6 +72,12 @@
       "@type": "Organization",
       "name": "Stichting AdamNet",
       "alternateName": "AdamNet"
+    },
+    {
+      "@id": "https://www.geonames.org",
+      "@type": "Organization",
+      "name": "GeoNames geographical database",
+      "alternateName": "Geonames"
     }
   ]
 }

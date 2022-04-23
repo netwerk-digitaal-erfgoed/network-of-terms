@@ -1,0 +1,48 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://www.geonames.org/places",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Geonames: plaatsen in NL en BE"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.geonames.org"
+    }
+  ],
+  "url": [
+    "https://sws.geonames.org"
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.netwerkdigitaalerfgoed.nl/NDE/geonames-nl-be/",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/NDE/geonames-nl-be/services/geonames-nl-be/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/geonames.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/geonames.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
+          }
+        }
+      ]
+    }
+  ]
+}

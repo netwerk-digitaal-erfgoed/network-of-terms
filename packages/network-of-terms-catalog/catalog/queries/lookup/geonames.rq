@@ -1,0 +1,38 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX gn: <https://sws.geonames.org/ontology#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote .
+    ?uri skos:broader ?adm1_uri .
+    ?adm1_uri skos:prefLabel ?adm1_prefLabel .
+    ?uri skos:broader ?adm2_uri .
+    ?adm2_uri skos:prefLabel ?adm2_prefLabel .
+}
+WHERE { 
+  # https://sws.geonames.org/2752375 (Koudekerke)
+  VALUES ?uri { ?uris }
+  
+  ?uri gn:name ?prefLabel .
+  OPTIONAL {
+    ?uri gn:alternateName ?altLabel .
+    FILTER(?altLabel!="")
+  }
+  # locate the parentlevels AMD1 and ADM2
+  OPTIONAL {
+    ?uri gn:parentADM1 ?adm1_uri .
+    ?adm1_uri gn:name ?adm1_prefLabel .
+  }
+  OPTIONAL {
+    ?uri gn:parentADM2 ?adm2_uri .
+    ?adm2_uri gn:name ?adm2_prefLabel .
+  }
+  OPTIONAL {
+    ?uri gn:featureCode ?feature_code .
+    ?feature_code gn:name ?scopeNote .
+  }
+} LIMIT 1000
