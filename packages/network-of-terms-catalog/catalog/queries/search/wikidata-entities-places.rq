@@ -35,14 +35,18 @@ WHERE {
         ?item wdt:P17 wd:Q55 .
 
         # Filter out Dutch municipalities
-        FILTER NOT EXISTS { ?item wdt:P31 wd:Q2039348 }
+        # deactivated because some places are former municipalities
+        # and would be excluded by this filter
+        #FILTER NOT EXISTS { ?item wdt:P31 wd:Q2039348 }
     }
     UNION {
         # Select places in Belgium
         ?item wdt:P17 wd:Q31 .
 
         # Filter out Belgian municipalities
-        FILTER NOT EXISTS { ?item wdt:P31 wd:Q493522}
+        # deactivated because some places are former municipalities
+        # and would be excluded by this filter
+        #FILTER NOT EXISTS { ?item wdt:P31 wd:Q493522}
     }
 
     # Filter out agglomerations
