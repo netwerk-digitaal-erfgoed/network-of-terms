@@ -3,6 +3,12 @@ import {URL} from 'url';
 export class Catalog {
   constructor(readonly datasets: ReadonlyArray<Dataset>) {}
 
+  public getDatasetByIri(iri: IRI): Dataset | undefined {
+    return this.datasets.find(
+      dataset => dataset.iri.toString() === iri.toString()
+    );
+  }
+
   public getDatasetByDistributionIri(iri: IRI): Dataset | undefined {
     return this.datasets.find(
       dataset => dataset.getDistributionByIri(iri) !== undefined
