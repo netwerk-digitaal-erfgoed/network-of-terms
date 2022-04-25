@@ -11,9 +11,9 @@
   "creator": [
     {
       "@id": "https://www.goudatijdmachine.nl",
-	  "@type": "http://schema.org/Organization",
-	  "name": "Gouda Tijdmachine",
-	  "alternateName": "GTM"
+      "@type": "http://schema.org/Organization",
+      "name": "Gouda Tijdmachine",
+      "alternateName": "GTM"
     }
   ],
   "url": [
