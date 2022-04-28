@@ -20,8 +20,8 @@ WHERE {
     OPTIONAL {
         ?uri schema:additionalType <http://vocab.getty.edu/aat/300000641> .
         BIND("Type: kloostergebouw" AS ?buildingTypeScopeNote)
-      }
-      OPTIONAL {
+    }
+    OPTIONAL {
         ?uri schema:address ?address .
         OPTIONAL { ?address schema:streetAddress ?streetAddress }
         OPTIONAL { ?address schema:addressLocality ?addressLocality }
