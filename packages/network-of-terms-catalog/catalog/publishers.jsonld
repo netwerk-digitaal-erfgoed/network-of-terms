@@ -72,6 +72,12 @@
       "@type": "Organization",
       "name": "Stichting AdamNet",
       "alternateName": "AdamNet"
+    },
+    {
+      "@id": "https://www.erfgoedbrabant.nl",
+      "@type": "Organization",
+      "name": "Erfgoed Brabant",
+      "alternateName": "Erfgoed Brabant"
     }
   ]
 }
