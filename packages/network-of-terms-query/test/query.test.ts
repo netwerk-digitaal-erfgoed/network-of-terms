@@ -1,22 +1,21 @@
 import {testCatalog} from '../src/server-test';
 import {IRI, QueryMode, QueryTermsService} from '../src';
-import {ActorInitSparql} from '@comunica/actor-init-sparql';
+import {QueryEngine} from '@comunica/query-sparql';
 import {ArrayIterator} from 'asynciterator';
-import factory from '@rdfjs/data-model';
 import {jest} from '@jest/globals';
-import RDF from 'rdf-js';
+import RDF from '@rdfjs/types';
 
 describe('Query', () => {
   it('passes dataset IRI query parameter to Comunica', async () => {
     const catalog = testCatalog(1000);
     const comunicaMock = jest.mocked({
-      query: jest.fn((_query: string, _config: object) => ({
-        type: 'quads',
-        quadStream: new ArrayIterator([], {autoStart: false}),
-      })),
+      queryQuads: jest.fn(
+        (_query: string, _config: object) =>
+          new ArrayIterator([], {autoStart: false})
+      ),
     });
     const service = new QueryTermsService({
-      comunica: comunicaMock as unknown as ActorInitSparql,
+      comunica: comunicaMock as unknown as QueryEngine,
     });
     const dataset = catalog.getDatasetByDistributionIri(
       new IRI('https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql')
@@ -32,11 +31,11 @@ describe('Query', () => {
       10000
     );
 
-    const config = comunicaMock.query.mock.calls[0][1] as {
+    const config = comunicaMock.queryQuads.mock.calls[0][1] as {
       initialBindings: Map<string, RDF.Term>;
     };
-    expect(config.initialBindings.get('?datasetUri')).toEqual(
-      factory.namedNode(dataset.iri.toString())
+    expect(config.initialBindings.get('datasetUri')?.value).toEqual(
+      dataset.iri.toString()
     );
   });
 });

@@ -10,4 +10,4 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-      - dependency-name: "@netwerk-digitaal-erfgoed/network-of-terms-catalog" # Done with release in update-catalog.yml.
+      - dependency-name: "@qiwi/multi-semantic-release" # Version 6.0.0 ignores all packages except query and catalog.

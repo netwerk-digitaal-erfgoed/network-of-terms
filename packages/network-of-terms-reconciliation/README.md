@@ -7,12 +7,10 @@ You can use it to **match and reconcile textual strings in your data with terms*
 
 ## For users
 
-If you want to use the Reconciliation Service API, configure one of the available public services in your
-[OpenRefine](https://openrefine.org) application:
-
-- [RKDartists](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql)
-- [CHT](https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht)
-- (more services will become available later).
+If you want to use the Reconciliation Service API, configure one or more service endpoints in your
+[OpenRefine](https://openrefine.org) application. An endpoint’s URL is structured like
+`https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{sourceUri}`. A full list of endpoints can be found in
+the [Network of Terms FAQ](https://termennetwerk.netwerkdigitaalerfgoed.nl/faq#openrefine).
 
 Note that the Network of Terms provides Reconciliation endpoints only for terminology sources that do not provide such
 endpoints themselves.
@@ -24,7 +22,7 @@ If you want to run the application locally, or host it yourself, you can use our
 
     docker run -p 3123:3123 ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-reconciliation
 
-If you want to make changes to the application, run it locally using Node (or in a 
+If you want to make changes to the application, run it locally using Node (or in a
 [Docker container](../../docs/docker.md)):
 
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git

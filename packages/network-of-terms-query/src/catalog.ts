@@ -3,6 +3,12 @@ import {URL} from 'url';
 export class Catalog {
   constructor(readonly datasets: ReadonlyArray<Dataset>) {}
 
+  public getDatasetByIri(iri: IRI): Dataset | undefined {
+    return this.datasets.find(
+      dataset => dataset.iri.toString() === iri.toString()
+    );
+  }
+
   public getDatasetByDistributionIri(iri: IRI): Dataset | undefined {
     return this.datasets.find(
       dataset => dataset.getDistributionByIri(iri) !== undefined
@@ -15,6 +21,19 @@ export class Catalog {
         iri.toString().startsWith(termPrefix.toString())
       )
     );
+  }
+
+  public getDistributionsProvidingFeature(
+    featureType: FeatureType
+  ): Distribution[] {
+    return this.datasets.reduce<Distribution[]>((acc, dataset) => {
+      return [
+        ...acc,
+        ...dataset.distributions.filter(distribution =>
+          distribution.hasFeature(featureType)
+        ),
+      ];
+    }, []);
   }
 }
 
@@ -48,8 +67,21 @@ export class SparqlDistribution {
     readonly iri: IRI,
     readonly endpoint: IRI,
     readonly searchQuery: string,
-    readonly lookupQuery: string
+    readonly lookupQuery: string,
+    readonly features: Feature[] = []
   ) {}
+
+  public hasFeature(feature: FeatureType) {
+    return this.features.some((value: Feature) => value.type === feature);
+  }
+}
+
+export class Feature {
+  constructor(readonly type: FeatureType, readonly url: URL) {}
+}
+
+export enum FeatureType {
+  RECONCILIATION = 'https://reconciliation-api.github.io/specs/latest/',
 }
 
 /**

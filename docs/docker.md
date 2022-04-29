@@ -1,7 +1,9 @@
 # Run in a development Docker container
 
 An alternative way to run the application for development purposes is in a Docker container. This is useful if you don’t
-want to install Node on your host machine.
+want to install Node on your host machine. You can also use this method if you want to run the application on an
+[Apple silicon](https://support.apple.com/en-gb/HT211814) computer without emulation, as our ready-made Docker images
+don’t yet support M1.
 
 Start by cloning the repository:
 
@@ -12,7 +14,7 @@ Then start run the development container:
 
     docker compose run --rm node
 
-And execute the commands that you find in each package’s readme (for example 
+And execute the commands that you find in each package’s readme (for example
 [GraphQL](../packages/network-of-terms-graphql/) or [Reconciliation](../packages/network-of-terms-reconciliation)):
 
     # In the container:

@@ -1,4 +1,12 @@
-import {Catalog, Dataset, IRI, Organization, SparqlDistribution} from './index';
+import {
+  Catalog,
+  Dataset,
+  Feature,
+  FeatureType,
+  IRI,
+  Organization,
+  SparqlDistribution,
+} from './index';
 import {setup} from 'jest-dev-server';
 import {dirname} from 'path';
 import {fileURLToPath} from 'url';
@@ -30,7 +38,7 @@ export const testCatalog = (port: number) =>
           WHERE { 
             ?s ?p ?o ;
               ?labelPredicate ?label .
-            VALUES ?labelPredicate { skos:prefLabel skos:altLabel }
+            VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
             FILTER (regex(?label, ?query, "i"))
           }`,
           `
@@ -39,7 +47,8 @@ export const testCatalog = (port: number) =>
             ?s ?p ?o ;
               skos:broader ?broader_uri ;
               skos:narrower ?narrower_uri ;
-              skos:related ?related_uri .
+              skos:related ?related_uri ;
+              skos:inScheme <https://data.rkd.nl/rkdartists> .
             ?broader_uri skos:prefLabel ?broader_prefLabel .
             ?narrower_uri skos:prefLabel ?narrower_prefLabel .
             ?related_uri skos:prefLabel ?related_prefLabel .
@@ -59,7 +68,13 @@ export const testCatalog = (port: number) =>
               ?s skos:related ?related_uri.
               ?related_uri skos:prefLabel ?related_prefLabel. 
             } 
-          }`
+          }`,
+          [
+            new Feature(
+              FeatureType.RECONCILIATION,
+              new URL('https://example.com/reconcile/rkd')
+            ),
+          ]
         ),
       ]
     ),
@@ -79,7 +94,13 @@ export const testCatalog = (port: number) =>
           new IRI('https://example.com/distributions/endpoint-error'),
           new IRI('http://does-not-resolve'),
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
-          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+          [
+            new Feature(
+              FeatureType.RECONCILIATION,
+              new URL('https://example.com/reconcile/cht')
+            ),
+          ]
         ),
       ]
     ),
@@ -113,5 +134,6 @@ export async function startDistributionSparqlEndpoint(
       fileURLToPath(import.meta.url)
     )}/../test/fixtures/terms.ttl -p ${port}`,
     port,
+    launchTimeout: 10000,
   });
 }

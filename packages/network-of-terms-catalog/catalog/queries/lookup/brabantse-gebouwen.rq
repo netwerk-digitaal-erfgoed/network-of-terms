@@ -1,0 +1,40 @@
+PREFIX schema: <https://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?schema_name ;
+        skos:altLabel ?schema_alternateName ;
+        skos:scopeNote ?schema_description,
+                       ?buildingTypeScopeNote,
+                       ?addressScopeNote .
+}
+WHERE {
+    # For example:
+    # Huize Boschlust: <https://data.brabantcloud.nl/id/ark:15052/62dd4e81-b7d6-4fc2-9473-5f4b17226105>
+    # Mariaklooster: <https://data.brabantcloud.nl/id/ark:15052/0963f6bb-4b84-4e37-a087-31bbabfda4bb>
+    VALUES ?uri { ?uris }
+
+    ?uri a schema:LandmarksOrHistoricalBuildings .
+    OPTIONAL { ?uri schema:name ?schema_name }
+    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+    OPTIONAL { ?uri schema:description ?schema_description }
+    OPTIONAL {
+        ?uri schema:additionalType <http://vocab.getty.edu/aat/300000641> .
+        BIND("Type: kloostergebouw" AS ?buildingTypeScopeNote)
+    }
+    OPTIONAL {
+        ?uri schema:address ?address .
+        OPTIONAL { ?address schema:streetAddress ?streetAddress }
+        OPTIONAL { ?address schema:addressLocality ?addressLocality }
+        OPTIONAL { ?address schema:addressRegion ?addressRegion }
+        BIND(
+            COALESCE(
+                IF(?streetAddress && ?addressLocality && ?addressRegion, CONCAT("Adres: ", ?streetAddress, ", ", ?addressLocality, ", ", ?addressRegion), ?noAddress),
+                IF(?streetAddress && ?addressLocality, CONCAT("Adres: ", ?streetAddress, ", ", ?addressLocality), ?noAddress),
+                IF(?streetAddress, CONCAT("Adres: ", ?streetAddress), ?noAddress)
+            ) AS ?addressScopeNote
+        )
+    }
+}
+LIMIT 1000

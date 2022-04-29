@@ -98,6 +98,17 @@
           },
           "sh:qualifiedMinCount": 1,
           "sh:qualifiedMaxCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:potentialAction"
+          },
+          "sh:qualifiedValueShape": {
+            "sh:class": {
+              "@id": "schema:Action"
+            }
+          },
+          "sh:qualifiedMinCount": 0
         }
       ]
     },
@@ -146,6 +157,49 @@
         {
           "sh:path": {
             "@id": "schema:query"
+          },
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        }
+      ]
+    },
+    {
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:Action"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:target"
+          },
+          "sh:class": {
+            "@id": "schema:EntryPoint"
+          },
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        }
+      ]
+    },
+    {
+      "@type": "sh:NodeShape",
+      "sh:targetClass": {
+        "@id": "schema:EntryPoint"
+      },
+      "sh:property": [
+        {
+          "sh:path": {
+            "@id": "schema:actionApplication"
+          },
+          "sh:class": {
+            "@id": "schema:SoftwareApplication"
+          },
+          "sh:minCount": 1,
+          "sh:maxCount": 1
+        },
+        {
+          "sh:path": {
+            "@id": "schema:urlTemplate"
           },
           "sh:minCount": 1,
           "sh:maxCount": 1

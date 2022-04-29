@@ -1,19 +1,16 @@
-import {ActorInitSparql} from '@comunica/actor-init-sparql';
-import {
-  Bindings,
-  IActorQueryOperationOutputQuads,
-} from '@comunica/bus-query-operation';
 import * as Hoek from '@hapi/hoek';
 import Joi from 'joi';
-import factory from '@rdfjs/data-model';
 import {LoggerPino} from './helpers/logger-pino';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
-import * as RDF from 'rdf-js';
+import * as RDF from '@rdfjs/types';
+import {Bindings} from '@rdfjs/types';
 import {Term, TermsTransformer} from './terms';
 import {QueryMode, queryVariants} from './search/query-mode';
-import {newEngine} from '@comunica/actor-init-sparql';
 import {Dataset, Distribution, IRI} from './catalog';
+import {QueryEngine} from '@comunica/query-sparql';
+import {BindingsFactory} from '@comunica/bindings-factory';
+import {DataFactory} from 'rdf-data-factory';
 
 export type TermsResult = Terms | TimeoutError | ServerError;
 
@@ -24,37 +21,22 @@ export class Terms {
 export class Error {
   constructor(readonly distribution: Distribution, readonly message: string) {}
 }
+
 export class TimeoutError extends Error {
   constructor(readonly distribution: Distribution, timeoutMs: number) {
     super(distribution, `Source timed out after ${timeoutMs}ms`);
   }
 }
+
 export class ServerError extends Error {}
 
 export class QueryTermsService {
   private readonly logger: Pino.Logger;
-  private readonly engine: ActorInitSparql;
+  private readonly engine: QueryEngine;
 
-  constructor(
-    options: {comunica?: ActorInitSparql; logger?: Pino.Logger} = {}
-  ) {
-    this.engine = options.comunica || newEngine();
+  constructor(options: {comunica?: QueryEngine; logger?: Pino.Logger} = {}) {
+    this.engine = options.comunica || new QueryEngine();
     this.logger = options.logger || Pino();
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected getConfig(distribution: Distribution, bindings?: Bindings): any {
-    const logger = new LoggerPino({logger: this.logger});
-    return {
-      log: logger,
-      sources: [
-        {
-          type: 'sparql', // Only supported type for now
-          value: distribution.endpoint.toString(),
-        },
-      ],
-      initialBindings: bindings,
-    };
   }
 
   async search(
@@ -66,18 +48,18 @@ export class QueryTermsService {
   ) {
     const bindings = [...queryVariants(searchQuery, queryMode)].reduce(
       (record: Record<string, RDF.Term>, [k, v]) => {
-        record[k] = factory.literal(v);
+        record[k] = dataFactory.literal(v);
         return record;
       },
       {}
     );
-    bindings['?datasetUri'] = factory.namedNode(dataset.iri.toString());
+    bindings['datasetUri'] = dataFactory.namedNode(dataset.iri.toString());
 
     return this.run(
       distribution.searchQuery,
       distribution,
       timeoutMs,
-      Bindings(bindings)
+      bindings
     );
   }
 
@@ -96,7 +78,7 @@ export class QueryTermsService {
     query: string,
     distribution: Distribution,
     timeoutMs: number,
-    bindings?: Bindings
+    bindings: Record<string, RDF.Term> = {}
   ): Promise<TermsResult> {
     Joi.attempt(
       timeoutMs,
@@ -109,24 +91,33 @@ export class QueryTermsService {
 
     this.logger.info(`Querying "${distribution.endpoint}" with "${query}"...`);
     const timer = new Hoek.Bench();
-    const result = (await this.engine.query(
-      query,
-      this.getConfig(distribution, bindings)
-    )) as IActorQueryOperationOutputQuads;
+    const logger = new LoggerPino({logger: this.logger});
+    const quadStream = await this.engine.queryQuads(query, {
+      log: logger,
+      sources: [
+        {
+          type: 'sparql',
+          value: distribution.endpoint.toString(),
+        },
+      ],
+      initialBindings: bindingsFactory.fromRecord(
+        bindings
+      ) as unknown as Bindings,
+    });
 
     return guardTimeout(
       new Promise(resolve => {
         const termsTransformer = new TermsTransformer();
-        result.quadStream.on('error', (error: Error) => {
+        quadStream.on('error', (error: Error) => {
           this.logger.error(
             `An error occurred when querying "${distribution.endpoint}": ${error}`
           );
           resolve(new ServerError(distribution, error.message));
         });
-        result.quadStream.on('data', (quad: RDF.Quad) => {
+        quadStream.on('data', (quad: RDF.Quad) => {
           termsTransformer.fromQuad(quad);
         });
-        result.quadStream.on('end', () => {
+        quadStream.on('end', () => {
           const terms = termsTransformer.asArray().sort(alphabeticallyByLabels);
           this.logger.info(
             `Found ${terms.length} terms matching "${query}" in "${
@@ -164,3 +155,6 @@ function guardTimeout<T>(
     ),
   ]) as Promise<T>;
 }
+
+const dataFactory = new DataFactory();
+const bindingsFactory = new BindingsFactory(dataFactory);

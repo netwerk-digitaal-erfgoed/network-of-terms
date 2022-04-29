@@ -1,10 +1,14 @@
 import {
   Catalog,
   Dataset,
+  Feature,
+  FeatureType,
   IRI,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {defaultCatalog} from '../src';
+import {defaultCatalog, fromFile, fromStore} from '../src';
+import {dirname, resolve} from 'path';
+import {fileURLToPath} from 'url';
 
 let catalog: Catalog;
 
@@ -65,5 +69,38 @@ describe('Catalog', () => {
     );
     expect(rkd).toBeInstanceOf(Dataset);
     expect(rkd?.iri).toEqual(new IRI('https://data.rkd.nl/rkdartists'));
+  });
+
+  it('retrieves distributions providing feature', () => {
+    const reconciliationApis = catalog.getDistributionsProvidingFeature(
+      FeatureType.RECONCILIATION
+    );
+    expect(reconciliationApis[0].features).toContainEqual(
+      new Feature(
+        FeatureType.RECONCILIATION,
+        new URL(
+          'https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/' +
+            reconciliationApis[0].iri
+        )
+      )
+    );
+  });
+
+  it('substitutes credentials from environment variables', async () => {
+    process.env.DATASET_CREDENTIALS = 'username:password';
+    const store = await fromFile(
+      resolve(
+        dirname(fileURLToPath(import.meta.url)),
+        'fixtures/credentials.jsonld'
+      )
+    );
+    const catalog = await fromStore([store]);
+    const distributionIri = new IRI(
+      'https://data.beeldengeluid.nl/id/datadownload/0027'
+    );
+    const dataset = catalog.getDatasetByDistributionIri(distributionIri)!;
+    expect(
+      dataset.getDistributionByIri(distributionIri)?.endpoint.toString()
+    ).toEqual('https://username:password@gtaa.apis.beeldengeluid.nl/sparql');
   });
 });

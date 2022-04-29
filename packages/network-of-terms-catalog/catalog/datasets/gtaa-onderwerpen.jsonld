@@ -20,7 +20,7 @@
     {
       "@id": "https://data.beeldengeluid.nl/id/datadownload/0031",
       "@type": "DataDownload",
-      "contentUrl": "https://gtaa.apis.beeldengeluid.nl/sparql",
+      "contentUrl": "https://$GTAA_CREDENTIALS@gtaa.apis.beeldengeluid.nl/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
@@ -30,6 +30,17 @@
         {
           "@type": "FindAction",
           "query": "file://catalog/queries/lookup/gtaa.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
+          }
         }
       ]
     }

@@ -4,6 +4,8 @@ import {
   Distribution,
   DistributionsService,
   Error,
+  Feature,
+  FeatureType,
   IRI,
   LookupQueryResult,
   LookupResult,
@@ -18,7 +20,7 @@ import {
   TermsResult,
   TimeoutError,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import * as RDF from 'rdf-js';
+import * as RDF from '@rdfjs/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -137,6 +139,14 @@ function source(distribution: Distribution, dataset: Dataset) {
       name: creator.name,
       alternateName: creator.alternateName,
     })),
+    features: distribution.features.map((feature: Feature) => {
+      return {
+        type: Object.entries(FeatureType).find(
+          ([_, val]) => val === feature.type
+        )?.[0],
+        url: feature.url.toString(),
+      };
+    }),
   };
 }
 

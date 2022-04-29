@@ -6,7 +6,7 @@
     skos:prefLabel "Nachtwacht" ;
     skos:altLabel "Nachtwacht alt" ;
     skos:scopeNote "One of the most famous Dutch paintings" ;
-    skos:hiddenLabel "Hidden label" ;
+    skos:hiddenLabel "art" ;
     skos:broader <https://example.com/resources/2> ;
     skos:related <https://example.com/resources/painter> ,
         <https://example.com/resources/painting> ,
@@ -16,7 +16,9 @@
 
 <https://example.com/resources/painting>
     a <http://www.w3.org/2008/05/skos#Concept> ;
-    skos:altLabel "painted things" ;
+    skos:altLabel
+        "painted things that can be beautiful",
+        "another altLabel" ;
     skos:related <https://example.com/resources/art> ;
     skos:broader <https://example.com/resources/art> .
 
@@ -26,8 +28,8 @@
 
 <https://example.com/resources/art>
     a skos:Concept ;
-    skos:prefLabel "Art" ;
-    skos:altLabel "All things art" ;
+    skos:prefLabel "All things art" ;
+    skos:altLabel "Art" ;
     skos:narrower <https://example.com/resources/artwork> .
 
 <https://example.com/resources/alphabet>
