@@ -45,6 +45,6 @@
   },
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.15.0"
   }
 }

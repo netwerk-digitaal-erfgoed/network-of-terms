@@ -6,8 +6,8 @@ import {findManifest} from './manifest';
 import formBodyPlugin from '@fastify/formbody';
 import {reconciliationQuery, ReconciliationQueryBatch} from './query';
 import {preview} from './preview';
-import en from './locales/en.json';
-import nl from './locales/nl.json';
+import en from './locales/en.json' assert {type: 'json'};
+import nl from './locales/nl.json' assert {type: 'json'};
 import {
   Catalog,
   getHttpLogger,
@@ -15,7 +15,7 @@ import {
   LookupService,
   QueryTermsService,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import jsonSchema from './json-schema/reconciliation-query.json';
+import jsonSchema from './json-schema/reconciliation-query.json' assert {type: 'json'};
 import {parse} from 'querystring';
 
 export async function server(
