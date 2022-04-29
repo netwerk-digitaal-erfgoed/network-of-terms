@@ -1,9 +1,9 @@
 import fastify, {FastifyInstance} from 'fastify';
-import fastifyCors from 'fastify-cors';
-import fastifyAccepts from 'fastify-accepts';
+import fastifyCors from '@fastify/cors';
+import fastifyAccepts from '@fastify/accepts';
 import {IncomingMessage, Server} from 'http';
 import {findManifest} from './manifest';
-import formBodyPlugin from 'fastify-formbody';
+import formBodyPlugin from '@fastify/formbody';
 import {reconciliationQuery, ReconciliationQueryBatch} from './query';
 import {preview} from './preview';
 import en from './locales/en.json';
