@@ -9,7 +9,8 @@ RUN npm ci
 # Install the workspace’s dependencies. Any dependencies on other internal workspaces must be published packages.
 # Workspaces have no package-lock.json so we must use npm install rather than npm ci.
 COPY $PACKAGE_DIR/package.json ./$PACKAGE_DIR/
-RUN npm install --prefix $PACKAGE_DIR
+COPY package-lock.json ./$PACKAGE_DIR
+RUN npm ci --prefix $PACKAGE_DIR
 
 COPY . .
 RUN NODE_ENV=production npm run compile --workspace $PACKAGE_DIR
