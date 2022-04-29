@@ -6,13 +6,13 @@
     "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
   },
   "dependencies": {
+    "@fastify/accepts": "^3.0.0",
+    "@fastify/cors": "^7.0.0",
+    "@fastify/formbody": "^6.0.0",
     "@hapi/hoek": "^9.2.1",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "fastify": "^3.28.0",
-    "fastify-accepts": "^2.2.0",
-    "fastify-cors": "^6.0.3",
-    "fastify-formbody": "^5.2.0",
+    "fastify": "^3.29.0",
     "string-comparison": "^1.1.0"
   },
   "devDependencies": {
