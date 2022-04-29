@@ -33,7 +33,7 @@
   "scripts": {
     "clean": "rm -rf build/ tsconfig.build.tsbuildinfo",
     "compile": "npm run clean && tsc --build tsconfig.build.json",
-    "start": "node --experimental-specifier-resolution=node --experimental-json-modules build/main.js",
+    "start": "node --experimental-specifier-resolution=node build/main.js",
     "dev": "tsc-watch --build tsconfig.build.json --onSuccess 'npm run start'",
     "watch": "tsc --watch"
   },
