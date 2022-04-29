@@ -15,7 +15,7 @@ import {
   LookupService,
   QueryTermsService,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import jsonSchema from './json-schema/reconciliation-query.json';
+import jsonSchema from './json-schema/reconciliation-query.json' assert {type: 'json'};
 import {parse} from 'querystring';
 
 export async function server(
