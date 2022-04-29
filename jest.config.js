@@ -8,6 +8,7 @@ export default {
     },
   },
   collectCoverage: true,
+  coverageProvider: 'v8', // 'v8' instead of default 'babel' for better support of new Node features.
   coverageReporters: ['json-summary', 'text'],
   collectCoverageFrom: [
     '**/src/**/*.ts', // Include files that are not covered by tests.
@@ -15,10 +16,10 @@ export default {
   ],
   coverageThreshold: {
     global: {
-      lines: 89.44,
-      statements: 89.4,
-      branches: 91.17,
-      functions: 87.35,
+      lines: 90.12,
+      statements: 90.12,
+      branches: 96.38,
+      functions: 89.24,
     },
   },
   transform: {},

@@ -49,6 +49,6 @@
     "jest-dev-server": "^6.0.3"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.15.0"
   }
 }
