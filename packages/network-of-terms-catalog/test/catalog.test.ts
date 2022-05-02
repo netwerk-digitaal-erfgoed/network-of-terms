@@ -80,7 +80,7 @@ describe('Catalog', () => {
         FeatureType.RECONCILIATION,
         new URL(
           'https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/' +
-            reconciliationApis[0].iri
+            reconciliationApis[0].iri.toString().replace('#', '%23')
         )
       )
     );

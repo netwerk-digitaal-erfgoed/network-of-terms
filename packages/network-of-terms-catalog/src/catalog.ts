@@ -99,7 +99,9 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
                             .get('reconciliationUrlTemplate')!
                             .value.replace(
                               '{distribution}',
-                              bindings.get('distribution')!.value
+                              bindings
+                                .get('distribution')!
+                                .value.replace('#', '%23') // Escape # in URL.
                             )
                         )
                       ),
