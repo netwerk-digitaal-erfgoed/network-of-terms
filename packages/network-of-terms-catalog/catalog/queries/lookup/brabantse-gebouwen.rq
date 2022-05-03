@@ -13,6 +13,7 @@ WHERE {
     # For example:
     # Huize Boschlust: <https://data.brabantcloud.nl/id/ark:15052/62dd4e81-b7d6-4fc2-9473-5f4b17226105>
     # Mariaklooster: <https://data.brabantcloud.nl/id/ark:15052/0963f6bb-4b84-4e37-a087-31bbabfda4bb>
+    # Abdij van Binderen: <https://data.brabantcloud.nl/id/ark:15052/991b1709-527a-43c5-a96f-3366bb0e61c8>
     VALUES ?uri { ?uris }
 
     ?uri a schema:LandmarksOrHistoricalBuildings .
@@ -32,7 +33,9 @@ WHERE {
             COALESCE(
                 IF(?streetAddress && ?addressLocality && ?addressRegion, CONCAT("Adres: ", ?streetAddress, ", ", ?addressLocality, ", ", ?addressRegion), ?noAddress),
                 IF(?streetAddress && ?addressLocality, CONCAT("Adres: ", ?streetAddress, ", ", ?addressLocality), ?noAddress),
-                IF(?streetAddress, CONCAT("Adres: ", ?streetAddress), ?noAddress)
+                IF(?streetAddress, CONCAT("Adres: ", ?streetAddress), ?noAddress),
+                IF(?addressLocality && ?addressRegion, CONCAT("Plaats: ", ?addressLocality, ", ", ?addressRegion), ?noAddress),
+                IF(?addressLocality, CONCAT("Plaats: ", ?addressLocality), ?noAddress)
             ) AS ?addressScopeNote
         )
     }
