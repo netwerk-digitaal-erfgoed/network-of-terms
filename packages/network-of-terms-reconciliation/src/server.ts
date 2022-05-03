@@ -40,6 +40,10 @@ export async function server(
     done();
   });
 
+  server.get('/reconcile', (request, reply) => {
+    reply.send('ok');
+  });
+
   server.get<{Params: {'*': string}}>('/reconcile/*', (request, reply) => {
     const distributionIri = new IRI(request.params['*']);
     const manifest = findManifest(

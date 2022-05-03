@@ -19,6 +19,14 @@ describe('Server', () => {
     httpServer = await server(catalog);
   });
 
+  it('returns ok at root', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/reconcile',
+    });
+    expect(response.statusCode).toEqual(200);
+  });
+
   it('returns reconciliation service manifest', async () => {
     const response = await httpServer.inject({
       method: 'GET',
