@@ -30,7 +30,9 @@ WHERE {
             COALESCE(
                 IF(?streetAddress && ?addressLocality && ?addressRegion, CONCAT("Adres: ", ?streetAddress, ", ", ?addressLocality, ", ", ?addressRegion), ?noAddress),
                 IF(?streetAddress && ?addressLocality, CONCAT("Adres: ", ?streetAddress, ", ", ?addressLocality), ?noAddress),
-                IF(?streetAddress, CONCAT("Adres: ", ?streetAddress), ?noAddress)
+                IF(?streetAddress, CONCAT("Adres: ", ?streetAddress), ?noAddress),
+		        IF(?addressLocality && ?addressRegion, CONCAT("Plaats: ", ?addressLocality, ", ", ?addressRegion), ?noAddress),
+        		IF(?addressLocality, CONCAT("Plaats: ", ?addressLocality), ?noAddress)
             ) AS ?addressScopeNote
         )
     }
