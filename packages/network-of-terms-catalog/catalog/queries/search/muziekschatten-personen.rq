@@ -38,8 +38,9 @@ WHERE {
         ?label <bif:contains> ?virtuosoQuery .
     } UNION {
         # BC support.
-        BIND(?virtuosoQuery as ?b)
-        FILTER(!BOUND(?b))
+        # This Virtuoso endpoint needs STRLEN() rather than !BOUND() because the latter still matches, throwing an error
+        # for queries with diacritics or multiple words.
+        FILTER(STRLEN(?virtuosoQuery) = 0)
         ?uri ?predicate ?label .
         VALUES ?predicate { schema:name schema:alternateName }
         ?label <bif:contains> ?query .
