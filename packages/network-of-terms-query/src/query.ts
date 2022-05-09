@@ -112,7 +112,12 @@ export class QueryTermsService {
           this.logger.error(
             `An error occurred when querying "${distribution.endpoint}": ${error}`
           );
-          resolve(new ServerError(distribution, error.message));
+          resolve(
+            new ServerError(
+              distribution,
+              obfuscateHttpCredentials(error.message)
+            )
+          );
         });
         quadStream.on('data', (quad: RDF.Quad) => {
           termsTransformer.fromQuad(quad);
@@ -158,3 +163,6 @@ function guardTimeout<T>(
 
 const dataFactory = new DataFactory();
 const bindingsFactory = new BindingsFactory(dataFactory);
+
+const obfuscateHttpCredentials = (message: string) =>
+  message.replace(/(https?):\/\/.+:.+@/, '$1://***@');
