@@ -65,7 +65,7 @@ jobs:
       # See https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
       - name: Update deployment
         run: |
-          kubectl set image deployment/${{ steps.vars.outputs.package_name }} app=${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }} --record
+          kubectl set image deployment/${{ steps.vars.outputs.package_name }} app=${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
 
       - name: Verify deployment
         run: kubectl rollout status deployment/${{ steps.vars.outputs.package_name }} --timeout=60s
