@@ -16,6 +16,12 @@
   "url": [
     "https://data.niod.nl/WO2_Thesaurus/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Gebeurtenissen, plaatsen, begrippen en objecten uit de Tweede Wereldoorlog"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.niod.nl/PoolParty/sparql/WO2_Thesaurus",

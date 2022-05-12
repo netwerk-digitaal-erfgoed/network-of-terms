@@ -19,6 +19,12 @@
   "url": [
     "https://n2t.net/ark:/60537/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Straten in Gouda"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://www.goudatijdmachine.nl/id/straten#streets",

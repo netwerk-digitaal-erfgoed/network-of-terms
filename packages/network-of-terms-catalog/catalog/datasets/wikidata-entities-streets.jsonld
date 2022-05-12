@@ -16,6 +16,12 @@
   "url": [
     "http://www.wikidata.org/entity/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Straten in Nederland"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-streets",

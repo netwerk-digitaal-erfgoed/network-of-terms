@@ -22,6 +22,12 @@
   "url": [
     "http://vocab.getty.edu/aat/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties"
+    }
+  ],
   "distribution": [
     {
       "@id": "http://vocab.getty.edu/aat/sparql",

@@ -22,6 +22,12 @@
   "url": [
     "https://data.cultureelerfgoed.nl/term/id/cht/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen die het cultureel erfgoedveld in Nederland beslaan"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",

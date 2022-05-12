@@ -16,6 +16,12 @@
   "url": [
     "https://data.muziekweb.nl/Link/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Genres en stijlen in de collectie van Muziekweb"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb/sparql/Muziekweb#mw-genresstijlen",

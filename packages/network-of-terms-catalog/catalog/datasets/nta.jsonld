@@ -22,6 +22,12 @@
   "url": [
     "http://data.bibliotheken.nl/id/thes/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Naams- en andere persoonsgegevens van auteurs"
+    }
+  ],
   "distribution": [
     {
       "@id": "http://data.bibliotheken.nl/thesp/sparql",

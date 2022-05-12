@@ -16,6 +16,12 @@
   "url": [
     "http://data.beeldengeluid.nl/gtaa"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Diverse soorten eigennamen voor het beschrijven van audiovisueel materiaal"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.beeldengeluid.nl/id/datadownload/0030",
