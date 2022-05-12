@@ -9,7 +9,7 @@ CONSTRUCT {
         skos:scopeNote ?schema_description .
 }
 WHERE {
-    ?uri foaf:isPrimaryTopicOf/void:inDataset <http://data.bibliotheken.nl/id/dataset/stcn> ;
+    ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/stcn/printers> ;
         schema:additionalType <http://www.productontology.org/id/Printer_%28publishing%29> ;   # Select printers.
         rdfs:label ?rdfs_label .
 
