@@ -53,6 +53,12 @@
             "@id": "schema:Organization"
           },
           "sh:node": "schema:CreatorShape"
+        },
+        {
+          "sh:path": {
+            "@id": "schema:description"
+          },
+          "sh:minCount": 1
         }
       ]
     },
