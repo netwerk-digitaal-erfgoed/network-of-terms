@@ -25,9 +25,8 @@ WHERE {
     # http://data.bibliotheken.nl/id/thes/p338012834 for Plantijn working in Antwerp
     # The original source (STCN) shows also a time period, this data currently not available in the LOD version.
     OPTIONAL { 
-     ?uri schema:location/schema:address/schema:addressLocality ?place 
+     ?uri schema:location/schema:address/schema:addressLocality ?scopeNote 
     }
-    BIND(COALESCE(IF(BOUND(?place), ?place, ?noPlace)) as ?scopeNote)
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
 }
