@@ -5,7 +5,7 @@
   "name": [
     {
       "@language": "nl",
-      "@value": "Geonames: plaatsen in NL en BE"
+      "@value": "Geonames: geografische aanduidingen in NL en BE"
     }
   ],
   "creator": [
@@ -18,9 +18,9 @@
   ],
   "distribution": [
     {
-      "@id": "https://data.netwerkdigitaalerfgoed.nl/NDE/geonames-nl-be/",
+      "@id": "http://localhost:3030/geonames",
       "@type": "DataDownload",
-      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/NDE/geonames-nl-be/services/geonames-nl-be/sparql",
+      "contentUrl": "http://localhost:3030/geonames/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
