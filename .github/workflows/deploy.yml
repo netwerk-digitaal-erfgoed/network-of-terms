@@ -1,15 +1,16 @@
 name: Build app and update Docker image
 
 on:
+  push:
   # Use the release event because push events are not triggered for commits tagged with more than three tags:
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push.
-  release:
-    types: [created]
+#  release:
+#    types: [created]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-graphql') || startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-reconciliation')
+#    if: startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-graphql') || startsWith(github.ref_name, '@netwerk-digitaal-erfgoed/network-of-terms-reconciliation')
 
     steps:
       - uses: actions/checkout@v3
@@ -44,28 +45,45 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
-      - name: Build and push image to registry
+      - name: Build image
         uses: docker/build-push-action@v3.0.0
         with:
           context: .
-          push: true
           build-args: PACKAGE_DIR=packages/${{ steps.vars.outputs.package_name }}
           tags: |
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
             ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.version_tag }}
             ${{ steps.vars.outputs.docker_image }}:latest
 
-      - uses: digitalocean/action-doctl@v2
+      - name: Check image
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          image: ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
 
-      - name: Store DigitalOcean credentials
-        run: doctl kubernetes cluster kubeconfig save nde
+      - name: Push image to registry
+        uses: docker/build-push-action@v3.0.0
+        with:
+          context: .
+          build-args: PACKAGE_DIR=packages/${{ steps.vars.outputs.package_name }}
+          push: true
+          tags: |
+            ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
+            ${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.version_tag }}
+            ${{ steps.vars.outputs.docker_image }}:latest
 
-      # See https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
-      - name: Update deployment
-        run: |
-          kubectl set image deployment/${{ steps.vars.outputs.package_name }} app=${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
-
-      - name: Verify deployment
-        run: kubectl rollout status deployment/${{ steps.vars.outputs.package_name }} --timeout=60s
+#      - uses: digitalocean/action-doctl@v2
+#        with:
+#          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+#
+#      - name: Store DigitalOcean credentials
+#        run: doctl kubernetes cluster kubeconfig save nde
+#
+#      # See https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment
+#      - name: Update deployment
+#        run: |
+#          kubectl set image deployment/${{ steps.vars.outputs.package_name }} app=${{ steps.vars.outputs.docker_image }}:${{ steps.vars.outputs.sha_short }}
+#
+#      - name: Verify deployment
+#        run: kubectl rollout status deployment/${{ steps.vars.outputs.package_name }} --timeout=60s
