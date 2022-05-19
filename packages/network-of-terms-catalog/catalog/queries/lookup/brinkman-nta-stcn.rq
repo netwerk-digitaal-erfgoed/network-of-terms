@@ -31,9 +31,7 @@ WHERE {
     ?uri a ?type .
     VALUES ?type { skos:Concept schema:Person schema:Organization } .
 
-    ?uri schema:mainEntityOfPage/schema:isPartOf | foaf:isPrimaryTopicOf/void:inDataset ?datasetUriRaw .
-    # In the future, KB will split off the STCN printers dataset from the main STCN dataset. In the meantime, we have to translate the latter into the former.
-    BIND(IF(?datasetUriRaw = <http://data.bibliotheken.nl/id/dataset/stcn>, <http://data.bibliotheken.nl/id/dataset/stcn/printers>, ?datasetUriRaw) as ?datasetUri) .
+    ?uri schema:mainEntityOfPage/schema:isPartOf | foaf:isPrimaryTopicOf/void:inDataset ?datasetUri .
 
     # For Brinkman
     OPTIONAL {
@@ -76,6 +74,11 @@ WHERE {
         OPTIONAL { ?uri schema:name ?schema_name }
         OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
         OPTIONAL { ?uri schema:description ?schema_description }
+    }
+
+    # For STCN
+    OPTIONAL {
+        ?uri schema:location/schema:address/schema:addressLocality ?scopeNote
     }
 }
 LIMIT 1000
