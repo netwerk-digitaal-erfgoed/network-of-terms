@@ -21,7 +21,7 @@
     "@types/rdfjs__data-model": "^2.0.1",
     "jest-dev-server": "^6.0.3",
     "mercurius-codegen": "^3.3.1",
-    "ts-node-dev": "^1.1.8",
+    "ts-node-dev": "^2.0.0",
     "tsc-watch": "^5.0.3"
   },
   "scripts": {
