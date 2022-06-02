@@ -16,6 +16,12 @@
   "url": [
     "http://www.wikidata.org/entity/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Personen"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-persons",

@@ -16,6 +16,12 @@
   "url": [
     "https://data.brabantcloud.nl/id/ark:15052/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Gebouwen in de provincie Noord-Brabant, vooralsnog met een religieuze functie, zoals kloosters"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.brabantcloud.nl/gebouwen/query/",

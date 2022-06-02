@@ -16,6 +16,12 @@
   "url": [
     "https://adamlink.nl/geo/street/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Straten in Amsterdam"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://druid.datalegend.net/AdamNet/Geography/sparql#streets",

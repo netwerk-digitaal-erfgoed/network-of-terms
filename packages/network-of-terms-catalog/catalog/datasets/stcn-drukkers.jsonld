@@ -16,6 +16,12 @@
   "url": [
     "http://data.bibliotheken.nl/id/thes/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Uitgevers, een subset van Short-Title Catalogue Netherlands (STCN)"
+    }
+  ],
   "distribution": [
     {
       "@id": "http://data.bibliotheken.nl/thes/drukkers/sparql",
