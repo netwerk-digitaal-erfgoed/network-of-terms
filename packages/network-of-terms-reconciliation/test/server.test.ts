@@ -1,6 +1,5 @@
 import {FastifyInstance} from 'fastify';
-import {Server} from 'http';
-import {customRequest, server} from '../src/server';
+import {server} from '../src/server';
 import {teardown} from 'jest-dev-server';
 import {ReconciliationQueryBatch} from '../src/query';
 import {
@@ -8,7 +7,7 @@ import {
   testCatalog,
 } from '../../network-of-terms-query/src/server-test';
 
-let httpServer: FastifyInstance<Server, customRequest>;
+let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);
 describe('Server', () => {
   afterAll(async () => {
@@ -110,7 +109,7 @@ describe('Server', () => {
     );
     expect(response.statusCode).toEqual(400);
     expect(JSON.parse(response.body).message).toEqual(
-      "body['q1'].limit should be integer"
+      'body/q1/limit must be integer'
     );
   });
 
