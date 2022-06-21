@@ -18,9 +18,9 @@
   ],
   "distribution": [
     {
-      "@id": "http://localhost:3030/geonames",
+      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames",
       "@type": "DataDownload",
-      "contentUrl": "http://localhost:3030/geonames/sparql",
+      "contentUrl": "https://demo.netwerkdigitaalerfgoed.nl/geonames/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
