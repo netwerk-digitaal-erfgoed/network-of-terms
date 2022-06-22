@@ -7,39 +7,37 @@ CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
-        skos:scopeNote ?scopeNote .
-    ?uri skos:broader ?adm1_uri .
-    ?adm1_uri skos:prefLabel ?adm1_prefLabel .
-    ?uri skos:broader ?adm2_uri .
-    ?adm2_uri skos:prefLabel ?adm2_prefLabel .
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader .
+    ?broader skos:prefLabel ?broader_prefLabel .
 }
-WHERE { 
-  # search in names and alternative names
-  ?uri ?predicate ?name .
-  VALUES ?predicate {gn:name gn:alternateName } .
-  FILTER(CONTAINS(LCASE(?name),LCASE($query)))
-  
-  # limit results to places (P), localities (L), administrative levels (A) and water surfaces (H)
-  ?uri a gn:Feature .
-  ?uri gn:featureClass ?featureClass  .
-  VALUES ?featureClass {gn:P gn:L gn:A gn:H}
-  
-  ?uri gn:name ?prefLabel .
-  OPTIONAL {
-    ?uri gn:alternateName ?altLabel .
-    FILTER(?altLabel!="")
-  }
-  # locate the parentlevels AMD1 and ADM2
-  OPTIONAL {
-    ?uri gn:parentADM1 ?adm1_uri .
-    ?adm1_uri gn:name ?adm1_prefLabel .
-  }
-  OPTIONAL {
-    ?uri gn:parentADM2 ?adm2_uri .
-    ?adm2_uri gn:name ?adm2_prefLabel .
-  }
-  OPTIONAL {
-    ?uri gn:featureCode ?feature_code .
-    ?feature_code gn:name ?scopeNote .
-  }
-} LIMIT 1000
+WHERE {
+    ?uri a gn:Feature ;
+        gn:featureClass ?featureClass ;
+        gn:name ?prefLabel ;
+        ?names ?name .
+
+    # Search in names and alternative names.
+    VALUES ?names { gn:name gn:alternateName }
+
+    # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
+    VALUES ?featureClass { gn:P gn:L gn:A gn:H }
+
+    FILTER(CONTAINS(LCASE(?name), LCASE($query)))
+
+    OPTIONAL {
+        ?uri gn:alternateName ?altLabel .
+        FILTER(?altLabel != "")
+    }
+
+    OPTIONAL {
+        ?uri ?parents ?broader .
+        ?broader gn:name ?broader_prefLabel
+        VALUES ?parents { gn:parentADM1 gn:parentADM2 }
+    }
+
+    OPTIONAL {
+        ?uri gn:featureCode/gn:name ?scopeNote .
+    }
+}
+LIMIT 1000
