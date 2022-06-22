@@ -74,16 +74,16 @@
       "alternateName": "AdamNet"
     },
     {
-      "@id": "https://www.geonames.org",
-      "@type": "Organization",
-      "name": "GeoNames geographical database",
-      "alternateName": "Geonames"
-    },
-    {
       "@id": "https://www.erfgoedbrabant.nl",
       "@type": "Organization",
       "name": "Erfgoed Brabant",
       "alternateName": "Erfgoed Brabant"
+    },
+    {
+      "@id": "https://www.geonames.org",
+      "@type": "Organization",
+      "name": "GeoNames geographical database",
+      "alternateName": "Geonames"
     }
   ]
 }
