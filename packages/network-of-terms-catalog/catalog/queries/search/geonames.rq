@@ -1,0 +1,41 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX gn: <https://www.geonames.org/ontology#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader .
+    ?broader skos:prefLabel ?broader_prefLabel .
+}
+WHERE {
+    ?uri a gn:Feature ;
+        gn:featureClass ?featureClass ;
+        gn:name ?prefLabel ;
+        ?names ?name .
+
+    # Search in names and alternative names.
+    VALUES ?names { gn:name gn:alternateName }
+
+    # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
+    VALUES ?featureClass { gn:P gn:L gn:A gn:H }
+
+    FILTER(CONTAINS(LCASE(?name), LCASE($query)))
+
+    OPTIONAL {
+        ?uri gn:alternateName ?altLabel .
+        FILTER(?altLabel != "")
+    }
+
+    OPTIONAL {
+        ?uri ?parents ?broader .
+        ?broader gn:name ?broader_prefLabel
+        VALUES ?parents { gn:parentADM1 gn:parentADM2 }
+    }
+
+    OPTIONAL {
+        ?uri gn:featureCode/gn:name ?scopeNote .
+    }
+}
+LIMIT 1000
