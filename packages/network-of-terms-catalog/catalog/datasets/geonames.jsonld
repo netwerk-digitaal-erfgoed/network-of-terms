@@ -19,7 +19,7 @@
   "description": [
     {
       "@language": "nl",
-      "@value": "Selectie van NL en BE geografische aanduidingen zoals plaatsen, administratieve eenheden (gemeentes, provincies) en water eenheden (rivieren, beken, meren, etc)"
+      "@value": "Selectie van geografische namen zoals plaatsen, administratieve eenheden (gemeentes, provincies) en waterlichamen (rivieren, beken, meren etc.)"
     }
   ],
   "distribution": [
