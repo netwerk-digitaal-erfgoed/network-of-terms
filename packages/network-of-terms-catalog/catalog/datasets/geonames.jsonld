@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://www.geonames.org/places",
+  "@id": "https://www.geonames.org",
   "@type": "Dataset",
   "name": [
     {
@@ -10,7 +10,7 @@
   ],
   "creator": [
     {
-      "@id": "https://www.geonames.org"
+      "@id": "https://www.geonames.org/team.html"
     }
   ],
   "url": [

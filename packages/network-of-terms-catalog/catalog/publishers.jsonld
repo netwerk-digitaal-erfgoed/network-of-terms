@@ -80,10 +80,10 @@
       "alternateName": "Erfgoed Brabant"
     },
     {
-      "@id": "https://www.geonames.org",
+      "@id": "https://www.geonames.org/team.html",
       "@type": "Organization",
-      "name": "GeoNames geographical database",
-      "alternateName": "Geonames"
+      "name": "GeoNames",
+      "alternateName": "GeoNames"
     }
   ]
 }
