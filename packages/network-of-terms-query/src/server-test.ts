@@ -16,6 +16,7 @@ export const testCatalog = (port: number) =>
     new Dataset(
       new IRI('https://data.rkd.nl/rkdartists'),
       'RKDartists',
+      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
       [new IRI('https://example.com/resources/')],
       [
         new Organization(
@@ -81,6 +82,7 @@ export const testCatalog = (port: number) =>
     new Dataset(
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
       'Cultuurhistorische Thesaurus',
+      'Onderwerpen voor het beschrijven van cultureel erfgoed',
       [new IRI('https://data.cultureelerfgoed.nl/term/id/cht/')],
       [
         new Organization(
@@ -107,6 +109,7 @@ export const testCatalog = (port: number) =>
     new Dataset(
       new IRI('http://vocab.getty.edu/aat'),
       'Art & Architecture Thesaurus',
+      'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
       [new IRI('http://vocab.getty.edu/aat/')],
       [
         new Organization(
