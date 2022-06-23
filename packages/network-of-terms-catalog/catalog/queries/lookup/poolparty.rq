@@ -7,9 +7,11 @@ CONSTRUCT {
         skos:hiddenLabel ?hiddenLabel ;
         skos:scopeNote ?scopeNote ;
         skos:broader ?broader_uri ;
-        skos:narrower ?narrower_uri .
+        skos:narrower ?narrower_uri ;
+        skos:related ?related_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
     # For example:
@@ -44,6 +46,11 @@ WHERE {
         ?uri skos:narrower ?narrower_uri .
         ?narrower_uri skos:prefLabel ?narrower_prefLabel .
         FILTER(LANG(?narrower_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:related ?related_uri .
+        ?related_uri skos:prefLabel ?related_prefLabel .
+        FILTER(LANG(?related_prefLabel) = "nl")
     }
 }
 LIMIT 1000

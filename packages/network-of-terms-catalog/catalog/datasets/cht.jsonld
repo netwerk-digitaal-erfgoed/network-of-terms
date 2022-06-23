@@ -41,7 +41,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/abr-cht.rq"
+          "query": "file://catalog/queries/lookup/poolparty.rq"
         },
         {
           "@type": "Action",

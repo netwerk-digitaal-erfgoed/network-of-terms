@@ -1,43 +1,37 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://data.cultureelerfgoed.nl/term/id/abr",
+  "@id": "https://homosaurus.org/",
   "@type": "Dataset",
   "name": [
     {
       "@language": "nl",
-      "@value": "Archeologisch Basisregister"
-    }
-  ],
-  "alternateName": [
-    {
-      "@language": "nl",
-      "@value": "ABR"
+      "@value": "Homosaurus"
     }
   ],
   "creator": [
     {
-      "@id": "https://www.cultureelerfgoed.nl"
+      "@id": "https://ihlia.nl"
     }
   ],
   "url": [
-    "https://data.cultureelerfgoed.nl/term/id/abr/"
+    "https://data.ihlia.nl/homosaurus/"
   ],
   "description": [
     {
       "@language": "nl",
-      "@value": "Onderwerpen voor het beschrijven van onderzoeken, vondsten en sporen"
+      "@value": "LGBTQ+ erfgoed"
     }
   ],
   "distribution": [
     {
-      "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
+      "@id": "https://data.ihlia.nl/PoolParty/sparql/homosaurus",
       "@type": "DataDownload",
-      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
+      "contentUrl": "https://data.ihlia.nl/PoolParty/sparql/homosaurus",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/abr.rq"
+          "query": "file://catalog/queries/search/homosaurus.rq"
         },
         {
           "@type": "FindAction",

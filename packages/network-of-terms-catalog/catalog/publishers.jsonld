@@ -84,6 +84,12 @@
       "@type": "Organization",
       "name": "GeoNames",
       "alternateName": "GeoNames"
+    },
+    {
+      "@id": "https://ihlia.nl",
+      "@type": "Organization",
+      "name": "IHLIA",
+      "alternateName": "IHLIA"
     }
   ]
 }
