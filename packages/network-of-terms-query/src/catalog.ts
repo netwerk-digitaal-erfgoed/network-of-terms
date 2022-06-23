@@ -41,6 +41,7 @@ export class Dataset {
   constructor(
     readonly iri: IRI,
     readonly name: string,
+    readonly description: string,
     readonly termsPrefixes: IRI[],
     readonly creators: [Organization],
     readonly distributions: [Distribution],

@@ -33,12 +33,13 @@ export async function defaultCatalog(): Promise<Catalog> {
 export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
   // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
   const properties =
-    '?dataset ?name ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName';
+    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName';
   const query = `
       PREFIX schema: <http://schema.org/>
         SELECT ${properties} (GROUP_CONCAT(?url) as ?url)  WHERE {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
+            schema:description ?description ;
             schema:creator ?creator ;
             schema:distribution ?distribution ;
             schema:url ?url .
@@ -72,6 +73,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
         new Dataset(
           new IRI(bindings.get('dataset')!.value),
           bindings.get('name')!.value,
+          bindings.get('description')!.value,
           bindings
             .get('url')!
             .value.split(' ') // The single value is space-delineated.
