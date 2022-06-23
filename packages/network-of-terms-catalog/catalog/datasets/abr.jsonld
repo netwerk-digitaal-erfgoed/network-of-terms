@@ -37,7 +37,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/abr.rq"
+          "query": "file://catalog/queries/search/poolparty.rq"
         },
         {
           "@type": "FindAction",
