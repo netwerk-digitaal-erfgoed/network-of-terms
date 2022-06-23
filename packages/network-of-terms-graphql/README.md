@@ -54,6 +54,7 @@ query Sources {
     uri
     name
     alternateName
+    description
     creators {
       uri
       name
