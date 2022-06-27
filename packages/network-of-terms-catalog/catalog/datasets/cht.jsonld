@@ -37,11 +37,11 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/cht.rq"
+          "query": "file://catalog/queries/search/poolparty.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/abr-cht.rq"
+          "query": "file://catalog/queries/lookup/poolparty.rq"
         },
         {
           "@type": "Action",

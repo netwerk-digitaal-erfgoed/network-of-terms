@@ -6,14 +6,14 @@ CONSTRUCT {
         skos:altLabel ?altLabel ;
         skos:hiddenLabel ?hiddenLabel ;
         skos:scopeNote ?scopeNote ;
-        skos:exactMatch ?skos_exactMatch ;
         skos:broader ?broader_uri ;
-        skos:narrower ?narrower_uri .
+        skos:narrower ?narrower_uri ;
+        skos:related ?related_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    ?uri a <https://data.cultureelerfgoed.nl/vocab/id/abr#AbrConcept> .
     ?uri ?predicate ?label .
     VALUES ?predicate { skos:prefLabel skos:altLabel }
     FILTER(LANG(?label) = "nl")
@@ -27,12 +27,12 @@ WHERE {
         FILTER(LANG(?altLabel) = "nl")
     }
     OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote .
-        FILTER(LANG(?scopeNote) = "nl")
-    }
-    OPTIONAL {
         ?uri skos:hiddenLabel ?hiddenLabel .
         FILTER(LANG(?hiddenLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote .
+        FILTER(LANG(?scopeNote) = "nl")
     }
     OPTIONAL {
         ?uri skos:broader ?broader_uri .
@@ -45,7 +45,9 @@ WHERE {
         FILTER(LANG(?narrower_prefLabel) = "nl")
     }
     OPTIONAL {
-        ?uri skos:exactMatch ?skos_exactMatch .
+        ?uri skos:related ?related_uri .
+        ?related_uri skos:prefLabel ?related_prefLabel .
+        FILTER(LANG(?related_prefLabel) = "nl")
     }
 }
 LIMIT 1000
