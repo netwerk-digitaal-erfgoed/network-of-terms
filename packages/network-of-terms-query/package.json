@@ -32,7 +32,7 @@
     "@comunica/bindings-factory": "^2.0.1",
     "@comunica/data-factory": "^2.0.1",
     "@comunica/query-sparql": "^2.3.0",
-    "@hapi/hoek": "^10.0.0",
+    "@hapi/hoek": "^10.0.1",
     "@rdfjs/data-model": "^2.0.1",
     "joi": "^17.6.0",
     "pino": "^8.3.0",
