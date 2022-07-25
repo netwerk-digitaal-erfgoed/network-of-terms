@@ -8,7 +8,7 @@
   ],
   "dependencies": {
     "@fastify/cors": "8.0.0",
-    "@hapi/hoek": "10.0.0",
+    "@hapi/hoek": "10.0.1",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/data-model": "2.0.1",
