@@ -9,10 +9,10 @@
     "@fastify/accepts": "4.0.0",
     "@fastify/cors": "8.0.0",
     "@fastify/formbody": "7.0.1",
-    "@hapi/hoek": "10.0.0",
+    "@hapi/hoek": "10.0.1",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "fastify": "4.2.1",
+    "fastify": "4.3.0",
     "string-comparison": "1.1.0"
   },
   "devDependencies": {
