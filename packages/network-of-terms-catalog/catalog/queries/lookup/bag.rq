@@ -1,0 +1,31 @@
+PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX schema: <https://schema.org/>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+}
+WHERE {
+    VALUES ?uri { ?uris }
+
+    GRAPH <https://data.labs.kadaster.nl/kadaster/kg/graphs/bag-pand> {
+        ?uri a schema:Place ;
+            schema:name ?prefLabel ;
+            schema:floorSize ?floorSize ;
+            schema:dateCreated ?dateCreated .
+
+        OPTIONAL {
+            ?uri schema:containedInPlace ?broader_uri .
+            GRAPH <https://data.labs.kadaster.nl/kadaster/kg/graphs/bag-woonplaats> {
+                ?broader_uri schema:name ?broader_prefLabel .
+            }
+        }
+
+        BIND(CONCAT("Bouwjaar ", YEAR(?dateCreated), ", oppervlakte ", ?floorSize, " m²") AS ?scopeNote)
+    }
+}
+LIMIT 1000

@@ -90,6 +90,12 @@
       "@type": "Organization",
       "name": "IHLIA",
       "alternateName": "IHLIA"
+    },
+    {
+      "@id": "https://www.kadaster.nl",
+      "@type": "Organization",
+      "name": "Kadaster",
+      "alternateName": "Kadaster"
     }
   ]
 }
