@@ -1,0 +1,41 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tooiont: <https://identifier.overheid.nl/tooi/def/ont/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX prov: <http://www.w3.org/ns/prov#> 
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:broader ?broader_uri ;
+        skos:scopeNote ?scopeNote ;
+        skos:related ?related_uri ;
+        rdfs:seeAlso ?seeAlso .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?related_uri skos:prefLabel ?related_prefLabel .
+}
+WHERE {
+    #For example:
+    # Haarlem: https://identifier.overheid.nl/tooi/id/gemeente/gm0392
+    VALUES ?uri { ?uris }
+    OPTIONAL {
+        ?uri rdfs:label ?prefLabel .
+    }
+    OPTIONAL {
+        ?uri tooiont:ligtInProvincie ?broader_uri .
+        ?broader_uri rdfs:label ?broader_prefLabel .   
+    }
+    OPTIONAL {
+        ?uri tooiont:owmsId ?owmsId
+        BIND(STR(?owmsId) as ?seeAlso)
+    }
+    OPTIONAL {
+        ?event prov:invalidated ?uri ;
+               ?changeType ?related_uri ;
+               tooiont:tijdstipWijziging ?timestamp .
+        VALUES ?changeType {prov:used prov:generated}
+        ?related_uri rdfs:label ?related_prefLabel .
+        BIND(CONCAT("Opgegaan in ",?related_prefLabel," op ",STR(DAY(?timestamp)),'/',STR(MONTH(?timestamp)),'/',STR(YEAR(?timestamp))) as ?scopeNote )
+    }
+}
+LIMIT 1000

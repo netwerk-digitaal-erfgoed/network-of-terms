@@ -90,6 +90,12 @@
       "@type": "Organization",
       "name": "IHLIA",
       "alternateName": "IHLIA"
+    },
+    {
+      "@id": "https://identifier.overheid.nl/tooi",
+      "@type": "Organization",
+      "name": "Overheid.nl - TOOI",
+      "alternateName": "TOOI"
     }
   ]
 }
