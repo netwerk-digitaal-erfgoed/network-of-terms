@@ -31,7 +31,7 @@
   "dependencies": {
     "@comunica/bindings-factory": "^2.0.1",
     "@comunica/data-factory": "^2.0.1",
-    "@comunica/query-sparql": "^2.3.0",
+    "@comunica/query-sparql": "^2.4.3",
     "@hapi/hoek": "^10.0.1",
     "@rdfjs/data-model": "^2.0.1",
     "joi": "^17.6.0",
@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@comunica/core": "^2.4.0",
-    "@comunica/query-sparql-file": "^2.3.0",
+    "@comunica/query-sparql-file": "^2.4.3",
     "@jest/globals": "^29.0.2",
     "asynciterator": "^3.7.0",
     "jest-dev-server": "^6.1.1"
