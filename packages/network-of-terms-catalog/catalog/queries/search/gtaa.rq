@@ -1,5 +1,6 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX justskos: <http://justskos.org/ns/core#>
+PREFIX text: <http://jena.apache.org/text#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -15,36 +16,10 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    {
-        ?uri skos:inScheme ?datasetUri .
-        ?uri ?predicate ?label ;
-            justskos:status ?status .
-        VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-        FILTER(LANG(?label) = "nl")
-        FILTER(?status IN ('approved', 'candidate'))
-
-        # single word query, match case insensitive
-        FILTER regex(?query, "^[^ ]+$")
-        FILTER CONTAINS(LCASE(?label), LCASE(?query))
-    }
-    UNION
-    {
-        ?uri skos:inScheme ?datasetUri .
-        ?uri ?predicate ?label ;
-            justskos:status ?status .
-        VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-        FILTER(LANG(?label) = "nl")
-        FILTER(?status IN ('approved', 'candidate'))
-
-        # double word query, whitespace separator
-        FILTER REGEX(?query, "^([^ ]+)[ ]+([^ ]+)$")
-
-        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$1") AS ?term1)
-        BIND(REPLACE(?query, "^([^ ]+)[ ]+([^ ]+)$", "$2") AS ?term2)
-
-        # search case insensitive using an AND construct for the query terms
-        FILTER( CONTAINS(LCASE(?label), LCASE(?term1)) && CONTAINS(LCASE(?label), LCASE(?term2)) )
-    }
+    ?uri text:query ?query .
+    ?uri skos:inScheme ?datasetUri ;
+        justskos:status ?status .
+    FILTER(?status IN ('approved', 'candidate'))
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .

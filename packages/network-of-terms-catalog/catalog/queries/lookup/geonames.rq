@@ -3,7 +3,7 @@ PREFIX gn: <https://www.geonames.org/ontology#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
-        skos:prefLabel ?prefLabel ;
+        skos:prefLabel ?prefLabel_ext ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote ;
         skos:broader ?broader .
@@ -14,7 +14,10 @@ WHERE {
     VALUES ?uri { ?uris }
 
     ?uri a gn:Feature ;
+        gn:countryCode ?countryCode ;
         gn:name ?prefLabel .
+
+    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext) 
 
     OPTIONAL {
         ?uri gn:alternateName ?altLabel .
@@ -25,6 +28,8 @@ WHERE {
         ?uri ?parents ?broader .
         ?broader gn:name ?broader_prefLabel
         VALUES ?parents { gn:parentADM1 gn:parentADM2 }
+        # filter out the circular links in the converted data
+        FILTER(?uri != ?broader)
     }
 
     OPTIONAL {
