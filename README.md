@@ -59,3 +59,11 @@ This repository contains the following packages:
   sources;
 - [network-of-terms-reconciliation](packages/network-of-terms-reconciliation): a Reconciliation Service API for matching
   strings against terms with URIs.
+
+### Contributing
+
+You’re very welcome to contribute to this repository:
+
+- [create an issue](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues/new) if you encounter a problem
+  or have suggestions;
+- read [CONTRIBUTING](CONTRIBUTING.md) if you wish to commit code. 
