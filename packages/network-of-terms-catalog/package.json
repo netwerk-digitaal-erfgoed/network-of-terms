@@ -36,7 +36,7 @@
     "jsonld-streaming-parser": "^3.0.0",
     "rdf-data-factory": "^1.1.1",
     "rdf-ext": "^2.1.0",
-    "rdf-validate-shacl": "^0.4.4"
+    "rdf-validate-shacl": "^0.4.5"
   },
   "bugs": {
     "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/issues"
