@@ -9,7 +9,7 @@
     "@qiwi/multi-semantic-release": "^5.0.0",
     "@rdfjs/types": "^1.1.0",
     "@types/jest": "^27.4.1",
-    "@types/node": "^18.11.2",
+    "@types/node": "^18.11.4",
     "gts": "^3.1.1",
     "jest": "^27.5.1",
     "jest-coverage-thresholds-bumper": "^1.1.0",
