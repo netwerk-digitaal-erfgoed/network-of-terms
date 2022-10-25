@@ -16,7 +16,7 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    ?uri text:query ?query .
+    ?uri text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
     ?uri skos:inScheme ?datasetUri ;
         justskos:status ?status .
     FILTER(?status IN ('approved', 'candidate'))
