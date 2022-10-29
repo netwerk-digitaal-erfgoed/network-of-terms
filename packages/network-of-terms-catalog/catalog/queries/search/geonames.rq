@@ -24,7 +24,9 @@ WHERE {
     # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
     VALUES ?featureClass { gn:P gn:L gn:A gn:H }
 
-    FILTER(CONTAINS(LCASE(?name), LCASE($query)))
+    # Select results that start with the search string
+    # Using contains() leads too much noise 
+    FILTER(STRSTARTS(LCASE(?name), LCASE($query)))
 
     OPTIONAL {
         ?uri gn:alternateName ?altLabel .
