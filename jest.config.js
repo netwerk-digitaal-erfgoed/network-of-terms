@@ -2,11 +2,6 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   testTimeout: 60000,
   extensionsToTreatAsEsm: ['.ts'],
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
-  },
   collectCoverage: true,
   coverageProvider: 'v8', // 'v8' instead of default 'babel' for better support of new Node features.
   coverageReporters: ['json-summary', 'text'],
@@ -22,7 +17,14 @@ export default {
       functions: 89.36,
     },
   },
-  transform: {},
+  transform: {
+    '^.+\\.ts?$': [
+      'ts-jest',
+      {
+        useESM: true,
+      },
+    ],
+  },
   moduleNameMapper: {
     '^@netwerk-digitaal-erfgoed/(.*)$': '<rootDir>/packages/$1/src/',
   },
