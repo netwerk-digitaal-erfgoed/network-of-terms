@@ -89,15 +89,18 @@ export class QueryTermsService {
         .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000)
     );
 
-    this.logger.info(`Querying "${distribution.endpoint}" with "${query}"...`);
     const timer = new Hoek.Bench();
     const logger = new LoggerPino({logger: this.logger});
+    // Extract HTTP credentials if the distribution URL contains any.
+    const url = new URL(distribution.endpoint.toString());
+    this.logger.info(`Querying "${url}" with "${query}"...`);
     const quadStream = await this.engine.queryQuads(query, {
       log: logger,
+      httpAuth: url.username === '' ? '' : url.username + ':' + url.password,
       sources: [
         {
           type: 'sparql',
-          value: distribution.endpoint.toString(),
+          value: url.origin + url.pathname,
         },
       ],
       initialBindings: bindingsFactory.fromRecord(
