@@ -90,6 +90,12 @@
       "@type": "Organization",
       "name": "IHLIA",
       "alternateName": "IHLIA"
+    },
+    {
+      "@id": "https://www.indischherinneringscentrum.nl/",
+      "@type": "Organization",
+      "name": "Indisch Herinneringscentrum",
+      "alternateName": "IHC"
     }
   ]
 }
