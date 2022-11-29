@@ -16,6 +16,12 @@
   "url": [
     "http://iconclass.org/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Termen voor het beschrijven van de inhoud van afbeeldingen"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://iconclass.org/sparql/no-keys",
