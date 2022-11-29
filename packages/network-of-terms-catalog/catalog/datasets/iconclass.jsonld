@@ -18,9 +18,9 @@
   ],
   "distribution": [
     {
-      "@id": "https://test.iconclass.org/sparql",
+      "@id": "https://iconclass.org/sparql",
       "@type": "DataDownload",
-      "contentUrl": "https://test.iconclass.org/sparql",
+      "contentUrl": "https://iconclass.org/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
@@ -30,6 +30,17 @@
         {
           "@type": "FindAction",
           "query": "file://catalog/queries/lookup/iconclass.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
+          }
         }
       ]
     }
