@@ -16,6 +16,12 @@
   "url": [
     "http://data.beeldengeluid.nl/gtaa/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen die slechts voor shots/clips/geluiden worden toegepast voor het beschrijven van audiovisueel materiaal"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.beeldengeluid.nl/id/datadownload/0032",
@@ -38,7 +44,8 @@
             "actionApplication": {
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
-            }
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
         }
       ]

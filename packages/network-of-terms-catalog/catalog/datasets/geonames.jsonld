@@ -1,47 +1,41 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://data.cultureelerfgoed.nl/term/id/abr",
+  "@id": "https://www.geonames.org",
   "@type": "Dataset",
   "name": [
     {
       "@language": "nl",
-      "@value": "Archeologisch Basisregister"
-    }
-  ],
-  "alternateName": [
-    {
-      "@language": "nl",
-      "@value": "ABR"
+      "@value": "GeoNames: geografische namen in Nederland, België en Duitsland"
     }
   ],
   "creator": [
     {
-      "@id": "https://www.cultureelerfgoed.nl"
+      "@id": "https://www.geonames.org/team.html"
     }
   ],
   "url": [
-    "https://data.cultureelerfgoed.nl/term/id/abr/"
+    "https://sws.geonames.org/"
   ],
   "description": [
     {
       "@language": "nl",
-      "@value": "Onderwerpen voor het beschrijven van onderzoeken, vondsten en sporen"
+      "@value": "Selectie van geografische namen zoals plaatsen, administratieve eenheden (gemeentes, provincies) en waterlichamen (rivieren, beken, meren etc.)"
     }
   ],
   "distribution": [
     {
-      "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
+      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames",
       "@type": "DataDownload",
-      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
+      "contentUrl": "https://demo.netwerkdigitaalerfgoed.nl/geonames/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/poolparty.rq"
+          "query": "file://catalog/queries/search/geonames.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/poolparty.rq"
+          "query": "file://catalog/queries/lookup/geonames.rq"
         },
         {
           "@type": "Action",

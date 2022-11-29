@@ -3,6 +3,12 @@ import {URL} from 'url';
 export class Catalog {
   constructor(readonly datasets: ReadonlyArray<Dataset>) {}
 
+  public getDatasetByIri(iri: IRI): Dataset | undefined {
+    return this.datasets.find(
+      dataset => dataset.iri.toString() === iri.toString()
+    );
+  }
+
   public getDatasetByDistributionIri(iri: IRI): Dataset | undefined {
     return this.datasets.find(
       dataset => dataset.getDistributionByIri(iri) !== undefined
@@ -17,12 +23,14 @@ export class Catalog {
     );
   }
 
-  public getDistributionsProvidingFeature(feature: Feature): Distribution[] {
+  public getDistributionsProvidingFeature(
+    featureType: FeatureType
+  ): Distribution[] {
     return this.datasets.reduce<Distribution[]>((acc, dataset) => {
       return [
         ...acc,
         ...dataset.distributions.filter(distribution =>
-          distribution.features.includes(feature)
+          distribution.hasFeature(featureType)
         ),
       ];
     }, []);
@@ -33,6 +41,7 @@ export class Dataset {
   constructor(
     readonly iri: IRI,
     readonly name: string,
+    readonly description: string,
     readonly termsPrefixes: IRI[],
     readonly creators: [Organization],
     readonly distributions: [Distribution],
@@ -63,9 +72,17 @@ export class SparqlDistribution {
     readonly features: Feature[] = []
   ) {}
 
-  public hasFeature(feature: Feature) {
-    return this.features.includes(feature);
+  public hasFeature(feature: FeatureType) {
+    return this.features.some((value: Feature) => value.type === feature);
   }
+}
+
+export class Feature {
+  constructor(readonly type: FeatureType, readonly url: URL) {}
+}
+
+export enum FeatureType {
+  RECONCILIATION = 'https://reconciliation-api.github.io/specs/latest/',
 }
 
 /**
@@ -74,7 +91,3 @@ export class SparqlDistribution {
 export type Distribution = SparqlDistribution;
 
 export class IRI extends URL {}
-
-export enum Feature {
-  RECONCILIATION = 'https://reconciliation-api.github.io/specs/latest/',
-}

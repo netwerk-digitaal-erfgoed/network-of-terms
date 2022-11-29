@@ -22,6 +22,12 @@
   "url": [
     "http://data.bibliotheken.nl/id/thes/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Naams- en andere persoonsgegevens van auteurs"
+    }
+  ],
   "distribution": [
     {
       "@id": "http://data.bibliotheken.nl/thesp/sparql",
@@ -44,7 +50,8 @@
             "actionApplication": {
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
-            }
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
         }
       ]

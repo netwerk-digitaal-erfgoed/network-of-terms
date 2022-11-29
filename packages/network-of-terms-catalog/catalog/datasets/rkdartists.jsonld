@@ -16,6 +16,12 @@
   "url": [
     "https://data.rkd.nl/artists/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
@@ -38,7 +44,8 @@
             "actionApplication": {
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
-            }
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
         }
       ]

@@ -1,6 +1,5 @@
 import {FastifyInstance} from 'fastify';
 import {server} from '../src/server';
-import {gql} from 'mercurius-codegen';
 import {teardown} from 'jest-dev-server';
 import {
   startDistributionSparqlEndpoint,
@@ -20,7 +19,7 @@ describe('Server', () => {
 
   it('responds to GraphQL sources query', async () => {
     const body = await query(
-      gql`
+      `
         query {
           sources {
             uri
@@ -31,11 +30,22 @@ describe('Server', () => {
               name
               alternateName
             }
+            features {
+              type
+              url
+            }
           }
         }
       `
     );
     expect(body.data.sources).toHaveLength(catalog.datasets.length);
+    expect(body.data.sources[0].uri).toEqual(
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
+    );
+    expect(body.data.sources[0].features).toContainEqual({
+      type: 'RECONCILIATION',
+      url: 'https://example.com/reconcile/rkd',
+    });
   });
 
   it('responds to GraphQL terms query when source does not exist', async () => {
@@ -174,7 +184,7 @@ async function query(query: string): Promise<any> {
 }
 
 function termsQuery(sources: string[], query = 'nachtwacht') {
-  return gql`
+  return `
     query {
       terms(
         sources: [${sources.map(source => `"${source}"`).join(',')}],
@@ -219,7 +229,7 @@ function termsQuery(sources: string[], query = 'nachtwacht') {
 }
 
 function lookupQuery(...iris: string[]) {
-  return gql`
+  return `
     query {
       lookup(
         uris: [${iris.map(iri => `"${iri}"`).join(',')}],

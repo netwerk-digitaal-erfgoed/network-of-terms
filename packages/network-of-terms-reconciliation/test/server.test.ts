@@ -1,6 +1,5 @@
 import {FastifyInstance} from 'fastify';
-import {Server} from 'http';
-import {customRequest, server} from '../src/server';
+import {server} from '../src/server';
 import {teardown} from 'jest-dev-server';
 import {ReconciliationQueryBatch} from '../src/query';
 import {
@@ -8,7 +7,7 @@ import {
   testCatalog,
 } from '../../network-of-terms-query/src/server-test';
 
-let httpServer: FastifyInstance<Server, customRequest>;
+let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);
 describe('Server', () => {
   afterAll(async () => {
@@ -17,6 +16,14 @@ describe('Server', () => {
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3001);
     httpServer = await server(catalog);
+  });
+
+  it('returns ok at root', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/reconcile',
+    });
+    expect(response.statusCode).toEqual(200);
   });
 
   it('returns reconciliation service manifest', async () => {
@@ -60,11 +67,11 @@ describe('Server', () => {
     // Results must be sorted by score in decreasing order.
     expect(results.q2.result).toHaveLength(2);
     expect(results.q2.result[0].name).toEqual('All things art');
-    expect(results.q2.result[0].score).toEqual(81.65); // Match of ‘things’ in prefLabel ‘All things art’.
+    expect(results.q2.result[0].score).toEqual(62.5); // Match of ‘things’ in prefLabel ‘All things art’.
     expect(results.q2.result[1].description).toEqual(
       'painted things that can be beautiful • another altLabel'
     ); // Result has no prefLabel.
-    expect(results.q2.result[1].score).toEqual(63.25); // Match of ‘things’ in altLabel ‘painted things that can be beautiful’.
+    expect(results.q2.result[1].score).toEqual(28.57); // Match of ‘things’ in altLabel ‘painted things that can be beautiful’.
 
     expect(results.q3.result).toEqual([]); // No results.
   });
@@ -102,7 +109,7 @@ describe('Server', () => {
     );
     expect(response.statusCode).toEqual(400);
     expect(JSON.parse(response.body).message).toEqual(
-      "body['q1'].limit should be integer"
+      'body/q1/limit must be integer'
     );
   });
 

@@ -22,6 +22,12 @@
   "url": [
     "http://vocab.getty.edu/aat/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties"
+    }
+  ],
   "distribution": [
     {
       "@id": "http://vocab.getty.edu/aat/sparql",
@@ -36,6 +42,17 @@
         {
           "@type": "FindAction",
           "query": "file://catalog/queries/lookup/aat.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
+          }
         }
       ]
     }

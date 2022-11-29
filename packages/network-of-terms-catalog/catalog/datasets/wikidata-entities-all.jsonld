@@ -16,6 +16,12 @@
   "url": [
     "http://www.wikidata.org/entity/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Alle entiteiten in Wikidata, zoals beroepen, films of kunstwerken"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-all",

@@ -2,6 +2,7 @@ import {
   Catalog,
   Dataset,
   Feature,
+  FeatureType,
   IRI,
   Organization,
   SparqlDistribution,
@@ -15,6 +16,7 @@ export const testCatalog = (port: number) =>
     new Dataset(
       new IRI('https://data.rkd.nl/rkdartists'),
       'RKDartists',
+      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
       [new IRI('https://example.com/resources/')],
       [
         new Organization(
@@ -46,7 +48,8 @@ export const testCatalog = (port: number) =>
             ?s ?p ?o ;
               skos:broader ?broader_uri ;
               skos:narrower ?narrower_uri ;
-              skos:related ?related_uri .
+              skos:related ?related_uri ;
+              skos:inScheme <https://data.rkd.nl/rkdartists> .
             ?broader_uri skos:prefLabel ?broader_prefLabel .
             ?narrower_uri skos:prefLabel ?narrower_prefLabel .
             ?related_uri skos:prefLabel ?related_prefLabel .
@@ -67,13 +70,19 @@ export const testCatalog = (port: number) =>
               ?related_uri skos:prefLabel ?related_prefLabel. 
             } 
           }`,
-          [Feature.RECONCILIATION]
+          [
+            new Feature(
+              FeatureType.RECONCILIATION,
+              new URL('https://example.com/reconcile/rkd')
+            ),
+          ]
         ),
       ]
     ),
     new Dataset(
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
       'Cultuurhistorische Thesaurus',
+      'Onderwerpen voor het beschrijven van cultureel erfgoed',
       [new IRI('https://data.cultureelerfgoed.nl/term/id/cht/')],
       [
         new Organization(
@@ -88,13 +97,19 @@ export const testCatalog = (port: number) =>
           new IRI('http://does-not-resolve'),
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
-          [Feature.RECONCILIATION]
+          [
+            new Feature(
+              FeatureType.RECONCILIATION,
+              new URL('https://example.com/reconcile/cht')
+            ),
+          ]
         ),
       ]
     ),
     new Dataset(
       new IRI('http://vocab.getty.edu/aat'),
       'Art & Architecture Thesaurus',
+      'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
       [new IRI('http://vocab.getty.edu/aat/')],
       [
         new Organization(
@@ -107,6 +122,29 @@ export const testCatalog = (port: number) =>
         new SparqlDistribution(
           new IRI('https://example.com/distributions/timeout'),
           new IRI('https://httpbin.org/delay/3'),
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
+        ),
+      ]
+    ),
+    new Dataset(
+      new IRI('http://data.beeldengeluid.nl/gtaa/Persoonsnamen'),
+      'GTAA: persoonsnamen',
+      'Personen voor het beschrijven van audiovisueel materiaal',
+      [new IRI('http://data.beeldengeluid.nl/gtaa/')],
+      [
+        new Organization(
+          new IRI('https://www.beeldengeluid.nl/'),
+          'Nederlands Instituut voor Beeld en Geluid',
+          'Beeld en Geluid'
+        ),
+      ],
+      [
+        new SparqlDistribution(
+          new IRI('https://data.beeldengeluid.nl/id/datadownload/0026'),
+          new IRI(
+            'https://username:password@gtaa.apis.beeldengeluid.nl/sparql'
+          ),
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
         ),

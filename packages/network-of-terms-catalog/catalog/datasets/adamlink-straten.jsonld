@@ -16,6 +16,12 @@
   "url": [
     "https://adamlink.nl/geo/street/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Straten in Amsterdam"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://druid.datalegend.net/AdamNet/Geography/sparql#streets",
@@ -38,7 +44,8 @@
             "actionApplication": {
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
-            }
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
         }
       ]

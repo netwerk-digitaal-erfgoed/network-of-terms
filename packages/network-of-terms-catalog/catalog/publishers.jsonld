@@ -22,7 +22,7 @@
     {
       "@id": "http://www.wereldculturen.nl",
       "@type": "Organization",
-      "name": "Stiching Nationaal Museum van Wereldculturen",
+      "name": "Stichting Nationaal Museum van Wereldculturen",
       "alternateName": "NMVW"
     },
     {
@@ -72,6 +72,24 @@
       "@type": "Organization",
       "name": "Stichting AdamNet",
       "alternateName": "AdamNet"
+    },
+    {
+      "@id": "https://www.erfgoedbrabant.nl",
+      "@type": "Organization",
+      "name": "Erfgoed Brabant",
+      "alternateName": "Erfgoed Brabant"
+    },
+    {
+      "@id": "https://www.geonames.org/team.html",
+      "@type": "Organization",
+      "name": "GeoNames",
+      "alternateName": "GeoNames"
+    },
+    {
+      "@id": "https://ihlia.nl",
+      "@type": "Organization",
+      "name": "IHLIA",
+      "alternateName": "IHLIA"
     },
     {
       "@id": "https://henrivandewaalfoundation.org",

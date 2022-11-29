@@ -1,4 +1,4 @@
-import * as RDF from 'rdf-js';
+import * as RDF from '@rdfjs/types';
 
 export class Term {
   constructor(
@@ -11,7 +11,8 @@ export class Term {
     readonly seeAlso: RDF.NamedNode[],
     readonly broaderTerms: RelatedTerm[],
     readonly narrowerTerms: RelatedTerm[],
-    readonly relatedTerms: RelatedTerm[]
+    readonly relatedTerms: RelatedTerm[],
+    readonly datasetIri: RDF.Term | undefined
   ) {}
 }
 
@@ -30,6 +31,7 @@ class SparqlResultTerm {
   broaderTerms: RDF.Term[] = [];
   narrowerTerms: RDF.Term[] = [];
   relatedTerms: RDF.Term[] = [];
+  inScheme: RDF.Term | undefined = undefined;
 }
 
 export class TermsTransformer {
@@ -52,6 +54,7 @@ export class TermsTransformer {
     ['http://www.w3.org/2008/05/skos#narrower', 'narrowerTerms'],
     ['http://www.w3.org/2004/02/skos/core#related', 'relatedTerms'],
     ['http://www.w3.org/2008/05/skos#related', 'relatedTerms'],
+    ['http://www.w3.org/2004/02/skos/core#inScheme', 'inScheme'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -99,7 +102,8 @@ export class TermsTransformer {
         this.mapRelatedTerms(term.narrowerTerms).sort(
           alphabeticallyByPrefLabel
         ),
-        this.mapRelatedTerms(term.relatedTerms).sort(alphabeticallyByPrefLabel)
+        this.mapRelatedTerms(term.relatedTerms).sort(alphabeticallyByPrefLabel),
+        term.inScheme
       );
     });
   }

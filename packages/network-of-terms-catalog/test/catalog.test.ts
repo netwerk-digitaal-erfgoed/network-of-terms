@@ -2,6 +2,7 @@ import {
   Catalog,
   Dataset,
   Feature,
+  FeatureType,
   IRI,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -34,6 +35,9 @@ describe('Catalog', () => {
     )!;
     expect(cht).toBeInstanceOf(Dataset);
     expect(cht.name).toEqual('Cultuurhistorische Thesaurus');
+    expect(cht.description).toEqual(
+      'Onderwerpen voor het beschrijven van cultureel erfgoed'
+    );
     expect(cht.termsPrefixes).toEqual([
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht/'),
     ]);
@@ -72,9 +76,17 @@ describe('Catalog', () => {
 
   it('retrieves distributions providing feature', () => {
     const reconciliationApis = catalog.getDistributionsProvidingFeature(
-      Feature.RECONCILIATION
+      FeatureType.RECONCILIATION
     );
-    expect(reconciliationApis[0].features).toContain(Feature.RECONCILIATION);
+    expect(reconciliationApis[0].features).toContainEqual(
+      new Feature(
+        FeatureType.RECONCILIATION,
+        new URL(
+          'https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/' +
+            reconciliationApis[0].iri.toString().replace('#', '%23')
+        )
+      )
+    );
   });
 
   it('substitutes credentials from environment variables', async () => {

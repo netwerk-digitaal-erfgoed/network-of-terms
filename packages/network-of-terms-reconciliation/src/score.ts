@@ -1,5 +1,5 @@
 import {Term} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {cosine} from 'string-comparison';
+import {diceCoefficient} from 'string-comparison';
 
 /**
  * Calculate score for term based on case-insensitive cosine similarity, ignoring punctuation, between the search string
@@ -16,11 +16,11 @@ export const calculateMatchingScore = (
   searchString: string,
   againstStrings: string[]
 ): number => {
-  const normalizedSearchString = normalize(searchString);
-  const scores = againstStrings.map(againstString =>
-    cosine.similarity(normalizedSearchString, normalize(againstString))
+  const scores = diceCoefficient.sortMatch(
+    normalize(searchString),
+    againstStrings.map(normalize)
   );
-  const maxScore = Math.max(...scores);
+  const maxScore = Math.max(...scores.map(score => score.rating));
 
   return Math.round((maxScore + Number.EPSILON) * 10000) / 100; // Return percentage match rounded to two decimals.
 };

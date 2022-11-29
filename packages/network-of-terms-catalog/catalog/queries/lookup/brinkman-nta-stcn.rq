@@ -1,6 +1,7 @@
 PREFIX schema: <http://schema.org/>
 # Do not remove this prefix - KB data uses old version of SKOS
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX void: <http://rdfs.org/ns/void#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -14,7 +15,8 @@ CONSTRUCT {
         skos:scopeNote ?schema_description ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
-        skos:related ?related_uri .
+        skos:related ?related_uri ;
+        skos:inScheme ?datasetUri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
@@ -28,6 +30,8 @@ WHERE {
 
     ?uri a ?type .
     VALUES ?type { skos:Concept schema:Person schema:Organization } .
+
+    ?uri schema:mainEntityOfPage/schema:isPartOf | foaf:isPrimaryTopicOf/void:inDataset ?datasetUri .
 
     # For Brinkman
     OPTIONAL {
@@ -70,6 +74,11 @@ WHERE {
         OPTIONAL { ?uri schema:name ?schema_name }
         OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
         OPTIONAL { ?uri schema:description ?schema_description }
+    }
+
+    # For STCN
+    OPTIONAL {
+        ?uri schema:location/schema:address/schema:addressLocality ?scopeNote
     }
 }
 LIMIT 1000

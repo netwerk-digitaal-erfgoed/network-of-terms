@@ -8,7 +8,8 @@ CONSTRUCT {
         skos:scopeNote ?scopeNote ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
-        skos:related ?related_uri .
+        skos:related ?related_uri ;
+        skos:inScheme ?datasetUri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
@@ -17,7 +18,8 @@ WHERE {
 
     VALUES ?uri { ?uris }
 
-    ?uri a skos:Concept .
+    ?uri a skos:Concept ;
+        skos:inScheme ?datasetUri .
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .

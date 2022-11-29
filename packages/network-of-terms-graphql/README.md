@@ -11,6 +11,12 @@ For the Network of Terms web interface, see http://termennetwerk.netwerkdigitaal
 
 ## For application developers
 
+Developers that want to implement terms search/lookup in their (collection management) software can benefit from the
+Network of Terms. By connecting their client to a single GraphQL API, developers get access to a large and growing
+number of terminology sources. The Network of Terms **abstracts the complexity of the sources away**. While sources  
+require different queries and ways of harmonizing the results, they can be consulted through the Network of Terms with a
+single GraphQL query that returns the results consolidated into the SKOS data model.
+
 If you’re a developer and want to use the Network of Terms GraphQL API in your apps, you can connect your apps to the
 endpoint at https://termennetwerk-api.netwerkdigitaalerfgoed.nl/graphql.
 
@@ -25,7 +31,7 @@ and open http://localhost:3123 in your browser for the GraphQL Playground. See b
 
 ## For Network of Terms developers
 
-If you want to make changes to the Network of Terms code or catalog, the best way to get started is to run the 
+If you want to make changes to the Network of Terms code or catalog, the best way to get started is to run the
 application locally using Node (or in a [Docker container](../../docs/docker.md)):
 
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
@@ -48,10 +54,15 @@ query Sources {
     uri
     name
     alternateName
+    description
     creators {
       uri
       name
       alternateName
+    }
+    features {
+      type
+      url
     }
   }
 }

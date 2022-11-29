@@ -16,6 +16,12 @@
   "url": [
     "http://data.beeldengeluid.nl/gtaa/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Personen voor het beschrijven van audiovisueel materiaal"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.beeldengeluid.nl/id/datadownload/0026",
@@ -25,7 +31,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/gtaa-persoonsnamen.rq"
+          "query": "file://catalog/queries/search/gtaa.rq"
         },
         {
           "@type": "FindAction",
@@ -38,7 +44,8 @@
             "actionApplication": {
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
-            }
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
         }
       ]

@@ -1,0 +1,33 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX gtm: <https://www.goudatijdmachine.nl/def#>
+PREFIX schema: <https://schema.org/>
+PREFIX hg: <http://rdf.histograph.io/>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel;
+        skos:scopeNote ?scopeNote ;
+        skos:related ?related_uri .
+    ?related_uri skos:prefLabel ?related_prefLabel .
+}
+WHERE {
+    ?uri a gtm:Straat ;
+         dcterms:identifier ?identifier ;
+         skos:prefLabel ?prefLabel .
+    OPTIONAL { ?uri skos:altLabel ?altLabel . }
+    OPTIONAL {
+        ?uri hg:liesIn/schema:sameAs <http://sws.geonames.org/2755419/> # Gouda
+        BIND("Straat in Gouda" AS ?scopeNote)
+    }
+    OPTIONAL {
+        ?uri hg:absorbedBy|hg:absorbed ?related_uri .
+        ?related_uri a gtm:Straat ;
+                skos:prefLabel ?related_prefLabel .
+        FILTER (CONTAINS(STR(?related_uri), "ark:") && ?uri !=  ?related_uri )
+    }
+    FILTER (CONTAINS(STR(?uri), "ark:"))
+    FILTER (CONTAINS(LCASE(?prefLabel),?query) || CONTAINS(LCASE(?altLabel),?query) )
+}
+LIMIT 100

@@ -16,6 +16,12 @@
   "url": [
     "https://data.muziekweb.nl/Link/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Artiesten, zowel personen als groepen, in de collectie van Muziekweb"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb/sparql/Muziekweb#mw-personengroepen",
@@ -38,7 +44,8 @@
             "actionApplication": {
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
-            }
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
         }
       ]

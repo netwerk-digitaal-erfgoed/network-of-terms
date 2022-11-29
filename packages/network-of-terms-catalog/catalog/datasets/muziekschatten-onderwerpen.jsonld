@@ -16,6 +16,12 @@
   "url": [
     "https://data.muziekschatten.nl/som/"
   ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen in de catalogus van de bladmuziekcollectie van Stichting Omroep Muziek"
+    }
+  ],
   "distribution": [
     {
       "@id": "https://data.muziekschatten.nl/sparql/#onderwerpen",
@@ -38,7 +44,8 @@
             "actionApplication": {
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
-            }
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
         }
       ]

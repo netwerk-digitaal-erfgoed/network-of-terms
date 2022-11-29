@@ -8,9 +8,36 @@ Given a textual search query, the Network of Terms searches one or more terminol
 interface**, **handles errors** gracefully in case a source does not respond well and **harmonizes the results** to the
 SKOS data model.
 
-The Network of Terms is intended for managers of heritage information that want to improve the findability of their
+The Network of Terms is intended for **managers of heritage information** that want to improve the findability of their
 information by assigning terms from terminology sources that are used by the institutions in
-the [Dutch Digital Heritage Network](https://netwerkdigitaalerfgoed.nl).
+the [Dutch Digital Heritage Network](https://netwerkdigitaalerfgoed.nl). Information managers use the Network of Terms
+in their **collection registration system**.
+
+Schematically, the registration system sends out a single query to the Network of Terms, which gets translated to a set
+of queries that is appropriate for each terminology source. The terms matching the query are harmonized to SKOS and
+returned to the collection registration system where information managers can evaluate the results and link their
+data to the terms:
+
+```mermaid
+flowchart TD
+  crs(Collection registration systems)
+  not(Network of Terms)
+  ts1("Terminology source 1"):::ts
+  ts2("Terminology source 2"):::ts
+
+  style not fill:#D5E8D4,stroke:#82B366
+  style crs fill:#FFF2CC,stroke:#D6B656  
+  classDef ts fill:#DAE8FC,stroke:#6C8EBF;
+  
+  crs -- search query ---> not
+  not -. search results -.-> crs
+   
+  not -- search query ---> ts1
+  ts1 -. search results -.-> not
+  
+  not -- search query ---> ts2
+  ts2 -. search results -.-> not
+```
 
 ## Getting started
 
@@ -32,3 +59,11 @@ This repository contains the following packages:
   sources;
 - [network-of-terms-reconciliation](packages/network-of-terms-reconciliation): a Reconciliation Service API for matching
   strings against terms with URIs.
+
+### Contributing
+
+You’re very welcome to contribute to this repository:
+
+- [create an issue](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues/new) if you encounter a problem
+  or have suggestions;
+- read [CONTRIBUTING](CONTRIBUTING.md) if you wish to commit code. 

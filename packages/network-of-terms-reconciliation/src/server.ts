@@ -1,13 +1,13 @@
 import fastify, {FastifyInstance} from 'fastify';
-import fastifyCors from 'fastify-cors';
-import fastifyAccepts from 'fastify-accepts';
-import {IncomingMessage, Server} from 'http';
+import fastifyCors from '@fastify/cors';
+import fastifyAccepts from '@fastify/accepts';
+import {IncomingMessage} from 'http';
 import {findManifest} from './manifest';
-import formBodyPlugin from 'fastify-formbody';
+import formBodyPlugin from '@fastify/formbody';
 import {reconciliationQuery, ReconciliationQueryBatch} from './query';
 import {preview} from './preview';
-import en from './locales/en.json';
-import nl from './locales/nl.json';
+import en from './locales/en.json' assert {type: 'json'};
+import nl from './locales/nl.json' assert {type: 'json'};
 import {
   Catalog,
   getHttpLogger,
@@ -15,12 +15,11 @@ import {
   LookupService,
   QueryTermsService,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import jsonSchema from './json-schema/reconciliation-query.json';
+import jsonSchema from './json-schema/reconciliation-query.json' assert {type: 'json'};
 import {parse} from 'querystring';
+import {Accepts} from 'accepts';
 
-export async function server(
-  catalog: Catalog
-): Promise<FastifyInstance<Server, customRequest>> {
+export async function server(catalog: Catalog): Promise<FastifyInstance> {
   const logger = getHttpLogger({
     name: 'http',
     level: 'info',
@@ -29,24 +28,24 @@ export async function server(
   const queryTermsService = new QueryTermsService();
   const lookupService = new LookupService(catalog, queryTermsService);
 
-  const server = fastify<Server, customRequest>({logger});
+  const server = fastify({logger});
   server.register(fastifyCors);
   server.register(formBodyPlugin, {parser});
   server.register(fastifyAccepts);
   server.decorateRequest('previewUrl', '');
   server.addHook('onRequest', (request, reply, done) => {
-    request.raw.previewUrl =
+    request.previewUrl =
       request.protocol + '://' + request.hostname + '/preview/{{id}}';
     done();
   });
 
+  server.get('/reconcile', (request, reply) => {
+    reply.send('ok');
+  });
+
   server.get<{Params: {'*': string}}>('/reconcile/*', (request, reply) => {
     const distributionIri = new IRI(request.params['*']);
-    const manifest = findManifest(
-      distributionIri,
-      catalog,
-      request.raw.previewUrl
-    );
+    const manifest = findManifest(distributionIri, catalog, request.previewUrl);
     if (manifest === undefined) {
       reply.code(404).send();
       return;
@@ -66,7 +65,7 @@ export async function server(
       const manifest = findManifest(
         distributionIri,
         catalog,
-        request.raw.previewUrl
+        request.previewUrl
       );
       if (manifest === undefined) {
         reply.code(404).send();
@@ -113,3 +112,9 @@ const parser = (string: string) => {
   const parsed = parse(string);
   return JSON.parse(parsed['queries'] as string);
 };
+
+declare module 'fastify' {
+  interface FastifyRequest extends Accepts {
+    previewUrl: string;
+  }
+}

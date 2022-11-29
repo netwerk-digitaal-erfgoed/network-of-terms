@@ -3,7 +3,8 @@ import Joi from 'joi';
 import {LoggerPino} from './helpers/logger-pino';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
-import * as RDF from 'rdf-js';
+import * as RDF from '@rdfjs/types';
+import {Bindings} from '@rdfjs/types';
 import {Term, TermsTransformer} from './terms';
 import {QueryMode, queryVariants} from './search/query-mode';
 import {Dataset, Distribution, IRI} from './catalog';
@@ -20,11 +21,13 @@ export class Terms {
 export class Error {
   constructor(readonly distribution: Distribution, readonly message: string) {}
 }
+
 export class TimeoutError extends Error {
   constructor(readonly distribution: Distribution, timeoutMs: number) {
     super(distribution, `Source timed out after ${timeoutMs}ms`);
   }
 }
+
 export class ServerError extends Error {}
 
 export class QueryTermsService {
@@ -34,23 +37,6 @@ export class QueryTermsService {
   constructor(options: {comunica?: QueryEngine; logger?: Pino.Logger} = {}) {
     this.engine = options.comunica || new QueryEngine();
     this.logger = options.logger || Pino();
-  }
-
-  protected getConfig(
-    distribution: Distribution,
-    bindings: Record<string, RDF.Term>
-  ): object {
-    const logger = new LoggerPino({logger: this.logger});
-    return {
-      log: logger,
-      sources: [
-        {
-          type: 'sparql', // Only supported type for now
-          value: distribution.endpoint.toString(),
-        },
-      ],
-      initialBindings: bindingsFactory.fromRecord(bindings),
-    };
   }
 
   async search(
@@ -103,12 +89,24 @@ export class QueryTermsService {
         .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000)
     );
 
-    this.logger.info(`Querying "${distribution.endpoint}" with "${query}"...`);
     const timer = new Hoek.Bench();
-    const quadStream = await this.engine.queryQuads(
-      query,
-      this.getConfig(distribution, bindings)
-    );
+    const logger = new LoggerPino({logger: this.logger});
+    // Extract HTTP credentials if the distribution URL contains any.
+    const url = new URL(distribution.endpoint.toString());
+    this.logger.info(`Querying "${url}" with "${query}"...`);
+    const quadStream = await this.engine.queryQuads(query, {
+      log: logger,
+      httpAuth: url.username === '' ? '' : url.username + ':' + url.password,
+      sources: [
+        {
+          type: 'sparql',
+          value: url.origin + url.pathname,
+        },
+      ],
+      initialBindings: bindingsFactory.fromRecord(
+        bindings
+      ) as unknown as Bindings,
+    });
 
     return guardTimeout(
       new Promise(resolve => {
@@ -117,7 +115,12 @@ export class QueryTermsService {
           this.logger.error(
             `An error occurred when querying "${distribution.endpoint}": ${error}`
           );
-          resolve(new ServerError(distribution, error.message));
+          resolve(
+            new ServerError(
+              distribution,
+              obfuscateHttpCredentials(error.message)
+            )
+          );
         });
         quadStream.on('data', (quad: RDF.Quad) => {
           termsTransformer.fromQuad(quad);
@@ -163,3 +166,6 @@ function guardTimeout<T>(
 
 const dataFactory = new DataFactory();
 const bindingsFactory = new BindingsFactory(dataFactory);
+
+const obfuscateHttpCredentials = (message: string) =>
+  message.replace(/(https?):\/\/.+:.+@/, '$1://***@');
