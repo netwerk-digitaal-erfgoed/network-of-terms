@@ -31,7 +31,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/iconclass-no-keys.rq"
+          "query": "file://catalog/queries/search/iconclass.rq"
         },
         {
           "@type": "FindAction",
