@@ -96,6 +96,12 @@
       "@type": "Organization",
       "name": "Indisch Herinneringscentrum",
       "alternateName": "IHC"
+    },
+    {
+      "@id": "https://henrivandewaalfoundation.org",
+      "@type": "Organization",
+      "name": "Henri van de Waal Foundation",
+      "alternateName": "Henri van de Waal"
     }
   ]
 }
