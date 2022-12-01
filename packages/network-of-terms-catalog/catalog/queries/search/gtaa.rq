@@ -1,5 +1,5 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX justskos: <http://justskos.org/ns/core#>
+PREFIX openskos:  <http://openskos.org/xmlns#>
 PREFIX text: <http://jena.apache.org/text#>
 
 CONSTRUCT {
@@ -18,7 +18,7 @@ CONSTRUCT {
 WHERE {
     ?uri text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
     ?uri skos:inScheme ?datasetUri ;
-        justskos:status ?status .
+        openskos:status ?status .
     FILTER(?status IN ('approved', 'candidate'))
 
     OPTIONAL {
