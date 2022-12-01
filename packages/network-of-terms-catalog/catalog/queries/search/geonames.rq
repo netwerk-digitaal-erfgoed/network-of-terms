@@ -1,5 +1,6 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gn: <https://www.geonames.org/ontology#>
+PREFIX text: <http://jena.apache.org/text#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -10,21 +11,20 @@ CONSTRUCT {
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
-    ?uri a gn:Feature ;
+    ?uri text:query (gn:name gn:alternateName ?query) ;
+        a gn:Feature ;
         gn:featureClass ?featureClass ;
         gn:name ?prefLabel ;
         gn:countryCode ?countryCode ;
         ?names ?name .
 
-    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext) 
+    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
 
     # Search in names and alternative names.
     VALUES ?names { gn:name gn:alternateName }
 
     # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
     VALUES ?featureClass { gn:P gn:L gn:A gn:H }
-
-    FILTER(CONTAINS(LCASE(?name), LCASE($query)))
 
     OPTIONAL {
         ?uri gn:alternateName ?altLabel .

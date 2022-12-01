@@ -127,6 +127,29 @@ export const testCatalog = (port: number) =>
         ),
       ]
     ),
+    new Dataset(
+      new IRI('http://data.beeldengeluid.nl/gtaa/Persoonsnamen'),
+      'GTAA: persoonsnamen',
+      'Personen voor het beschrijven van audiovisueel materiaal',
+      [new IRI('http://data.beeldengeluid.nl/gtaa/')],
+      [
+        new Organization(
+          new IRI('https://www.beeldengeluid.nl/'),
+          'Nederlands Instituut voor Beeld en Geluid',
+          'Beeld en Geluid'
+        ),
+      ],
+      [
+        new SparqlDistribution(
+          new IRI('https://data.beeldengeluid.nl/id/datadownload/0026'),
+          new IRI(
+            'https://username:password@gtaa.apis.beeldengeluid.nl/sparql'
+          ),
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
+        ),
+      ]
+    ),
   ]);
 
 export async function startDistributionSparqlEndpoint(

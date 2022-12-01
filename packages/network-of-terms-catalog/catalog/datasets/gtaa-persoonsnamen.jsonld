@@ -31,7 +31,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/gtaa-persoonsnamen.rq"
+          "query": "file://catalog/queries/search/gtaa.rq"
         },
         {
           "@type": "FindAction",

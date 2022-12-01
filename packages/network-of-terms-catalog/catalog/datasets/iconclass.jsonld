@@ -1,41 +1,41 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://www.geonames.org",
+  "@id": "https://iconclass.org",
   "@type": "Dataset",
   "name": [
     {
       "@language": "nl",
-      "@value": "GeoNames: geografische namen in Nederland, België en Duitsland"
+      "@value": "Iconclass"
     }
   ],
   "creator": [
     {
-      "@id": "https://www.geonames.org/team.html"
+      "@id": "https://henrivandewaalfoundation.org"
     }
   ],
   "url": [
-    "https://sws.geonames.org/"
+    "http://iconclass.org/"
   ],
   "description": [
     {
       "@language": "nl",
-      "@value": "Selectie van geografische namen zoals plaatsen, administratieve eenheden (gemeentes, provincies) en waterlichamen (rivieren, beken, meren etc.)"
+      "@value": "Termen voor het beschrijven van de inhoud van afbeeldingen"
     }
   ],
   "distribution": [
     {
-      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames",
+      "@id": "https://iconclass.org/sparql",
       "@type": "DataDownload",
-      "contentUrl": "https://demo.netwerkdigitaalerfgoed.nl/geonames/sparql",
+      "contentUrl": "https://iconclass.org/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/geonames.rq"
+          "query": "file://catalog/queries/search/iconclass.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/geonames.rq"
+          "query": "file://catalog/queries/lookup/iconclass.rq"
         },
         {
           "@type": "Action",
