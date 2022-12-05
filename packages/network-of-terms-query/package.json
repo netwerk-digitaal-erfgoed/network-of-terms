@@ -29,7 +29,7 @@
   "keywords": [],
   "description": "Engine for querying sources in the Network of Terms",
   "dependencies": {
-    "@comunica/bindings-factory": "^2.0.1",
+    "@comunica/bindings-factory": "^2.5.1",
     "@comunica/data-factory": "^2.5.1",
     "@comunica/query-sparql": "^2.5.0",
     "@hapi/hoek": "^10.0.1",
