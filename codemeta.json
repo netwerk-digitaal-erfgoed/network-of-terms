@@ -1,22 +1,67 @@
 {
-  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
-  "@type": "SoftwareSourceCode",
-  "license": "https://spdx.org/licenses/EUPL-1.2",
-  "codeRepository": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms",
-  "contIntegration": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/actions",
-  "dateCreated": "2020-04-17",
-  "datePublished": "2020-09-24",
-  "issueTracker": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues",
-  "name": "Network of Terms API",
-  "description": "GraphQL API for searching the Network of Terms",
-  "developmentStatus": "active",
-  "programmingLanguage": [
-    "TypeScript"
-  ],
-  "runtimePlatform": [
-    "Node.js"
-  ],
-  "relatedLink": [
-    "https://termennetwerk-api.netwerkdigitaalerfgoed.nl"
-  ]
+    "@context": [
+        "https://doi.org/10.5063/schema/codemeta-2.0",
+        "https://w3id.org/software-iodata",
+        "https://raw.githubusercontent.com/jantman/repostatus.org/master/badges/latest/ontology.jsonld",
+        "https://schema.org",
+        "https://w3id.org/software-types"
+    ],
+    "@type": "SoftwareSourceCode",
+    "applicationCategory": "https://vocabs.dariah.eu/tadirah/identifying",
+    "codeRepository": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git",
+    "contributor": [
+        {
+            "@type": "Person",
+            "email": "david@ddeboer.nl",
+            "familyName": "de Boer",
+            "givenName": "David"
+        },
+        {
+            "@type": "Person",
+            "email": "sjors@sjorsdevalk.nl",
+            "familyName": "de Valk",
+            "givenName": "Sjors"
+        },
+        {
+            "@type": "Person",
+            "email": "enno.meijers@kb.nl",
+            "familyName": "Meijers",
+            "givenName": "Enno"
+        }
+    ],
+    "dateCreated": "2020-04-17T00:22:24Z+0200",
+    "description": "Search engine for finding terms in terminology sources (such as thesauri, classification systems and reference lists)",
+    "developmentStatus": ["https://www.repostatus.org/#active", "https://w3id.org/research-technology-readiness-level#Level9Proven"],
+    "issueTracker": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues",
+    "keywords": [
+        "graphql",
+        "linked-data",
+        "reconciliation",
+        "search"
+    ],
+    "license": "https://spdx.org/licenses/EUPL-1.2",
+    "name": "network-of-terms",
+    "producer": {
+        "@type": "Organization",
+        "name": "Netwerk Digitaal Erfgoed",
+        "url": "https://www.netwerkdigitaalerfgoed.nl"
+    },
+    "programmingLanguage": "TypeScript",
+    "readme": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/blob/master/README.md",
+    "runtimePlatform": "node >=16.15.0",
+    "targetProduct": [
+        {
+            "@id": "/api",
+            "@type": "WebApplication",
+            "name": "Network of Terms GraphQL API",
+            "url": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl"
+        },
+        {
+            "@id": "/reconciliation",
+            "@type": "WebApplication",
+            "name": "Network of Terms Reconciliation Service API",
+            "url": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile"
+        }
+    ],
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
 }
