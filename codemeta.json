@@ -9,7 +9,7 @@
     "@type": "SoftwareSourceCode",
     "applicationCategory": "https://vocabs.dariah.eu/tadirah/identifying",
     "codeRepository": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git",
-    "contributor": [
+    "author": [
         {
             "@type": "Person",
             "email": "david@ddeboer.nl",
