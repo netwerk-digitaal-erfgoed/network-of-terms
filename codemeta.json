@@ -47,7 +47,7 @@
         "url": "https://www.netwerkdigitaalerfgoed.nl"
     },
     "programmingLanguage": "TypeScript",
-    "readme": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/blob/master/README.md",
+    "readme": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
     "runtimePlatform": "node >=16.15.0",
     "targetProduct": [
         {
