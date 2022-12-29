@@ -44,7 +44,7 @@
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog#readme",
   "dependencies": {
     "@comunica/bindings-factory": "^2.5.1",
-    "@comunica/query-sparql-rdfjs": "^2.4.3",
+    "@comunica/query-sparql-rdfjs": "^2.5.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "globby": "^13.1.3",
     "rdf-parse": "^2.1.1",
