@@ -26,10 +26,10 @@ jobs:
         id: vars
         run: |
           VERSION_TAG=${GITHUB_REF#refs/tags/}
-          echo "::set-output name=package_name::${{steps.parse-tag.outputs.group1}}"
-          echo "::set-output name=version_tag::${{steps.parse-tag.outputs.group2}}"
-          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
-          echo "::set-output name=docker_image::ghcr.io/netwerk-digitaal-erfgoed/${{steps.parse-tag.outputs.group1}}"
+          echo "package_name=${{steps.parse-tag.outputs.group1}}" >> $GITHUB_OUTPUT
+          echo "version_tag=${{steps.parse-tag.outputs.group2}}" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "docker_image=ghcr.io/netwerk-digitaal-erfgoed/${{steps.parse-tag.outputs.group1}}" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2.2.1
