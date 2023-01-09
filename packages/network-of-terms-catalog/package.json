@@ -35,7 +35,7 @@
     "gts": "^3.1.1",
     "jsonld-streaming-parser": "^3.1.0",
     "rdf-data-factory": "^1.1.1",
-    "rdf-ext": "^2.1.0",
+    "rdf-ext": "^2.1.1",
     "rdf-validate-shacl": "^0.4.5"
   },
   "bugs": {
