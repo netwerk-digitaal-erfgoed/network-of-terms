@@ -24,7 +24,7 @@ WHERE {
         a ?type ;
         void:inDataset <http://vocab.getty.edu/dataset/aat>  .
 
-    # limit results to the "processes and techniques facet (300053001)" hierarchy
+    # limit results to the "processes and techniques hierarchy name (300053001)"
     ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300053001> . 
     
     ?type rdfs:subClassOf gvp:Subject .

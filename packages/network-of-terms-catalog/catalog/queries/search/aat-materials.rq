@@ -24,8 +24,8 @@ WHERE {
         a ?type ;
         void:inDataset <http://vocab.getty.edu/dataset/aat>  .
 
-    # limit results to the "materials facet (300264091)" hierarchy
-    ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300264091> .
+    # limit results to the "materials hierarchy name" (300010357)
+    ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300010357> .
      
     ?type rdfs:subClassOf gvp:Subject .
     FILTER (?type != gvp:Subject) .

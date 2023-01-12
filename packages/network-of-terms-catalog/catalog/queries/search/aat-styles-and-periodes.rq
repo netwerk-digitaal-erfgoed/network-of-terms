@@ -24,8 +24,8 @@ WHERE {
         a ?type ;
         void:inDataset <http://vocab.getty.edu/dataset/aat>  .
     
-    # limit results to the "styles and periodes facet (300264088)" hierarchy
-    ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300264088> . 
+    # limit results to the "styles and periodes hierarchy name (300015646)" 
+    ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300015646> . 
     
     ?type rdfs:subClassOf gvp:Subject .
     FILTER (?type != gvp:Subject) .
