@@ -4,9 +4,9 @@
   "@type": "Dataset",
   "name": [
     {
-        "@language": "nl",
-        "@value": "Art & Architecture Thesaurus - processen en technieken"
-    }    
+      "@language": "nl",
+      "@value": "Art & Architecture Thesaurus - processen en technieken"
+    }
   ],
   "alternateName": [
     {

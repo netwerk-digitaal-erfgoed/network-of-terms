@@ -4,9 +4,9 @@
   "@type": "Dataset",
   "name": [
     {
-        "@language": "nl",
-        "@value": "Art & Architecture Thesaurus - materialen"
-    }    
+      "@language": "nl",
+      "@value": "Art & Architecture Thesaurus - materialen"
+    }
   ],
   "alternateName": [
     {
