@@ -102,6 +102,9 @@ export const schema = `
     source: Source!
     terms: [Term]! @deprecated(reason: "Use 'result' instead")
     result: TermsResult!
+    
+    "Response time in milliseconds."
+    responseTimeMs: Int!
   }
 
   union TermsResult = Terms | TimeoutError | ServerError
@@ -119,6 +122,9 @@ export const schema = `
 
     "The term if the lookup succeeded; an error otherwise."
     result: LookupResult!
+    
+    "Response time in milliseconds."
+    responseTimeMs: Int!
   }
 
   union SourceResult = Source | SourceNotFoundError

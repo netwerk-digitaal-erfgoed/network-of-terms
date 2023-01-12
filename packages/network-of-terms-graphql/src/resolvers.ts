@@ -17,6 +17,7 @@ import {
   SourceNotFoundError,
   SourceResult,
   Term,
+  TermsResponse,
   TermsResult,
   TimeoutError,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -44,7 +45,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     timeoutMs: args.timeoutMs,
   });
-  return resolveTermsResults(results, context.catalog);
+  return resolveTermsResponse(results, context.catalog);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -72,34 +73,37 @@ async function lookupTerms(object: any, args: any, context: any) {
             ),
       result:
         result.result instanceof Term ? term(result.result) : result.result,
+      responseTimeMs: result.responseTimeMs,
     };
   });
 }
 
-function resolveTermsResults(results: TermsResult[], catalog: Catalog) {
-  return results.map((result: TermsResult) => {
-    if (result instanceof Error) {
+function resolveTermsResponse(results: TermsResponse[], catalog: Catalog) {
+  return results.map((response: TermsResponse) => {
+    if (response.result instanceof Error) {
       return {
         source: source(
-          result.distribution,
-          catalog.getDatasetByDistributionIri(result.distribution.iri)!
+          response.result.distribution,
+          catalog.getDatasetByDistributionIri(response.result.distribution.iri)!
         ),
-        result,
+        result: response.result,
+        responseTimeMs: response.responseTimeMs,
         terms: [], // For BC.
       };
     }
 
-    const terms = result.terms.map(term);
+    const terms = response.result.terms.map(term);
 
     return {
       source: source(
-        result.distribution,
-        catalog.getDatasetByDistributionIri(result.distribution.iri)!
+        response.result.distribution,
+        catalog.getDatasetByDistributionIri(response.result.distribution.iri)!
       ),
-      terms, // For BC.
       result: {
         terms: terms,
       },
+      responseTimeMs: response.responseTimeMs,
+      terms, // For BC.
     };
   });
 }

@@ -117,6 +117,7 @@ query {
         message
       }
     }
+    responseTimeMs
   }
 }
 ```
@@ -156,6 +157,7 @@ query {
         message
       }
     }
+    responseTimeMs
   }
 }
 ```
@@ -184,7 +186,7 @@ query {
         __typename
         message
       }
-    }        
+    }
     result {
       ... on Term {
         uri
@@ -203,6 +205,7 @@ query {
         message
       }
     }
+    responseTimeMs
   }
 }
 ```

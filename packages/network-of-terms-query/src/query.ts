@@ -14,6 +14,10 @@ import {DataFactory} from 'rdf-data-factory';
 
 export type TermsResult = Terms | TimeoutError | ServerError;
 
+export class TermsResponse {
+  constructor(readonly result: TermsResult, readonly responseTimeMs: number) {}
+}
+
 export class Terms {
   constructor(readonly distribution: Distribution, readonly terms: Term[]) {}
 }
@@ -45,7 +49,7 @@ export class QueryTermsService {
     dataset: Dataset,
     distribution: Distribution,
     timeoutMs: number
-  ) {
+  ): Promise<TermsResponse> {
     const bindings = [...queryVariants(searchQuery, queryMode)].reduce(
       (record: Record<string, RDF.Term>, [k, v]) => {
         record[k] = dataFactory.literal(v);
@@ -79,7 +83,7 @@ export class QueryTermsService {
     distribution: Distribution,
     timeoutMs: number,
     bindings: Record<string, RDF.Term> = {}
-  ): Promise<TermsResult> {
+  ): Promise<TermsResponse> {
     Joi.attempt(
       timeoutMs,
       Joi.number()
@@ -112,17 +116,26 @@ export class QueryTermsService {
     return new Promise(resolve => {
       const termsTransformer = new TermsTransformer();
       quadStream.on('error', error => {
+        const elapsed = Math.round(timer.elapsed());
         this.logger.error(
           `An error occurred when querying "${distribution.endpoint}": ${error}`
         );
 
         if ('AbortError' === error.name) {
-          resolve(new TimeoutError(distribution, timeoutMs));
+          resolve(
+            new TermsResponse(
+              new TimeoutError(distribution, timeoutMs),
+              elapsed
+            )
+          );
         } else {
           resolve(
-            new ServerError(
-              distribution,
-              obfuscateHttpCredentials(error.message)
+            new TermsResponse(
+              new ServerError(
+                distribution,
+                obfuscateHttpCredentials(error.message)
+              ),
+              elapsed
             )
           );
         }
@@ -137,7 +150,12 @@ export class QueryTermsService {
             distribution.endpoint
           }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
-        resolve(new Terms(distribution, terms));
+        resolve(
+          new TermsResponse(
+            new Terms(distribution, terms),
+            Math.round(timer.elapsed())
+          )
+        );
       });
     });
   }

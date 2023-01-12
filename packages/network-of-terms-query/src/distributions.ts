@@ -1,7 +1,7 @@
 import {QueryEngine} from '@comunica/query-sparql';
 import Joi from 'joi';
 import Pino from 'pino';
-import {QueryTermsService, TermsResult} from './query';
+import {QueryTermsService, TermsResponse} from './query';
 import {QueryMode} from './search/query-mode';
 import {Catalog, IRI} from './catalog';
 import {comunica} from './index';
@@ -49,7 +49,7 @@ export class DistributionsService {
     this.comunica = options.comunica || comunica;
   }
 
-  async query(options: QueryOptions): Promise<TermsResult> {
+  async query(options: QueryOptions): Promise<TermsResponse> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(`Preparing to query source "${args.source}"...`);
     const dataset = await this.catalog.getDatasetByDistributionIri(args.source);
@@ -70,7 +70,7 @@ export class DistributionsService {
     );
   }
 
-  async queryAll(options: QueryAllOptions): Promise<TermsResult[]> {
+  async queryAll(options: QueryAllOptions): Promise<TermsResponse[]> {
     const args = Joi.attempt(options, schemaQueryAll);
     const requests = args.sources.map((source: IRI) =>
       this.query({
