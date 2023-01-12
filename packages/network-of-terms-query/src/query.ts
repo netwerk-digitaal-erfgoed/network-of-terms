@@ -97,6 +97,7 @@ export class QueryTermsService {
     const quadStream = await this.engine.queryQuads(query, {
       log: logger,
       httpAuth: url.username === '' ? '' : url.username + ':' + url.password,
+      httpTimeout: timeoutMs,
       sources: [
         {
           type: 'sparql',
@@ -108,36 +109,37 @@ export class QueryTermsService {
       ) as unknown as Bindings,
     });
 
-    return guardTimeout(
-      new Promise(resolve => {
-        const termsTransformer = new TermsTransformer();
-        quadStream.on('error', (error: Error) => {
-          this.logger.error(
-            `An error occurred when querying "${distribution.endpoint}": ${error}`
-          );
+    return new Promise(resolve => {
+      const termsTransformer = new TermsTransformer();
+      quadStream.on('error', error => {
+        this.logger.error(
+          `An error occurred when querying "${distribution.endpoint}": ${error}`
+        );
+
+        if ('AbortError' === error.name) {
+          resolve(new TimeoutError(distribution, timeoutMs));
+        } else {
           resolve(
             new ServerError(
               distribution,
               obfuscateHttpCredentials(error.message)
             )
           );
-        });
-        quadStream.on('data', (quad: RDF.Quad) => {
-          termsTransformer.fromQuad(quad);
-        });
-        quadStream.on('end', () => {
-          const terms = termsTransformer.asArray().sort(alphabeticallyByLabels);
-          this.logger.info(
-            `Found ${terms.length} terms matching "${query}" in "${
-              distribution.endpoint
-            }" in ${PrettyMilliseconds(timer.elapsed())}`
-          );
-          resolve(new Terms(distribution, terms));
-        });
-      }),
-      timeoutMs,
-      new TimeoutError(distribution, timeoutMs)
-    );
+        }
+      });
+      quadStream.on('data', (quad: RDF.Quad) => {
+        termsTransformer.fromQuad(quad);
+      });
+      quadStream.on('end', () => {
+        const terms = termsTransformer.asArray().sort(alphabeticallyByLabels);
+        this.logger.info(
+          `Found ${terms.length} terms matching "${query}" in "${
+            distribution.endpoint
+          }" in ${PrettyMilliseconds(timer.elapsed())}`
+        );
+        resolve(new Terms(distribution, terms));
+      });
+    });
   }
 }
 
@@ -150,19 +152,6 @@ const alphabeticallyByLabels = (a: Term, b: Term) => {
   const sortLabelB = prefLabelB + altLabelB;
   return sortLabelA.localeCompare(sortLabelB);
 };
-
-function guardTimeout<T>(
-  promise: Promise<T>,
-  timeoutMs: number,
-  timeoutError: TimeoutError
-): Promise<T> {
-  return Promise.race([
-    promise,
-    new Promise(resolve =>
-      setTimeout(resolve.bind(null, timeoutError), timeoutMs)
-    ),
-  ]) as Promise<T>;
-}
 
 const dataFactory = new DataFactory();
 const bindingsFactory = new BindingsFactory(dataFactory);
