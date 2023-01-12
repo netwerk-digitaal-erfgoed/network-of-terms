@@ -28,14 +28,15 @@ export async function reconciliationQuery(
       [queryId, {query: queryString, limit}]
     ) => {
       const results = await resultsPromise;
-      const termsResult = await queryTermsService.search(
+      const response = await queryTermsService.search(
         queryString,
         QueryMode.OPTIMIZED,
         dataset,
         distribution,
         10000
       );
-      const terms = termsResult instanceof Terms ? termsResult.terms : [];
+      const terms =
+        response.result instanceof Terms ? response.result.terms : [];
       results[queryId] = {
         result: terms
           .map(term => ({

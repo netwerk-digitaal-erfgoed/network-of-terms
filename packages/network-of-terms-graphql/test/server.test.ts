@@ -75,6 +75,7 @@ describe('Server', () => {
     expect(body.data.terms).toHaveLength(2);
     expect(body.data.terms[0].result.__typename).toEqual('TimeoutError');
     expect(body.data.terms[1].result.__typename).toEqual('Terms');
+    expect(body.data.terms[0].responseTimeMs).toBeGreaterThan(1000); // timeoutMs set to 1000.
   });
 
   it('responds to successful GraphQL terms query', async () => {
@@ -88,6 +89,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.name).toEqual('RKDartists');
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
+    expect(body.data.terms[0].responseTimeMs).toBeGreaterThan(0);
 
     const artwork = body.data.terms[0].result.terms.find(
       (term: {uri: string}) =>
@@ -117,6 +119,7 @@ describe('Server', () => {
     expect(term.source.name).toEqual('RKDartists');
     expect(term.result.__typename).toEqual('Term');
     expect(term.result.uri).toEqual('https://example.com/resources/art');
+    expect(term.responseTimeMs).toBeGreaterThan(0);
 
     const termNotFound = body.data.lookup[1];
     expect(termNotFound.uri).toEqual(
@@ -224,6 +227,7 @@ function termsQuery(sources: string[], query = 'nachtwacht') {
             message
           }
         }
+        responseTimeMs
       }
     }`;
 }
@@ -270,6 +274,7 @@ function lookupQuery(...iris: string[]) {
             message
           }
         }
+        responseTimeMs       
       }
     }`;
 }

@@ -8,7 +8,7 @@ import {
   IRI,
   QueryMode,
   Term,
-  TermsResult,
+  TermsResponse,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {defaultCatalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
@@ -52,25 +52,30 @@ export class QuerySourcesCommand extends Command {
     }),
   };
 
-  private render(results: TermsResult[], catalog: Catalog): void {
-    const rowsPerDistribution = results.map((result: TermsResult): Row[] => {
-      if (result instanceof Error) {
-        return [];
-      }
+  private render(results: TermsResponse[], catalog: Catalog): void {
+    const rowsPerDistribution = results.map(
+      (response: TermsResponse): Row[] => {
+        if (response.result instanceof Error) {
+          return [];
+        }
 
-      return result.terms.map((term: Term): Row => {
-        return {
-          datasetTitle:
-            catalog.getDatasetByDistributionIri(result.distribution.iri)
-              ?.name ?? '',
-          termUri: term.id!.value,
-          prefLabels: term.prefLabels
-            .map(prefLabel => prefLabel.value)
-            .join(' / '),
-          altLabels: term.altLabels.map(altLabel => altLabel.value).join(' / '),
-        };
-      });
-    });
+        return response.result.terms.map((term: Term): Row => {
+          return {
+            datasetTitle:
+              catalog.getDatasetByDistributionIri(
+                response.result.distribution.iri
+              )?.name ?? '',
+            termUri: term.id!.value,
+            prefLabels: term.prefLabels
+              .map(prefLabel => prefLabel.value)
+              .join(' / '),
+            altLabels: term.altLabels
+              .map(altLabel => altLabel.value)
+              .join(' / '),
+          };
+        });
+      }
+    );
     const rows = ([] as Row[]).concat(...rowsPerDistribution); // Flatten array
 
     cli.table<Row>(rows, {
