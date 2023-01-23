@@ -44,6 +44,16 @@ and open http://localhost:3123 in your browser for the GraphQL Playground. See b
 
 See [Running the tests](../../docs/tests.md) for more information about this repository’s test suite.
 
+### Running your own instance
+
+To run your own instance of the Network of Terms GraphQL API with a custom [catalog](../network-of-terms-catalog)
+(set of terminology sources and term queries):
+
+1. create your custom catalog that matches the data structure of the [default catalog](../network-of-terms-catalog/catalog)
+2. provide the path to your custom catalog in the `CATALOG_PATH` environment variable when starting the server:
+    
+       CATALOG_PATH=my-custom-catalog/ npm run start
+
 ## GraphQL queries
 
 ### List queryable sources

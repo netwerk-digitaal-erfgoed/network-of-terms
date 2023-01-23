@@ -10,7 +10,7 @@ import {
   Term,
   TermsResponse,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {defaultCatalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {getCatalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 interface Row extends Record<string, unknown> {
   datasetTitle: string;
@@ -104,7 +104,7 @@ export class QuerySourcesCommand extends Command {
       name: 'cli',
       level: flags.loglevel,
     });
-    const catalog = await defaultCatalog();
+    const catalog = await getCatalog();
     const service = new DistributionsService({logger, catalog});
     const results = await service.queryAll({
       sources,

@@ -4,7 +4,7 @@ import {
   Dataset,
   Distribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {defaultCatalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import {getCatalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 type DatasetDistribution = {
   dataset: Dataset;
@@ -29,7 +29,7 @@ export class ListSourcesCommand extends Command {
   }
 
   async run(): Promise<void> {
-    const catalog = await defaultCatalog();
+    const catalog = await getCatalog();
     const distributions = catalog.datasets.flatMap((dataset: Dataset) =>
       dataset.distributions.map(distribution => ({
         dataset,

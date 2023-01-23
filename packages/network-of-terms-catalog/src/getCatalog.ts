@@ -20,12 +20,9 @@ import {DataFactory} from 'rdf-data-factory';
 import {BindingsFactory} from '@comunica/bindings-factory';
 import {Bindings} from '@rdfjs/types';
 
-export async function defaultCatalog(): Promise<Catalog> {
-  const directory = resolve(
-    dirname(fileURLToPath(import.meta.url)),
-    '../',
-    'catalog/'
-  );
+export async function getCatalog(path?: string): Promise<Catalog> {
+  const directory =
+    path ?? resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/');
   const store = await fromFiles(directory);
   return fromStore(store);
 }
