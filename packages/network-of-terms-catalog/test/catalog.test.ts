@@ -6,7 +6,7 @@ import {
   IRI,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {defaultCatalog, fromFile, fromStore} from '../src';
+import {getCatalog, fromFile, fromStore} from '../src';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 
@@ -14,7 +14,7 @@ let catalog: Catalog;
 
 describe('Catalog', () => {
   beforeAll(async () => {
-    catalog = await defaultCatalog();
+    catalog = await getCatalog();
   });
 
   it('lists datasets in alphabetical order', () => {
@@ -105,5 +105,12 @@ describe('Catalog', () => {
     expect(
       dataset.getDistributionByIri(distributionIri)?.endpoint.toString()
     ).toEqual('https://username:password@gtaa.apis.beeldengeluid.nl/sparql');
+  });
+
+  it('loads catalog from a path', async () => {
+    const catalog = await getCatalog(
+      resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/')
+    );
+    expect(catalog.datasets.length).toBeGreaterThan(3);
   });
 });
