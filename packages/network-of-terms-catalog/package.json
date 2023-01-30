@@ -28,7 +28,7 @@
   "author": "Netwerk Digitaal Erfgoed",
   "license": "EUPL-1.2",
   "devDependencies": {
-    "@comunica/core": "^2.5.1",
+    "@comunica/core": "^2.6.0",
     "@comunica/types": "^2.6.0",
     "@types/n3": "^1.4.3",
     "@types/rdf-ext": "^1.3.11",
