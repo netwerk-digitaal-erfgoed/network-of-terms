@@ -1,5 +1,5 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX openskos:  <http://openskos.org/xmlns#>
+PREFIX bengthes: <http://data.beeldengeluid.nl/schema/thes#>
 PREFIX text: <http://jena.apache.org/text#>
 
 CONSTRUCT {
@@ -18,7 +18,7 @@ CONSTRUCT {
 WHERE {
     ?uri text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
     ?uri skos:inScheme ?datasetUri ;
-        openskos:status ?status .
+        bengthes:status ?status .
     FILTER(?status IN ('approved', 'candidate'))
 
     OPTIONAL {
@@ -53,4 +53,4 @@ WHERE {
         FILTER(LANG(?related_prefLabel) = "nl")
     }
 }
-LIMIT 1000
+LIMIT 10
