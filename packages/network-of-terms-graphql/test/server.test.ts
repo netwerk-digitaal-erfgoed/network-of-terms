@@ -97,6 +97,17 @@ describe('Server', () => {
     );
     expect(artwork.seeAlso).toEqual(['https://example.com/html/artwork']);
 
+    const prefLabels = body.data.terms[0].result.terms.map(
+      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
+    );
+    expect(prefLabels).toEqual([
+      'Rembrandt',
+      'Nachtwacht',
+      'All things art',
+      '',
+      '',
+    ]); // Results with score must come first.
+
     const relatedPrefLabels = artwork.related.map(
       ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
     );

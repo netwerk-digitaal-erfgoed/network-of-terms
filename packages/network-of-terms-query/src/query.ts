@@ -144,7 +144,9 @@ export class QueryTermsService {
         termsTransformer.fromQuad(quad);
       });
       quadStream.on('end', () => {
-        const terms = termsTransformer.asArray().sort(alphabeticallyByLabels);
+        const terms = termsTransformer
+          .asArray()
+          .sort(byScoreThenAlphabetically);
         this.logger.info(
           `Found ${terms.length} terms matching "${query}" in "${
             distribution.endpoint
@@ -160,6 +162,16 @@ export class QueryTermsService {
     });
   }
 }
+
+const byScoreThenAlphabetically = (a: Term, b: Term) => {
+  const scoreA = a.score?.value || 0;
+  const scoreB = b.score?.value || 0;
+  if (scoreA === scoreB) {
+    return alphabeticallyByLabels(a, b);
+  } else {
+    return scoreA < scoreB ? 1 : -1;
+  }
+};
 
 const alphabeticallyByLabels = (a: Term, b: Term) => {
   const prefLabelA = a.prefLabels[0]?.value ?? '';

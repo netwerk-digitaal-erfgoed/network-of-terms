@@ -8,3 +8,7 @@ This repository follows [Semantic Versioning](https://semver.org). Tags and [rel
 [created automatically](.github/workflows/release.yml) based on commit messages. So please make sure to follow
 the [Conventional Commits specification](https://www.conventionalcommits.org/en/v1.0.0/#summary) when committing
 changes.
+
+## Adding a terminology source
+
+Please see the [network-of-terms-catalog package](packages/network-of-terms-catalog/).

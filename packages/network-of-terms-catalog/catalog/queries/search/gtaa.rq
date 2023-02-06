@@ -1,6 +1,7 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX bengthes: <http://data.beeldengeluid.nl/schema/thes#>
 PREFIX text: <http://jena.apache.org/text#>
+PREFIX vrank: <http://purl.org/voc/vrank#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -10,13 +11,14 @@ CONSTRUCT {
         skos:scopeNote ?scopeNote ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
-        skos:related ?related_uri .
+        skos:related ?related_uri ;
+        vrank:simpleRank ?score .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    ?uri text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
+    (?uri ?score) text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
     ?uri skos:inScheme ?datasetUri ;
         bengthes:status ?status .
     FILTER(?status IN ('approved', 'candidate'))
@@ -53,4 +55,5 @@ WHERE {
         FILTER(LANG(?related_prefLabel) = "nl")
     }
 }
+ORDER BY DESC(?score)
 LIMIT 10

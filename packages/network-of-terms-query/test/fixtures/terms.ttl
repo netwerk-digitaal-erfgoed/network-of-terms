@@ -1,5 +1,6 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix vrank: <http://purl.org/voc/vrank#> .
 
 <https://example.com/resources/artwork>
     a skos:Concept ;
@@ -12,7 +13,8 @@
         <https://example.com/resources/painting> ,
         <https://example.com/resources/art> ;
     skos:ignored "Not used by Network of Terms" ;
-    rdfs:seeAlso <https://example.com/html/artwork> .
+    rdfs:seeAlso <https://example.com/html/artwork> ;
+    vrank:simpleRank 18.0 .
 
 <https://example.com/resources/painting>
     a <http://www.w3.org/2008/05/skos#Concept> ;
@@ -24,7 +26,8 @@
 
 <https://example.com/resources/painter>
     a <http://www.w3.org/2008/05/skos#Concept> ;
-    skos:prefLabel "Rembrandt" .
+    skos:prefLabel "Rembrandt" ;
+    vrank:simpleRank 20.5 .
 
 <https://example.com/resources/art>
     a skos:Concept ;
