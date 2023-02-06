@@ -34,7 +34,9 @@ two types of queries:
 
 * Create a `your-dataset.jsonld` file in the `catalog/` directory and add a description.
 * Create a `your-dataset.rq` file in the `queries/search` directory and add your SPARQL search query. A SPARQL
-  lookup goes into the `queries/lookup` directory.
+  lookup query goes into the `queries/lookup` directory.
+  * If your SPARQL server supports fulltext search relevance scores, you can return them as `vrank:simpleRank` values to
+    have search results ordered by rank instead of the default, alphabetical order.
 * [Run the tests](../../docs/tests.md) to make sure your dataset description conforms to the
   [dataset SHACL](shacl/dataset.jsonld).
 * To try your queries locally, you can

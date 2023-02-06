@@ -12,7 +12,8 @@ export class Term {
     readonly broaderTerms: RelatedTerm[],
     readonly narrowerTerms: RelatedTerm[],
     readonly relatedTerms: RelatedTerm[],
-    readonly datasetIri: RDF.Term | undefined
+    readonly datasetIri: RDF.Term | undefined,
+    readonly score: RDF.Literal | undefined
   ) {}
 }
 
@@ -32,6 +33,7 @@ class SparqlResultTerm {
   narrowerTerms: RDF.Term[] = [];
   relatedTerms: RDF.Term[] = [];
   inScheme: RDF.Term | undefined = undefined;
+  score: RDF.Literal | undefined = undefined;
 }
 
 export class TermsTransformer {
@@ -55,6 +57,7 @@ export class TermsTransformer {
     ['http://www.w3.org/2004/02/skos/core#related', 'relatedTerms'],
     ['http://www.w3.org/2008/05/skos#related', 'relatedTerms'],
     ['http://www.w3.org/2004/02/skos/core#inScheme', 'inScheme'],
+    ['http://purl.org/voc/vrank#simpleRank', 'score'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -103,7 +106,8 @@ export class TermsTransformer {
           alphabeticallyByPrefLabel
         ),
         this.mapRelatedTerms(term.relatedTerms).sort(alphabeticallyByPrefLabel),
-        term.inScheme
+        term.inScheme,
+        term.score
       );
     });
   }
