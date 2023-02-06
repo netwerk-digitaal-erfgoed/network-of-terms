@@ -47,7 +47,7 @@
     "@comunica/query-sparql-rdfjs": "^2.4.3",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "globby": "^13.1.3",
-    "rdf-parse": "^2.1.1",
+    "rdf-parse": "^2.3.0",
     "rdf-store-stream": "^1.3.1"
   }
 }
