@@ -32,7 +32,7 @@ export class QuerySourcesCommand extends Command {
       description: 'Query, e.g. "Gogh" or "fiets"',
       required: true,
     }),
-    queryMode: Flags.enum({
+    queryMode: Flags.string({
       description:
         'The mode in which the literal search query (`query`) is interpreted before it is sent to the term sources.',
       options: Object.keys(QueryMode),
