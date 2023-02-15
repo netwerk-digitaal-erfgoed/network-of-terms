@@ -12,13 +12,13 @@
     "@hapi/hoek": "11.0.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "fastify": "4.13.0",
+    "fastify": "^4.13.0",
     "string-comparison": "1.1.0"
   },
   "devDependencies": {
     "@types/accepts": "1.3.5",
     "accepts": "1.3.8",
-    "jest-dev-server": "6.2.0"
+    "jest-dev-server": "7.0.0"
   },
   "files": [
     "build/"
