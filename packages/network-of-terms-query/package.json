@@ -31,7 +31,7 @@
   "dependencies": {
     "@comunica/bindings-factory": "^2.5.1",
     "@comunica/data-factory": "^2.5.1",
-    "@comunica/query-sparql": "^2.5.0",
+    "@comunica/query-sparql": "^2.6.6",
     "@hapi/hoek": "^11.0.2",
     "@rdfjs/data-model": "^2.0.1",
     "joi": "^17.7.0",
