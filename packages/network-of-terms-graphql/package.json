@@ -13,7 +13,7 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/data-model": "2.0.1",
     "fastify": "^4.13.0",
-    "joi": "17.7.0",
+    "joi": "17.8.1",
     "mercurius": "12.0.0"
   },
   "devDependencies": {

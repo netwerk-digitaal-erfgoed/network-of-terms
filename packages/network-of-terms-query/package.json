@@ -34,7 +34,7 @@
     "@comunica/query-sparql": "^2.6.6",
     "@hapi/hoek": "^11.0.2",
     "@rdfjs/data-model": "^2.0.1",
-    "joi": "^17.7.0",
+    "joi": "^17.8.1",
     "pino": "^8.10.0",
     "pino-pretty": "^9.2.0",
     "pretty-ms": "^8.0.0",
