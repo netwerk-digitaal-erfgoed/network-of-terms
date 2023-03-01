@@ -9,10 +9,10 @@ PREFIX wd: <http://www.wikidata.org/entity/>
 CONSTRUCT {
     # Wikidata seems to have a problem with the short syntax for construct queries
     # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
-    ?item a skos:Concept .
-    ?item skos:prefLabel ?prefLabel .
-    ?item skos:altLabel ?altLabel .
-    ?item skos:scopeNote ?schema_description .
+    ?uri a skos:Concept .
+    ?uri skos:prefLabel ?prefLabel .
+    ?uri skos:altLabel ?altLabel .
+    ?uri skos:scopeNote ?schema_description .
 }
 WHERE {
     SERVICE wikibase:mwapi {
@@ -30,6 +30,9 @@ WHERE {
     # on instances (P31) or subclasses (P279) of "human settlement" (Q486972)
     ?item wdt:P31/wdt:P279* wd:Q486972 .
 
+    # replace HTTP with HTTPS in ?item because of current poor Wikidata support for HTTP
+    BIND(URI(REPLACE(LCASE(STR(?item)),"http://","https://")) as ?uri)
+    
     {
         # Select places in the Netherlands (Q55)
         ?item wdt:P17 wd:Q55 .

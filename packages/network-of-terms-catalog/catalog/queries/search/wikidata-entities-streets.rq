@@ -8,7 +8,7 @@ PREFIX wd: <http://www.wikidata.org/entity/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 CONSTRUCT {
-    ?item a skos:Concept ;
+    ?uri a skos:Concept ;
         skos:prefLabel ?streetName ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?description .
@@ -21,6 +21,9 @@ WHERE {
         bd:serviceParam mwapi:srsearch ?query .
         ?item wikibase:apiOutputItem mwapi:title .
     }
+    # replace HTTP with HTTPS in ?item because of current poor Wikidata support for HTTP
+    BIND(URI(REPLACE(LCASE(STR(?item)),"http://","https://")) as ?uri)
+
     {
         # select Streets
         ?item wdt:P31 wd:Q79007

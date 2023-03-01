@@ -7,10 +7,10 @@ PREFIX wikibase: <http://wikiba.se/ontology#>
 CONSTRUCT {
     # Wikidata seems to have a problem with the short syntax for construct queries
     # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
-    ?item a skos:Concept .
-    ?item skos:prefLabel ?rdfs_label .
-    ?item skos:altLabel ?altLabel .
-    ?item skos:scopeNote ?schema_description .
+    ?uri a skos:Concept .
+    ?uri skos:prefLabel ?rdfs_label .
+    ?uri skos:altLabel ?altLabel .
+    ?uri skos:scopeNote ?schema_description .
 }
 WHERE {
     SERVICE wikibase:mwapi {
@@ -21,6 +21,9 @@ WHERE {
         ?item wikibase:apiOutputItem mwapi:item .
     }
     ?item rdfs:label ?rdfs_label .
+    
+    # replace HTTP with HTTPS in ?item because of current poor Wikidata support for HTTP
+    BIND(URI(REPLACE(LCASE(STR(?item)),"http://","https://")) as ?uri)
     FILTER(LANG(?rdfs_label) = "nl")
     OPTIONAL {
         ?item skos:altLabel ?altLabel .
