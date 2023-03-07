@@ -46,7 +46,8 @@
     "@comunica/query-sparql-file": "^2.6.7",
     "@jest/globals": "^29.4.3",
     "asynciterator": "^3.8.0",
-    "jest-dev-server": "^8.0.0"
+    "jest-dev-server": "8.0.3",
+    "spawnd": "^8.0.0"
   },
   "engines": {
     "node": ">=16.15.0"

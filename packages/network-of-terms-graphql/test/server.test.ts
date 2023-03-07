@@ -1,9 +1,9 @@
 import {FastifyInstance} from 'fastify';
 import {server} from '../src/server';
-import {teardown} from 'jest-dev-server';
 import {
   startDistributionSparqlEndpoint,
   testCatalog,
+  teardown,
 } from '../../network-of-terms-query/src/server-test';
 
 let httpServer: FastifyInstance;
