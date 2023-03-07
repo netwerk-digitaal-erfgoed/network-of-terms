@@ -7,10 +7,16 @@ import {
   Organization,
   SparqlDistribution,
 } from './index';
-import {setup} from 'jest-dev-server';
+import {setup, teardown as teardownServer} from 'jest-dev-server';
 import {dirname} from 'path';
 import {fileURLToPath} from 'url';
+import {SpawndChildProcess} from 'spawnd';
 
+export const teardown = async () => {
+  await teardownServer(servers);
+};
+
+let servers: SpawndChildProcess[];
 export const testCatalog = (port: number) =>
   new Catalog([
     new Dataset(
@@ -155,7 +161,7 @@ export const testCatalog = (port: number) =>
 export async function startDistributionSparqlEndpoint(
   port: number
 ): Promise<void> {
-  await setup({
+  servers = await setup({
     command: `npx comunica-sparql-file-http ${dirname(
       fileURLToPath(import.meta.url)
     )}/../test/fixtures/terms.ttl -p ${port}`,
