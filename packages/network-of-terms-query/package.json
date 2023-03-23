@@ -47,7 +47,7 @@
     "@jest/globals": "^29.4.3",
     "asynciterator": "^3.8.0",
     "jest-dev-server": "8.0.3",
-    "spawnd": "^8.0.0"
+    "spawnd": "^8.0.5"
   },
   "engines": {
     "node": ">=16.15.0"
