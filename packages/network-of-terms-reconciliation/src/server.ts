@@ -1,7 +1,6 @@
 import fastify, {FastifyInstance} from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyAccepts from '@fastify/accepts';
-import {IncomingMessage} from 'http';
 import {findManifest} from './manifest';
 import formBodyPlugin from '@fastify/formbody';
 import {reconciliationQuery, ReconciliationQueryBatch} from './query';
@@ -16,8 +15,14 @@ import {
   QueryTermsService,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import jsonSchema from './json-schema/reconciliation-query.json' assert {type: 'json'};
+import dataExtensionQuery from './json-schema/data-extension-query.json' assert {type: 'json'};
 import {parse} from 'querystring';
 import {Accepts} from 'accepts';
+import {
+  dataExtensionProperties,
+  DataExtensionQuery,
+  extendQuery,
+} from './data-extension';
 
 export async function server(catalog: Catalog): Promise<FastifyInstance> {
   const logger = getHttpLogger({
@@ -32,10 +37,9 @@ export async function server(catalog: Catalog): Promise<FastifyInstance> {
   server.register(fastifyCors);
   server.register(formBodyPlugin, {parser});
   server.register(fastifyAccepts);
-  server.decorateRequest('previewUrl', '');
+  server.decorateRequest('root', '');
   server.addHook('onRequest', (request, reply, done) => {
-    request.previewUrl =
-      request.protocol + '://' + request.hostname + '/preview/{{id}}';
+    request.root = request.protocol + '://' + request.hostname;
     done();
   });
 
@@ -45,7 +49,7 @@ export async function server(catalog: Catalog): Promise<FastifyInstance> {
 
   server.get<{Params: {'*': string}}>('/reconcile/*', (request, reply) => {
     const distributionIri = new IRI(request.params['*']);
-    const manifest = findManifest(distributionIri, catalog, request.previewUrl);
+    const manifest = findManifest(distributionIri, catalog, request.root);
     if (manifest === undefined) {
       reply.code(404).send();
       return;
@@ -53,20 +57,37 @@ export async function server(catalog: Catalog): Promise<FastifyInstance> {
     reply.send(manifest);
   });
 
-  server.post<{Params: {'*': string}; Body: ReconciliationQueryBatch}>(
+  server.post<{
+    Params: {'*': string};
+    Body: ReconciliationQueryBatch | DataExtensionQuery;
+  }>(
     '/reconcile/*',
     {
       schema: {
-        body: jsonSchema,
+        body: {anyOf: [jsonSchema, dataExtensionQuery]},
       },
     },
     async (request, reply) => {
+      // BC for Reconciliation API spec 0.2.
+      if (request.body.ids) {
+        await extendQuery(
+          (request.body as DataExtensionQuery).ids.map(
+            termIri => new IRI(termIri)
+          ),
+          lookupService
+        );
+        reply.send(
+          await extendQuery(
+            (request.body as DataExtensionQuery).ids.map(
+              termIri => new IRI(termIri)
+            ),
+            lookupService
+          )
+        );
+        return;
+      }
       const distributionIri = new IRI(request.params['*']);
-      const manifest = findManifest(
-        distributionIri,
-        catalog,
-        request.previewUrl
-      );
+      const manifest = findManifest(distributionIri, catalog, request.root);
       if (manifest === undefined) {
         reply.code(404).send();
         return;
@@ -75,9 +96,33 @@ export async function server(catalog: Catalog): Promise<FastifyInstance> {
       reply.send(
         await reconciliationQuery(
           distributionIri,
-          request.body,
+          request.body as ReconciliationQueryBatch,
           catalog,
           queryTermsService
+        )
+      );
+    }
+  );
+
+  server.get('/extend/propose', (request, reply) => {
+    reply.send({
+      type: 'Concept',
+      properties: dataExtensionProperties,
+    });
+  });
+
+  server.post<{Body: DataExtensionQuery}>(
+    '/extend',
+    {
+      schema: {
+        body: dataExtensionQuery,
+      },
+    },
+    async (request, reply) => {
+      reply.send(
+        await extendQuery(
+          request.body.ids.map(termIri => new IRI(termIri)),
+          lookupService
         )
       );
     }
@@ -99,10 +144,6 @@ export async function server(catalog: Catalog): Promise<FastifyInstance> {
   return server;
 }
 
-export interface customRequest extends IncomingMessage {
-  previewUrl: string;
-}
-
 export type locale = typeof en;
 
 /**
@@ -110,11 +151,12 @@ export type locale = typeof en;
  */
 const parser = (string: string) => {
   const parsed = parse(string);
-  return JSON.parse(parsed['queries'] as string);
+
+  return JSON.parse((parsed['queries'] ?? parsed['extend']) as string);
 };
 
 declare module 'fastify' {
   interface FastifyRequest extends Accepts {
-    previewUrl: string;
+    root: string;
   }
 }
