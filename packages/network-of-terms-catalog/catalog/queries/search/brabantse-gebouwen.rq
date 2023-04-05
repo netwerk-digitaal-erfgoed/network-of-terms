@@ -11,7 +11,7 @@ CONSTRUCT {
 WHERE {
     ?uri a schema:LandmarksOrHistoricalBuildings .
     ?uri ?predicate ?label .
-    VALUES ?predicate { schema:name schema:alternateName }
+    VALUES ?predicate { schema:name schema:alternateName skos:hiddenLabel skos:scopeNote}
     FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
