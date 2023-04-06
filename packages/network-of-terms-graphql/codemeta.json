@@ -30,24 +30,32 @@
         }
     ],
     "dateCreated": "2020-04-17T00:22:24Z+0200",
-    "description": "Search engine for finding terms in terminology sources (such as thesauri, classification systems and reference lists)",
-    "developmentStatus": ["https://www.repostatus.org/#active", "https://w3id.org/research-technology-readiness-level#Level9Proven"],
+    "description": "GraphQL API for the Network of Terms, a Search engine for finding terms in terminology sources (such as thesauri, classification systems and reference lists)",
+    "developmentStatus": ["https://www.repostatus.org/#active", "https://w3id.org/research-technology-readiness-levels#Level9Proven"],
     "issueTracker": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues",
+    "funding": {
+        "@type": "Grant",
+        "funder": {
+            "@id": "https://identifier.overheid.nl/tooi/id/ministerie/mnre1109",
+            "@type": "Organization",
+            "name": "Ministerie van Onderwijs, Cultuur en Wetenschap",
+            "url": "https://www.rijksoverheid.nl/ministeries/ministerie-van-onderwijs-cultuur-en-wetenschap"
+        }
+    },
     "keywords": [
         "graphql",
         "linked-data",
-        "reconciliation",
         "search"
     ],
     "license": "https://spdx.org/licenses/EUPL-1.2",
-    "name": "network-of-terms",
+    "name": "Network of Terms GraphQL API",
     "producer": {
         "@type": "Organization",
         "name": "Netwerk Digitaal Erfgoed",
         "url": "https://www.netwerkdigitaalerfgoed.nl"
     },
     "programmingLanguage": "TypeScript",
-    "readme": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
+    "readme": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/blob/master/packages/network-of-terms-graphql/README.md",
     "runtimePlatform": "node >=16.15.0",
     "targetProduct": [
         {
@@ -55,12 +63,6 @@
             "@type": "WebApplication",
             "name": "Network of Terms GraphQL API",
             "url": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl"
-        },
-        {
-            "@id": "/reconciliation",
-            "@type": "WebApplication",
-            "name": "Network of Terms Reconciliation Service API",
-            "url": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile"
         }
     ],
     "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
