@@ -6,6 +6,7 @@ import {
   testCatalog,
   teardown,
 } from '../../network-of-terms-query/src/server-test';
+import {DataExtensionQuery} from '../src/data-extension';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);
@@ -109,7 +110,7 @@ describe('Server', () => {
     );
     expect(response.statusCode).toEqual(400);
     expect(JSON.parse(response.body).message).toEqual(
-      'body/q1/limit must be integer'
+      "body/q1/limit must be integer, body must have required property 'ids', body must match a schema in anyOf"
     );
   });
 
@@ -118,6 +119,42 @@ describe('Server', () => {
       'https://example.com/distributions/endpoint-error'
     );
     expect(response.statusCode).toEqual(200);
+  });
+
+  it('returns data extension properties', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/extend/propose',
+    });
+    expect(response.statusCode).toEqual(200);
+  });
+
+  it('returns data extension response for terms', async () => {
+    const response = await dataExtensionQuery('/extend');
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+
+    // This is what OpenRefine currently expects.
+    const response2 = await dataExtensionQuery(
+      '/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql/extend'
+    );
+    expect(response2.statusCode).toEqual(200);
+    const results2 = JSON.parse(response.body);
+
+    expect(results).toEqual(results2);
+
+    expect(results.rows).toEqual({
+      'https://example.com/resources/artwork': {
+        prefLabels: [{str: 'Nachtwacht'}],
+        altLabels: [{str: 'Nachtwacht alt'}],
+        scopeNotes: [{str: 'One of the most famous Dutch paintings'}],
+      },
+      'https://example.com/resources/painter': {
+        prefLabels: [{str: 'Rembrandt'}],
+        altLabels: [],
+        scopeNotes: [],
+      },
+    });
   });
 
   it('shows HTML term preview', async () => {
@@ -203,5 +240,25 @@ async function reconciliationQuery(
     payload: new URLSearchParams([
       ['queries', JSON.stringify(query)],
     ]).toString(),
+  });
+}
+
+async function dataExtensionQuery(
+  url = '/extend',
+  query: DataExtensionQuery = {
+    ids: [
+      'https://example.com/resources/artwork',
+      'https://example.com/resources/painter',
+    ],
+    properties: [{id: 'altLabel'}],
+  }
+) {
+  return httpServer.inject({
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    url,
+    payload: query,
   });
 }

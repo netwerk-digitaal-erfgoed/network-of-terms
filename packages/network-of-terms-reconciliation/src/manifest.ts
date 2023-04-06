@@ -14,16 +14,25 @@ export class ServiceManifest {
     },
   ];
   public readonly preview;
+  public readonly extend;
 
   constructor(
     public readonly name: string,
     public readonly identifierSpace: IRI,
-    readonly previewUrl: string
+    readonly root: string
   ) {
     this.preview = {
       width: 300,
       height: 300,
-      url: previewUrl,
+      url: root + '/preview/{{id}}',
+    };
+
+    this.extend = {
+      propose_properties: {
+        service_url: root,
+        service_path: '/extend/propose',
+      },
+      property_settings: [],
     };
   }
 }
@@ -31,7 +40,7 @@ export class ServiceManifest {
 export function findManifest(
   distributionIri: IRI,
   catalog: Catalog,
-  hostname: string
+  root: string
 ): ServiceManifest | undefined {
   const source = catalog.getDatasetByDistributionIri(distributionIri);
   if (
@@ -40,7 +49,7 @@ export function findManifest(
       .getDistributionByIri(distributionIri)
       ?.hasFeature(FeatureType.RECONCILIATION)
   ) {
-    return new ServiceManifest(source.name, source.iri, hostname);
+    return new ServiceManifest(source.name, source.iri, root);
   }
 
   return undefined;
