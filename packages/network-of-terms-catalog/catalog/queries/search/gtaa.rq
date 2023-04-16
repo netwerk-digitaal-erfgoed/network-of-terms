@@ -18,42 +18,44 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    (?uri ?score) text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
-    ?uri skos:inScheme ?datasetUri ;
-        bengthes:status ?status .
-    FILTER(?status IN ('approved', 'candidate'))
+    SELECT * WHERE {
+        (?uri ?score) text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
+        ?uri skos:inScheme ?datasetUri ;
+            bengthes:status ?status .
+        FILTER(?status IN ('approved', 'candidate'))
 
-    OPTIONAL {
-        ?uri skos:prefLabel ?prefLabel .
-        FILTER(LANG(?prefLabel) = "nl" )
+        OPTIONAL {
+            ?uri skos:prefLabel ?prefLabel .
+            FILTER(LANG(?prefLabel) = "nl" )
+        }
+        OPTIONAL {
+            ?uri skos:altLabel ?altLabel .
+            FILTER(LANG(?altLabel) = "nl")
+        }
+        OPTIONAL {
+            ?uri skos:hiddenLabel ?hiddenLabel .
+            FILTER(LANG(?hiddenLabel) = "nl")
+        }
+        OPTIONAL {
+            ?uri skos:scopeNote ?scopeNote .
+            FILTER(LANG(?scopeNote) = "nl")
+        }
+        OPTIONAL {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+            FILTER(LANG(?broader_prefLabel) = "nl")
+        }
+        OPTIONAL {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+            FILTER(LANG(?narrower_prefLabel) = "nl")
+        }
+        OPTIONAL {
+            ?uri skos:related ?related_uri .
+            ?related_uri skos:prefLabel ?related_prefLabel .
+            FILTER(LANG(?related_prefLabel) = "nl")
+        }
     }
-    OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:hiddenLabel ?hiddenLabel .
-        FILTER(LANG(?hiddenLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote .
-        FILTER(LANG(?scopeNote) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri skos:prefLabel ?broader_prefLabel .
-        FILTER(LANG(?broader_prefLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-        FILTER(LANG(?narrower_prefLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:related ?related_uri .
-        ?related_uri skos:prefLabel ?related_prefLabel .
-        FILTER(LANG(?related_prefLabel) = "nl")
-    }
+    LIMIT 20
 }
 ORDER BY DESC(?score)
-LIMIT 10

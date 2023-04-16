@@ -9,29 +9,31 @@ CONSTRUCT {
         skos:scopeNote ?scopeNote .
 }
 WHERE {
-    ?uri void:inDataset <https://data.adamlink.nl/adamnet/geography/> .
-    ?uri a hg:Street .
-    ?uri ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-
-    {
-        FILTER(?virtuosoQuery)
+    SELECT * WHERE {
+        ?uri void:inDataset <https://data.adamlink.nl/adamnet/geography/> .
+        ?uri a hg:Street .
         ?uri ?predicate ?label .
-        ?label <bif:contains> ?virtuosoQuery .
-    } UNION {
-        # BC support.
-        BIND(?virtuosoQuery as ?b)
-        FILTER(!BOUND(?b))
-        ?uri ?predicate ?label .
-        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-        FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")) )
-    }
+        VALUES ?predicate { skos:prefLabel skos:altLabel }
 
-    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
-    OPTIONAL { ?uri skos:altLabel ?altLabel }
-    OPTIONAL {
-        ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
-        BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+        {
+            FILTER(?virtuosoQuery)
+            ?uri ?predicate ?label .
+            ?label <bif:contains> ?virtuosoQuery .
+        } UNION {
+            # BC support.
+            BIND(?virtuosoQuery as ?b)
+            FILTER(!BOUND(?b))
+            ?uri ?predicate ?label .
+            # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
+            FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")) )
+        }
+
+        OPTIONAL { ?uri skos:prefLabel ?prefLabel }
+        OPTIONAL { ?uri skos:altLabel ?altLabel }
+        OPTIONAL {
+            ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
+            BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+        }
     }
+    LIMIT 1000
 }
-LIMIT 1000
