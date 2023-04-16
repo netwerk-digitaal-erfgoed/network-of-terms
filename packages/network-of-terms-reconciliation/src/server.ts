@@ -33,7 +33,7 @@ export async function server(catalog: Catalog): Promise<FastifyInstance> {
   const queryTermsService = new QueryTermsService();
   const lookupService = new LookupService(catalog, queryTermsService);
 
-  const server = fastify({logger});
+  const server = fastify({logger, trustProxy: true});
   server.register(fastifyCors);
   server.register(formBodyPlugin, {parser});
   server.register(fastifyAccepts);
