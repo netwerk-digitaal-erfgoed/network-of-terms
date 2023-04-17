@@ -7,6 +7,7 @@ import {
   teardown,
 } from '../../network-of-terms-query/src/server-test';
 import {DataExtensionQuery} from '../src/data-extension';
+import {config} from '../src/config';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);
@@ -16,7 +17,7 @@ describe('Server', () => {
   });
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3001);
-    httpServer = await server(catalog);
+    httpServer = await server(catalog, config);
   });
 
   it('returns ok at root', async () => {

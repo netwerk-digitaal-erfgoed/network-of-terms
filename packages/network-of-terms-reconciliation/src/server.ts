@@ -23,8 +23,12 @@ import {
   DataExtensionQuery,
   extendQuery,
 } from './data-extension';
+import {EnvSchemaData} from 'env-schema';
 
-export async function server(catalog: Catalog): Promise<FastifyInstance> {
+export async function server(
+  catalog: Catalog,
+  config: EnvSchemaData
+): Promise<FastifyInstance> {
   const logger = getHttpLogger({
     name: 'http',
     level: 'info',
@@ -33,7 +37,7 @@ export async function server(catalog: Catalog): Promise<FastifyInstance> {
   const queryTermsService = new QueryTermsService();
   const lookupService = new LookupService(catalog, queryTermsService);
 
-  const server = fastify({logger, trustProxy: true});
+  const server = fastify({logger, trustProxy: config.TRUST_PROXY as boolean});
   server.register(fastifyCors);
   server.register(formBodyPlugin, {parser});
   server.register(fastifyAccepts);
