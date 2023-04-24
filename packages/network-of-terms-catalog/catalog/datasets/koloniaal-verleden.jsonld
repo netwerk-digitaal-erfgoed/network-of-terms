@@ -1,0 +1,54 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://data.cultureelerfgoed.nl/koloniaalverleden/",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Koloniaal Verleden"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.cultureelerfgoed.nl"
+    }
+  ],
+  "url": [
+    "https://data.cultureelerfgoed.nl/koloniaalverleden/"
+  ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Termen voor het beschrijven van museale collecties over het koloniaal verleden"
+    }
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/koloniaalverleden",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/koloniaalverleden",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
+          }
+        }
+      ]
+    }
+  ]
+}
