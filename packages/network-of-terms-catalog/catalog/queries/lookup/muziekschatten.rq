@@ -9,9 +9,9 @@ CONSTRUCT {
         skos:altLabel ?schema_alternateName ;
         skos:scopeNote ?scopeNote ;
         skos:scopeNote ?schema_hasOccupation ;
-        skos:broader ?uri_broader ;
+        skos:broader ?broader_uri ;
         skos:inScheme ?datasetUri .
-    ?uri_broader skos:prefLabel ?broader_schema_name .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
     # For example:
@@ -19,10 +19,31 @@ WHERE {
     # Subject: <https://data.muziekschatten.nl/som/d78165>
     # Person: <https://data.muziekschatten.nl/som/b7bc6d966287e0f0e0f491752ff65ba5>
     # Person: <https://data.muziekschatten.nl/som/4275e51d7d94b224928da9b7707a170a>
+    # Uitvoeringsmedium: <https://data.muziekschatten.nl/som/um2603>
     VALUES ?uri { ?uris }
 
     ?uri a ?type .
     VALUES ?type { skos:Concept schema:Person } .
+
+    # For Uitvoeringsmedia
+    OPTIONAL {
+        ?uri skos:inScheme ?datasetUri ;
+            skos:prefLabel ?prefLabel .
+
+        FILTER(?datasetUri = <https://data.muziekschatten.nl/som/Uitvoeringsmedium>)
+
+        FILTER(LANG(?prefLabel) = "nl")
+
+        OPTIONAL {
+            ?uri skos:scopeNote ?scopeNote
+        }
+
+        OPTIONAL {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+            FILTER(LANG(?broader_prefLabel) = "nl")
+        }
+    }
 
     # For subjects
     OPTIONAL {
@@ -35,9 +56,9 @@ WHERE {
         }
 
         OPTIONAL {
-            ?uri skos:broader ?uri_broader .
-            ?uri_broader schema:name ?broader_schema_name .
-            FILTER(LANG(?broader_schema_name) = "nl")
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri schema:name ?broader_prefLabel .
+            FILTER(LANG(?broader_prefLabel) = "nl")
         }
         OPTIONAL {
             ?uri schema:keywords ?schema_keywords

@@ -1,0 +1,30 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX som: <https://data.muziekschatten.nl/som/>
+
+CONSTRUCT {
+    ?uri a skos:Concept;
+        skos:prefLabel ?prefLabel;
+        skos:scopeNote ?scopeNote;
+        skos:broader ?broader_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+}
+WHERE {
+    ?uri a skos:Concept ;
+        skos:inScheme som:Uitvoeringsmedium ;
+        skos:prefLabel ?prefLabel .
+
+    FILTER(LANG(?prefLabel) = "nl")
+
+    ?prefLabel <bif:contains> ?virtuosoQuery .
+
+    OPTIONAL {
+        ?uri skos:scopeNote ?scopeNote
+    }
+
+    OPTIONAL {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+        FILTER(LANG(?broader_prefLabel) = "nl")
+    }
+}
+LIMIT 1000
