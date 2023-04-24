@@ -102,6 +102,12 @@
       "@type": "Organization",
       "name": "Henri van de Waal Foundation",
       "alternateName": "Henri van de Waal"
+    },
+    {
+      "@id": "https://www.podiumkunst.net",
+      "@type": "Organization",
+      "name": "Podiumkunst.net",
+      "alternateName": "Podiumkunst.net"
     }
   ]
 }
