@@ -3,8 +3,9 @@ PREFIX som: <https://data.muziekschatten.nl/som/>
 
 CONSTRUCT {
     ?uri a skos:Concept;
-        skos:prefLabel ?prefLabel;
-        skos:scopeNote ?scopeNote;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
         skos:broader ?broader_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
 }
@@ -15,10 +16,17 @@ WHERE {
 
     FILTER(LANG(?prefLabel) = "nl")
 
-    ?prefLabel <bif:contains> ?virtuosoQuery .
+    ?uri ?predicate ?label .
+    VALUES ?predicate { skos:prefLabel skos:altLabel }
+    ?label <bif:contains> ?virtuosoQuery .
 
     OPTIONAL {
         ?uri skos:scopeNote ?scopeNote
+    }
+
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl")
     }
 
     OPTIONAL {

@@ -6,7 +6,7 @@ CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?schema_name ;
         skos:prefLabel ?prefLabel ;
-        skos:altLabel ?schema_alternateName ;
+        skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote ;
         skos:scopeNote ?schema_hasOccupation ;
         skos:broader ?broader_uri ;
@@ -36,6 +36,11 @@ WHERE {
 
         OPTIONAL {
             ?uri skos:scopeNote ?scopeNote
+        }
+
+        OPTIONAL {
+            ?uri skos:altLabel ?altLabel .
+            FILTER(LANG(?altLabel) = "nl")
         }
 
         OPTIONAL {
@@ -80,7 +85,7 @@ WHERE {
         ?uri a schema:Person
         BIND(<http://data.muziekschatten.nl/#personen> AS ?datasetUri).
         OPTIONAL { ?uri schema:name ?schema_name }
-        OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+        OPTIONAL { ?uri schema:alternateName ?altLabel }
         OPTIONAL { ?uri schema:hasOccupation ?schema_hasOccupation }
         OPTIONAL { ?uri schema:familyName ?schema_familyName }
         OPTIONAL { ?uri schema:givenName ?schema_givenName }
