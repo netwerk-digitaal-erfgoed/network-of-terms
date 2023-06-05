@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@comunica/core": "^2.6.0",
-    "@comunica/query-sparql-file": "^2.7.0",
+    "@comunica/query-sparql-file": "^2.7.1",
     "@jest/globals": "^29.4.3",
     "asynciterator": "^3.8.0",
     "jest-dev-server": "9.0.0",
