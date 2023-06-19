@@ -32,7 +32,7 @@ two types of queries:
 
 ### Adding a dataset
 
-* Create a `your-dataset.jsonld` file in the `catalog/` directory and add a description.
+* Create a `your-dataset.jsonld` file in the `catalog/datasets` directory and add a description.
 * Create a `your-dataset.rq` file in the `queries/search` directory and add your SPARQL search query. A SPARQL
   lookup query goes into the `queries/lookup` directory.
   * If your SPARQL server supports fulltext search relevance scores, you can return them as `vrank:simpleRank` values to
