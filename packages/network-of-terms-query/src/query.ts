@@ -118,7 +118,7 @@ export class QueryTermsService {
       quadStream.on('error', error => {
         const elapsed = Math.round(timer.elapsed());
         this.logger.error(
-          `An error occurred when querying "${distribution.endpoint}": ${error}`
+          `An error occurred when querying "${distribution.endpoint}": ${error} with %o`, error
         );
 
         if ('AbortError' === error.name) {
