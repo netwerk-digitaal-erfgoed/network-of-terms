@@ -219,3 +219,24 @@ query {
   }
 }
 ```
+
+### Response times and timeout
+
+Response times from the Network of Terms will vary depending on how fast each terminology source returns results for the
+query.
+
+Use the `responseTimeMs` query parameter to inspect the response time for each source.
+
+The default timeout is 5 seconds. You can raise this up till `MAX_QUERY_TIMEOUT` (60 seconds, by default) using the
+`timeoutMs` query parameter. For example, to wait a maximum of 15 seconds for each terminology source to respond:
+
+```graphql
+query {
+  terms(
+    sources: [...],
+    query: "...",
+    timeoutMs: 15000,
+  ) {
+    ...
+  }
+}
