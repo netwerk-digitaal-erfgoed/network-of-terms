@@ -89,7 +89,7 @@ export class QueryTermsService {
       Joi.number()
         .integer()
         .min(1)
-        .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 10000)
+        .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 60000)
         .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000)
     );
 
