@@ -17,7 +17,7 @@
     "mercurius": "13.0.0"
   },
   "devDependencies": {
-    "@types/rdfjs__data-model": "2.0.3",
+    "@types/rdfjs__data-model": "2.0.4",
     "jest-dev-server": "9.0.0",
     "ts-node-dev": "2.0.0",
     "tsc-watch": "6.0.4"
