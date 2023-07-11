@@ -5,6 +5,7 @@ import {QueryTermsService, TermsResponse} from './query';
 import {QueryMode} from './search/query-mode';
 import {Catalog, IRI} from './catalog';
 import {comunica} from './index';
+import {clientQueriesCounter} from './instrumentation';
 
 export interface QueryOptions {
   source: IRI;
@@ -72,6 +73,10 @@ export class DistributionsService {
 
   async queryAll(options: QueryAllOptions): Promise<TermsResponse[]> {
     const args = Joi.attempt(options, schemaQueryAll);
+    clientQueriesCounter.add(1, {
+      numberOfSources: args.sources.length,
+      type: 'search',
+    });
     const requests = args.sources.map((source: IRI) =>
       this.query({
         source,

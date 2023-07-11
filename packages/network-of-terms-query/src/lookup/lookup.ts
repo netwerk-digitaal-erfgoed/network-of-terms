@@ -9,6 +9,7 @@ import {
   TimeoutError,
 } from '../query';
 import {Term} from '../terms';
+import {clientQueriesCounter} from '../instrumentation';
 
 export type LookupQueryResult = {
   uri: IRI;
@@ -112,6 +113,7 @@ export class LookupService {
     return iris.map(iri => {
       const dataset = irisToDataset.get(iri.toString());
       if (dataset === undefined) {
+        clientQueriesCounter.add(1, {type: 'lookup', error: 'SourceNotFound'});
         return {
           uri: iri,
           distribution: new SourceNotFoundError(iri),
@@ -121,6 +123,7 @@ export class LookupService {
       }
 
       const response = datasetToTerms.get(dataset)!;
+      clientQueriesCounter.add(1, {type: 'lookup'});
 
       return {
         uri: iri,
