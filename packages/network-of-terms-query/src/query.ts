@@ -11,6 +11,7 @@ import {Dataset, Distribution, IRI} from './catalog';
 import {QueryEngine} from '@comunica/query-sparql';
 import {BindingsFactory} from '@comunica/bindings-factory';
 import {DataFactory} from 'rdf-data-factory';
+import {sourceQueriesHistogram} from './instrumentation';
 
 export type TermsResult = Terms | TimeoutError | ServerError;
 
@@ -123,6 +124,10 @@ export class QueryTermsService {
         );
 
         if ('AbortError' === error.name) {
+          sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
+            distribution: distribution.iri.toString(),
+            error: 'TimeoutError',
+          });
           resolve(
             new TermsResponse(
               new TimeoutError(distribution, timeoutMs),
@@ -130,6 +135,10 @@ export class QueryTermsService {
             )
           );
         } else {
+          sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
+            distribution: distribution.iri.toString(),
+            error: 'ServerError',
+          });
           resolve(
             new TermsResponse(
               new ServerError(
@@ -153,6 +162,9 @@ export class QueryTermsService {
             distribution.endpoint
           }" in ${PrettyMilliseconds(timer.elapsed())}`
         );
+        sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
+          distribution: distribution.iri.toString(),
+        });
         resolve(
           new TermsResponse(
             new Terms(distribution, terms),
