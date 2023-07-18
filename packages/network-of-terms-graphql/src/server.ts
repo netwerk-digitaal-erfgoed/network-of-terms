@@ -9,13 +9,10 @@ import {
   comunica,
   getHttpLogger,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {EnvSchemaData} from 'env-schema';
 
 export async function server(
-  catalog: Catalog,
-  config: EnvSchemaData
+  catalog: Catalog
 ): Promise<FastifyInstance<Server>> {
-  console.log(config);
   const logger = getHttpLogger({
     name: 'http',
     level: 'info',

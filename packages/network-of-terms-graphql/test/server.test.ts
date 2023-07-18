@@ -1,6 +1,5 @@
 import {FastifyInstance} from 'fastify';
 import {server} from '../src/server';
-import {config} from '../src/config';
 import {
   startDistributionSparqlEndpoint,
   testCatalog,
@@ -15,7 +14,7 @@ describe('Server', () => {
   });
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3000);
-    httpServer = await server(catalog, config);
+    httpServer = await server(catalog);
   });
 
   it('responds to GraphQL sources query', async () => {
