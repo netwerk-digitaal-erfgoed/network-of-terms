@@ -9,15 +9,19 @@ import {
   comunica,
   getHttpLogger,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import {EnvSchemaData} from 'env-schema';
 
 export async function server(
-  catalog: Catalog
+  catalog: Catalog,
+  config: EnvSchemaData
 ): Promise<FastifyInstance<Server>> {
-  const logger = getHttpLogger({
-    name: 'http',
-    level: 'info',
+  const server = fastify({
+    logger: getHttpLogger({
+      name: 'http',
+      level: 'info',
+    }),
+    trustProxy: config.TRUST_PROXY as boolean,
   });
-  const server = fastify({logger});
   server.register(mercurius, {
     schema,
     resolvers,
