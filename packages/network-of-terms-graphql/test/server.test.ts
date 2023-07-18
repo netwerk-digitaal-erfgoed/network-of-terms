@@ -12,7 +12,7 @@ const catalog = testCatalog(3000);
 describe('Server', () => {
   afterAll(async () => {
     await teardown();
-    await meterProvider.shutdown();
+    await meterProvider.shutdown({timeoutMillis: 1000});
   });
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3000);
