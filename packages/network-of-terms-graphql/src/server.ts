@@ -15,13 +15,12 @@ export async function server(
   catalog: Catalog,
   config: EnvSchemaData
 ): Promise<FastifyInstance<Server>> {
-  const server = fastify({
-    logger: getHttpLogger({
-      name: 'http',
-      level: 'info',
-    }),
-    trustProxy: config.TRUST_PROXY as boolean,
+  console.log(config);
+  const logger = getHttpLogger({
+    name: 'http',
+    level: 'info',
   });
+  const server = fastify({logger});
   server.register(mercurius, {
     schema,
     resolvers,
