@@ -17,7 +17,7 @@ const meterProvider = new MeterProvider({
 meterProvider.addMetricReader(
   new PeriodicExportingMetricReader({
     exporter: new OTLPMetricExporter(),
-    exportIntervalMillis: 3000,
+    exportIntervalMillis: 15000,
   })
 );
 metrics.setGlobalMeterProvider(meterProvider);
