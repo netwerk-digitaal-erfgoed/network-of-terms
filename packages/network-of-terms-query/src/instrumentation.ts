@@ -18,7 +18,6 @@ meterProvider.addMetricReader(
   new PeriodicExportingMetricReader({
     exporter: new OTLPMetricExporter(),
     exportIntervalMillis: 60000,
-    exportTimeoutMillis: 1000,
   })
 );
 metrics.setGlobalMeterProvider(meterProvider);
