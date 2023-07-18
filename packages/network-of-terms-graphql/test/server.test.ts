@@ -5,12 +5,14 @@ import {
   testCatalog,
   teardown,
 } from '../../network-of-terms-query/src/server-test';
+import {meterProvider} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3000);
 describe('Server', () => {
   afterAll(async () => {
     await teardown();
+    await meterProvider.shutdown();
   });
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3000);
