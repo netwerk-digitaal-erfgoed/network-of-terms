@@ -22,6 +22,7 @@
     "check": "gts check",
     "fix": "gts fix",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1}",
+    "posttest": "jest-coverage-thresholds-bumper",
     "release": "npx multi-semantic-release"
   },
   "engines": {
