@@ -7,7 +7,7 @@ import {OTLPMetricExporter} from '@opentelemetry/exporter-metrics-otlp-proto';
 import {SemanticResourceAttributes} from '@opentelemetry/semantic-conventions';
 import {metrics, ValueType} from '@opentelemetry/api';
 
-export const meterProvider = new MeterProvider({
+const meterProvider = new MeterProvider({
   resource: Resource.default().merge(
     new Resource({
       [SemanticResourceAttributes.SERVICE_NAME]: 'network-of-terms',
