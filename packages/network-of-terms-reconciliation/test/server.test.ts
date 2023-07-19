@@ -8,11 +8,13 @@ import {
 } from '../../network-of-terms-query/src/server-test';
 import {DataExtensionQuery} from '../src/data-extension';
 import {config} from '../src/config';
+import {meterProvider} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);
 describe('Server', () => {
   afterAll(async () => {
+    meterProvider.shutdown({timeoutMillis: 1000});
     await teardown();
   });
   beforeAll(async () => {
