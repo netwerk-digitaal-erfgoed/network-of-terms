@@ -7,6 +7,9 @@ const schema = {
       type: 'boolean',
       default: false,
     },
+    CATALOG_PATH: {
+      type: 'string',
+    },
   },
 };
 
