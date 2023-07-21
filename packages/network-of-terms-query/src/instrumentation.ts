@@ -1,8 +1,6 @@
 import {
-  ExponentialHistogramAggregation,
   MeterProvider,
   PeriodicExportingMetricReader,
-  View,
 } from '@opentelemetry/sdk-metrics';
 import {Resource} from '@opentelemetry/resources';
 import {OTLPMetricExporter} from '@opentelemetry/exporter-metrics-otlp-proto';
@@ -17,12 +15,6 @@ const meterProvider = new MeterProvider({
       [SemanticResourceAttributes.SERVICE_NAME]: 'network-of-terms',
     })
   ),
-  views: [
-    new View({
-      aggregation: new ExponentialHistogramAggregation(10),
-      instrumentName: sourceQueriesHistogramName,
-    }),
-  ],
 });
 
 if ('test' !== process.env.NODE_ENV) {
