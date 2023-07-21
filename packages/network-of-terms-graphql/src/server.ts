@@ -1,9 +1,8 @@
-import fastify, {FastifyInstance} from 'fastify';
+import fastify from 'fastify';
 import mercurius from 'mercurius';
 import {resolvers} from './resolvers';
 import {schema} from './schema';
 import fastifyCors from '@fastify/cors';
-import {Server} from 'http';
 import {
   Catalog,
   comunica,
@@ -11,10 +10,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {EnvSchemaData} from 'env-schema';
 
-export async function server(
-  catalog: Catalog,
-  config: EnvSchemaData
-): Promise<FastifyInstance<Server>> {
+export async function server(catalog: Catalog, config: EnvSchemaData) {
   const logger = getHttpLogger({
     name: 'http',
     level: 'info',
