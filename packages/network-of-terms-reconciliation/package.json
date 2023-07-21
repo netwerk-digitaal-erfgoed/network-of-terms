@@ -12,8 +12,8 @@
     "@hapi/hoek": "11.0.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "env-schema": "^5.2.0",
-    "fastify": "^4.19.1",
+    "env-schema": "5.2.0",
+    "fastify": "4.19.2",
     "string-comparison": "1.1.0"
   },
   "devDependencies": {
