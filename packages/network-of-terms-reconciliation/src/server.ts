@@ -1,4 +1,4 @@
-import fastify from 'fastify';
+import fastify, {FastifyInstance} from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyAccepts from '@fastify/accepts';
 import {findManifest} from './manifest';
@@ -17,6 +17,7 @@ import {
 import jsonSchema from './json-schema/reconciliation-query.json' assert {type: 'json'};
 import dataExtensionQuery from './json-schema/data-extension-query.json' assert {type: 'json'};
 import {parse} from 'querystring';
+import {Accepts} from 'accepts';
 import {
   dataExtensionProperties,
   DataExtensionQuery,
@@ -24,7 +25,10 @@ import {
 } from './data-extension';
 import {EnvSchemaData} from 'env-schema';
 
-export async function server(catalog: Catalog, config: EnvSchemaData) {
+export async function server(
+  catalog: Catalog,
+  config: EnvSchemaData
+): Promise<FastifyInstance> {
   const logger = getHttpLogger({
     name: 'http',
     level: 'info',
