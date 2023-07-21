@@ -24,13 +24,16 @@ const meterProvider = new MeterProvider({
     }),
   ],
 });
-meterProvider.addMetricReader(
-  new PeriodicExportingMetricReader({
-    exporter: new OTLPMetricExporter(),
-    exportIntervalMillis:
-      (process.env.OTEL_METRIC_EXPORT_INTERVAL as unknown as number) ?? 60000,
-  })
-);
+
+if ('test' !== process.env.NODE_ENV) {
+  meterProvider.addMetricReader(
+    new PeriodicExportingMetricReader({
+      exporter: new OTLPMetricExporter(),
+      exportIntervalMillis:
+        (process.env.OTEL_METRIC_EXPORT_INTERVAL as unknown as number) ?? 60000,
+    })
+  );
+}
 metrics.setGlobalMeterProvider(meterProvider);
 
 const meter = metrics.getMeter('default');
