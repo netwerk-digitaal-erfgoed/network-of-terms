@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "http://data.muziekschatten.nl/#personen",
+  "@id": "https://data.muziekschatten.nl/#personen",
   "@type": "Dataset",
   "name": [
     {

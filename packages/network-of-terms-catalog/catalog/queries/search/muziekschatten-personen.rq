@@ -1,6 +1,6 @@
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX som: <http://data.muziekschatten.nl/som/>
+PREFIX som: <https://data.muziekschatten.nl/som/>
 
 # Persons for testing the query
 # No birth year:

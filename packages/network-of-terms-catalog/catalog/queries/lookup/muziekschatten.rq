@@ -1,6 +1,6 @@
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX som: <http://data.muziekschatten.nl/som/>
+PREFIX som: <https://data.muziekschatten.nl/som/>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -53,7 +53,7 @@ WHERE {
     # For subjects
     OPTIONAL {
         ?uri a skos:Concept
-        BIND(<http://data.muziekschatten.nl/#onderwerpen> AS ?datasetUri).
+        BIND(<https://data.muziekschatten.nl/#onderwerpen> AS ?datasetUri).
 
         OPTIONAL {
             ?uri schema:name ?schema_name .
@@ -83,7 +83,7 @@ WHERE {
     # For persons
     OPTIONAL {
         ?uri a schema:Person
-        BIND(<http://data.muziekschatten.nl/#personen> AS ?datasetUri).
+        BIND(<https://data.muziekschatten.nl/#personen> AS ?datasetUri).
         OPTIONAL { ?uri schema:name ?schema_name }
         OPTIONAL { ?uri schema:alternateName ?altLabel }
         OPTIONAL { ?uri schema:hasOccupation ?schema_hasOccupation }

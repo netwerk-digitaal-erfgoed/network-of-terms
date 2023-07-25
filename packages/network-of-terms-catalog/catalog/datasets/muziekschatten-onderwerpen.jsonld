@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "http://data.muziekschatten.nl/#onderwerpen",
+  "@id": "https://data.muziekschatten.nl/#onderwerpen",
   "@type": "Dataset",
   "name": [
     {
