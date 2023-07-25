@@ -41,11 +41,23 @@ flowchart TD
 
 ## Getting started
 
-### Web interface
+### For users
 
 If you just want to search the Network of Terms using a web interface, have a look at our
 [demonstrator](https://termennetwerk.netwerkdigitaalerfgoed.nl), a web interface on top of the
 [GraphQL API](packages/network-of-terms-graphql/).
+
+### For application developers
+
+If you’re a software developer who wants to implement terms search/lookup in your software (such as collection 
+management systems), you probably want to use the Network of Terms
+[GraphQL API](packages/network-of-terms-graphql/README.md#for-application-developers).
+
+### For Network of Terms developers
+
+If you want to make changes to the Network of Terms code or catalog, the best way to get started is to run the 
+application [locally using Node](packages/network-of-terms-graphql/README.md#for-network-of-terms-developers)
+or [in a development Docker container](docs/docker.md).
 
 ### Packages
 
