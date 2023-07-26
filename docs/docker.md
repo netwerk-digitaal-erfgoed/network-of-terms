@@ -12,7 +12,7 @@ Start by cloning the repository:
 
 Then start run the development container:
 
-    docker compose run --rm node
+    docker compose run --service-ports --rm node
 
 And execute the commands that you find in each package’s readme (for example
 [GraphQL](../packages/network-of-terms-graphql/) or [Reconciliation](../packages/network-of-terms-reconciliation)):
