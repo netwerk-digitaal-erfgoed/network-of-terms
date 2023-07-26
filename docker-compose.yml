@@ -2,6 +2,7 @@ version: "3.9"
 services:
   node:
     image: node:lts-alpine
+    user: node
     volumes:
       - .:/app
     ports:
