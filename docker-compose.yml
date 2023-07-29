@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   node:
-    image: node:lts-alpine
+    image: node:18
     user: node
     volumes:
       - .:/app
@@ -10,4 +10,4 @@ services:
       - "3000:3000"
       - "3001:3001"
     working_dir: /app
-    command: sh
+    command: bash
