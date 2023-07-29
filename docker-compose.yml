@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   node:
-    image: node:18
+    image: node:lts
     user: node
     volumes:
       - .:/app
