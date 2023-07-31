@@ -15,7 +15,7 @@
     "env-schema": "5.2.0",
     "fastify": "4.19.2",
     "joi": "17.9.2",
-    "mercurius": "13.0.0"
+    "mercurius": "13.1.0"
   },
   "devDependencies": {
     "@types/rdfjs__data-model": "2.0.4",
