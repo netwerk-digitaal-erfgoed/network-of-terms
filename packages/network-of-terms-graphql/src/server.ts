@@ -10,6 +10,7 @@ import {
   getHttpLogger,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {EnvSchemaData} from 'env-schema';
+import mercuriusLogging from 'mercurius-logging';
 
 export async function server(
   catalog: Catalog,
@@ -33,6 +34,9 @@ export async function server(
       }),
   });
   server.register(fastifyCors);
+  server.register(mercuriusLogging, {
+    logBody: true,
+  });
   server.route({
     method: 'GET',
     url: '/',
