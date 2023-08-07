@@ -11,36 +11,38 @@ CONSTRUCT {
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
-    ?uri text:query (gn:name gn:alternateName ?query) ;
+    SELECT * WHERE {
+        ?uri text:query (gn:name gn:alternateName ?query) ;
         a gn:Feature ;
         gn:featureClass ?featureClass ;
         gn:name ?prefLabel ;
         gn:countryCode ?countryCode ;
         ?names ?name .
 
-    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
+        BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
 
-    # Search in names and alternative names.
-    VALUES ?names { gn:name gn:alternateName }
+        # Search in names and alternative names.
+        VALUES ?names { gn:name gn:alternateName }
 
-    # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
-    VALUES ?featureClass { gn:P gn:L gn:A gn:H }
+        # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
+        VALUES ?featureClass { gn:P gn:L gn:A gn:H }
 
-    OPTIONAL {
-        ?uri gn:alternateName ?altLabel .
-        FILTER(?altLabel != "")
+        OPTIONAL {
+            ?uri gn:alternateName ?altLabel .
+            FILTER(?altLabel != "")
+        }
+
+        OPTIONAL {
+            ?uri ?parents ?broader .
+            ?broader gn:name ?broader_prefLabel
+            VALUES ?parents { gn:parentADM1 gn:parentADM2 }
+            # filter out the circular links in the converted data
+            FILTER(?uri != ?broader)
+        }
+
+        OPTIONAL {
+            ?uri gn:featureCode/gn:name ?scopeNote .
+        }
     }
-
-    OPTIONAL {
-        ?uri ?parents ?broader .
-        ?broader gn:name ?broader_prefLabel
-        VALUES ?parents { gn:parentADM1 gn:parentADM2 }
-        # filter out the circular links in the converted data
-        FILTER(?uri != ?broader)
-    }
-
-    OPTIONAL {
-        ?uri gn:featureCode/gn:name ?scopeNote .
-    }
+    LIMIT 1000
 }
-LIMIT 1000
