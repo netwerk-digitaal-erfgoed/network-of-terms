@@ -11,7 +11,7 @@ CONSTRUCT {
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
-    ?uri text:query (gn:name gn:alternateName ?query) ;
+    ?uri text:query ?virtuosoQuery ;
         a gn:Feature ;
         gn:featureClass ?featureClass ;
         gn:name ?prefLabel ;
