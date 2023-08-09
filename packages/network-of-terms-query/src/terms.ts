@@ -18,7 +18,10 @@ export class Term {
 }
 
 export class RelatedTerm {
-  constructor(readonly id: RDF.Term, readonly prefLabels: RDF.Literal[]) {}
+  constructor(
+    readonly id: RDF.Term,
+    readonly prefLabels: RDF.Literal[]
+  ) {}
 }
 
 class SparqlResultTerm {

@@ -78,7 +78,10 @@ export class SparqlDistribution {
 }
 
 export class Feature {
-  constructor(readonly type: FeatureType, readonly url: URL) {}
+  constructor(
+    readonly type: FeatureType,
+    readonly url: URL
+  ) {}
 }
 
 export enum FeatureType {

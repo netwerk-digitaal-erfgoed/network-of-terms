@@ -16,19 +16,31 @@ import {sourceQueriesHistogram} from './instrumentation';
 export type TermsResult = Terms | TimeoutError | ServerError;
 
 export class TermsResponse {
-  constructor(readonly result: TermsResult, readonly responseTimeMs: number) {}
+  constructor(
+    readonly result: TermsResult,
+    readonly responseTimeMs: number
+  ) {}
 }
 
 export class Terms {
-  constructor(readonly distribution: Distribution, readonly terms: Term[]) {}
+  constructor(
+    readonly distribution: Distribution,
+    readonly terms: Term[]
+  ) {}
 }
 
 export class Error {
-  constructor(readonly distribution: Distribution, readonly message: string) {}
+  constructor(
+    readonly distribution: Distribution,
+    readonly message: string
+  ) {}
 }
 
 export class TimeoutError extends Error {
-  constructor(readonly distribution: Distribution, timeoutMs: number) {
+  constructor(
+    readonly distribution: Distribution,
+    timeoutMs: number
+  ) {
     super(distribution, `Source timed out after ${timeoutMs}ms`);
   }
 }

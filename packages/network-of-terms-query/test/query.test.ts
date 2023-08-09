@@ -59,7 +59,7 @@ const query = async (iri: IRI) => {
       {
         type: 'sparql';
         value: string;
-      }
+      },
     ];
     initialBindings: Map<string, RDF.Term>;
   };
