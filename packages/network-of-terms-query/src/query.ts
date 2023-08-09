@@ -189,8 +189,8 @@ export class QueryTermsService {
 }
 
 const byScoreThenAlphabetically = (a: Term, b: Term) => {
-  const scoreA = a.score?.value || 0;
-  const scoreB = b.score?.value || 0;
+  const scoreA = parseFloat(a.score?.value ?? '0');
+  const scoreB = parseFloat(b.score?.value ?? '0');
   if (scoreA === scoreB) {
     return alphabeticallyByLabels(a, b);
   } else {

@@ -1,27 +1,25 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gn: <https://www.geonames.org/ontology#>
 PREFIX text: <http://jena.apache.org/text#>
+PREFIX vrank: <http://purl.org/voc/vrank#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel_ext ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote ;
-        skos:broader ?broader .
+        skos:broader ?broader ;
+        vrank:simpleRank ?score .
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
-    ?uri text:query (gn:name gn:alternateName ?query) ;
-        a gn:Feature ;
+    (?uri ?score) text:query (gn:name gn:alternateName ?query 100) .
+    ?uri a gn:Feature ;
         gn:featureClass ?featureClass ;
         gn:name ?prefLabel ;
-        gn:countryCode ?countryCode ;
-        ?names ?name .
+        gn:countryCode ?countryCode .
 
     BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
-
-    # Search in names and alternative names.
-    VALUES ?names { gn:name gn:alternateName }
 
     # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
     VALUES ?featureClass { gn:P gn:L gn:A gn:H }
