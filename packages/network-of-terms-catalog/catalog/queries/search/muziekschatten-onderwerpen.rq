@@ -10,22 +10,11 @@ CONSTRUCT {
     ?broader_uri skos:prefLabel ?broader_schema_name .
 }
 WHERE {
-    ?uri a skos:Concept .
+    ?uri a skos:Concept ;
+        ?predicate ?label .
 
-    {
-        FILTER(?virtuosoQuery)
-        ?uri ?predicate ?label .
-        VALUES ?predicate { schema:name schema:keywords }
-        ?label <bif:contains> ?virtuosoQuery .
-    } UNION {
-        # BC support.
-        # This Virtuoso endpoint needs STRLEN() rather than !BOUND() because the latter still matches, throwing an error
-        # for queries with diacritics or multiple words.
-        FILTER(STRLEN(?virtuosoQuery) = 0)
-        ?uri ?predicate ?label .
-        VALUES ?predicate { schema:name schema:keywords }
-        ?label <bif:contains> ?query .
-    }
+    VALUES ?predicate { schema:name schema:keywords }
+    ?label <bif:contains> ?virtuosoQuery .
 
     OPTIONAL {
         ?uri schema:name ?schema_name .

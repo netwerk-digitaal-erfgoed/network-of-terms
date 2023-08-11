@@ -64,7 +64,7 @@ export const schema = `
       query: String!,
 
       "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."      
-      queryMode: QueryMode = DEPRECATED
+      queryMode: QueryMode = OPTIMIZED
 
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000
@@ -87,10 +87,7 @@ export const schema = `
   The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources.
   """
   enum QueryMode {
-    "This mode is only for backwards-compatibility. Switch to \`OPTIMIZED\` mode for forwards-compatibility."
-    DEPRECATED @deprecated(reason: "This mode will be removed in the future. Use \`OPTIMIZED\` instead.")
-    
-    "Optimize search query input for term sources. This will become the default."
+    "Optimize search query input for term sources. The default."
     OPTIMIZED
     
     "Send the unaltered query input to the term sources. For advanced users that want to have full control over the search query."

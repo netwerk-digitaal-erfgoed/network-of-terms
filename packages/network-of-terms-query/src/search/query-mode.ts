@@ -1,7 +1,6 @@
 export enum QueryMode {
   RAW = 'raw',
   OPTIMIZED = 'optimized',
-  DEPRECATED = 'deprecated',
 }
 
 export function queryVariants(query: string, type: QueryMode) {
@@ -16,8 +15,6 @@ export function queryVariants(query: string, type: QueryMode) {
         ['query', stringQuery(query)],
         ['virtuosoQuery', virtuosoQuery(stringQuery(query))],
       ]);
-    case QueryMode.DEPRECATED:
-      return new Map([['query', query]]);
   }
 }
 
