@@ -7,7 +7,5 @@ services:
       - .:/app
     ports:
       - "3123:3123"
-      - "3000:3000"
-      - "3001:3001"
     working_dir: /app
     command: bash
