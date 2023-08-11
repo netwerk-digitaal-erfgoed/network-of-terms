@@ -10,22 +10,10 @@ CONSTRUCT {
         skos:scopeNote ?schema_description .
 }
 WHERE {
-    ?uri a schema:MusicGroup .
-    ?uri ?predicate ?label .
+    ?uri a schema:MusicGroup ;
+        ?predicate ?label .
     VALUES ?predicate { skos:prefLabel skos:altLabel }
-
-    {
-        FILTER(?virtuosoQuery)
-        ?uri ?predicate ?label .
-        ?label <bif:contains> ?virtuosoQuery .
-    } UNION {
-        # BC support.
-        BIND(?virtuosoQuery as ?b)
-        FILTER(!BOUND(?b))
-        ?uri ?predicate ?label .
-        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-        FILTER (<bif:contains> (?label, REPLACE(?query, "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)", " AND ", "i")) )
-    }
+    ?label <bif:contains> ?virtuosoQuery .
 
     OPTIONAL { ?uri skos:prefLabel ?prefLabel }
     OPTIONAL { ?uri skos:altLabel ?altLabel }

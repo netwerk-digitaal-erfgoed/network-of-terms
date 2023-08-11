@@ -29,22 +29,10 @@ CONSTRUCT {
 WHERE {
     ?uri a schema:Person .
     # Require the presence of this property for quality purposes
-    ?uri som:NDEREC ?nderec .
-
-    {
-        FILTER(?virtuosoQuery)
-        ?uri ?predicate ?label .
-        VALUES ?predicate { schema:name schema:alternateName }
-        ?label <bif:contains> ?virtuosoQuery .
-    } UNION {
-        # BC support.
-        # This Virtuoso endpoint needs STRLEN() rather than !BOUND() because the latter still matches, throwing an error
-        # for queries with diacritics or multiple words.
-        FILTER(STRLEN(?virtuosoQuery) = 0)
-        ?uri ?predicate ?label .
-        VALUES ?predicate { schema:name schema:alternateName }
-        ?label <bif:contains> ?query .
-    }
+    ?uri som:NDEREC ?nderec ;
+        ?predicate ?label .
+    VALUES ?predicate { schema:name schema:alternateName }
+    ?label <bif:contains> ?virtuosoQuery .
 
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName }

@@ -8,29 +8,10 @@ CONSTRUCT {
         skos:scopeNote ?schema_description .
 }
 WHERE {
-    ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/persons> .
-    ?uri ?predicate ?label .
+    ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/persons> ;
+        ?predicate ?label .
     VALUES ?predicate { rdfs:label schema:name schema:alternateName }
-
-    {
-        FILTER(?virtuosoQuery)
-        ?uri ?predicate ?label .
-        ?label <bif:contains> ?virtuosoQuery .
-    } UNION {
-        # BC support.
-        BIND(?virtuosoQuery as ?b)
-        FILTER(!BOUND(?b))
-        ?uri ?predicate ?label .
-        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-        FILTER (<bif:contains> (?label,
-            REPLACE(
-                REPLACE(?query, "[.,]", " "),
-                "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)(?!$)(?![[:space:]])",
-                " AND ",
-                "i"
-            )
-        ))
-    }
+    ?label <bif:contains> ?virtuosoQuery .
 
     OPTIONAL { ?uri rdfs:label ?rdfs_label }
     OPTIONAL { ?uri schema:name ?schema_name }

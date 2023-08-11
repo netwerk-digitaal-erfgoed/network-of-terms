@@ -15,27 +15,8 @@ WHERE {
     ?uri ?name ?label .
     VALUES ?name { schema:name schema:alternateName }
 
-    {
-        FILTER(?virtuosoQuery)
-        ?uri ?predicate ?label .
-        ?label <bif:contains> ?virtuosoQuery .
-    } UNION {
-        # BC support.
-        # The RKD Virtuoso endpoint needs isLiteral() rather than !BOUND() because the latter still matches, throwing an
-        # error for queries with diacritics.
-        FILTER(!isLiteral(?virtuosoQuery))
-
-        ?uri ?predicate ?label .
-        # Replace query "A B" with "A AND B", leaving queries "A AND B" or "A OR B" unchanged.
-        FILTER (<bif:contains> (?label,
-            REPLACE(
-                REPLACE(?query, "[.,]", " "),
-                "(?<!AND)(?<!OR)[[:space:]]+(?!AND)(?!OR)(?!$)(?![[:space:]])",
-                " AND ",
-                "i"
-            )
-        ))
-    }
+    ?uri ?predicate ?label .
+    ?label <bif:contains> ?virtuosoQuery .
 
     OPTIONAL { ?uri schema:name ?schema_name . }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName . }
