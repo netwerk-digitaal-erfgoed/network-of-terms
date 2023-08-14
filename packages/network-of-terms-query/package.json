@@ -31,7 +31,7 @@
   "dependencies": {
     "@comunica/bindings-factory": "^2.7.0",
     "@comunica/data-factory": "^2.7.0",
-    "@comunica/query-sparql": "^2.8.1",
+    "@comunica/query-sparql": "^2.8.2",
     "@hapi/hoek": "^11.0.2",
     "@opentelemetry/api": "^1.4.1",
     "@opentelemetry/exporter-metrics-otlp-proto": "0.41.2",
