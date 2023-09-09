@@ -1,17 +1,17 @@
 import * as Hoek from '@hapi/hoek';
 import Joi from 'joi';
-import {LoggerPino} from './helpers/logger-pino';
+import {LoggerPino} from './helpers/logger-pino.js';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from '@rdfjs/types';
 import {Bindings} from '@rdfjs/types';
-import {Term, TermsTransformer} from './terms';
-import {QueryMode, queryVariants} from './search/query-mode';
-import {Dataset, Distribution, IRI} from './catalog';
+import {Term, TermsTransformer} from './terms.js';
+import {QueryMode, queryVariants} from './search/query-mode.js';
+import {Dataset, Distribution, IRI} from './catalog.js';
 import {QueryEngine} from '@comunica/query-sparql';
 import {BindingsFactory} from '@comunica/bindings-factory';
 import {DataFactory} from 'rdf-data-factory';
-import {sourceQueriesHistogram} from './instrumentation';
+import {sourceQueriesHistogram} from './instrumentation.js';
 
 export type TermsResult = Terms | TimeoutError | ServerError;
 

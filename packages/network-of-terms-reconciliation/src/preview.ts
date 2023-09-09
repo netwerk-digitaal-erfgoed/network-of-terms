@@ -6,7 +6,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {Literal} from '@rdfjs/types';
 import {escapeHtml} from '@hapi/hoek';
-import {locale} from './server';
+import {locale} from './server.js';
 
 export function preview(
   lookupResult: LookupQueryResult,

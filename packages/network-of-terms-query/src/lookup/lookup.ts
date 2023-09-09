@@ -1,4 +1,4 @@
-import {Catalog, Dataset, Distribution, IRI} from '../catalog';
+import {Catalog, Dataset, Distribution, IRI} from '../catalog.js';
 import {
   Error,
   QueryTermsService,
@@ -7,9 +7,9 @@ import {
   TermsResponse,
   TermsResult,
   TimeoutError,
-} from '../query';
-import {Term} from '../terms';
-import {clientQueriesCounter} from '../instrumentation';
+} from '../query.js';
+import {Term} from '../terms.js';
+import {clientQueriesCounter} from '../instrumentation.js';
 
 export type LookupQueryResult = {
   uri: IRI;

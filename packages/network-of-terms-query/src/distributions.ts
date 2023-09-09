@@ -1,11 +1,11 @@
 import {QueryEngine} from '@comunica/query-sparql';
 import Joi from 'joi';
 import Pino from 'pino';
-import {QueryTermsService, TermsResponse} from './query';
-import {QueryMode} from './search/query-mode';
-import {Catalog, IRI} from './catalog';
-import {comunica} from './index';
-import {clientQueriesCounter} from './instrumentation';
+import {QueryTermsService, TermsResponse} from './query.js';
+import {QueryMode} from './search/query-mode.js';
+import {Catalog, IRI} from './catalog.js';
+import {comunica} from './index.js';
+import {clientQueriesCounter} from './instrumentation.js';
 
 export interface QueryOptions {
   source: IRI;

@@ -1,7 +1,7 @@
 import fastify, {FastifyInstance} from 'fastify';
 import mercurius from 'mercurius';
-import {resolvers} from './resolvers';
-import {schema} from './schema';
+import {resolvers} from './resolvers.js';
+import {schema} from './schema.js';
 import fastifyCors from '@fastify/cors';
 import {Server} from 'http';
 import {

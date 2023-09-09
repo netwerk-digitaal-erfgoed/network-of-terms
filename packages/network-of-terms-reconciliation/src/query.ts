@@ -5,7 +5,7 @@ import {
   QueryTermsService,
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {score} from './score';
+import {score} from './score.js';
 
 /**
  * Fan out reconciliation query batch to terminology source queries.
