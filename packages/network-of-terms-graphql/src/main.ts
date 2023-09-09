@@ -1,6 +1,6 @@
 import {getCatalog} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
-import {server} from './server';
-import {config} from './config';
+import {server} from './server.js';
+import {config} from './config.js';
 
 (async () => {
   try {

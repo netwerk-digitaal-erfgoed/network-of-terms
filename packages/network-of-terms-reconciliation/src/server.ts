@@ -1,10 +1,10 @@
 import fastify, {FastifyInstance} from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyAccepts from '@fastify/accepts';
-import {findManifest} from './manifest';
+import {findManifest} from './manifest.js';
 import formBodyPlugin from '@fastify/formbody';
-import {reconciliationQuery, ReconciliationQueryBatch} from './query';
-import {preview} from './preview';
+import {reconciliationQuery, ReconciliationQueryBatch} from './query.js';
+import {preview} from './preview.js';
 import en from './locales/en.json' assert {type: 'json'};
 import nl from './locales/nl.json' assert {type: 'json'};
 import {
@@ -22,7 +22,7 @@ import {
   dataExtensionProperties,
   DataExtensionQuery,
   extendQuery,
-} from './data-extension';
+} from './data-extension.js';
 import {EnvSchemaData} from 'env-schema';
 
 export async function server(

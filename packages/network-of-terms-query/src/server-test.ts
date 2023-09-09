@@ -6,7 +6,7 @@ import {
   IRI,
   Organization,
   SparqlDistribution,
-} from './index';
+} from './index.js';
 import {setup, teardown as teardownServer} from 'jest-dev-server';
 import {dirname} from 'path';
 import {fileURLToPath} from 'url';

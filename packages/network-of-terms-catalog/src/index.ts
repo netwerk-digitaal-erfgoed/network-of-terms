@@ -1,1 +1,1 @@
-export * from './getCatalog';
+export * from './getCatalog.js';
