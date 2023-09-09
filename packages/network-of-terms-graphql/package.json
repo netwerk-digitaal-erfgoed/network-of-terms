@@ -30,7 +30,7 @@
     "compile": "npm run clean && tsc --build tsconfig.build.json",
     "fix": "gts fix",
     "start": "node --experimental-specifier-resolution=node build/main.js",
-    "dev": "tsc-watch --build tsconfig.build.json --onSuccess 'npm run start'",
+    "dev": "tsc-watch --build tsconfig.build.json --onSuccess \"npm run start\"",
     "watch": "tsc --watch"
   },
   "repository": {
