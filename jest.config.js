@@ -13,8 +13,8 @@ export default {
     global: {
       lines: 90.87,
       statements: 90.87,
-      branches: 93.83,
-      functions: 89.79,
+      branches: 95.86,
+      functions: 91.52,
     },
   },
   transform: {
@@ -27,5 +27,6 @@ export default {
   },
   moduleNameMapper: {
     '^@netwerk-digitaal-erfgoed/(.*)$': '<rootDir>/packages/$1/src/',
+    '^(\\.{1,2}/.*)\\.js$': '$1',
   },
 };
