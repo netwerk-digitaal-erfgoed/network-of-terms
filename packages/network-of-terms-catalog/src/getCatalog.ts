@@ -3,7 +3,6 @@ import rdfParser from 'rdf-parse';
 import * as RDF from '@rdfjs/types';
 import {QueryEngine} from '@comunica/query-sparql-rdfjs';
 import {Transform, TransformCallback} from 'stream';
-import {dirname, resolve} from 'path';
 import {globby} from 'globby';
 import {storeStream} from 'rdf-store-stream';
 import {
@@ -156,10 +155,8 @@ class InlineFiles extends Transform {
     callback: TransformCallback
   ) {
     if (quad.object.value.startsWith('file://')) {
-      const file = resolve(
-        dirname(fileURLToPath(import.meta.url)),
-        '../',
-        quad.object.value.substr(7)
+      const file = fileURLToPath(
+        new URL('../' + quad.object.value.substr(7), import.meta.url)
       );
       quad.object.value = await fs.promises.readFile(file, 'utf-8');
     }
