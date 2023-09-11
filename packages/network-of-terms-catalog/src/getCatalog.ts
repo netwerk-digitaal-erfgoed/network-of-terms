@@ -20,8 +20,9 @@ import {BindingsFactory} from '@comunica/bindings-factory';
 import {Bindings} from '@rdfjs/types';
 
 export async function getCatalog(path?: string): Promise<Catalog> {
-  const directory =
-    (path ?? fileURLToPath(new URL('../catalog', import.meta.url))).replace(/\\/g, '/');
+  const directory = (
+    path ?? fileURLToPath(new URL('../catalog', import.meta.url))
+  ).replace(/\\/g, '/'); // Windows compatibility.
   const store = await fromFiles(directory);
   return fromStore(store);
 }
