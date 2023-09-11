@@ -22,7 +22,7 @@ import {Bindings} from '@rdfjs/types';
 
 export async function getCatalog(path?: string): Promise<Catalog> {
   const directory =
-    path ?? resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/');
+    path ?? fileURLToPath(new URL('../catalog', import.meta.url));
   const store = await fromFiles(directory);
   return fromStore(store);
 }
