@@ -3,7 +3,6 @@ import rdfParser from 'rdf-parse';
 import * as RDF from '@rdfjs/types';
 import {QueryEngine} from '@comunica/query-sparql-rdfjs';
 import {Transform, TransformCallback} from 'stream';
-import {dirname, resolve} from 'path';
 import {globby} from 'globby';
 import {storeStream} from 'rdf-store-stream';
 import {
@@ -21,8 +20,9 @@ import {BindingsFactory} from '@comunica/bindings-factory';
 import {Bindings} from '@rdfjs/types';
 
 export async function getCatalog(path?: string): Promise<Catalog> {
-  const directory =
-    path ?? resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/');
+  const directory = (
+    path ?? fileURLToPath(new URL('../catalog', import.meta.url))
+  ).replace(/\\/g, '/'); // Windows compatibility.
   const store = await fromFiles(directory);
   return fromStore(store);
 }
@@ -156,10 +156,8 @@ class InlineFiles extends Transform {
     callback: TransformCallback
   ) {
     if (quad.object.value.startsWith('file://')) {
-      const file = resolve(
-        dirname(fileURLToPath(import.meta.url)),
-        '../',
-        quad.object.value.substr(7)
+      const file = fileURLToPath(
+        new URL('../' + quad.object.value.substr(7), import.meta.url)
       );
       quad.object.value = await fs.promises.readFile(file, 'utf-8');
     }
