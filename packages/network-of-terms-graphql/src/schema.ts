@@ -6,6 +6,7 @@ export const schema = `
     uri: ID!
     name: String!
     alternateName: String
+    availableLanguage: String
     description: String!
     creators: [Creator]!
     features: [Feature]!

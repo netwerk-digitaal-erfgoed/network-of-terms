@@ -138,6 +138,7 @@ function source(distribution: Distribution, dataset: Dataset) {
     uri: distribution.iri,
     name: dataset.name,
     alternateName: dataset.alternateName,
+    availableLanguage: dataset.availableLanguage,
     description: dataset.description,
     creators: dataset.creators.map(creator => ({
       uri: creator.iri,

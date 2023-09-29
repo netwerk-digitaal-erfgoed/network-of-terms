@@ -30,7 +30,7 @@ export async function getCatalog(path?: string): Promise<Catalog> {
 export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
   // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
   const properties =
-    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName';
+    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?availableLanguage ?alternateName';
   const query = `
       PREFIX schema: <http://schema.org/>
         SELECT ${properties} (GROUP_CONCAT(?url) as ?url)  WHERE {
@@ -40,6 +40,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
             schema:creator ?creator ;
             schema:distribution ?distribution ;
             schema:url ?url .
+          OPTIONAL { ?dataset schema:availableLanguage ?availableLanguage . }
           OPTIONAL { ?dataset schema:alternateName ?alternateName . }
           ?creator schema:name ?creatorName ;
             schema:alternateName ?creatorAlternateName .
@@ -109,7 +110,8 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
               ]
             ),
           ],
-          bindings.get('alternateName')?.value
+          bindings.get('alternateName')?.value,
+          bindings.get('availableLanguage')?.value
         )
       );
     });
