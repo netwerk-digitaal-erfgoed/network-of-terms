@@ -34,7 +34,7 @@
     "@comunica/query-sparql": "^2.9.0",
     "@hapi/hoek": "^11.0.2",
     "@opentelemetry/api": "^1.4.1",
-    "@opentelemetry/exporter-metrics-otlp-proto": "0.41.2",
+    "@opentelemetry/exporter-metrics-otlp-proto": "0.43.0",
     "@opentelemetry/resources": "1.17.0",
     "@opentelemetry/sdk-metrics": "1.17.0",
     "@opentelemetry/semantic-conventions": "1.17.0",
