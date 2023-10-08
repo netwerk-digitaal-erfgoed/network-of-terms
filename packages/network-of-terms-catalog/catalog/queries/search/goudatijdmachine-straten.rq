@@ -18,7 +18,7 @@ CONSTRUCT {
         luc:query ?query ;
         luc:entities ?uri .
 
-    FILTER (CONTAINS(STR(?uri), "https://n2t.net/ark:/60537/"))
+    FILTER (STRSTARTS(STR(?uri), "https://n2t.net/ark:/60537/"))
        
     ?uri sdo:identifier ?identifier ;
         sdo:name ?prefLabel ;
@@ -32,6 +32,6 @@ CONSTRUCT {
         ?uri hg:absorbedBy|hg:absorbed ?related_uri .
         ?related_uri a gtm:Straat ;
                 sdo:name ?related_prefLabel .
-        FILTER (CONTAINS(STR(?related_uri), "https://n2t.net/ark:/60537/") && ?uri != ?related_uri )
+        FILTER (STRSTARTS(STR(?related_uri), "https://n2t.net/ark:/60537/") && ?uri != ?related_uri )
     }
 } ORDER BY DESC(?score) LIMIT 100
