@@ -64,7 +64,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
     }) as unknown as Bindings,
   });
 
-  const promise: Promise<Dataset[]> = new Promise(resolve => {
+  const promise: Promise<Dataset[]> = new Promise((resolve, reject) => {
     const datasets: Dataset[] = [];
     bindingsStream.on('data', (bindings: RDF.Bindings) => {
       datasets.push(
@@ -116,6 +116,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
       );
     });
     bindingsStream.on('end', () => resolve(datasets));
+    bindingsStream.on('error', () => reject);
   });
 
   return new Catalog(await promise);
