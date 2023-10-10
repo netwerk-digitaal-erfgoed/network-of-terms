@@ -28,6 +28,10 @@
       "@value": "Onderwerpen voor het beschrijven van onderzoeken, vondsten en sporen"
     }
   ],
+  "inLanguage": {
+    "@type": "Language",
+    "alternateName": "nl"
+  },
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",

@@ -22,6 +22,10 @@
       "@value": "Onderwerpen over alle gebieden waarop de Europese Unie actief is. De nadruk ligt op de parlementaire activiteiten van de EU"
     }
   ],
+  "inLanguage": {
+    "@type": "Language",
+    "alternateName": "nl"
+  },
   "distribution": [
     {
       "@id": "http://publications.europa.eu/webapi/rdf/sparql#eurovoc",

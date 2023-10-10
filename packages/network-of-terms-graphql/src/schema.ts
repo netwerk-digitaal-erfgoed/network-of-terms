@@ -9,6 +9,7 @@ export const schema = `
     description: String!
     creators: [Creator]!
     features: [Feature]!
+    inLanguage: [String]!
   }
 
   """

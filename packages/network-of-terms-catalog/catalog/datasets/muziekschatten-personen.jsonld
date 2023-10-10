@@ -22,6 +22,10 @@
       "@value": "Personen in de catalogus van de bladmuziekcollectie van Stichting Omroep Muziek"
     }
   ],
+  "inLanguage": {
+    "@type": "Language",
+    "alternateName": "nl"
+  },
   "distribution": [
     {
       "@id": "https://data.muziekschatten.nl/sparql/#personen",

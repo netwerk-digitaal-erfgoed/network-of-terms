@@ -22,6 +22,10 @@
       "@value": "Genres voor het beschrijven van audiovisueel materiaal"
     }
   ],
+  "inLanguage": {
+    "@type": "Language",
+    "alternateName": "nl"
+  },
   "distribution": [
     {
       "@id": "https://data.beeldengeluid.nl/id/datadownload/0028",

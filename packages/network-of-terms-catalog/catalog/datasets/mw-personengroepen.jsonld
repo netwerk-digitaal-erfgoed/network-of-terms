@@ -22,6 +22,10 @@
       "@value": "Artiesten, zowel personen als groepen, in de collectie van Muziekweb"
     }
   ],
+  "inLanguage": {
+    "@type": "Language",
+    "alternateName": "nl"
+  },
   "distribution": [
     {
       "@id": "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb/sparql/Muziekweb#mw-personengroepen",

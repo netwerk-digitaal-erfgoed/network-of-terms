@@ -45,7 +45,8 @@ export class Dataset {
     readonly termsPrefixes: IRI[],
     readonly creators: [Organization],
     readonly distributions: [Distribution],
-    readonly alternateName?: string
+    readonly alternateName?: string,
+    readonly inLanguage?: string
   ) {}
 
   public getDistributionByIri(iri: IRI): Distribution | undefined {

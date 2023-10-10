@@ -22,6 +22,10 @@
       "@value": "Onderwerpen verdeeld over de facetten Functie, Cultuur, Geografische herkomst, Object, Materiaal & Techniek"
     }
   ],
+  "inLanguage": {
+    "@type": "Language",
+    "alternateName": "nl"
+  },
   "distribution": [
     {
       "@id": "https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql",

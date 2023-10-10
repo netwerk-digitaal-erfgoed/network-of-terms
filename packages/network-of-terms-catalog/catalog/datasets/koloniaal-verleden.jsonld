@@ -22,6 +22,10 @@
       "@value": "Termen voor het beschrijven van museale collecties over het koloniaal verleden"
     }
   ],
+  "inLanguage": {
+    "@type": "Language",
+    "alternateName": "nl"
+  },
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/koloniaalverleden",
