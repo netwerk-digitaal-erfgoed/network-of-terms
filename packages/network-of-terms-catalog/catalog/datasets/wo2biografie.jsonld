@@ -22,10 +22,7 @@
       "@value": "Korte biografieën van personen die een sleutelrol speelden in de Tweede Wereldoorlog"
     }
   ],
-  "inLanguage": {
-    "@type": "Language",
-    "alternateName": "nl"
-  },
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://data.niod.nl/PoolParty/sparql/WO2_biografieen",

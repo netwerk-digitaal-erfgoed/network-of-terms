@@ -22,10 +22,7 @@
       "@value": "Termen voor het beschrijven van de inhoud van afbeeldingen"
     }
   ],
-  "inLanguage": {
-    "@type": "Language",
-    "alternateName": "nl"
-  },
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://iconclass.org/sparql",

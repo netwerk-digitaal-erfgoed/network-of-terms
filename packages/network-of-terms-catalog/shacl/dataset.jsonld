@@ -26,11 +26,7 @@
           "sh:path": {
             "@id": "schema:inLanguage"
           },
-          "sh:minCount": 1,
-          "sh:class": {
-            "@id": "schema:Language"
-          },
-          "sh:node": "schema:LanguageShape"
+          "sh:minCount": 1
         },
         {
           "sh:path": {
@@ -141,21 +137,6 @@
           },
           "sh:minCount": 1
         },
-        {
-          "sh:path": {
-            "@id": "schema:alternateName"
-          },
-          "sh:minCount": 1
-        }
-      ]
-    },
-    {
-      "@id": "schema:LanguageShape",
-      "@type": "sh:NodeShape",
-      "sh:targetClass": {
-        "@id": "schema:Language"
-      },
-      "sh:property": [
         {
           "sh:path": {
             "@id": "schema:alternateName"

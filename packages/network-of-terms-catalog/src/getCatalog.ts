@@ -37,7 +37,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
             schema:description ?description ;
-            schema:inLanguage/schema:alternateName ?inLanguage ;
+            schema:inLanguage ?inLanguage ;
             schema:creator ?creator ;
             schema:distribution ?distribution ;
             schema:url ?url .

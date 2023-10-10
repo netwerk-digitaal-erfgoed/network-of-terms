@@ -22,10 +22,7 @@
       "@value": "Selectie van geografische namen zoals plaatsen, administratieve eenheden (gemeentes, provincies) en waterlichamen (rivieren, beken, meren etc.)"
     }
   ],
-  "inLanguage": {
-    "@type": "Language",
-    "alternateName": "en"
-  },
+  "inLanguage": "en",
   "distribution": [
     {
       "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames",

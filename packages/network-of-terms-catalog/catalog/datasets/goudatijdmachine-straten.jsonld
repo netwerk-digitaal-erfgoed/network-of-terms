@@ -25,10 +25,7 @@
       "@value": "Straten in Gouda"
     }
   ],
-  "inLanguage": {
-    "@type": "Language",
-    "alternateName": "nl"
-  },
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://www.goudatijdmachine.nl/id/straten#streets",

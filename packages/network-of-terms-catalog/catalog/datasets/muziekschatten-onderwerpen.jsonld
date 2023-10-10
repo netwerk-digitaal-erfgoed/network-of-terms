@@ -22,10 +22,7 @@
       "@value": "Onderwerpen in de catalogus van de bladmuziekcollectie van Stichting Omroep Muziek"
     }
   ],
-  "inLanguage": {
-    "@type": "Language",
-    "alternateName": "nl"
-  },
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://data.muziekschatten.nl/sparql/#onderwerpen",

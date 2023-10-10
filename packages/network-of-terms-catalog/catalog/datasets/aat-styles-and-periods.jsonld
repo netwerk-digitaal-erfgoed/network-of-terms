@@ -28,10 +28,7 @@
       "@value": "Selectie van AAT termen voor het beschrijven van stijlen en periodes in architectuur-, kunst- en cultuurhistorische collecties"
     }
   ],
-  "inLanguage": {
-    "@type": "Language",
-    "alternateName": "nl"
-  },
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "http://vocab.getty.edu/aat/sparql/styles-and-periods",

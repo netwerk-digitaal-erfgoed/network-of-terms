@@ -22,10 +22,7 @@
       "@value": "Alle entiteiten in Wikidata, zoals beroepen, films of kunstwerken"
     }
   ],
-  "inLanguage": {
-    "@type": "Language",
-    "alternateName": "nl"
-  },
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-all",
