@@ -32,11 +32,11 @@
     "@comunica/types": "^2.8.2",
     "@types/n3": "^1.16.1",
     "@types/rdf-ext": "^2.2.2",
-    "gts": "^5.0.1",
+    "gts": "^5.2.0",
     "jsonld-streaming-parser": "^3.2.0",
     "rdf-data-factory": "^1.1.2",
     "rdf-ext": "^2.3.0",
-    "rdf-validate-shacl": "^0.4.5"
+    "rdf-validate-shacl": "^0.5.1"
   },
   "bugs": {
     "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog/issues"
@@ -44,7 +44,7 @@
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog#readme",
   "dependencies": {
     "@comunica/bindings-factory": "^2.7.0",
-    "@comunica/query-sparql-rdfjs": "^2.8.3",
+    "@comunica/query-sparql-rdfjs": "^2.9.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "globby": "^13.2.2",
     "rdf-parse": "^2.3.2",
