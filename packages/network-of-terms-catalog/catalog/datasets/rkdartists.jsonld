@@ -22,7 +22,7 @@
       "@value": "Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden"
     }
   ],
-  "distribution": [
+"inLanguage": "nl",  "distribution": [
     {
       "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
       "@type": "DataDownload",

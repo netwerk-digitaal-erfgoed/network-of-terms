@@ -83,7 +83,9 @@ export const testCatalog = (port: number) =>
             ),
           ]
         ),
-      ]
+      ],
+      'RKD',
+      'nl'
     ),
     new Dataset(
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),

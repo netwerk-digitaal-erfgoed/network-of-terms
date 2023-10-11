@@ -28,6 +28,7 @@
       "@value": "Termen voor het beschrijven van collecties uit de periode 1930–1970 rondom voormalig Nederlands-Indië, onafhankelijk Indonesië en de postkoloniale migratie van personen naar Nederland"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/ied",

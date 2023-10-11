@@ -22,6 +22,7 @@
       "@value": "Gebeurtenissen, plaatsen, begrippen en objecten uit de Tweede Wereldoorlog"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://data.niod.nl/PoolParty/sparql/WO2_Thesaurus",
