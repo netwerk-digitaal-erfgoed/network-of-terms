@@ -88,6 +88,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1); // Source.
     expect(body.data.terms[0].source.name).toEqual('RKDartists');
+    expect(body.data.terms[0].source.inLanguage).toEqual(['nl']);
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
     expect(body.data.terms[0].responseTimeMs).toBeGreaterThan(0);
@@ -209,6 +210,7 @@ function termsQuery(sources: string[], query = 'nachtwacht') {
         source {
           uri
           name
+          inLanguage
           creators {
             uri
             name
