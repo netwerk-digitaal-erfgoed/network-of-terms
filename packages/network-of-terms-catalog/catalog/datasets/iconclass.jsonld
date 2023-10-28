@@ -16,6 +16,9 @@
   "url": [
     "http://iconclass.org/"
   ],
+  "mainEntityOfPage": [
+    "https://iconclass.org"
+  ],
   "description": [
     {
       "@language": "nl",

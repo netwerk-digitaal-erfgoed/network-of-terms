@@ -24,6 +24,8 @@ export const testCatalog = (port: number) =>
       'RKDartists',
       'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
       [new IRI('https://example.com/resources/')],
+      'https://example.com/rkdartists',
+      'nl',
       [
         new Organization(
           new IRI('https://rkd.nl'),
@@ -84,14 +86,15 @@ export const testCatalog = (port: number) =>
           ]
         ),
       ],
-      'RKD',
-      'nl'
+      'RKD'
     ),
     new Dataset(
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
       'Cultuurhistorische Thesaurus',
       'Onderwerpen voor het beschrijven van cultureel erfgoed',
       [new IRI('https://data.cultureelerfgoed.nl/term/id/cht/')],
+      'https://example.com/cht',
+      'nl',
       [
         new Organization(
           new IRI('https://www.cultureelerfgoed.nl'),
@@ -119,6 +122,8 @@ export const testCatalog = (port: number) =>
       'Art & Architecture Thesaurus',
       'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
       [new IRI('http://vocab.getty.edu/aat/')],
+      'https://example.com/aat',
+      'nl',
       [
         new Organization(
           new IRI('http://www.getty.edu/research/'),
@@ -140,6 +145,8 @@ export const testCatalog = (port: number) =>
       'GTAA: persoonsnamen',
       'Personen voor het beschrijven van audiovisueel materiaal',
       [new IRI('http://data.beeldengeluid.nl/gtaa/')],
+      'https://example.com/gtaa',
+      'nl',
       [
         new Organization(
           new IRI('https://www.beeldengeluid.nl/'),

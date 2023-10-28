@@ -16,6 +16,9 @@
   "url": [
     "http://eurovoc.europa.eu/"
   ],
+  "mainEntityOfPage": [
+    "https://data.europa.eu/data/datasets/eurovoc"
+  ],
   "description": [
     {
       "@language": "nl",

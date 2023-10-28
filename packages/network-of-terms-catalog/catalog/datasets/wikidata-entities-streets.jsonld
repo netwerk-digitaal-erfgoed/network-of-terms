@@ -16,6 +16,9 @@
   "url": [
     "http://www.wikidata.org/entity/"
   ],
+  "mainEntityOfPage": [
+    "https://www.wikidata.org"
+  ],
   "description": [
     {
       "@language": "nl",

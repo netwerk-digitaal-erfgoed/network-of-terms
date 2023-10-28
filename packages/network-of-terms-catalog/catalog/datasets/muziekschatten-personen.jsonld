@@ -16,6 +16,9 @@
   "url": [
     "https://data.muziekschatten.nl/som/"
   ],
+  "mainEntityOfPage": [
+    "https://???"
+  ],
   "description": [
     {
       "@language": "nl",

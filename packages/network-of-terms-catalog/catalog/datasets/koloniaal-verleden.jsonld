@@ -16,6 +16,9 @@
   "url": [
     "https://data.cultureelerfgoed.nl/koloniaalverleden/"
   ],
+  "mainEntityOfPage": [
+    "https://???"
+  ],
   "description": [
     {
       "@language": "nl",
