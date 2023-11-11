@@ -16,6 +16,9 @@
   "url": [
     "https://data.muziekweb.nl/Link/"
   ],
+  "mainEntityOfPage": [
+    "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb"
+  ],
   "description": [
     {
       "@language": "nl",

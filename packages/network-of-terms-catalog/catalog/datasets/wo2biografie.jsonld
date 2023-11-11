@@ -16,6 +16,9 @@
   "url": [
     "https://data.niod.nl/WO2_biografieen/"
   ],
+  "mainEntityOfPage": [
+    "https://www.oorlogsbronnen.nl/nieuws/project-wo2-thesaurus"
+  ],
   "description": [
     {
       "@language": "nl",

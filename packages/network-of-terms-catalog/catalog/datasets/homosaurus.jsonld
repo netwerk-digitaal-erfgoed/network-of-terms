@@ -16,6 +16,9 @@
   "url": [
     "https://data.ihlia.nl/homosaurus/"
   ],
+  "mainEntityOfPage": [
+    "https://homosaurus.org"
+  ],
   "description": [
     {
       "@language": "nl",
