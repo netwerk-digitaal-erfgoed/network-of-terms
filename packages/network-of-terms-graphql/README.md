@@ -64,6 +64,7 @@ query Sources {
     uri
     name
     alternateName
+    mainEntityOfPage
     description
     creators {
       uri

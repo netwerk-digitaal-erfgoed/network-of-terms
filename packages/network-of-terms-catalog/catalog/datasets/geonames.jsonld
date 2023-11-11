@@ -16,6 +16,9 @@
   "url": [
     "https://sws.geonames.org/"
   ],
+  "mainEntityOfPage": [
+    "https://www.geonames.org/about.html"
+  ],
   "description": [
     {
       "@language": "nl",

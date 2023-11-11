@@ -16,6 +16,9 @@
   "url": [
     "http://data.bibliotheken.nl/id/thes/"
   ],
+  "mainEntityOfPage": [
+    "https://data.bibliotheken.nl/doc/dataset/stcn/printers"
+  ],
   "description": [
     {
       "@language": "nl",

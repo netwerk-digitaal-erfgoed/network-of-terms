@@ -16,6 +16,9 @@
   "url": [
     "https://adamlink.nl/geo/street/"
   ],
+  "mainEntityOfPage": [
+    "https://adamlink.nl"
+  ],
   "description": [
     {
       "@language": "nl",
