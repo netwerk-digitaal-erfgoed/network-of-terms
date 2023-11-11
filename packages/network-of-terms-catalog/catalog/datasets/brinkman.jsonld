@@ -28,6 +28,7 @@
       "@value": "Onderwerpen die de Koninklijke Bibliotheek aan publicaties toekent"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "http://data.bibliotheken.nl/thes/brinkman/sparql",

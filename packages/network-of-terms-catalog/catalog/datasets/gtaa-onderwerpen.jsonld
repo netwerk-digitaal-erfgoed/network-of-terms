@@ -22,6 +22,7 @@
       "@value": "Onderwerpen voor het beschrijven van audiovisueel materiaal"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://data.beeldengeluid.nl/id/datadownload/0031",

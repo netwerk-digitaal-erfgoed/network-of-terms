@@ -14,13 +14,14 @@ additions specific to the Network of Terms:
 
 - `schema:url` is used for the HTTP URI prefix of terms in the dataset, e.g. `http://vocab.getty.edu/aat/` for Getty
   resources. This prefix is needed when clients look up terms by their URI in the Network of Terms: the Network then has 
-  to know which source to consult to retrieve the term.
-- Each distribution has two or more [`schema:potentialAction`](https://schema.org/potentialAction)s:
-  - a [`schema:SearchAction`](https://schema.org/SearchAction) and
-    a [`schema:FindAction`](https://schema.org/FindAction), both with a [`schema:query`](https://schema.org/query)
-    property that points to the queries directory;
-  - optionally, a number of [`schema:Action`](https://schema.org/Action)s that configure the features that the Network
-    of Terms provides for the distribution, such as [Reconciliation](../network-of-terms-reconciliation).
+  to know which source to consult to retrieve the term;
+- `schema:inLanguage` is a required property;
+- each distribution has two or more [`schema:potentialAction`](https://schema.org/potentialAction)s:
+    - a [`schema:SearchAction`](https://schema.org/SearchAction) and
+      a [`schema:FindAction`](https://schema.org/FindAction), both with a [`schema:query`](https://schema.org/query)
+      property that points to the queries directory;
+    - optionally, a number of [`schema:Action`](https://schema.org/Action)s that configure the features that the Network
+      of Terms provides for the distribution, such as [Reconciliation](../network-of-terms-reconciliation).
 
 The [queries](catalog/queries) directory contains SPARQL queries for retrieving terms from the datasets. There are
 two types of queries:

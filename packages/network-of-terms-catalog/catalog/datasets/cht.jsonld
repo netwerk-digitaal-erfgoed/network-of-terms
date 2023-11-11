@@ -28,6 +28,7 @@
       "@value": "Onderwerpen voor het beschrijven van cultureel erfgoed"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",

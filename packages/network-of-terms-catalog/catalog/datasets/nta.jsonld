@@ -28,6 +28,7 @@
       "@value": "Naams- en andere persoonsgegevens van auteurs"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "http://data.bibliotheken.nl/thesp/sparql",

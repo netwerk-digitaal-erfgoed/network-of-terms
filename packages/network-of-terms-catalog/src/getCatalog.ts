@@ -30,17 +30,17 @@ export async function getCatalog(path?: string): Promise<Catalog> {
 export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
   // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
   const properties =
-    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName';
+    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName ?inLanguage';
   const query = `
       PREFIX schema: <http://schema.org/>
         SELECT ${properties} (GROUP_CONCAT(?url) as ?url)  WHERE {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
             schema:description ?description ;
+            schema:inLanguage ?inLanguage ;
             schema:creator ?creator ;
             schema:distribution ?distribution ;
             schema:url ?url .
-          OPTIONAL { ?dataset schema:alternateName ?alternateName . }
           ?creator schema:name ?creatorName ;
             schema:alternateName ?creatorAlternateName .
           ?distribution schema:encodingFormat "application/sparql-query" ;
@@ -52,7 +52,8 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
                 ?distribution schema:potentialAction/schema:target ?entryPoint .
                 ?entryPoint schema:actionApplication ?reconciliationIri ;
                     schema:urlTemplate ?reconciliationUrlTemplate .
-            } 
+            }
+          OPTIONAL { ?dataset schema:alternateName ?alternateName . }
         }
         GROUP BY ${properties}
         ORDER BY LCASE(?name)`;
@@ -109,7 +110,8 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
               ]
             ),
           ],
-          bindings.get('alternateName')?.value
+          bindings.get('alternateName')?.value,
+          bindings.get('inLanguage')?.value
         )
       );
     });

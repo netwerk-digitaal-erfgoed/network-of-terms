@@ -22,6 +22,7 @@
       "@value": "Termen voor het beschrijven van LHBTIQ (Lesbisch/Homo/Biseksueel/Transgender/Intersekse/Queer)-publicaties en -erfgoed"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://data.ihlia.nl/PoolParty/sparql/homosaurus",

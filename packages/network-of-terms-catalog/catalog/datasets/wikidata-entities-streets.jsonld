@@ -22,6 +22,7 @@
       "@value": "Straten in Nederland"
     }
   ],
+  "inLanguage": "nl",
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-streets",
