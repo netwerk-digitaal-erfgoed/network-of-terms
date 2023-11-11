@@ -16,13 +16,17 @@
   "url": [
     "https://data.rkd.nl/artists/"
   ],
+  "mainEntityOfPage": [
+    "https://rkd.nl/nl/explore/artists"
+  ],
   "description": [
     {
       "@language": "nl",
       "@value": "Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden"
     }
   ],
-"inLanguage": "nl",  "distribution": [
+  "inLanguage": "nl",
+  "distribution": [
     {
       "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
       "@type": "DataDownload",

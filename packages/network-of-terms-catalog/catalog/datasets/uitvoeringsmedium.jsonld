@@ -16,6 +16,9 @@
   "url": [
     "https://data.muziekschatten.nl/som/um"
   ],
+  "mainEntityOfPage": [
+    "https://data.muziekschatten.nl/som/um"
+  ],
   "description": [
     {
       "@language": "nl",

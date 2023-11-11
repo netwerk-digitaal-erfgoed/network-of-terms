@@ -22,6 +22,9 @@
   "url": [
     "http://vocab.getty.edu/aat/"
   ],
+  "mainEntityOfPage": [
+    "https://www.getty.edu/research/tools/vocabularies/aat/about.html"
+  ],
   "description": [
     {
       "@language": "nl",

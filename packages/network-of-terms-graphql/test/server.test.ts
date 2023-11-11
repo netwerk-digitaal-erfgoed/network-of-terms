@@ -26,6 +26,7 @@ describe('Server', () => {
             uri
             name
             alternateName
+            mainEntityOfPage
             creators {
               uri
               name
@@ -43,6 +44,9 @@ describe('Server', () => {
     expect(body.data.sources[0].uri).toEqual(
       'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
     );
+    expect(body.data.sources[0].mainEntityOfPage).toEqual([
+      'https://example.com/rkdartists',
+    ]);
     expect(body.data.sources[0].features).toContainEqual({
       type: 'RECONCILIATION',
       url: 'https://example.com/reconcile/rkd',

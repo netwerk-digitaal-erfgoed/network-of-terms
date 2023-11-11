@@ -10,6 +10,7 @@ export const schema = `
     creators: [Creator]!
     features: [Feature]!
     inLanguage: [String]!
+    mainEntityOfPage: [String]!
   }
 
   """

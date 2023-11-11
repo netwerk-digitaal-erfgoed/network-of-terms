@@ -43,10 +43,11 @@ export class Dataset {
     readonly name: string,
     readonly description: string,
     readonly termsPrefixes: IRI[],
+    readonly mainEntityOfPage: string,
+    readonly inLanguage: string,
     readonly creators: [Organization],
     readonly distributions: [Distribution],
-    readonly alternateName?: string,
-    readonly inLanguage?: string
+    readonly alternateName?: string
   ) {}
 
   public getDistributionByIri(iri: IRI): Distribution | undefined {
