@@ -12,7 +12,7 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/data-model": "2.0.1",
-    "env-schema": "5.2.0",
+    "env-schema": "5.2.1",
     "fastify": "4.19.2",
     "joi": "17.11.0",
     "mercurius": "13.2.2",
