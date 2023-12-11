@@ -9,7 +9,7 @@
     "@fastify/accepts": "4.3.0",
     "@fastify/cors": "8.4.1",
     "@fastify/formbody": "7.4.0",
-    "@hapi/hoek": "11.0.2",
+    "@hapi/hoek": "11.0.4",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "env-schema": "5.2.1",
