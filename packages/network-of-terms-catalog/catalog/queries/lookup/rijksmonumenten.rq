@@ -37,10 +37,11 @@ WHERE {
         ) as ?scopeNote
     )
     {
-    SELECT ?uri (MIN(?optional_altlabel) AS ?adres)  WHERE {
-        ?uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
-        OPTIONAL { ?uri ceosp:volledigAdres ?adres1 }
-        BIND(IF(BOUND(?adres1), ?adres1, "Geen adres beschikbaar") AS ?optional_altlabel)
+        SELECT ?uri (MIN(?optional_altlabel) AS ?adres) WHERE {
+            ?uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
+            OPTIONAL { ?uri ceosp:volledigAdres ?adres1 }
+            BIND(IF(BOUND(?adres1), ?adres1, "Geen adres beschikbaar") AS ?optional_altlabel)
+        }
     }
-}} GROUP BY ?uri
+}
 LIMIT 1000
