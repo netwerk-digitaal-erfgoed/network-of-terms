@@ -35,13 +35,13 @@
     "@hapi/hoek": "^11.0.4",
     "@opentelemetry/api": "^1.7.0",
     "@opentelemetry/exporter-metrics-otlp-proto": "0.45.1",
-    "@opentelemetry/resources": "1.18.1",
+    "@opentelemetry/resources": "1.19.0",
     "@opentelemetry/sdk-metrics": "1.18.1",
     "@opentelemetry/semantic-conventions": "1.18.1",
     "@rdfjs/data-model": "^2.0.1",
     "joi": "^17.11.0",
-    "pino": "^8.16.2",
-    "pino-pretty": "^10.2.3",
+    "pino": "^8.17.1",
+    "pino-pretty": "^10.3.0",
     "pretty-ms": "^8.0.0",
     "rdf-data-factory": "^1.1.2",
     "rdf-store-stream": "^2.0.0"
@@ -51,7 +51,7 @@
     "@comunica/query-sparql-file": "^2.10.0",
     "@jest/globals": "^29.6.2",
     "asynciterator": "^3.8.1",
-    "jest-dev-server": "9.0.1",
+    "jest-dev-server": "9.0.2",
     "spawnd": "^9.0.2"
   },
   "engines": {
