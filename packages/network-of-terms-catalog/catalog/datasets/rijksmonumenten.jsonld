@@ -5,12 +5,6 @@
     "name": [
       {
         "@language": "nl",
-        "@value": "Rijksmonumenten"
-      }
-    ],
-    "alternateName": [
-      {
-        "@language": "nl",
         "@value": "Rijksmonumentenregister"
       }
     ],
