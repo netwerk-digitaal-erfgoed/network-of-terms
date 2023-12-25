@@ -7,7 +7,7 @@
     "build/"
   ],
   "dependencies": {
-    "@fastify/cors": "8.4.1",
+    "@fastify/cors": "8.5.0",
     "@hapi/hoek": "11.0.4",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
