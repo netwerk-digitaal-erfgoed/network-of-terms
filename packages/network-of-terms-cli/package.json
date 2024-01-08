@@ -24,7 +24,7 @@
   "dependencies": {
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "@oclif/core": "^3.15.1",
+    "@oclif/core": "^3.16.0",
     "cli-ux": "^6.0.9"
   },
   "oclif": {
