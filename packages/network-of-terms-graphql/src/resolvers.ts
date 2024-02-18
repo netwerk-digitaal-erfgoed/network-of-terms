@@ -131,6 +131,10 @@ function term(term: Term) {
       uri: related.id.value,
       prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
     })),
+    exactMatch: term.exactMatches.map(exactMatch => ({
+      uri: exactMatch.id.value,
+      prefLabel: exactMatch.prefLabels.map(prefLabel => prefLabel.value)
+    })),
   };
 }
 
