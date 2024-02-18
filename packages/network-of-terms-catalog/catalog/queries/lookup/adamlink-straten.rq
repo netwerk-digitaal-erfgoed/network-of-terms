@@ -6,7 +6,8 @@ CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
-        skos:scopeNote ?scopeNote .
+        skos:scopeNote ?scopeNote ;
+        skos:exactMatch ?exactMatch .
 }
 WHERE {
     # For example:
@@ -22,5 +23,6 @@ WHERE {
         ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
         BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
     }
+    OPTIONAL { ?uri owl:sameAs ?exactMatch } # Has no labels.
 }
 LIMIT 1000

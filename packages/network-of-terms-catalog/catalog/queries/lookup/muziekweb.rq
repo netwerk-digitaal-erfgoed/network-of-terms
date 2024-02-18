@@ -12,7 +12,8 @@ CONSTRUCT {
         skos:scopeNote ?rdfs_comment ;
         skos:scopeNote ?schema_description ;
         skos:broader ?broader_uri ;
-        skos:narrower ?narrower_uri .
+        skos:narrower ?narrower_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
@@ -39,5 +40,6 @@ WHERE {
         ?uri skos:narrower ?narrower_uri .
         ?narrower_uri rdfs:label ?narrower_prefLabel
     }
+    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
 LIMIT 1000

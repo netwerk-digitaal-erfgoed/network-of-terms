@@ -8,10 +8,12 @@ CONSTRUCT {
         skos:scopeNote ?scopeNote ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
-        skos:related ?related_uri .
+        skos:related ?related_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
     ?uri ?predicate ?label .
@@ -48,6 +50,13 @@ WHERE {
         ?uri skos:related ?related_uri .
         ?related_uri skos:prefLabel ?related_prefLabel .
         FILTER(LANG(?related_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:exactMatch ?exactMatch_uri .
+        OPTIONAL {
+            ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+            FILTER(LANG(?exactMatch_prefLabel) = "nl")
+        }
     }
 }
 LIMIT 1000

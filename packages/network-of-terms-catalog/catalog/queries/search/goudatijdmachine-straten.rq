@@ -5,21 +5,24 @@ PREFIX hg: <http://rdf.histograph.io/>
 PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
 PREFIX luc-index: <http://www.ontotext.com/connectors/lucene/instance#>
 PREFIX omeka: <http://omeka.org/s/vocabs/o#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel;
         skos:scopeNote ?scopeNote ;
-        skos:related ?related_uri .
+        skos:related ?related_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?related_uri skos:prefLabel ?related_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 } WHERE {
     ?search a luc-index:straten_index ;
         luc:query ?query ;
         luc:entities ?uri .
 
     FILTER (STRSTARTS(STR(?uri), "https://n2t.net/ark:/60537/"))
-       
+
     ?uri sdo:name ?prefLabel ;
         luc:score ?score .
 
@@ -27,13 +30,13 @@ CONSTRUCT {
         ?uri gtm:genoemdNaar ?genoemdNaar .
     }
 
-    BIND ( 
-        CONCAT( 
+    BIND (
+        CONCAT(
             IF ( EXISTS { ?entity omeka:item_set <https://n2t.net/ark:/60537/bd75pg> }, "Verdwenen straat", "Straat" ),
             IF ( BOUND(?genoemdNaar), CONCAT(" in Gouda, genoemd naar ", ?genoemdNaar )," in Gouda" )
-        ) 
+        )
     AS ?scopeNote )
-    
+
     OPTIONAL { ?uri sdo:alternateName ?altLabel . }
 
     OPTIONAL {
@@ -41,5 +44,10 @@ CONSTRUCT {
         ?related_uri a gtm:Straat ;
             sdo:name ?related_prefLabel .
         FILTER (STRSTARTS(STR(?related_uri), "https://n2t.net/ark:/60537/") && ?uri != ?related_uri )
+    }
+
+    OPTIONAL {
+        ?uri owl:sameAs ?exactMatch_uri .
+        ?exactMatch_uri sdo:name ?exactMatch_prefLabel .
     }
 } ORDER BY DESC(?score) LIMIT 100

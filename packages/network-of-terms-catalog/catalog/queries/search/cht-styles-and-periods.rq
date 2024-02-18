@@ -8,10 +8,12 @@ CONSTRUCT {
         skos:scopeNote ?scopeNote ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
-        skos:related ?related_uri .
+        skos:related ?related_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
     ?uri ?predicate ?label .
@@ -19,7 +21,7 @@ WHERE {
 
     # limit results to the narrower terms of the toplevel term 'stijlen en periodes'
     ?uri skos:broader+ <https://data.cultureelerfgoed.nl/term/id/cht/63cca950-f545-467a-9d70-db3a2b21bba3> .
-    
+
     FILTER(LANG(?label) = "nl")
     FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
     OPTIONAL {
@@ -52,6 +54,13 @@ WHERE {
         ?uri skos:related ?related_uri .
         ?related_uri skos:prefLabel ?related_prefLabel .
         FILTER(LANG(?related_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:exactMatch ?exactMatch_uri .
+        OPTIONAL {
+            ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+            FILTER(LANG(?exactMatch_label) = "nl")
+        }
     }
 }
 LIMIT 1000

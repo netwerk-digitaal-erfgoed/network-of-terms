@@ -133,7 +133,7 @@ function term(term: Term) {
     })),
     exactMatch: term.exactMatches.map(exactMatch => ({
       uri: exactMatch.id.value,
-      prefLabel: exactMatch.prefLabels.map(prefLabel => prefLabel.value)
+      prefLabel: exactMatch.prefLabels.map(prefLabel => prefLabel.value),
     })),
   };
 }
