@@ -105,6 +105,12 @@ describe('Server', () => {
     expect(artwork.description).toEqual([
       'One of the most famous Dutch paintings',
     ]);
+    expect(artwork.exactMatch).toEqual([
+      {
+        prefLabel: ['Exact match'],
+        uri: 'https://example.com/resources/match'
+      }
+    ]);
 
     const prefLabels = body.data.terms[0].result.terms.map(
       ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
@@ -242,6 +248,10 @@ function termsQuery(sources: string[], query = 'nachtwacht') {
               related {
                 uri
                 prefLabel
+              }
+              exactMatch {
+                uri
+                prefLabel 
               }
             }
           }
