@@ -41,13 +41,12 @@ export function getCliLogger(options: GetLoggerOptions): Pino.Logger {
   return Pino(loggerOptions, destinationStdErr);
 }
 
-export function getHttpLogger(options: GetLoggerOptions): Pino.Logger {
+export function getHttpLogger(options: GetLoggerOptions): Pino.LoggerOptions {
   const args = Joi.attempt(options, schemaGetLogger);
-  const loggerOptions = Object.assign(baseOptions, {
+  return Object.assign(baseOptions, {
     base: {
       name: args.name,
     },
     level: args.level,
   });
-  return Pino(loggerOptions);
 }
