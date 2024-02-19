@@ -12,6 +12,7 @@ export class Term {
     readonly broaderTerms: RelatedTerm[],
     readonly narrowerTerms: RelatedTerm[],
     readonly relatedTerms: RelatedTerm[],
+    readonly exactMatches: RelatedTerm[],
     readonly datasetIri: RDF.Term | undefined,
     readonly score: RDF.Literal | undefined
   ) {}
@@ -35,6 +36,7 @@ class SparqlResultTerm {
   broaderTerms: RDF.Term[] = [];
   narrowerTerms: RDF.Term[] = [];
   relatedTerms: RDF.Term[] = [];
+  exactMatches: RDF.Term[] = [];
   inScheme: RDF.Term | undefined = undefined;
   score: RDF.Literal | undefined = undefined;
 }
@@ -59,6 +61,8 @@ export class TermsTransformer {
     ['http://www.w3.org/2008/05/skos#narrower', 'narrowerTerms'],
     ['http://www.w3.org/2004/02/skos/core#related', 'relatedTerms'],
     ['http://www.w3.org/2008/05/skos#related', 'relatedTerms'],
+    ['http://www.w3.org/2004/02/skos/core#exactMatch', 'exactMatches'],
+    ['http://www.w3.org/2008/05/skos#exactMatch', 'exactMatches'],
     ['http://www.w3.org/2004/02/skos/core#inScheme', 'inScheme'],
     ['http://purl.org/voc/vrank#simpleRank', 'score'],
   ]);
@@ -109,6 +113,7 @@ export class TermsTransformer {
           alphabeticallyByPrefLabel
         ),
         this.mapRelatedTerms(term.relatedTerms).sort(alphabeticallyByPrefLabel),
+        this.mapRelatedTerms(term.exactMatches).sort(alphabeticallyByPrefLabel),
         term.inScheme,
         term.score
       );
@@ -124,9 +129,7 @@ export class TermsTransformer {
   private mapRelatedTerms = (terms: RDF.Term[]) =>
     terms.reduce((acc: RelatedTerm[], iri: RDF.Term) => {
       const term = this.termsMap.get(iri.value);
-      if (term) {
-        acc.push(new RelatedTerm(term.id, term.prefLabels));
-      }
+      acc.push(new RelatedTerm(iri, term?.prefLabels ?? []));
       return acc;
     }, []);
 }

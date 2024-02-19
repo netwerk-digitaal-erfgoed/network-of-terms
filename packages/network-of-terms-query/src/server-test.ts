@@ -49,6 +49,10 @@ export const testCatalog = (port: number) =>
               ?labelPredicate ?label .
             VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
             FILTER (regex(?label, ?query, "i"))
+            OPTIONAL { 
+              ?s skos:exactMatch ?match .
+              ?match skos:prefLabel ?match_label .
+            }
           }`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>

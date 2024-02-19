@@ -12,10 +12,12 @@ CONSTRUCT {
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri ;
+        skos:exactMatch ?exactMatch_uri ;
         vrank:simpleRank ?score .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
     (?uri ?score) text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
@@ -53,6 +55,11 @@ WHERE {
         ?uri skos:related ?related_uri .
         ?related_uri skos:prefLabel ?related_prefLabel .
         FILTER(LANG(?related_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:exactMatch ?exactMatch_uri .
+        ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+        FILTER(LANG(?exactMatch_prefLabel) = "nl")
     }
 }
 ORDER BY DESC(?score)

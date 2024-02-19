@@ -15,9 +15,11 @@ CONSTRUCT {
         skos:scopeNote ?scopeNote ;
         rdfs:seeAlso ?rdfs_seeAlso ;
         skos:broader ?broader_uri ;
-        skos:narrower ?narrower_uri .
+        skos:narrower ?narrower_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
     ?uri luc:term ?query ;
@@ -25,8 +27,8 @@ WHERE {
         void:inDataset <http://vocab.getty.edu/dataset/aat>  .
 
     # limit results to the "processes and techniques hierarchy name (300053001)"
-    ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300053001> . 
-    
+    ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300053001> .
+
     ?type rdfs:subClassOf gvp:Subject .
     FILTER (?type != gvp:Subject) .
     ?uri skosxl:prefLabel ?prefLabel_uri .
@@ -56,6 +58,12 @@ WHERE {
         ?narrower_uri skosxl:prefLabel ?narrower_uri_skosxl .
         ?narrower_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
         ?narrower_uri_skosxl skosxl:literalForm ?narrower_prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:exactMatch ?exactMatch_uri .
+        ?exactMatch_uri skosxl:prefLabel ?exactMatch_uri_skosxl .
+        ?exactMatch_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
+        ?exactMatch_uri_skosxl skosxl:literalForm ?exactMatch_prefLabel .
     }
 }
 LIMIT 1000

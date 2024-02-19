@@ -51,6 +51,7 @@ export const schema = `
     broader: [RelatedTerm]
     narrower: [RelatedTerm]
     related: [RelatedTerm]
+    exactMatch: [RelatedTerm]
   }
 
   type RelatedTerm {

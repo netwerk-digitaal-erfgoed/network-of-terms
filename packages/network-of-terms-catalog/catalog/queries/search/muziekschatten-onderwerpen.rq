@@ -1,3 +1,4 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX som: <https://data.muziekschatten.nl/som/>
@@ -6,7 +7,8 @@ CONSTRUCT {
     ?uri a skos:Concept;
         skos:prefLabel ?schema_name;
         skos:scopeNote ?scopeNote;
-        skos:broader ?broader_uri .
+        skos:broader ?broader_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_schema_name .
 }
 WHERE {
@@ -40,5 +42,6 @@ WHERE {
     )
 
     ?uri som:BASIS "1" .
+    OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
 LIMIT 1000

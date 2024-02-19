@@ -5,10 +5,11 @@ CONSTRUCT {
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
         skos:hiddenLabel ?hiddenLabel ;
-        skos:scopeNote ?scopeNote .
-    ?uri skos:broader ?broader_uri .
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
-    ?uri skos:narrower ?narrower_uri .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
 WHERE {
@@ -35,6 +36,9 @@ WHERE {
     OPTIONAL {
         ?uri skos:narrower ?narrower_uri .
         ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    }
+    OPTIONAL {
+        ?uri skos:exactMatch ?exactMatch_uri . # Has no labels.
     }
 }
 LIMIT 1000
