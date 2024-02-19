@@ -60,10 +60,8 @@ WHERE {
         ?narrower_uri_skosxl skosxl:literalForm ?narrower_prefLabel .
     }
     OPTIONAL {
-        ?uri skos:exactMatch ?exactMatch_uri .
-        ?exactMatch_uri skosxl:prefLabel ?exactMatch_uri_skosxl .
-        ?exactMatch_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
-        ?exactMatch_uri_skosxl skosxl:literalForm ?exactMatch_prefLabel .
+        ?uri skos:exactMatch ?exactMatch_uri . # Has no labels.
+        FILTER(?exactMatch_uri != ?uri) # Exclude self-reference.
     }
 }
 LIMIT 1000
