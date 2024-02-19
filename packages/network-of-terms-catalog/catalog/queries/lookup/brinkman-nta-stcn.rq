@@ -17,7 +17,7 @@ CONSTRUCT {
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri ;
         skos:inScheme ?datasetUri ;
-        skos:exactMatch ?exactMatch .
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
@@ -68,7 +68,7 @@ WHERE {
             ?related_uri skos:prefLabel ?related_prefLabel .
             FILTER(LANG(?related_prefLabel) = "nl")
         }
-        OPTIONAL { ?uri skos:exactMatch ?exactMatch } # Has no labels.
+        OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
     }
 
     # For NTA

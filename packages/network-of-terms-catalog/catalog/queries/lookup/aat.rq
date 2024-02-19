@@ -17,7 +17,7 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-    ?exactMatch skos:prefLabel ?exactMatch_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
     # For example:

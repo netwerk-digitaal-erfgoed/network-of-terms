@@ -59,7 +59,7 @@ WHERE {
         ?uri skos:exactMatch ?exactMatch_uri .
         OPTIONAL {
             ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
-            FILTER(LANG(?exactMatch_label) = "nl")
+            FILTER(LANG(?exactMatch_prefLabel) = "nl")
         }
     }
 }

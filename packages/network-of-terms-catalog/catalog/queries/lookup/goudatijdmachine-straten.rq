@@ -6,10 +6,10 @@ PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
-         skos:prefLabel ?prefLabel ;
-         skos:altLabel ?altLabel ;
-         skos:scopeNote ?scopeNote ;
-         skos:related ?related_uri ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:related ?related_uri ;
         skos:exactMatch ?exactMatch_uri .
     ?related_uri skos:prefLabel ?related_prefLabel .
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
