@@ -108,8 +108,8 @@ describe('Server', () => {
     expect(artwork.exactMatch).toEqual([
       {
         prefLabel: ['Exact match'],
-        uri: 'https://example.com/resources/match'
-      }
+        uri: 'https://example.com/resources/match',
+      },
     ]);
 
     const prefLabels = body.data.terms[0].result.terms.map(
