@@ -1,4 +1,4 @@
-import fastify, {FastifyInstance} from 'fastify';
+import fastify, {FastifyInstance, FastifyLoggerOptions} from 'fastify';
 import mercurius from 'mercurius';
 import {resolvers} from './resolvers.js';
 import {schema} from './schema.js';
@@ -16,7 +16,7 @@ export async function server(
   catalog: Catalog,
   config: EnvSchemaData
 ): Promise<FastifyInstance<Server>> {
-  const logger = getHttpLogger({
+  const logger: FastifyLoggerOptions = getHttpLogger({
     name: 'http',
     level: 'info',
   });
