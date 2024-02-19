@@ -1,5 +1,5 @@
 import {Term} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {diceCoefficient} from 'string-comparison';
+import stringComparison from 'string-comparison';
 
 /**
  * Calculate score for term based on case-insensitive cosine similarity, ignoring punctuation, between the search string
@@ -16,7 +16,7 @@ export const calculateMatchingScore = (
   searchString: string,
   againstStrings: string[]
 ): number => {
-  const scores = diceCoefficient.sortMatch(
+  const scores = stringComparison.diceCoefficient.sortMatch(
     normalize(searchString),
     againstStrings.map(normalize)
   );
