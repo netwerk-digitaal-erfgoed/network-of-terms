@@ -16,10 +16,12 @@ CONSTRUCT {
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri ;
-        skos:inScheme ?datasetUri .
+        skos:inScheme ?datasetUri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
     # For example:
@@ -66,6 +68,7 @@ WHERE {
             ?related_uri skos:prefLabel ?related_prefLabel .
             FILTER(LANG(?related_prefLabel) = "nl")
         }
+        OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
     }
 
     # For NTA
@@ -74,11 +77,19 @@ WHERE {
         OPTIONAL { ?uri schema:name ?schema_name }
         OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
         OPTIONAL { ?uri schema:description ?schema_description }
+        OPTIONAL {
+            ?uri ?matchPredicate ?exactMatch_uri .
+            VALUES ?matchPredicate { owl:sameAs schema:sameAs }
+            OPTIONAL {
+                ?exactMatch_uri rdfs:label ?exactMatch_prefLabel .
+            }
+        }
     }
 
     # For STCN
     OPTIONAL {
-        ?uri schema:location/schema:address/schema:addressLocality ?scopeNote
+        OPTIONAL { ?uri schema:location/schema:address/schema:addressLocality ?scopeNote }
+        OPTIONAL { ?uri schema:sameAs ?exactMatch_uri } # Has no labels.
     }
 }
 LIMIT 1000

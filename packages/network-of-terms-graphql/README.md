@@ -121,6 +121,10 @@ query {
             uri
             prefLabel
           }
+          exactMatch {
+            uri
+            prefLabel
+          }
         }
       }
       ... on Error {
@@ -205,6 +209,10 @@ query {
         scopeNote
         seeAlso
         broader {
+          uri
+          prefLabel
+        }
+        exactMatch {
           uri
           prefLabel
         }
