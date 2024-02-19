@@ -1,0 +1,47 @@
+PREFIX ceo: <https://linkeddata.cultureelerfgoed.nl/def/ceo/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX ceosp: <https://linkeddata.cultureelerfgoed.nl/def/ceosp/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?rijksmonumentnummer_tn ;
+        skos:altLabel ?adres;
+        skos:scopeNote ?scopeNote ;
+        rdfs:seeAlso ?rdfs_seeAlso .
+}
+WHERE {
+    VALUES ?uri { ?uris }
+    ?uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
+    OPTIONAL { ?uri ceosp:naam ?naam }
+    OPTIONAL { ?uri ceosp:volledigAdres ?adres_zoeken }
+    OPTIONAL { ?uri ceosp:postcode ?postcode1 }
+    OPTIONAL { ?uri ceosp:heeftGemeente ?woonplaats }
+    OPTIONAL { ?uri ceosp:oorspronkelijkeFunctie ?functie }
+    OPTIONAL { ?uri ceosp:redengevendeOmschrijving ?redengevende_omschrijving }
+    OPTIONAL { ?uri ceo:isOnderdeelVanComplex/ceo:heeftHoofdobject/ceo:rijksmonumentnummer ?rijksmonumentnummer_hoofdobject }
+
+    BIND(URI(CONCAT("https://monumentenregister.cultureelerfgoed.nl/monumenten/", ?rijksmonumentnummer)) as ?rdfs_seeAlso)
+    BIND(STRAFTER(STR(?woonplaats), "owms/terms/") AS ?owms_string)
+    BIND(CONCAT("Rijksmonumentnummer ", ?rijksmonumentnummer) as ?rijksmonumentnummer_tn)
+    BIND(
+        CONCAT(
+            IF(BOUND(?woonplaats), CONCAT(" ",?owms_string, ", "), ""),
+            IF(BOUND(?functie), CONCAT("Oorspronkelijke functie: ", ?functie), ""),
+            IF(BOUND(?naam), CONCAT(", Naam: ", ?naam), ""),
+            IF(BOUND(?rijksmonumentnummer_hoofdobject) && ?rijksmonumentnummer != ?rijksmonumentnummer_hoofdobject,
+                CONCAT(", Rijksmonumentnummer van hoofdobject: ", ?rijksmonumentnummer_hoofdobject),
+            ""
+            )
+        ) as ?scopeNote
+    )
+    {
+        SELECT ?uri (MIN(?optional_altlabel) AS ?adres) WHERE {
+            ?uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
+            OPTIONAL { ?uri ceosp:volledigAdres ?adres1 }
+            BIND(IF(BOUND(?adres1), ?adres1, "Geen adres beschikbaar") AS ?optional_altlabel)
+        }
+    }
+}
+LIMIT 1000

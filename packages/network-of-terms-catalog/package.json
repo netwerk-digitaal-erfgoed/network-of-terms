@@ -30,12 +30,12 @@
   "devDependencies": {
     "@comunica/core": "^2.7.0",
     "@comunica/types": "^2.8.2",
-    "@types/n3": "^1.16.3",
-    "@types/rdf-ext": "^2.2.4",
+    "@types/n3": "^1.16.4",
+    "@types/rdf-ext": "^2.5.0",
     "gts": "^5.2.0",
-    "jsonld-streaming-parser": "^3.2.0",
+    "jsonld-streaming-parser": "^3.3.0",
     "rdf-data-factory": "^1.1.2",
-    "rdf-ext": "^2.4.0",
+    "rdf-ext": "^2.5.1",
     "rdf-validate-shacl": "^0.5.1"
   },
   "bugs": {
@@ -44,10 +44,10 @@
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog#readme",
   "dependencies": {
     "@comunica/bindings-factory": "^2.7.0",
-    "@comunica/query-sparql-rdfjs": "^2.9.0",
+    "@comunica/query-sparql-rdfjs": "^2.10.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
-    "globby": "^13.2.2",
-    "rdf-parse": "^2.3.2",
+    "globby": "^14.0.1",
+    "rdf-parse": "^2.3.3",
     "rdf-store-stream": "^2.0.0"
   }
 }

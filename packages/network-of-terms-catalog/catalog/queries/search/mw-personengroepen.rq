@@ -1,3 +1,4 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -7,7 +8,8 @@ CONSTRUCT {
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
         skos:hiddenLabel ?hiddenLabel ;
-        skos:scopeNote ?schema_description .
+        skos:scopeNote ?schema_description ;
+        skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
     ?uri a schema:MusicGroup ;
@@ -19,5 +21,6 @@ WHERE {
     OPTIONAL { ?uri skos:altLabel ?altLabel }
     OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
     OPTIONAL { ?uri schema:description ?schema_description }
+    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
 LIMIT 1000

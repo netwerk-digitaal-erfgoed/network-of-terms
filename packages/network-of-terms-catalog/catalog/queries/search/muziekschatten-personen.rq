@@ -1,3 +1,4 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX som: <https://data.muziekschatten.nl/som/>
@@ -24,7 +25,8 @@ CONSTRUCT {
     ?uri a skos:Concept;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?schema_alternateName ;
-        skos:scopeNote ?schema_hasOccupation .
+        skos:scopeNote ?schema_hasOccupation ;
+        skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
     ?uri a schema:Person .
@@ -59,5 +61,6 @@ WHERE {
         ) AS ?dates
     )
     BIND(CONCAT(?name, IF(?dates != "", CONCAT(" (", ?dates, ")"), "")) AS ?prefLabel)
+    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
 LIMIT 1000

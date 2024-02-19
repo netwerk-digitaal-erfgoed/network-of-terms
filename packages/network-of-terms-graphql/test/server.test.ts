@@ -102,6 +102,15 @@ describe('Server', () => {
         term.uri === 'https://example.com/resources/artwork'
     );
     expect(artwork.seeAlso).toEqual(['https://example.com/html/artwork']);
+    expect(artwork.description).toEqual([
+      'One of the most famous Dutch paintings',
+    ]);
+    expect(artwork.exactMatch).toEqual([
+      {
+        prefLabel: ['Exact match'],
+        uri: 'https://example.com/resources/match',
+      },
+    ]);
 
     const prefLabels = body.data.terms[0].result.terms.map(
       ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
@@ -229,6 +238,7 @@ function termsQuery(sources: string[], query = 'nachtwacht') {
               prefLabel
               altLabel
               hiddenLabel
+              description
               scopeNote
               seeAlso
               broader {
@@ -238,6 +248,10 @@ function termsQuery(sources: string[], query = 'nachtwacht') {
               related {
                 uri
                 prefLabel
+              }
+              exactMatch {
+                uri
+                prefLabel 
               }
             }
           }

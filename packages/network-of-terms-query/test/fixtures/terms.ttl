@@ -12,6 +12,7 @@
     skos:related <https://example.com/resources/painter> ,
         <https://example.com/resources/painting> ,
         <https://example.com/resources/art> ;
+    skos:exactMatch <https://example.com/resources/match> ;
     skos:ignored "Not used by Network of Terms" ;
     rdfs:seeAlso <https://example.com/html/artwork> ;
     vrank:simpleRank 18.0 .
@@ -38,3 +39,6 @@
 <https://example.com/resources/alphabet>
     a skos:Concept ;
     skos:altLabel "Resource without prefLabel" .
+
+<https://example.com/resources/match>
+    skos:prefLabel "Exact match" .

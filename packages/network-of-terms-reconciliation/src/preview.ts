@@ -53,12 +53,13 @@ const literal = (values: Literal[]) =>
   values.map(literal => literal.value).join(' • ');
 
 function relatedTerms(label: string, terms: RelatedTerm[]) {
-  if (terms.length === 0) {
+  const termsWithPrefLabel = terms.filter(term => term.prefLabels.length > 0);
+  if (termsWithPrefLabel.length === 0) {
     return '';
   }
 
   return `<dt>${label}</dt>
       <dd>${escapeHtml(
-        terms.map(term => term.prefLabels[0].value).join(' • ')
+        termsWithPrefLabel.map(term => term.prefLabels[0].value).join(' • ')
       )}</dd>`;
 }

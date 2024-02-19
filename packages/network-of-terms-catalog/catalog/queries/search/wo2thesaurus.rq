@@ -7,7 +7,8 @@ CONSTRUCT {
         skos:hiddenLabel ?hiddenLabel ;
         skos:scopeNote ?scopeNote ;
         skos:broader ?broader_uri ;
-        skos:narrower ?narrower_uri .
+        skos:narrower ?narrower_uri ;
+        skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
@@ -45,6 +46,9 @@ WHERE {
         ?uri skos:narrower ?narrower_uri .
         ?narrower_uri skos:prefLabel ?narrower_prefLabel .
         FILTER(LANG(?narrower_prefLabel) = "nl")
+    }
+    OPTIONAL {
+        ?uri skos:exactMatch ?exactMatch_uri . # Has no labels.
     }
 }
 LIMIT 1000

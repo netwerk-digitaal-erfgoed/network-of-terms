@@ -31,28 +31,28 @@
   "dependencies": {
     "@comunica/bindings-factory": "^2.7.0",
     "@comunica/data-factory": "^2.7.0",
-    "@comunica/query-sparql": "^2.9.0",
-    "@hapi/hoek": "^11.0.2",
-    "@opentelemetry/api": "^1.6.0",
-    "@opentelemetry/exporter-metrics-otlp-proto": "0.44.0",
-    "@opentelemetry/resources": "1.17.0",
-    "@opentelemetry/sdk-metrics": "1.17.0",
-    "@opentelemetry/semantic-conventions": "1.17.1",
+    "@comunica/query-sparql": "^2.10.2",
+    "@hapi/hoek": "^11.0.4",
+    "@opentelemetry/api": "^1.7.0",
+    "@opentelemetry/exporter-metrics-otlp-proto": "0.48.0",
+    "@opentelemetry/resources": "1.21.0",
+    "@opentelemetry/sdk-metrics": "1.20.0",
+    "@opentelemetry/semantic-conventions": "1.21.0",
     "@rdfjs/data-model": "^2.0.1",
-    "joi": "^17.11.0",
-    "pino": "^8.16.0",
-    "pino-pretty": "^10.2.3",
-    "pretty-ms": "^8.0.0",
+    "joi": "^17.12.0",
+    "pino": "^8.18.0",
+    "pino-pretty": "^10.3.1",
+    "pretty-ms": "^9.0.0",
     "rdf-data-factory": "^1.1.2",
     "rdf-store-stream": "^2.0.0"
   },
   "devDependencies": {
     "@comunica/core": "^2.7.0",
-    "@comunica/query-sparql-file": "^2.9.0",
+    "@comunica/query-sparql-file": "^2.10.2",
     "@jest/globals": "^29.6.2",
     "asynciterator": "^3.8.1",
-    "jest-dev-server": "9.0.1",
-    "spawnd": "^9.0.0"
+    "jest-dev-server": "9.0.2",
+    "spawnd": "^9.0.2"
   },
   "engines": {
     "node": ">=16.15.0"

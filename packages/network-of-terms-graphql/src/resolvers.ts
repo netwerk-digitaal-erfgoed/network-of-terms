@@ -116,6 +116,7 @@ function term(term: Term) {
     hiddenLabel: term.hiddenLabels.map(
       (hiddenLabel: RDF.Term) => hiddenLabel.value
     ),
+    description: term.scopeNotes.map((scopeNote: RDF.Term) => scopeNote.value),
     scopeNote: term.scopeNotes.map((scopeNote: RDF.Term) => scopeNote.value),
     seeAlso: term.seeAlso.map((seeAlso: RDF.NamedNode) => seeAlso.value),
     broader: term.broaderTerms.map(related => ({
@@ -129,6 +130,10 @@ function term(term: Term) {
     related: term.relatedTerms.map(related => ({
       uri: related.id.value,
       prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+    })),
+    exactMatch: term.exactMatches.map(exactMatch => ({
+      uri: exactMatch.id.value,
+      prefLabel: exactMatch.prefLabels.map(prefLabel => prefLabel.value),
     })),
   };
 }

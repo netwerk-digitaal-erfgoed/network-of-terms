@@ -8,7 +8,8 @@ CONSTRUCT {
         skos:prefLabel ?rdfs_label ;
         skos:altLabel ?schema_name ;
         skos:altLabel ?schema_alternateName ;
-        skos:scopeNote ?scopeNote .
+        skos:scopeNote ?scopeNote ;
+        skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
     ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/stcn/printers> ;
@@ -24,10 +25,13 @@ WHERE {
     # http://data.bibliotheken.nl/id/thes/p075556251 for Plantijn working in Leiden
     # http://data.bibliotheken.nl/id/thes/p338012834 for Plantijn working in Antwerp
     # The original source (STCN) shows also a time period, this data currently not available in the LOD version.
-    OPTIONAL { 
-     ?uri schema:location/schema:address/schema:addressLocality ?scopeNote 
+    OPTIONAL {
+     ?uri schema:location/schema:address/schema:addressLocality ?scopeNote
     }
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+    OPTIONAL {
+        ?uri schema:sameAs ?exactMatch_uri . # Has no labels.
+    }
 }
 LIMIT 1000
