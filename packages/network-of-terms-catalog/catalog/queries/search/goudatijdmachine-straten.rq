@@ -7,7 +7,7 @@ PREFIX luc-index: <http://www.ontotext.com/connectors/lucene/instance#>
 PREFIX omeka: <http://omeka.org/s/vocabs/o#>
 
 CONSTRUCT {
-    ?uri a skos:Concept ;
+    ?piduri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel;
         skos:scopeNote ?scopeNote ;
@@ -18,7 +18,9 @@ CONSTRUCT {
         luc:query ?query ;
         luc:entities ?uri .
 
-    FILTER (STRSTARTS(STR(?uri), "https://n2t.net/ark:/60537/"))
+    ?uri sdo:identifier ?pid
+    FILTER(STRSTARTS(?pid,"https://n2t.net"))
+    BIND(IRI(?pid) AS ?piduri)
        
     ?uri sdo:name ?prefLabel ;
         luc:score ?score .
