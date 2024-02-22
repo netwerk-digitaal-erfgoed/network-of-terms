@@ -57,6 +57,7 @@ WHERE {
     }
     OPTIONAL {
         ?uri skos:exactMatch ?exactMatch_uri .
+        FILTER(!STRSTARTS(STR(?exactMatch_uri), "https://data.cultureelerfgoed.nl/term/id/rn"))
         OPTIONAL {
             ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
             FILTER(LANG(?exactMatch_prefLabel) = "nl")
