@@ -18,10 +18,6 @@ CONSTRUCT {
 WHERE {
     ?uri ?predicate ?label .
     VALUES ?predicate { skos:prefLabel skos:altLabel }
-
-    # limit results to the narrower terms of the toplevel term 'materialen'
-    ?uri skos:broader+ <https://data.cultureelerfgoed.nl/term/id/cht/aa872ce6-a74c-4f81-96ec-6ee0e717f92a> .
-
     FILTER(LANG(?label) = "nl")
     FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
     OPTIONAL {

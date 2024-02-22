@@ -16,14 +16,13 @@ CONSTRUCT {
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
-    ?uri ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
+    # For example:
+    # Aardewerk: <https://data.cultureelerfgoed.nl/term/id/abr/71e411bf-8645-4420-98a4-b8746574b002>
+    # Aardewerk: <https://data.cultureelerfgoed.nl/term/id/cht/dfbf8107-09f9-49c9-8118-8e79b7613723>
+    VALUES ?uri { ?uris }
 
-    # limit results to the narrower terms of the toplevel term 'materialen'
-    ?uri skos:broader+ <https://data.cultureelerfgoed.nl/term/id/cht/aa872ce6-a74c-4f81-96ec-6ee0e717f92a> .
+    ?uri a skos:Concept .
 
-    FILTER(LANG(?label) = "nl")
-    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl")
