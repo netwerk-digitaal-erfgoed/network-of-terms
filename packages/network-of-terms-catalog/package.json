@@ -48,6 +48,6 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "globby": "^14.0.1",
     "rdf-parse": "^2.3.3",
-    "rdf-store-stream": "^2.0.0"
+    "rdf-store-stream": "^2.0.1"
   }
 }
