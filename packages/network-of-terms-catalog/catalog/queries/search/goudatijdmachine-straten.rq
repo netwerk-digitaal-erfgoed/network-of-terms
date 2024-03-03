@@ -51,6 +51,6 @@ CONSTRUCT {
     OPTIONAL {
         ?uri owl:sameAs ?exactMatch_uri .
         ?exactMatch_uri sdo:name ?exactMatch_prefLabel .
-        FILTER(?exactMatch_uri!=?uri)
+        FILTER(?exactMatch_uri != ?uri)
     }
 } ORDER BY DESC(?score) LIMIT 100
