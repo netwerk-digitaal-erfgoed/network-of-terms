@@ -15,7 +15,7 @@
     "env-schema": "5.2.1",
     "fastify": "4.26.2",
     "joi": "17.12.2",
-    "mercurius": "13.3.3",
+    "mercurius": "13.4.0",
     "mercurius-logging": "^1.4.0"
   },
   "devDependencies": {
