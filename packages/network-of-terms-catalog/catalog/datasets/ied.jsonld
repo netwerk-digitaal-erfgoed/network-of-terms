@@ -41,11 +41,11 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/poolparty.rq"
+          "query": "file://catalog/queries/search/ied.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/poolparty.rq"
+          "query": "file://catalog/queries/lookup/ied.rq"
         },
         {
           "@type": "Action",
