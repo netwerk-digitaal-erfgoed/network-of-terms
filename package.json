@@ -6,11 +6,14 @@
   ],
   "type": "module",
   "devDependencies": {
+    "@commitlint/cli": "^19.2.0",
+    "@commitlint/config-conventional": "^19.1.0",
     "@qiwi/multi-semantic-release": "^5.0.0",
     "@rdfjs/types": "^1.1.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.28",
     "gts": "^5.2.0",
+    "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-coverage-thresholds-bumper": "^1.1.0",
     "ts-jest": "^29.1.2",
@@ -23,7 +26,8 @@
     "fix": "gts fix",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1}",
     "posttest": "jest-coverage-thresholds-bumper --silent",
-    "release": "npx multi-semantic-release"
+    "release": "npx multi-semantic-release",
+    "prepare": "husky"
   },
   "engines": {
     "node": ">=16.15.0"
