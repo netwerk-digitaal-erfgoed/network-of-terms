@@ -12,6 +12,7 @@ import {QueryEngine} from '@comunica/query-sparql';
 import {BindingsFactory} from '@comunica/bindings-factory';
 import {DataFactory} from 'rdf-data-factory';
 import {sourceQueriesHistogram} from './instrumentation.js';
+import {config} from './config.js';
 
 export type TermsResult = Terms | TimeoutError | ServerError;
 
@@ -102,8 +103,8 @@ export class QueryTermsService {
       Joi.number()
         .integer()
         .min(1)
-        .max(parseInt(process.env.MAX_QUERY_TIMEOUT as string) || 60000)
-        .default(parseInt(process.env.DEFAULT_QUERY_TIMEOUT as string) || 5000)
+        .max(config.MAX_QUERY_TIMEOUT)
+        .default(config.DEFAULT_QUERY_TIMEOUT)
     );
 
     const timer = new Hoek.Bench();
