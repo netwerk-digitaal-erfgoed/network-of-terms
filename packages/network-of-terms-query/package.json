@@ -50,7 +50,7 @@
     "@comunica/core": "^2.7.0",
     "@comunica/query-sparql-file": "^2.10.2",
     "@jest/globals": "^29.6.2",
-    "asynciterator": "^3.8.1",
+    "asynciterator": "^3.9.0",
     "jest-dev-server": "10.0.0",
     "spawnd": "^10.0.0"
   },
