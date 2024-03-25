@@ -29,7 +29,7 @@
   "license": "EUPL-1.2",
   "devDependencies": {
     "@comunica/core": "^2.7.0",
-    "@comunica/types": "^2.8.2",
+    "@comunica/types": "^3.0.1",
     "@types/n3": "^1.16.4",
     "@types/rdf-ext": "^2.5.0",
     "gts": "^5.2.0",
