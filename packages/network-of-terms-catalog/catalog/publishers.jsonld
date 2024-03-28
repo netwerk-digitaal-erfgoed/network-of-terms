@@ -108,6 +108,12 @@
       "@type": "Organization",
       "name": "Podiumkunst.net",
       "alternateName": "Podiumkunst.net"
+    },
+    {
+      "@id": "https://www.amsterdamtimemachine.nl",
+      "@type": "Organization",
+      "name": "Amsterdam Time Machine",
+      "alternateName": "ATM"
     }
   ]
 }
