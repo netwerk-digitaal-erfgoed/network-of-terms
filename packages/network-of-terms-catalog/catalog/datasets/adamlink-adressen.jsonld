@@ -1,0 +1,58 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://adamlink.nl/geo/addresses/start/",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Adamlink: Historische adressen in Amsterdam"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.amsterdamtimemachine.nl"
+    }
+  ],
+  "url": [
+    "https://adamlink.nl/geo/address/"
+  ],
+  "mainEntityOfPage": [
+    "https://adamlink.nl"
+  ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Historische adressen in Amsterdam"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql#adamlink-addresses",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/adamlink-adressen.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/adamlink-adressen.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
+          }
+        }
+      ]
+    }
+  ]
+}

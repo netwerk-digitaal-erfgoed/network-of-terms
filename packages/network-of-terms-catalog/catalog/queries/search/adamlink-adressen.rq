@@ -1,0 +1,49 @@
+PREFIX hg: <http://rdf.histograph.io/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX roar: <https://w3id.org/roar#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX bag: <http://bag.basisregistraties.overheid.nl/def/bag#>
+PREFIX schema: <https://schema.org/>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:exactMatch ?exactMatch_uri ;
+        rdfs:seeAlso ?seeAlso_uri .
+
+    ?seeAlso_uri skos:prefLabel ?seeAlso_label .
+}
+WHERE {
+    GRAPH <https://lod.uba.uva.nl/ATM/Adamlink/graphs/addresses> {
+        ?uri a hg:Address .
+        ?uri ?predicate ?label .
+
+        VALUES ?predicate { rdfs:label skos:prefLabel skos:altLabel }
+
+        ?label <bif:contains> ?virtuosoQuery .
+
+        OPTIONAL { ?uri rdfs:label ?prefLabel }
+        OPTIONAL { ?uri skos:altLabel ?altLabel }
+        OPTIONAL {
+            ?uri roar:documentedIn ?source .
+            ?source rdfs:label ?source_name .
+            BIND(CONCAT("Adres afkomstig van ", ?source_name) AS ?scopeNote)
+        }
+        OPTIONAL { ?uri owl:sameAs ?exactMatch_uri }
+        OPTIONAL { 
+            ?exactMatch_uri a bag:Pand ;
+                            schema:geoContains ?geo .
+            ?uri schema:geoContains ?geo . 
+        } # A historical address is very similar to a bag:Pand
+        OPTIONAL {
+            ?uri schema:geoContains ?geo .
+            ?seeAlso_uri schema:geoContains ?geo ;
+                      skos:altLabel ?seeAlso_label .
+        }
+    }
+}
+LIMIT 1000
