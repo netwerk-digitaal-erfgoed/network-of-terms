@@ -1,6 +1,6 @@
 PREFIX hg: <http://rdf.histograph.io/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -13,16 +13,19 @@ WHERE {
     # For example:
     # Jodenbreestraat: <https://adamlink.nl/geo/street/jodenbreestraat/2158>
     # Damrak: <https://adamlink.nl/geo/street/damrak/882>
+  
     VALUES ?uri { ?uris }
-
-    ?uri a hg:Street .
-
-    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
-    OPTIONAL { ?uri skos:altLabel ?altLabel }
-    OPTIONAL {
-        ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
-        BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+  
+    GRAPH <https://lod.uba.uva.nl/ATM/Adamlink/graphs/streets> {
+        ?uri a hg:Street .
+    
+        OPTIONAL { ?uri skos:prefLabel ?prefLabel }
+        OPTIONAL { ?uri skos:altLabel ?altLabel }
+        OPTIONAL {
+            ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
+            BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+        }
+        OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
     }
-    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
 LIMIT 1000

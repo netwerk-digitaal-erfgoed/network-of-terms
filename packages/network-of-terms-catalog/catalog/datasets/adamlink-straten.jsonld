@@ -10,7 +10,7 @@
   ],
   "creator": [
     {
-      "@id": "https://www.adamnet.nl"
+      "@id": "https://www.amsterdamtimemachine.nl"
     }
   ],
   "url": [
@@ -28,9 +28,9 @@
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://druid.datalegend.net/AdamNet/Geography/sparql#streets",
+      "@id": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql#adamlink-streets",
       "@type": "DataDownload",
-      "contentUrl": "https://api.druid.datalegend.net/datasets/AdamNet/Geography/services/endpoint/sparql",
+      "contentUrl": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
