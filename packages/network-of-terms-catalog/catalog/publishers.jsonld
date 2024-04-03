@@ -68,12 +68,6 @@
       "alternateName": "Europese Unie"
     },
     {
-      "@id": "https://www.adamnet.nl",
-      "@type": "Organization",
-      "name": "Stichting AdamNet",
-      "alternateName": "AdamNet"
-    },
-    {
       "@id": "https://www.erfgoedbrabant.nl",
       "@type": "Organization",
       "name": "Erfgoed Brabant",
