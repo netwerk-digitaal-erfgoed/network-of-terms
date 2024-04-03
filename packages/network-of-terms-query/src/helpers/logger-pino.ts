@@ -1,4 +1,4 @@
-import {Logger} from '@comunica/types';
+import {Logger} from '@comunica/core';
 import Pino from 'pino';
 
 export interface ConstructorOptions {
