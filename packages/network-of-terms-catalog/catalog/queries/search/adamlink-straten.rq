@@ -1,7 +1,7 @@
 PREFIX hg: <http://rdf.histograph.io/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX void: <http://rdfs.org/ns/void#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -11,18 +11,21 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
-    ?uri void:inDataset <https://data.adamlink.nl/adamnet/geography/> .
-    ?uri a hg:Street .
-    ?uri ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-    ?label <bif:contains> ?virtuosoQuery .
+    GRAPH <https://lod.uba.uva.nl/ATM/Adamlink/graphs/streets> {
+        ?uri a hg:Street .
+        ?uri ?predicate ?label .
 
-    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
-    OPTIONAL { ?uri skos:altLabel ?altLabel }
-    OPTIONAL {
-        ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
-        BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+        VALUES ?predicate { skos:prefLabel skos:altLabel }
+
+        ?label <bif:contains> ?virtuosoQuery .
+
+        OPTIONAL { ?uri skos:prefLabel ?prefLabel }
+        OPTIONAL { ?uri skos:altLabel ?altLabel }
+        OPTIONAL {
+            ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
+            BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+        }
+        OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
     }
-    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
 LIMIT 1000

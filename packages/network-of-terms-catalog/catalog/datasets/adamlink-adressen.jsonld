@@ -1,11 +1,11 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://adamlink.nl/geo/streets/list",
+  "@id": "https://adamlink.nl/geo/addresses/start/",
   "@type": "Dataset",
   "name": [
     {
       "@language": "nl",
-      "@value": "Adamlink: straten in Amsterdam"
+      "@value": "Adamlink: historische adressen in Amsterdam"
     }
   ],
   "creator": [
@@ -14,7 +14,7 @@
     }
   ],
   "url": [
-    "https://adamlink.nl/geo/street/"
+    "https://adamlink.nl/geo/address/"
   ],
   "mainEntityOfPage": [
     "https://adamlink.nl"
@@ -22,24 +22,24 @@
   "description": [
     {
       "@language": "nl",
-      "@value": "Straten in Amsterdam"
+      "@value": "Historische adressen in Amsterdam"
     }
   ],
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql#adamlink-streets",
+      "@id": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql#adamlink-addresses",
       "@type": "DataDownload",
       "contentUrl": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/adamlink-straten.rq"
+          "query": "file://catalog/queries/search/adamlink-adressen.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/adamlink-straten.rq"
+          "query": "file://catalog/queries/lookup/adamlink-adressen.rq"
         },
         {
           "@type": "Action",

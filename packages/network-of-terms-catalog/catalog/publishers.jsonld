@@ -68,12 +68,6 @@
       "alternateName": "Europese Unie"
     },
     {
-      "@id": "https://www.adamnet.nl",
-      "@type": "Organization",
-      "name": "Stichting AdamNet",
-      "alternateName": "AdamNet"
-    },
-    {
       "@id": "https://www.erfgoedbrabant.nl",
       "@type": "Organization",
       "name": "Erfgoed Brabant",
@@ -108,6 +102,12 @@
       "@type": "Organization",
       "name": "Podiumkunst.net",
       "alternateName": "Podiumkunst.net"
+    },
+    {
+      "@id": "https://www.amsterdamtimemachine.nl",
+      "@type": "Organization",
+      "name": "Amsterdam Time Machine",
+      "alternateName": "ATM"
     }
   ]
 }
