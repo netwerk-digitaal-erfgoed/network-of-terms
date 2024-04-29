@@ -40,7 +40,7 @@
     "@opentelemetry/semantic-conventions": "1.22.0",
     "@rdfjs/data-model": "^2.0.2",
     "env-schema": "^5.2.1",
-    "joi": "^17.12.3",
+    "joi": "^17.13.0",
     "pino": "^8.20.0",
     "pino-pretty": "^11.0.0",
     "pretty-ms": "^9.0.0",
