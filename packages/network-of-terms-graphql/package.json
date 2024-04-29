@@ -14,7 +14,7 @@
     "@rdfjs/data-model": "2.0.2",
     "env-schema": "5.2.1",
     "fastify": "4.26.2",
-    "joi": "17.12.3",
+    "joi": "17.13.0",
     "mercurius": "14.0.0",
     "mercurius-logging": "^1.4.0"
   },
