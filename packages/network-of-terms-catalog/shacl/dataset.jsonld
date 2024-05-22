@@ -24,6 +24,13 @@
         },
         {
           "sh:path": {
+            "@id": "schema:genre"
+          },
+          "sh:minCount": 1,
+          "sh:pattern": "^https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/"
+        },
+        {
+          "sh:path": {
             "@id": "schema:inLanguage"
           },
           "sh:minCount": 1

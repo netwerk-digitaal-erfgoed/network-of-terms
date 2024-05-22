@@ -14,6 +14,11 @@
       "@value": "AAT - stijlen en periodes"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "http://www.getty.edu/research/"

@@ -8,6 +8,11 @@
       "@value": "Thesaurus Nationaal Museum van Wereldculturen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "http://www.wereldculturen.nl"

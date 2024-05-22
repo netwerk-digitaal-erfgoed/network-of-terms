@@ -42,6 +42,7 @@ export class Dataset {
     readonly iri: IRI,
     readonly name: string,
     readonly description: string,
+    readonly genres: IRI[],
     readonly termsPrefixes: IRI[],
     readonly mainEntityOfPage: string,
     readonly inLanguage: string,

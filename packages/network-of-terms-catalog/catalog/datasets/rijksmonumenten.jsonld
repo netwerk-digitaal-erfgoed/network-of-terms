@@ -1,58 +1,63 @@
 {
-    "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-    "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/",
-    "@type": "Dataset",
-    "name": [
-      {
-        "@language": "nl",
-        "@value": "Rijksmonumentenregister"
-      }
-    ],
-    "creator": [
-      {
-        "@id": "https://www.cultureelerfgoed.nl"
-      }
-    ],
-    "url": [
-      "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/"
-    ],
-    "mainEntityOfPage": [
-      "https://monumentenregister.cultureelerfgoed.nl/"
-    ],
-    "description": [
-      {
-        "@language": "nl",
-        "@value": "Rijksmonumenten"
-      }
-    ],
-    "inLanguage": "nl",
-    "distribution": [
-      {
-        "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/",
-        "@type": "DataDownload",
-        "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/rce/Rijksmonument/services/Rijksmonument/sparql",
-        "encodingFormat": "application/sparql-query",
-        "potentialAction": [
-          {
-            "@type": "SearchAction",
-            "query": "file://catalog/queries/search/rijksmonumenten.rq"
-          },
-          {
-            "@type": "FindAction",
-            "query": "file://catalog/queries/lookup/rijksmonumenten.rq"
-          },
-          {
-            "@type": "Action",
-            "target": {
-              "@type": "EntryPoint",
-              "actionApplication": {
-                "@id": "https://reconciliation-api.github.io/specs/latest/",
-                "@type": "SoftwareApplication"
-              },
-              "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
-            }
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Rijksmonumentenregister"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.cultureelerfgoed.nl"
+    }
+  ],
+  "url": [
+    "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/"
+  ],
+  "mainEntityOfPage": [
+    "https://monumentenregister.cultureelerfgoed.nl/"
+  ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Rijksmonumenten"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/rce/Rijksmonument/services/Rijksmonument/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/rijksmonumenten.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/rijksmonumenten.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
           }
-        ]
-      }
-    ]
-  }
+        }
+      ]
+    }
+  ]
+}

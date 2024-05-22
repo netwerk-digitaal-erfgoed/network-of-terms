@@ -33,10 +33,11 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
     '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName ?mainEntityOfPage ?inLanguage';
   const query = `
       PREFIX schema: <http://schema.org/>
-        SELECT ${properties} (GROUP_CONCAT(?url) as ?url)  WHERE {
+        SELECT ${properties} (GROUP_CONCAT(?genre) as ?genre) (GROUP_CONCAT(?url) as ?url) WHERE {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
             schema:description ?description ;
+            schema:genre ?genre ;
             schema:inLanguage ?inLanguage ;
             schema:creator ?creator ;
             schema:distribution ?distribution ;
@@ -73,6 +74,10 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
           new IRI(bindings.get('dataset')!.value),
           bindings.get('name')!.value,
           bindings.get('description')!.value,
+          bindings
+            .get('genre')!
+            .value.split(' ') // The single value is space-delineated.
+            .map((genre: string) => new IRI(genre)),
           bindings
             .get('url')!
             .value.split(' ') // The single value is space-delineated.

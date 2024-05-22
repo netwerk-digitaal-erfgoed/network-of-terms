@@ -8,6 +8,11 @@
       "@value": "Adamlink: straten in Amsterdam"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.amsterdamtimemachine.nl"

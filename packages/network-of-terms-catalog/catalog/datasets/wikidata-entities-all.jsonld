@@ -8,6 +8,11 @@
       "@value": "Wikidata: alle entiteiten"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.wikidata.org/entity/Q180"

@@ -14,6 +14,11 @@
       "@value": "Brinkman"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "http://data.bibliotheken.nl/doc/thes/p075301482"

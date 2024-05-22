@@ -8,6 +8,11 @@
       "@value": "Muziek: genres en stijlen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.muziekweb.nl"

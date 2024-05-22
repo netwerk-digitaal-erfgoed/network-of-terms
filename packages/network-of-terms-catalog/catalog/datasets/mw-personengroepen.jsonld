@@ -8,6 +8,11 @@
       "@value": "Muziek: personen en groepen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.muziekweb.nl"
