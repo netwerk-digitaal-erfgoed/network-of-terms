@@ -98,7 +98,7 @@ describe('Catalog', () => {
         'fixtures/credentials.jsonld'
       )
     );
-    const catalog = await fromStore([store]);
+    const catalog = await fromStore(store);
     const distributionIri = new IRI(
       'https://data.beeldengeluid.nl/id/datadownload/0027'
     );
