@@ -27,7 +27,7 @@ export async function getCatalog(path?: string): Promise<Catalog> {
   return fromStore(store);
 }
 
-export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
+export async function fromStore(store: RDF.Store): Promise<Catalog> {
   // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
   const properties =
     '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName ?mainEntityOfPage ?inLanguage';
@@ -59,7 +59,7 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
         GROUP BY ${properties}
         ORDER BY LCASE(?name)`;
   const bindingsStream = await new QueryEngine().queryBindings(query, {
-    sources: store as [RDF.Store, ...RDF.Store[]],
+    sources: [store],
     initialBindings: bindingsFactory.fromRecord({
       reconciliationIri: dataFactory.namedNode(FeatureType.RECONCILIATION),
     }) as unknown as Bindings,
@@ -128,10 +128,15 @@ export async function fromStore(store: RDF.Store[]): Promise<Catalog> {
  * Return a separate RDF.Store for each catalog file because merging them into a single store
  * causes blank nodes to be re-used instead of incremented when adding the next file.
  */
-export async function fromFiles(directory: string): Promise<RDF.Store[]> {
+export async function fromFiles(directory: string): Promise<RDF.Store> {
   // Read all files except those in the queries/ directory.
   const files = await globby([directory, '!' + directory + '/queries']);
-  return Promise.all(files.map(fromFile));
+  return (await Promise.all(files.map(fromFile))).reduce(
+    (previous, current) => {
+      previous.import(current.match());
+      return previous;
+    }
+  );
 }
 
 export async function fromFile(file: string): Promise<RDF.Store> {
