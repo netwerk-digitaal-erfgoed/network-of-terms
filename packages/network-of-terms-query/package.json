@@ -37,7 +37,7 @@
     "@opentelemetry/exporter-metrics-otlp-proto": "0.50.0",
     "@opentelemetry/resources": "1.24.1",
     "@opentelemetry/sdk-metrics": "1.24.1",
-    "@opentelemetry/semantic-conventions": "1.24.0",
+    "@opentelemetry/semantic-conventions": "1.24.1",
     "@rdfjs/data-model": "^2.0.2",
     "env-schema": "^5.2.1",
     "joi": "^17.13.1",
