@@ -13,7 +13,10 @@
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
     },
      {
-      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Actoren-en-organismen"
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
     }
   ],
   "creator": [
