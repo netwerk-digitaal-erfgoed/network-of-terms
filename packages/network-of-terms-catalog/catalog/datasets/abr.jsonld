@@ -17,6 +17,18 @@
   "genre": [
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Technieken"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
     }
   ],
   "creator": [
