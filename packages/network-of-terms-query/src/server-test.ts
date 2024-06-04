@@ -25,7 +25,7 @@ export const testCatalog = (port: number) =>
       'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
       [
         new IRI(
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
+          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'
         ),
       ],
       [new IRI('https://example.com/resources/')],
