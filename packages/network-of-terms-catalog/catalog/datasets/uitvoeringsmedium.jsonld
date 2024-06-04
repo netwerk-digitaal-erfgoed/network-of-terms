@@ -10,6 +10,9 @@
   ],
   "genre": [
     {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
+    },
+    {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
     }
   ],
