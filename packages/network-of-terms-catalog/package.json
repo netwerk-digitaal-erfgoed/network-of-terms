@@ -31,7 +31,7 @@
     "@comunica/types": "^3.1.0",
     "@types/n3": "^1.16.4",
     "@types/rdf-ext": "^2.5.0",
-    "gts": "^5.3.0",
+    "gts": "^5.3.1",
     "jsonld-streaming-parser": "^3.4.0",
     "rdf-data-factory": "^1.1.2",
     "rdf-ext": "^2.5.1",
