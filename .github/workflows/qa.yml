@@ -17,6 +17,6 @@ jobs:
           node-version: lts/*
       - run: npm ci
       - run: npm run check
-      - run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
       - run: npm test
       - run: npm run compile
+      - run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
