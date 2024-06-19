@@ -1,0 +1,50 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX schema: <http://schema.org/>
+PREFIX som: <https://data.muziekschatten.nl/som/>
+
+CONSTRUCT {
+    ?uri a skos:Concept;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+}
+WHERE {
+    ?uri ?predicate ?label.
+    VALUES ?predicate { rdfs:label rdaw:P10086 rdaw:P10223 rdaw:P10333 rdaw:P10335 rdaw:P10047 }
+
+    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+
+    ?uri a <http://rdaregistry.info/Elements/c/C10001>;
+        rdfs:label ?prefLabel .
+
+    OPTIONAL { ?uri rdaw:P10086 ?altLabel } # Varianttitel
+    OPTIONAL { ?uri rdaw:P10219 ?eerste_datum }
+    OPTIONAL { ?uri rdaw:P10333 ?opusnummer }
+    OPTIONAL { ?uri rdaw:P10335 ?thematisch_nummer }
+    OPTIONAL {
+        ?uri rdaw:P10019 ?broader_uri . # Is part of work
+        ?broader_uri rdfs:label ?broader_prefLabel .
+    }
+    OPTIONAL {
+        ?uri rdaw:P10147 ?narrower_uri . # Has part work
+        ?narrower_uri rdfs:label ?narrower_prefLabel .
+    }
+
+    BIND(
+        CONCAT(
+            ?prefLabel, ",",
+            IF(BOUND(?altLabel), CONCAT(" Varianttitel: ", ?altLabel, ","), ""),
+            IF(BOUND(?opusnummer), CONCAT(" Opusnr.: ", ?opusnummer, ","), ""),
+            IF(BOUND(?thematisch_nummer), CONCAT(" Thematisch nr.: ", ?thematisch_nummer, ","), ""),
+            IF(BOUND(?eerste_datum), CONCAT(" Datum: ", ?eerste_datum), "")
+        ) AS ?scopeNote
+    )
+}
+LIMIT 1000
