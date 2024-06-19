@@ -1,4 +1,5 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX som: <https://data.muziekschatten.nl/som/>
@@ -11,9 +12,11 @@ CONSTRUCT {
         skos:scopeNote ?scopeNote ;
         skos:scopeNote ?schema_hasOccupation ;
         skos:broader ?broader_uri ;
+        skos:narrower ?narrower_uri ;
         skos:exactMatch ?exactMatch_uri ;
         skos:inScheme ?datasetUri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
 WHERE {
     # For example:
@@ -22,10 +25,15 @@ WHERE {
     # Person: <https://data.muziekschatten.nl/som/b7bc6d966287e0f0e0f491752ff65ba5>
     # Person: <https://data.muziekschatten.nl/som/4275e51d7d94b224928da9b7707a170a>
     # Uitvoeringsmedium: <https://data.muziekschatten.nl/som/um2603>
+    # Klassiek muziekwerk:
     VALUES ?uri { ?uris }
 
     ?uri a ?type .
-    VALUES ?type { skos:Concept schema:Person } .
+    VALUES ?type {
+        skos:Concept
+        schema:Person
+        <http://rdaregistry.info/Elements/c/C10001> # Klassiek muziekwerk
+    } .
 
     # For Uitvoeringsmedia
     OPTIONAL {
@@ -116,6 +124,35 @@ WHERE {
         )
         BIND(CONCAT(?name, IF(?dates != "", CONCAT(" (", ?dates, ")"), "")) AS ?prefLabel)
         OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
+    }
+
+    # For Klassieke muziekwerken
+    OPTIONAL {
+        ?uri a <http://rdaregistry.info/Elements/c/C10001>;
+            rdfs:label ?prefLabel .
+
+        OPTIONAL { ?uri rdaw:P10086 ?altLabel } # Varianttitel
+        OPTIONAL { ?uri rdaw:P10219 ?eerste_datum }
+        OPTIONAL { ?uri rdaw:P10333 ?opusnummer }
+        OPTIONAL { ?uri rdaw:P10335 ?thematisch_nummer }
+        OPTIONAL {
+            ?uri rdaw:P10019 ?broader_uri . # Is part of work
+            ?broader_uri rdfs:label ?broader_prefLabel .
+        }
+        OPTIONAL {
+            ?uri rdaw:P10147 ?narrower_uri . # Has part work
+            ?narrower_uri rdfs:label ?narrower_prefLabel .
+        }
+
+        BIND(
+            CONCAT(
+                ?prefLabel, ",",
+                IF(BOUND(?altLabel), CONCAT(" Varianttitel: ", ?altLabel, ","), ""),
+                IF(BOUND(?opusnummer), CONCAT(" Opusnr.: ", ?opusnummer, ","), ""),
+                IF(BOUND(?thematisch_nummer), CONCAT(" Thematisch nr.: ", ?thematisch_nummer, ","), ""),
+                IF(BOUND(?eerste_datum), CONCAT(" Datum: ", ?eerste_datum), "")
+            ) AS ?scopeNote
+        )
     }
 }
 LIMIT 1000
