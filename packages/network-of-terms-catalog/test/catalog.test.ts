@@ -41,7 +41,7 @@ describe('Catalog', () => {
     expect(cht.genres).toContainEqual(
       new IRI(
         'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
-      ),
+      )
     );
     expect(cht.termsPrefixes).toEqual([
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht/'),
