@@ -8,6 +8,11 @@
       "@value": "WO2-biografieën"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.niod.nl"

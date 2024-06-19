@@ -8,6 +8,14 @@
       "@value": "GTAA: namen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Actoren-en-organismen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.beeldengeluid.nl/"

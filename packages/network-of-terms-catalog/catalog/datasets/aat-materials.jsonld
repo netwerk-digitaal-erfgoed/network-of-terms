@@ -14,6 +14,11 @@
       "@value": "AAT - materialen"
     }
   ],
+  "genre": [
+       {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen"
+    }
+  ],
   "creator": [
     {
       "@id": "http://www.getty.edu/research/"

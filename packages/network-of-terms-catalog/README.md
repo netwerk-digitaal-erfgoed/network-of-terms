@@ -16,6 +16,7 @@ additions specific to the Network of Terms:
   resources. This prefix is needed when clients look up terms by their URI in the Network of Terms: the Network then has 
   to know which source to consult to retrieve the term;
 - `schema:inLanguage` is a required property;
+- `schema:genre` is a required property, with values restricted to the list of [Termennetwerk onderwerpen](https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen.html);
 - `schema:mainEntityOfPage` is a required property;
 - each distribution has two or more [`schema:potentialAction`](https://schema.org/potentialAction)s:
     - a [`schema:SearchAction`](https://schema.org/SearchAction) and

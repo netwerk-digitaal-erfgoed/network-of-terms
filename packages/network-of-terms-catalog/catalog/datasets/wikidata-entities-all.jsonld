@@ -8,6 +8,17 @@
       "@value": "Wikidata: alle entiteiten"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
+    },
+     {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.wikidata.org/entity/Q180"

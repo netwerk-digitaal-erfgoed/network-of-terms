@@ -8,6 +8,17 @@
       "@value": "EuroVoc - thesaurus van de Europese Unie"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Actoren-en-organismen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
   "creator": [
     {
       "@id": "https://op.europa.eu/"

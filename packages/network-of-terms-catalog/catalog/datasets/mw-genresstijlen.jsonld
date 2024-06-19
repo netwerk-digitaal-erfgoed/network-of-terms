@@ -8,6 +8,14 @@
       "@value": "Muziek: genres en stijlen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Genres"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Stijlen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.muziekweb.nl"

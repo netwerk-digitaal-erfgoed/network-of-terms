@@ -8,6 +8,11 @@
       "@value": "Muziekschatten: personen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.omroepmuziek.nl"

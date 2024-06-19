@@ -8,6 +8,11 @@
       "@value": "GeoNames: geografische namen in Nederland, België en Duitsland"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.geonames.org/team.html"

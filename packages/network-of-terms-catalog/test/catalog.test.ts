@@ -38,6 +38,11 @@ describe('Catalog', () => {
     expect(cht.description).toEqual(
       'Onderwerpen voor het beschrijven van cultureel erfgoed'
     );
+    expect(cht.genres).toContainEqual(
+      new IRI(
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
+      )
+    );
     expect(cht.termsPrefixes).toEqual([
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht/'),
     ]);

@@ -8,6 +8,11 @@
       "@value": "Homosaurus"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://ihlia.nl"

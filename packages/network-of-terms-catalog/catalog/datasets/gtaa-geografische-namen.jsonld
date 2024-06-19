@@ -8,6 +8,11 @@
       "@value": "GTAA: geografische namen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.beeldengeluid.nl/"

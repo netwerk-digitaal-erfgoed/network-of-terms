@@ -8,6 +8,11 @@
       "@value": "Goudse straten"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.goudatijdmachine.nl",

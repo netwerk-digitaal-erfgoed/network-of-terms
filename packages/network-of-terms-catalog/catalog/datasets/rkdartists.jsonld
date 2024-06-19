@@ -8,6 +8,11 @@
       "@value": "RKDartists"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://rkd.nl"

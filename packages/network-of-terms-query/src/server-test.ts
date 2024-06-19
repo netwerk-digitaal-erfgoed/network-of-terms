@@ -23,6 +23,11 @@ export const testCatalog = (port: number) =>
       new IRI('https://data.rkd.nl/rkdartists'),
       'RKDartists',
       'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+      [
+        new IRI(
+          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'
+        ),
+      ],
       [new IRI('https://example.com/resources/')],
       'https://example.com/rkdartists',
       'nl',
@@ -97,6 +102,11 @@ export const testCatalog = (port: number) =>
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
       'Cultuurhistorische Thesaurus',
       'Onderwerpen voor het beschrijven van cultureel erfgoed',
+      [
+        new IRI(
+          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
+        ),
+      ],
       [new IRI('https://data.cultureelerfgoed.nl/term/id/cht/')],
       'https://example.com/cht',
       'nl',
@@ -126,6 +136,11 @@ export const testCatalog = (port: number) =>
       new IRI('http://vocab.getty.edu/aat'),
       'Art & Architecture Thesaurus',
       'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
+      [
+        new IRI(
+          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
+        ),
+      ],
       [new IRI('http://vocab.getty.edu/aat/')],
       'https://example.com/aat',
       'nl',
@@ -149,6 +164,11 @@ export const testCatalog = (port: number) =>
       new IRI('http://data.beeldengeluid.nl/gtaa/Persoonsnamen'),
       'GTAA: persoonsnamen',
       'Personen voor het beschrijven van audiovisueel materiaal',
+      [
+        new IRI(
+          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
+        ),
+      ],
       [new IRI('http://data.beeldengeluid.nl/gtaa/')],
       'https://example.com/gtaa',
       'nl',

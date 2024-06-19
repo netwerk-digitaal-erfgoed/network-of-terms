@@ -8,6 +8,11 @@
       "@value": "Wikidata: personen"
     }
   ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
   "creator": [
     {
       "@id": "https://www.wikidata.org/entity/Q180"
