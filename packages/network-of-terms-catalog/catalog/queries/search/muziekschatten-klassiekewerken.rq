@@ -18,8 +18,7 @@ CONSTRUCT {
 WHERE {
     ?uri ?predicate ?label.
     VALUES ?predicate { rdfs:label rdaw:P10086 rdaw:P10223 rdaw:P10333 rdaw:P10335 rdaw:P10047 }
-
-    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+    ?label <bif:contains> ?virtuosoQuery .
 
     ?uri a <http://rdaregistry.info/Elements/c/C10001>;
         rdfs:label ?prefLabel .
