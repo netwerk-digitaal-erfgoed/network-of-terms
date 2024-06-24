@@ -42,7 +42,7 @@
     "env-schema": "^5.2.1",
     "joi": "^17.13.3",
     "pino": "^9.2.0",
-    "pino-pretty": "^11.2.0",
+    "pino-pretty": "^11.2.1",
     "pretty-ms": "^9.0.0",
     "rdf-data-factory": "^1.1.2",
     "rdf-store-stream": "^2.0.1"
