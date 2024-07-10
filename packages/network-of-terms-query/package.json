@@ -35,7 +35,7 @@
     "@hapi/hoek": "^11.0.4",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/exporter-metrics-otlp-proto": "0.52.1",
-    "@opentelemetry/resources": "1.25.0",
+    "@opentelemetry/resources": "1.25.1",
     "@opentelemetry/sdk-metrics": "1.25.1",
     "@opentelemetry/semantic-conventions": "1.25.1",
     "@rdfjs/data-model": "^2.0.2",
