@@ -39,7 +39,7 @@
     "@opentelemetry/sdk-metrics": "1.25.1",
     "@opentelemetry/semantic-conventions": "1.25.1",
     "@rdfjs/data-model": "^2.0.2",
-    "env-schema": "^5.2.1",
+    "env-schema": "^6.0.0",
     "joi": "^17.13.3",
     "pino": "^9.2.0",
     "pino-pretty": "^11.2.1",
