@@ -47,4 +47,3 @@ WHERE {
     )
 }
 LIMIT 1000
-
