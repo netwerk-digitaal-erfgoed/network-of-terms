@@ -9,6 +9,8 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    ignore:
+      - dependency-name: "@qiwi/multi-semantic-release" # Version >= 6.0 ignores all packages except query and catalog.
     groups:
       comunica:
         patterns:
