@@ -42,7 +42,7 @@ jobs:
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
       - name: Build and push image to registry
-        uses: docker/build-push-action@v6.3.0
+        uses: docker/build-push-action@v6.4.1
         with:
           context: .
           push: true
