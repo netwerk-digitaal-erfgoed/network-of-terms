@@ -38,7 +38,7 @@ export function getCliLogger(options: GetLoggerOptions): Pino.Logger {
     },
   });
   const destinationStdErr = Pino.destination(2);
-  return Pino(loggerOptions, destinationStdErr);
+  return Pino.pino(loggerOptions, destinationStdErr);
 }
 
 export function getHttpLogger(options: GetLoggerOptions): Pino.LoggerOptions {

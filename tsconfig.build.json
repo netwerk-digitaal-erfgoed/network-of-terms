@@ -4,13 +4,13 @@
     "sourceMap": true,
     "target": "es2022",
     "lib": [
-      "es2023"
+      "esnext"
     ],
-    "module": "esnext",
+    "module": "nodenext",
     "declarationMap": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "resolveJsonModule": true,
     "declaration": true,
     "forceConsistentCasingInFileNames": true

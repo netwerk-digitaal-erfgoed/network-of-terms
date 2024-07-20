@@ -1,5 +1,4 @@
 export default {
-  preset: 'ts-jest/presets/default-esm',
   testTimeout: 60000,
   extensionsToTreatAsEsm: ['.ts'],
   collectCoverage: true,
@@ -11,19 +10,14 @@ export default {
   ],
   coverageThreshold: {
     global: {
-      lines: 91.33,
-      statements: 91.33,
-      branches: 95.97,
-      functions: 92.37,
+      lines: 91.38,
+      statements: 91.38,
+      branches: 95.08,
+      functions: 92.56,
     },
   },
   transform: {
-    '^.+\\.ts?$': [
-      'ts-jest',
-      {
-        useESM: true,
-      },
-    ],
+    '^.+\\.ts$': '@swc/jest',
   },
   moduleNameMapper: {
     '^@netwerk-digitaal-erfgoed/(.*)$': '<rootDir>/packages/$1/src/',
