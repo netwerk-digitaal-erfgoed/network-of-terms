@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import rdf from 'rdf-ext';
 import SHACLValidator from 'rdf-validate-shacl';
 import ValidationReport from 'rdf-validate-shacl';
-import DatasetExt from 'rdf-ext/lib/Dataset';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
+import {DatasetCore} from '@rdfjs/types';
 
 describe('Dataset', () => {
   it('validates against SHACL', async () => {
@@ -42,7 +42,7 @@ describe('Dataset', () => {
 
 const listDatasets = () => fs.readdirSync(catalogPath + '/datasets');
 
-const containsDatasetNode = (data: DatasetExt): boolean =>
+const containsDatasetNode = (data: DatasetCore): boolean =>
   data.match(
     null,
     rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),

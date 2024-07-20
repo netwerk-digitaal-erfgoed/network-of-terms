@@ -22,6 +22,7 @@ import {
   TimeoutError,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
+import {dereferenceGenre} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -138,7 +139,7 @@ function term(term: Term) {
   };
 }
 
-function source(distribution: Distribution, dataset: Dataset) {
+async function source(distribution: Distribution, dataset: Dataset) {
   return {
     uri: distribution.iri,
     name: dataset.name,
@@ -151,14 +152,16 @@ function source(distribution: Distribution, dataset: Dataset) {
       name: creator.name,
       alternateName: creator.alternateName,
     })),
-    features: distribution.features.map((feature: Feature) => {
-      return {
-        type: Object.entries(FeatureType).find(
-          ([_, val]) => val === feature.type
-        )?.[0],
-        url: feature.url.toString(),
-      };
-    }),
+    genres: dataset.genres.map(async genre => ({
+      uri: genre.toString(),
+      name: (await dereferenceGenre(genre))?.name ?? 'Unknown',
+    })),
+    features: distribution.features.map((feature: Feature) => ({
+      type: Object.entries(FeatureType).find(
+        ([_, val]) => val === feature.type
+      )?.[0],
+      url: feature.url.toString(),
+    })),
   };
 }
 

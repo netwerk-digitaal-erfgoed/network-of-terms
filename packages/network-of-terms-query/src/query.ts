@@ -54,7 +54,7 @@ export class QueryTermsService {
 
   constructor(options: {comunica?: QueryEngine; logger?: Pino.Logger} = {}) {
     this.engine = options.comunica || new QueryEngine();
-    this.logger = options.logger || Pino();
+    this.logger = options.logger || Pino.pino();
   }
 
   async search(

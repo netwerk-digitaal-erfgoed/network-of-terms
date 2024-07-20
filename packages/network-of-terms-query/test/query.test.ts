@@ -1,5 +1,5 @@
-import {testCatalog} from '../src/server-test';
-import {IRI, QueryMode, QueryTermsService} from '../src';
+import {testCatalog} from '../src/server-test.js';
+import {IRI, QueryMode, QueryTermsService} from '../src/index.js';
 import {QueryEngine} from '@comunica/query-sparql';
 import {ArrayIterator} from 'asynciterator';
 import {jest} from '@jest/globals';

@@ -1,13 +1,13 @@
 import {FastifyInstance} from 'fastify';
-import {server} from '../src/server';
-import {ReconciliationQueryBatch} from '../src/query';
+import {server} from '../src/server.js';
+import {ReconciliationQueryBatch} from '../src/query.js';
 import {
   startDistributionSparqlEndpoint,
   testCatalog,
   teardown,
-} from '../../network-of-terms-query/src/server-test';
-import {DataExtensionQuery} from '../src/data-extension';
-import {config} from '../src/config';
+} from '../../network-of-terms-query/src/server-test.js';
+import {DataExtensionQuery} from '../src/data-extension.js';
+import {config} from '../src/config.js';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);

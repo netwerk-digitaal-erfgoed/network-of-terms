@@ -6,7 +6,7 @@ import {
   IRI,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {getCatalog, fromFile, fromStore} from '../src';
+import {getCatalog, fromFile, fromStore} from '../src/index.js';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 

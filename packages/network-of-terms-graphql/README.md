@@ -71,6 +71,10 @@ query Sources {
       name
       alternateName
     }
+    genres {
+      uri
+      name
+    }
     features {
       type
       url

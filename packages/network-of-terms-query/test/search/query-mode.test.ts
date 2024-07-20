@@ -1,4 +1,4 @@
-import {QueryMode, queryVariants} from '../../src/search/query-mode';
+import {QueryMode, queryVariants} from '../../src/index.js';
 
 describe('Search query', () => {
   it('transforms simple query', () => {

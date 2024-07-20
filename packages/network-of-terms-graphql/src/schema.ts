@@ -9,6 +9,7 @@ export const schema = `
     description: String!
     creators: [Creator]!
     features: [Feature]!
+    genres: [Genre]!
     inLanguage: [String]!
     mainEntityOfPage: [String]!
   }
@@ -34,7 +35,14 @@ export const schema = `
     "Reconciliation Service API"
     RECONCILIATION
   }
-
+  
+  """
+  A genre (category) that a source provides terms about.
+  """
+  type Genre {
+    uri: ID!
+    name: String!
+  }
 
   """
   A description of a concept or entity, expressed in the SKOS vocabulary, used to describe objects.

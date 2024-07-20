@@ -1,4 +1,4 @@
-import {calculateMatchingScore} from '../src/score';
+import {calculateMatchingScore} from '../src/score.js';
 
 describe('Score', () => {
   it('ignores punctuation', () => {

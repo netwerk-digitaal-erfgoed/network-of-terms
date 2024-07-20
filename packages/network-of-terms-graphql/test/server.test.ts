@@ -1,11 +1,11 @@
 import {FastifyInstance} from 'fastify';
-import {server} from '../src/server';
-import {config} from '../src/config';
+import {server} from '../src/server.js';
+import {config} from '../src/config.js';
 import {
   startDistributionSparqlEndpoint,
   testCatalog,
   teardown,
-} from '../../network-of-terms-query/src/server-test';
+} from '../../network-of-terms-query/src/server-test.js';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3000);
@@ -32,6 +32,10 @@ describe('Server', () => {
               name
               alternateName
             }
+            genres {
+              uri
+              name
+            }
             features {
               type
               url
@@ -50,6 +54,10 @@ describe('Server', () => {
     expect(body.data.sources[0].features).toContainEqual({
       type: 'RECONCILIATION',
       url: 'https://example.com/reconcile/rkd',
+    });
+    expect(body.data.sources[0].genres).toContainEqual({
+      uri: 'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
+      name: 'Personen',
     });
   });
 
