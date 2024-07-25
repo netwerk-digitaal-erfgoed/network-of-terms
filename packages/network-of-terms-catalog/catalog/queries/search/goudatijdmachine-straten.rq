@@ -6,6 +6,8 @@ PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
 PREFIX luc-index: <http://www.ontotext.com/connectors/lucene/instance#>
 PREFIX omeka: <http://omeka.org/s/vocabs/o#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX o: <http://omeka.org/s/vocabs/o#>
 
 CONSTRUCT {
     ?piduri a skos:Concept ;
@@ -15,7 +17,7 @@ CONSTRUCT {
         skos:related ?related_uri ;
         skos:exactMatch ?exactMatch_uri .
     ?related_uri skos:prefLabel ?related_prefLabel .
-    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_label .
 } WHERE {
     ?search a luc-index:straten_index ;
         luc:query ?query ;
@@ -49,8 +51,7 @@ CONSTRUCT {
     }
 
     OPTIONAL {
-        ?uri owl:sameAs ?exactMatch_uri .
-        ?exactMatch_uri sdo:name ?exactMatch_prefLabel .
-        FILTER(?exactMatch_uri != ?uri)
+        ?uri rdfs:seeAlso ?exactMatch_uri .
+        ?exactMatch_uri o:label ?exactMatch_label .
     }
 } ORDER BY DESC(?score) LIMIT 100
