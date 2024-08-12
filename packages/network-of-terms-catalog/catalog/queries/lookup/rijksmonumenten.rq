@@ -1,47 +1,62 @@
-PREFIX ceo: <https://linkeddata.cultureelerfgoed.nl/def/ceo/>
+PREFIX ceo: <https://linkeddata.cultureelerfgoed.nl/def/ceo#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX ceosp: <https://linkeddata.cultureelerfgoed.nl/def/ceosp/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+prefix xsd: <http://www.w3.org/2001/XMLSchema#>
 
 CONSTRUCT {
-    ?uri a skos:Concept ;
+    ?monument_uri a skos:Concept ;
         skos:prefLabel ?rijksmonumentnummer_tn ;
         skos:altLabel ?adres;
         skos:scopeNote ?scopeNote ;
         rdfs:seeAlso ?rdfs_seeAlso .
 }
 WHERE {
-    VALUES ?uri { ?uris }
-    ?uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
-    OPTIONAL { ?uri ceosp:naam ?naam }
-    OPTIONAL { ?uri ceosp:volledigAdres ?adres_zoeken }
-    OPTIONAL { ?uri ceosp:postcode ?postcode1 }
-    OPTIONAL { ?uri ceosp:heeftGemeente ?woonplaats }
-    OPTIONAL { ?uri ceosp:oorspronkelijkeFunctie ?functie }
-    OPTIONAL { ?uri ceosp:redengevendeOmschrijving ?redengevende_omschrijving }
-    OPTIONAL { ?uri ceo:isOnderdeelVanComplex/ceo:heeftHoofdobject/ceo:rijksmonumentnummer ?rijksmonumentnummer_hoofdobject }
+    VALUES ?monument_uri {?uris  }
+  
+  
 
+    ?monument_uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
+  ?monument_uri a ceo:Rijksmonument .
+    OPTIONAL { ?monument_uri ceo:heeftNaam/ceo:naam ?naam } .
+    OPTIONAL { ?monument_uri ceo:heeftBasisregistratieRelatie/ceo:heeftGemeente/skos:prefLabel ?woonplaats }
+    OPTIONAL { ?monument_uri ceo:heeftOorspronkelijkeFunctie/ceo:heeftFunctieNaam/skos:prefLabel ?functie }
+    OPTIONAL { ?monument_uri ceo:heeftOmschrijving ?redengevende_omschrijving .
+      ?redengevende_omschrijving ceo:omschrijving ?omschrijving_label .
+    ?redengevende_omschrijving ceo:formeelStandpunt "1"^^xsd:boolean .}
+    OPTIONAL { ?monument_uri ceo:isOnderdeelVanComplex/ceo:heeftHoofdobject/ceo:rijksmonumentnummer ?rijksmonumentnummer_hoofdobject }
+    OPTIONAL { ?monument_uri ceo:heeftBasisregistratieRelatie/ceo:heeftBAGRelatie/ceo:volledigAdres ?adres1 }
+    
+ BIND(CONCAT(
+        IF(BOUND(?woonplaats), CONCAT(?woonplaats, " "), ""),
+        IF(BOUND(?omschrijving_label), CONCAT(?omschrijving_label, " "), ""),
+     IF(BOUND(?adres1), CONCAT(?adres1, " "), "")
+    ) AS ?combinedLabels)
+
+
+  
     BIND(URI(CONCAT("https://monumentenregister.cultureelerfgoed.nl/monumenten/", ?rijksmonumentnummer)) as ?rdfs_seeAlso)
-    BIND(STRAFTER(STR(?woonplaats), "owms/terms/") AS ?owms_string)
     BIND(CONCAT("Rijksmonumentnummer ", ?rijksmonumentnummer) as ?rijksmonumentnummer_tn)
     BIND(
-        CONCAT(
-            IF(BOUND(?woonplaats), CONCAT(" ",?owms_string, ", "), ""),
+        CONCAT(?rijksmonumentnummer_tn,",",
+            IF(BOUND(?woonplaats), CONCAT(" ",?woonplaats, ", "), ""),
             IF(BOUND(?functie), CONCAT("Oorspronkelijke functie: ", ?functie), ""),
-            IF(BOUND(?naam), CONCAT(", Naam: ", ?naam), ""),
+           IF(BOUND(?naam), CONCAT(", Naam: ", ?naam), ""),
             IF(BOUND(?rijksmonumentnummer_hoofdobject) && ?rijksmonumentnummer != ?rijksmonumentnummer_hoofdobject,
                 CONCAT(", Rijksmonumentnummer van hoofdobject: ", ?rijksmonumentnummer_hoofdobject),
-            ""
+              ""
             )
-        ) as ?scopeNote
-    )
+        ) as ?scopeNote)
+    
+  
+  
     {
-        SELECT ?uri (MIN(?optional_altlabel) AS ?adres) WHERE {
-            ?uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
-            OPTIONAL { ?uri ceosp:volledigAdres ?adres1 }
+        SELECT ?monument_uri  (MIN(?optional_altlabel) AS ?adres) WHERE {
+            ?monument_uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
+           OPTIONAL { ?monument_uri ceo:heeftBasisregistratieRelatie/ceo:heeftBAGRelatie/ceo:volledigAdres ?adres1 }
             BIND(IF(BOUND(?adres1), ?adres1, "Geen adres beschikbaar") AS ?optional_altlabel)
         }
+        GROUP BY ?monument_uri
     }
-}
-LIMIT 1000
+  } LIMIT 1000
