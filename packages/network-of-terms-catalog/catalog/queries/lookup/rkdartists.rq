@@ -26,11 +26,11 @@ WHERE {
 
             OPTIONAL { ?uri schema:description ?schema_description . }
             OPTIONAL { ?uri schema:birthPlace ?birthPlace .
-                FILTER(langMatches(lang(?birthPlace),"en")) }
+                FILTER(langMatches(lang(?birthPlace), "nl")) }
             OPTIONAL { ?uri schema:deathPlace ?deathPlace .
-                FILTER(langMatches(lang(?deathPlace),"en"))}
+                FILTER(langMatches(lang(?deathPlace), "nl"))}
             OPTIONAL { ?uri schema:additionalType ?additionalType .
-                FILTER(langMatches(lang(?additionalType),"en"))}
+                FILTER(langMatches(lang(?additionalType), "nl"))}
 
         } GROUP BY ?uri
     }
