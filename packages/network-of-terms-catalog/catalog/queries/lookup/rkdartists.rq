@@ -7,8 +7,7 @@ CONSTRUCT {
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote ;
-        rdfs:seeAlso ?seeAlso ;
-        skos:label ?label .
+        rdfs:seeAlso ?seeAlso .
 }
 WHERE {
     # For example:
@@ -24,9 +23,6 @@ WHERE {
         WHERE {
             ?uri a ?type .
             VALUES ?type { schema:Person schema:Organization }
-
-            ?uri ?name ?label .
-            VALUES ?name { schema:name schema:alternateName }
 
             OPTIONAL { ?uri schema:description ?schema_description . }
             OPTIONAL { ?uri schema:birthPlace ?birthPlace .
