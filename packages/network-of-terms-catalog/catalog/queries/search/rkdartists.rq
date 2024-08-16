@@ -1,28 +1,74 @@
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX schema: <http://schema.org/>
+PREFIX schema: <https://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?schema_name ;
         skos:altLabel ?schema_alternateName ;
-        skos:scopeNote ?schema_description ;
-        rdfs:seeAlso ?rdfs_seeAlso .
+        skos:scopeNote ?scopeNote ;
+        rdfs:seeAlso ?rdfs_seeAlso ;
+        skos:label ?label .
 }
 WHERE {
-    ?uri a ?type .
-    VALUES ?type { schema:Person schema:Organization }
-    ?uri ?name ?label .
-    VALUES ?name { schema:name schema:alternateName }
-
+    
+    
     ?uri ?predicate ?label .
     ?label <bif:contains> ?virtuosoQuery .
+    
+    {
+        SELECT ?uri 
+            (group_concat(DISTINCT ?schema_description;separator="; ") as ?descriptions)
+            (group_concat(DISTINCT ?birthPlace;separator="/") as ?birthPlaces)
+            (group_concat(DISTINCT ?deathPlace;separator="/") as ?deathPlaces)
+            (group_concat(DISTINCT ?additionalType;separator=", ") as ?additionalTypes)
+        WHERE { 
+            ?uri a ?type .
+            VALUES ?type { schema:Person schema:Organization }
 
+            ?uri ?name ?label .
+            VALUES ?name { schema:name schema:alternateName }
+
+            OPTIONAL { ?uri schema:description ?schema_description . }
+            OPTIONAL { ?uri schema:birthPlace ?birthPlace . 
+                FILTER(langMatches(lang(?birthPlace),"en")) }
+            OPTIONAL { ?uri schema:deathPlace ?deathPlace . 
+                FILTER(langMatches(lang(?deathPlace),"en")) }
+            OPTIONAL { ?uri schema:additionalType ?additionalType . 
+                FILTER(langMatches(lang(?additionalType),"en")) }
+
+        } GROUP BY ?uri
+    }
+
+   
     OPTIONAL { ?uri schema:name ?schema_name . }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName . }
-    OPTIONAL { ?uri schema:description ?schema_description . }
+    OPTIONAL { ?uri schema:birthDate ?birthDate . }
+    OPTIONAL { ?uri schema:deathDate ?deathDate . }      
 
+    
+    BIND(
+        CONCAT(
+          IF(BOUND(?birthDate) || STRLEN(?birthPlaces)>0 ,
+            CONCAT(
+              IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
+              IF(STRLEN(?birthPlaces)>0, CONCAT("(", ?birthPlaces, ") "), ""), 
+              IF(BOUND(?deathDate) || STRLEN(?deathPlaces)>0 ," - "," - ; ")),
+            ""),
+          IF(BOUND(?deathDate) || STRLEN(?deathPlaces)>0 ,
+            CONCAT(
+              IF(BOUND(?birthDate) || STRLEN(?birthPlaces)>0 , "", "- "),
+              IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
+              IF(STRLEN(?deathPlaces)>0, CONCAT("(", ?deathPlaces, ")"), ""),
+              "; "),
+            ""),
+            IF(STRLEN(?additionalTypes)>0, CONCAT(?additionalTypes, ". "), ""),
+            IF(STRLEN(?descriptions)>0, CONCAT(?descriptions, ". "), "")
+        ) as ?scopeNote
+    ) 
+
+    
     BIND(STRAFTER(STR(?uri), "https://data.rkd.nl/artists/") AS ?identifier)
-    BIND(IRI(CONCAT("https://rkd.nl/explore/artists/", ?identifier)) AS ?rdfs_seeAlso)
+    BIND(IRI(CONCAT("https://rkd.nl/artists/", ?identifier)) AS ?rdfs_seeAlso)
 }
 LIMIT 1000

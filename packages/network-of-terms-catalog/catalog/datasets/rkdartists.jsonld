@@ -33,9 +33,9 @@
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql",
+      "@id": "https://api.rkd.triply.cc/datasets/rkd/RKD-SDO-Knowledge-Graph/sparql",
       "@type": "DataDownload",
-      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/rkd/rkdartists/services/rkdartists/sparql",
+      "contentUrl": "https://api.rkd.triply.cc/datasets/rkd/RKD-SDO-Knowledge-Graph/services/Virtuoso/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
