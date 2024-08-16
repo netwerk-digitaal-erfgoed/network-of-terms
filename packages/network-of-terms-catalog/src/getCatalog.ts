@@ -145,8 +145,6 @@ export async function fromFiles(directory: string): Promise<RDF.Store> {
 }
 
 export async function fromFile(file: string): Promise<RDF.Store> {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   const quadStream = rdfParser
     .parse(fs.createReadStream(file), {
       path: file,
