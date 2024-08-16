@@ -12,6 +12,7 @@ CONSTRUCT {
 WHERE {
     ?uri ?predicate ?label .
     ?label <bif:contains> ?virtuosoQuery .
+    VALUES ?predicate { schema:name schema:alternateName }
 
     {
         SELECT ?uri
