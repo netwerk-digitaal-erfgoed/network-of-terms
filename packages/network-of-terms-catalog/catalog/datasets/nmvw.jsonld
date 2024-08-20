@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://api.colonialcollections.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql",
+  "@id": "https://data.colonialcollections.nl/nmvw/thesaurus",
   "@type": "Dataset",
   "name": [
     {
