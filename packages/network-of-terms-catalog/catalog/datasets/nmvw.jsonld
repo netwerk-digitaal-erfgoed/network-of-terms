@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus",
+  "@id": "https://api.colonialcollections.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql",
   "@type": "Dataset",
   "name": [
     {
@@ -45,9 +45,9 @@
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://data.netwerkdigitaalerfgoed.nl/NMVW/thesaurus/sparql",
+      "@id": "https://api.colonialcollections.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql",
       "@type": "DataDownload",
-      "contentUrl": "https://api.data.netwerkdigitaalerfgoed.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql",
+      "contentUrl": "https://api.colonialcollections.nl/datasets/nmvw/thesaurus/services/thesaurus/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
