@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@types/rdfjs__data-model": "2.0.8",
-    "jest-dev-server": "10.0.0",
+    "jest-dev-server": "10.1.0",
     "ts-node-dev": "2.0.0",
     "tsc-watch": "6.2.0"
   },
