@@ -3,62 +3,54 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX ceosp: <https://linkeddata.cultureelerfgoed.nl/def/ceosp/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-prefix xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX schema: <https://schema.org/>
 
 CONSTRUCT {
-
-    ?monument_uri a skos:Concept ;
+    ?uri a skos:Concept ;
         skos:prefLabel ?rijksmonumentnummer_tn ;
-        skos:altLabel ?adres ;
+        skos:altLabel ?adres_lang ;
         skos:scopeNote ?scopeNote ;
-        rdfs:seeAlso ?rdfs_seeAlso .
-} 
-  
-  
-  WHERE {
-    
-   FILTER(CONTAINS(LCASE(?combinedLabels), LCASE(?query)))
+        rdfs:seeAlso ?monument_url .
+}
+WHERE {
+    ?uri ?predicate ?label .
+    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+    VALUES ?predicate { schema:addressLocality schema:identifier schema:address schema:name schema:State }
 
-    ?monument_uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
-  ?monument_uri a ceo:Rijksmonument .
-    OPTIONAL { ?monument_uri ceo:heeftNaam/ceo:naam ?naam } .
-    OPTIONAL { ?monument_uri ceo:heeftBasisregistratieRelatie/ceo:heeftGemeente/skos:prefLabel ?woonplaats }
-    OPTIONAL { ?monument_uri ceo:heeftOorspronkelijkeFunctie/ceo:heeftFunctieNaam/skos:prefLabel ?functie }
-    OPTIONAL { ?monument_uri ceo:heeftOmschrijving ?redengevende_omschrijving .
-      ?redengevende_omschrijving ceo:omschrijving ?omschrijving_label .
-    ?redengevende_omschrijving ceo:formeelStandpunt "1"^^xsd:boolean .}
-    OPTIONAL { ?monument_uri ceo:isOnderdeelVanComplex/ceo:heeftHoofdobject/ceo:rijksmonumentnummer ?rijksmonumentnummer_hoofdobject }
-    OPTIONAL { ?monument_uri ceo:heeftBasisregistratieRelatie/ceo:heeftBAGRelatie/ceo:volledigAdres ?adres1 }
-    
- BIND(CONCAT(
-        IF(BOUND(?woonplaats), CONCAT(?woonplaats, " "), ""),
-        IF(BOUND(?omschrijving_label), CONCAT(?omschrijving_label, " "), ""),
-     IF(BOUND(?adres1), CONCAT(?adres1, " "), "")
-    ) AS ?combinedLabels)
+    ?uri schema:name ?naam ;
+        schema:identifier ?rijksmonumentnummer ;
+        schema:category ?monumentaard ;
+        schema:postalCode ?postcode ;
+        schema:additionalType ?functie ;
+        schema:addressLocality ?woonplaats ;
+        schema:State ?provincie ;
+        schema:sameAs ?monument_url .
 
-
-  
-    BIND(URI(CONCAT("https://monumentenregister.cultureelerfgoed.nl/monumenten/", ?rijksmonumentnummer)) as ?rdfs_seeAlso)
     BIND(CONCAT("Rijksmonumentnummer ", ?rijksmonumentnummer) as ?rijksmonumentnummer_tn)
-    BIND(
-        CONCAT(?rijksmonumentnummer_tn,",",
-            IF(BOUND(?woonplaats), CONCAT(" ",?woonplaats, ", "), ""),
-            IF(BOUND(?functie), CONCAT("Oorspronkelijke functie: ", ?functie), ""),
-           IF(BOUND(?naam), CONCAT(", Naam: ", ?naam), ""),
-            IF(BOUND(?rijksmonumentnummer_hoofdobject) && ?rijksmonumentnummer != ?rijksmonumentnummer_hoofdobject,
-                CONCAT(", Rijksmonumentnummer van hoofdobject: ", ?rijksmonumentnummer_hoofdobject),
-              ""
-            )
-        ) as ?scopeNote)
-    
-  
-  
+
+    # Aggregate and get the minimum address as ?adres2
     {
-        SELECT ?monument_uri  (MIN(?optional_altlabel) AS ?adres) WHERE {
-            ?monument_uri ceo:rijksmonumentnummer ?rijksmonumentnummer .
-           OPTIONAL { ?monument_uri ceo:heeftBasisregistratieRelatie/ceo:heeftBAGRelatie/ceo:volledigAdres ?adres1 }
-            BIND(IF(BOUND(?adres1), ?adres1, "Geen adres beschikbaar") AS ?optional_altlabel)
+        SELECT ?uri (MIN(?adres) AS ?adres2)
+        WHERE {
+            OPTIONAL { ?uri schema:address ?adres . }
         }
-        GROUP BY ?monument_uri
+        GROUP BY ?uri
     }
-  } LIMIT 1000
+
+    BIND(
+        CONCAT(
+            "Naam: ", STR(?naam),
+            " / Oorspronkelijke functie: ", STR(?functie),
+            " / Type monument: ", STR(?monumentaard)
+        ) AS ?scopeNote
+    )
+
+    BIND(
+        CONCAT(
+            IF(BOUND(?adres2), CONCAT(STR(?adres2), " "), ""),
+            STR(?postcode), " ", STR(?woonplaats)
+        ) AS ?adres_lang
+    )
+}
+LIMIT 200

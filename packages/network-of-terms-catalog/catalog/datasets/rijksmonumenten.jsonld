@@ -35,7 +35,7 @@
     {
       "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/",
       "@type": "DataDownload",
-      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/rce/cho/services/cho/sparql",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/rce/Rijksmonumenten-sdo/services/Rijksmonumenten-sdo/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
