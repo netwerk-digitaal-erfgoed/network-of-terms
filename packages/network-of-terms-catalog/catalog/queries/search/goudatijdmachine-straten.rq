@@ -7,7 +7,6 @@ PREFIX luc-index: <http://www.ontotext.com/connectors/lucene/instance#>
 PREFIX omeka: <http://omeka.org/s/vocabs/o#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX o: <http://omeka.org/s/vocabs/o#>
 
 CONSTRUCT {
     ?piduri a skos:Concept ;
@@ -36,7 +35,7 @@ CONSTRUCT {
 
     BIND (
         CONCAT(
-            IF ( EXISTS { ?entity omeka:item_set <https://n2t.net/ark:/60537/bd75pg> }, "Verdwenen straat", "Straat" ),
+            IF ( EXISTS { ?uri omeka:item_set <https://n2t.net/ark:/60537/bd75pg> }, "Verdwenen straat", "Straat" ),
             IF ( BOUND(?genoemdNaar), CONCAT(" in Gouda, genoemd naar ", ?genoemdNaar )," in Gouda" )
         )
     AS ?scopeNote )
@@ -52,6 +51,6 @@ CONSTRUCT {
 
     OPTIONAL {
         ?uri rdfs:seeAlso ?exactMatch_uri .
-        ?exactMatch_uri o:label ?exactMatch_label .
+        ?exactMatch_uri omeka:label ?exactMatch_label .
     }
 } ORDER BY DESC(?score) LIMIT 100
