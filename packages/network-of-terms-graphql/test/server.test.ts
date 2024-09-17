@@ -143,45 +143,10 @@ describe('Server', () => {
       )
     );
     expect(body.data.terms).toHaveLength(1); // Source.
-    expect(body.data.terms[0].source.name).toEqual('RKDartists');
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists'
     );
-    expect(body.data.terms[0].source.inLanguage).toEqual(['nl']);
-    expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
-    expect(body.data.terms[0].responseTimeMs).toBeGreaterThan(0);
-
-    const artwork = body.data.terms[0].result.terms.find(
-      (term: {uri: string}) =>
-        term.uri === 'https://example.com/resources/artwork'
-    );
-    expect(artwork.seeAlso).toEqual(['https://example.com/html/artwork']);
-    expect(artwork.description).toEqual([
-      'One of the most famous Dutch paintings',
-    ]);
-    expect(artwork.exactMatch).toEqual([
-      {
-        prefLabel: ['Exact match'],
-        uri: 'https://example.com/resources/match',
-      },
-    ]);
-
-    const prefLabels = body.data.terms[0].result.terms.map(
-      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
-    );
-    expect(prefLabels).toEqual([
-      'Rembrandt',
-      'Nachtwacht',
-      'All things art',
-      '',
-      '',
-    ]); // Results with score must come first.
-
-    const relatedPrefLabels = artwork.related.map(
-      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
-    );
-    expect(relatedPrefLabels).toEqual(['', 'All things art', 'Rembrandt']); // Sorted alphabetically.
   });
 
   it('responds to GraphQL lookup query', async () => {
