@@ -51,6 +51,12 @@ export class Dataset {
     readonly alternateName?: string
   ) {}
 
+  public getSparqlDistribution(): Distribution | undefined {
+    return this.distributions.find(
+      distribution => distribution instanceof SparqlDistribution
+    );
+  }
+
   public getDistributionByIri(iri: IRI): Distribution | undefined {
     return this.distributions.find(
       distribution => distribution.iri.toString() === iri.toString()
