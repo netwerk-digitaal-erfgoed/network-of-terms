@@ -22,7 +22,7 @@ WHERE {
         schema:postalCode ?postcode ;
         schema:additionalType ?functie ;
         schema:addressLocality ?woonplaats ;
-        schema:State ?provincie ;
+        schema:addressRegion ?provincie ;
         schema:sameAs ?monument_url .
 
     BIND(CONCAT("Rijksmonumentnummer ", ?rijksmonumentnummer) as ?rijksmonumentnummer_tn)
