@@ -16,7 +16,7 @@ CONSTRUCT {
 WHERE {
     ?uri ?predicate ?label .
     FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
-    VALUES ?predicate { schema:addressLocality schema:identifier schema:address schema:name schema:State }
+    VALUES ?predicate { schema:addressLocality schema:identifier schema:address schema:name schema:addressRegion }
 
     ?uri schema:name ?naam ;
         schema:identifier ?rijksmonumentnummer ;
@@ -24,7 +24,7 @@ WHERE {
         schema:postalCode ?postcode ;
         schema:additionalType ?functie ;
         schema:addressLocality ?woonplaats ;
-        schema:State ?provincie ;
+        schema:addressRegion ?provincie ;
         schema:sameAs ?monument_url .
 
     BIND(CONCAT("Rijksmonumentnummer ", ?rijksmonumentnummer) as ?rijksmonumentnummer_tn)
