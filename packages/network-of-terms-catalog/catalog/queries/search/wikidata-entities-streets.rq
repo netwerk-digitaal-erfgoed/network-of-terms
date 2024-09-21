@@ -21,14 +21,18 @@ WHERE {
         bd:serviceParam mwapi:srsearch ?query .
         ?item wikibase:apiOutputItem mwapi:title .
     }
+    # Use UNION instead of VALUES because the latter doesn't properly restrict results.
     {
-        # select Streets
+        # Streets.
         ?item wdt:P31 wd:Q79007
     }
-    UNION
-    {
-        # select Squares
+    UNION {
+        # Squares.
         ?item wdt:P31 wd:Q174782
+    }
+    UNION {
+        # Main squares, e.g. http://www.wikidata.org/entity/Q1083850.
+        ?item wdt:P31 wd:Q26987258
     }
     ?item wdt:P17 wd:Q55 .
     ?item wdt:P131 ?administration .
