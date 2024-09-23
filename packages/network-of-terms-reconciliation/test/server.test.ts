@@ -31,6 +31,14 @@ describe('Server', () => {
   it('returns reconciliation service manifest', async () => {
     const response = await httpServer.inject({
       method: 'GET',
+      url: '/reconcile/https://data.rkd.nl/rkdartists',
+    });
+    expect(response.statusCode).toEqual(200);
+  });
+
+  it('returns reconciliation service manifest with backwards compatible distribution URI', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
       url: '/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
     });
     expect(response.statusCode).toEqual(200);
@@ -52,7 +60,7 @@ describe('Server', () => {
 
   it('responds to successful reconciliation API requests', async () => {
     const response = await reconciliationQuery(
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
+      'https://data.rkd.nl/rkdartists'
     );
     expect(response.statusCode).toEqual(200);
     const results = JSON.parse(response.body);
@@ -78,9 +86,26 @@ describe('Server', () => {
     expect(results.q3.result).toEqual([]); // No results.
   });
 
+  it('responds to successful reconciliation API request with backwards compatible distribution URI', async () => {
+    const response = await reconciliationQuery(
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
+    );
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+
+    expect(results.q1.result).toEqual([
+      {
+        id: 'https://example.com/resources/artwork',
+        name: 'Nachtwacht',
+        score: 100,
+        description: 'Nachtwacht alt',
+      },
+    ]);
+  });
+
   it('limits reconciliation API results', async () => {
     const response = await reconciliationQuery(
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      'https://data.rkd.nl/rkdartists',
       {
         q1: {
           query: 'art',
@@ -99,7 +124,7 @@ describe('Server', () => {
 
   it('validates reconciliation requests', async () => {
     const response = await reconciliationQuery(
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      'https://data.rkd.nl/rkdartists',
       {
         q1: {
           query: 'art',
@@ -137,7 +162,7 @@ describe('Server', () => {
 
     // This is what OpenRefine currently expects.
     const response2 = await dataExtensionQuery(
-      '/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql/extend'
+      '/reconcile/https://data.rkd.nl/rkdartists/extend'
     );
     expect(response2.statusCode).toEqual(200);
     const results2 = JSON.parse(response.body);

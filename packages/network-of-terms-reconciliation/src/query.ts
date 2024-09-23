@@ -14,12 +14,12 @@ import {score} from './score.js';
  * We may want to make this smarter by batching queries and acting on Timeout responses.
  */
 export async function reconciliationQuery(
-  distributionIri: IRI,
+  datasetIri: IRI,
   query: ReconciliationQueryBatch,
   catalog: Catalog,
   queryTermsService: QueryTermsService
 ): Promise<ReconciliationResultBatch> {
-  const dataset = catalog.getDatasetByDistributionIri(distributionIri)!;
+  const dataset = catalog.getDatasetByIri(datasetIri)!;
   const distribution = dataset.distributions[0];
 
   return Object.entries(query).reduce(

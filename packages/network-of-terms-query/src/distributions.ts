@@ -53,9 +53,7 @@ export class DistributionsService {
   async query(options: QueryOptions): Promise<TermsResponse> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(`Preparing to query source "${args.source}"...`);
-    const dataset =
-      this.catalog.getDatasetByIri(args.source) ??
-      this.catalog.getDatasetByDistributionIri(args.source);
+    const dataset = this.catalog.getDatasetByIri(args.source);
     if (dataset === undefined) {
       throw Error(`Source with URI "${args.source}" not found`);
     }

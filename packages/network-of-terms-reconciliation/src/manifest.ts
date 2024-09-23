@@ -38,16 +38,14 @@ export class ServiceManifest {
 }
 
 export function findManifest(
-  distributionIri: IRI,
+  dataset: IRI,
   catalog: Catalog,
   root: string
 ): ServiceManifest | undefined {
-  const source = catalog.getDatasetByDistributionIri(distributionIri);
+  const source = catalog.getDatasetByIri(dataset);
   if (
     source &&
-    source
-      .getDistributionByIri(distributionIri)
-      ?.hasFeature(FeatureType.RECONCILIATION)
+    source.getSparqlDistribution()?.hasFeature(FeatureType.RECONCILIATION)
   ) {
     return new ServiceManifest(source.name, source.iri, root);
   }
