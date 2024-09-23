@@ -53,11 +53,11 @@ export class DistributionsService {
   async query(options: QueryOptions): Promise<TermsResponse> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(`Preparing to query source "${args.source}"...`);
-    const dataset = await this.catalog.getDatasetByDistributionIri(args.source);
+    const dataset = this.catalog.getDatasetByIri(args.source);
     if (dataset === undefined) {
       throw Error(`Source with URI "${args.source}" not found`);
     }
-    const distribution = dataset.getDistributionByIri(args.source)!;
+    const distribution = dataset.getSparqlDistribution()!;
     const queryService = new QueryTermsService({
       logger: this.logger,
       comunica: this.comunica,

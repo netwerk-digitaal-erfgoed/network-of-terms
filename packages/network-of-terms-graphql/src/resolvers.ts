@@ -39,9 +39,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     comunica: context.comunica,
   });
   const results = await service.queryAll({
-    sources: args.sources.map(
-      (distributionIri: string) => new IRI(distributionIri)
-    ),
+    sources: args.sources.map((datasetIri: string) => new IRI(datasetIri)),
     query: args.query,
     queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     timeoutMs: args.timeoutMs,
@@ -141,7 +139,7 @@ function term(term: Term) {
 
 async function source(distribution: Distribution, dataset: Dataset) {
   return {
-    uri: distribution.iri,
+    uri: dataset.iri,
     name: dataset.name,
     alternateName: dataset.alternateName,
     description: dataset.description,

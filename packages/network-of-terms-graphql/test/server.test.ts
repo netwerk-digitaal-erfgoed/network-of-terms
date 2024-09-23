@@ -45,9 +45,7 @@ describe('Server', () => {
       `
     );
     expect(body.data.sources).toHaveLength(catalog.datasets.length);
-    expect(body.data.sources[0].uri).toEqual(
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
-    );
+    expect(body.data.sources[0].uri).toEqual('https://data.rkd.nl/rkdartists');
     expect(body.data.sources[0].mainEntityOfPage).toEqual([
       'https://example.com/rkdartists',
     ]);
@@ -93,13 +91,13 @@ describe('Server', () => {
 
   it('responds to successful GraphQL terms query', async () => {
     const body = await query(
-      termsQuery(
-        ['https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'],
-        '.*'
-      )
+      termsQuery(['https://data.rkd.nl/rkdartists'], '.*')
     );
     expect(body.data.terms).toHaveLength(1); // Source.
     expect(body.data.terms[0].source.name).toEqual('RKDartists');
+    expect(body.data.terms[0].source.uri).toEqual(
+      'https://data.rkd.nl/rkdartists'
+    );
     expect(body.data.terms[0].source.inLanguage).toEqual(['nl']);
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
@@ -137,6 +135,20 @@ describe('Server', () => {
     expect(relatedPrefLabels).toEqual(['', 'All things art', 'Rembrandt']); // Sorted alphabetically.
   });
 
+  it('responds to successful GraphQL terms query with backwards compatible distribution URI', async () => {
+    const body = await query(
+      termsQuery(
+        ['https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'],
+        '.*'
+      )
+    );
+    expect(body.data.terms).toHaveLength(1); // Source.
+    expect(body.data.terms[0].source.uri).toEqual(
+      'https://data.rkd.nl/rkdartists'
+    );
+    expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
+  });
+
   it('responds to GraphQL lookup query', async () => {
     const body = await query(
       lookupQuery(
@@ -151,6 +163,7 @@ describe('Server', () => {
     const term = body.data.lookup[0];
     expect(term.uri).toEqual('https://example.com/resources/art');
     expect(term.source.name).toEqual('RKDartists');
+    expect(term.source.uri).toEqual('https://data.rkd.nl/rkdartists');
     expect(term.result.__typename).toEqual('Term');
     expect(term.result.uri).toEqual('https://example.com/resources/art');
     expect(term.responseTimeMs).toBeGreaterThan(0);

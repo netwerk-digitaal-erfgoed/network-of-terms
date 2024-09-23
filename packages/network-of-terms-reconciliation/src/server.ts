@@ -51,8 +51,8 @@ export async function server(
   });
 
   server.get<{Params: {'*': string}}>('/reconcile/*', (request, reply) => {
-    const distributionIri = new IRI(request.params['*']);
-    const manifest = findManifest(distributionIri, catalog, request.root);
+    const dataset = new IRI(request.params['*']);
+    const manifest = findManifest(dataset, catalog, request.root);
     if (manifest === undefined) {
       reply.code(404).send();
       return;
@@ -89,8 +89,8 @@ export async function server(
         );
         return;
       }
-      const distributionIri = new IRI(request.params['*']);
-      const manifest = findManifest(distributionIri, catalog, request.root);
+      const dataset = new IRI(request.params['*']);
+      const manifest = findManifest(dataset, catalog, request.root);
       if (manifest === undefined) {
         reply.code(404).send();
         return;
@@ -98,7 +98,7 @@ export async function server(
 
       reply.send(
         await reconciliationQuery(
-          distributionIri,
+          dataset,
           request.body as ReconciliationQueryBatch,
           catalog,
           queryTermsService

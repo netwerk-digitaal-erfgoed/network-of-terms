@@ -91,7 +91,7 @@ query Sources {
 # Query Cultuurhistorische Thesaurus (CHT)
 query {
   terms(
-    sources: ["https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht"],
+    sources: ["https://data.cultureelerfgoed.nl/term/id/cht"],
     query: "fiets"
   ) {
     source {
@@ -146,7 +146,7 @@ query {
 # Query RKDartists and NTA simultaneously
 query {
   terms(
-    sources: ["https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql", "http://data.bibliotheken.nl/thesp/sparql"],
+    sources: ["https://data.rkd.nl/rkdartists", "http://data.bibliotheken.nl/id/dataset/persons"],
     query: "Gogh"
   ) {
     source {

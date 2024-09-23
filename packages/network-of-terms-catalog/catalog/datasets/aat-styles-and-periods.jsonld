@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "http://vocab.getty.edu/aat/styles-and-periods",
+  "@id": "http://vocab.getty.edu/aat#styles-and-periods",
   "@type": "Dataset",
   "name": [
     {
@@ -20,7 +20,7 @@
     },
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Stijlen"
-    }    
+    }
   ],
   "creator": [
     {
@@ -63,7 +63,7 @@
               "@id": "https://reconciliation-api.github.io/specs/latest/",
               "@type": "SoftwareApplication"
             },
-            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{distribution}"
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
           }
         }
       ]
