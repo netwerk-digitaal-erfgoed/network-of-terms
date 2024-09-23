@@ -106,10 +106,8 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
                           bindings
                             .get('reconciliationUrlTemplate')!
                             .value.replace(
-                              '{distribution}',
-                              bindings
-                                .get('distribution')!
-                                .value.replace('#', '%23') // Escape # in URL.
+                              '{dataset}',
+                              bindings.get('dataset')!.value.replace('#', '%23') // Escape # in URL.
                             )
                         )
                       ),
