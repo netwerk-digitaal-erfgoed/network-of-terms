@@ -1,12 +1,11 @@
 import {
   Catalog,
   Dataset,
-  Feature,
   FeatureType,
   IRI,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import {getCatalog, fromFile, fromStore} from '../src/index.js';
+import {fromFile, fromStore, getCatalog} from '../src/index.js';
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 
@@ -30,8 +29,8 @@ describe('Catalog', () => {
       catalog.getDatasetByDistributionIri(new IRI('https://nope.com'))
     ).toBeUndefined();
 
-    const cht = catalog.getDatasetByDistributionIri(
-      new IRI('https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht')
+    const cht = catalog.getDatasetByIri(
+      new IRI('https://data.cultureelerfgoed.nl/term/id/cht')
     )!;
     expect(cht).toBeInstanceOf(Dataset);
     expect(cht.name).toEqual('Cultuurhistorische Thesaurus');
@@ -52,6 +51,12 @@ describe('Catalog', () => {
       'Rijksdienst voor het Cultureel Erfgoed'
     );
     expect(cht.creators[0].alternateName).toEqual('RCE');
+    expect(cht.distributions[0].features[0].type).toEqual(
+      FeatureType.RECONCILIATION
+    );
+    expect(cht.distributions[0].features[0].url.toString()).toEqual(
+      `https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/${cht.iri}`
+    );
   });
 
   it('can retrieve distributions by IRI', () => {
@@ -84,14 +89,8 @@ describe('Catalog', () => {
     const reconciliationApis = catalog.getDistributionsProvidingFeature(
       FeatureType.RECONCILIATION
     );
-    expect(reconciliationApis[0].features).toContainEqual(
-      new Feature(
-        FeatureType.RECONCILIATION,
-        new URL(
-          'https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/' +
-            reconciliationApis[0].iri.toString().replace('#', '%23')
-        )
-      )
+    expect(reconciliationApis[0].features[0].type).toEqual(
+      FeatureType.RECONCILIATION
     );
   });
 
