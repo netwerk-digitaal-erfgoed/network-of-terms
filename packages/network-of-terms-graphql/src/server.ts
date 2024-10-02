@@ -50,7 +50,7 @@ export async function server(
     method: 'GET',
     url: '/playground',
     handler: (req, reply) => {
-      reply.redirect(301, '/graphiql');
+      reply.redirect('/graphiql', 301);
     },
   });
 
