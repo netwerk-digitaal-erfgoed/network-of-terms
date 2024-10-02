@@ -10,7 +10,7 @@ You can use it to **match and reconcile textual strings in your data with terms*
 If you want to use the Reconciliation Service API, configure one or more service endpoints in your
 [OpenRefine](https://openrefine.org) application. An endpoint’s URL is structured like
 `https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{sourceUri}`. A full list of endpoints can be found in
-the [Network of Terms FAQ](https://termennetwerk.netwerkdigitaalerfgoed.nl/faq#openrefine).
+the [Network of Terms FAQ](https://termennetwerk.netwerkdigitaalerfgoed.nl/reconciliation).
 
 Note that the Network of Terms provides Reconciliation endpoints only for terminology sources that do not provide such
 endpoints themselves.
@@ -32,6 +32,6 @@ If you want to make changes to the application, run it locally using Node (or in
     npm run dev
 
 In both cases, Reconciliation endpoints will be available at `http://localhost:3123/reconcile/{distribution URI}`, for
-example http://localhost:3123/reconcile/https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql.
+example http://localhost:3123/reconcile/https://data.rkd.nl/rkdartists.
 
 See [Running the tests](../../docs/tests.md) for more information about this repository’s test suite.
