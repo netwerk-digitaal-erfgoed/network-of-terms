@@ -24,6 +24,7 @@
     "compile": "npm run compile --workspaces",
     "check": "gts check",
     "fix": "gts fix",
+    "commitlint": "commitlint --edit $1",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1}",
     "posttest": "jest-coverage-thresholds-bumper --silent",
     "release": "npx multi-semantic-release",
