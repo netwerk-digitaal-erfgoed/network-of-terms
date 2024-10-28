@@ -22,9 +22,8 @@ CONSTRUCT {
         luc:query ?query ;
         luc:entities ?uri .
 
-    ?uri sdo:identifier ?pid
-    FILTER(STRSTARTS(?pid, "https://n2t.net"))
-    BIND(IRI(?pid) AS ?piduri)
+    ?uri owl:sameAs ?piduri
+    FILTER(STRSTARTS(STR(?piduri), "https://n2t.net"))
 
     ?uri sdo:name ?prefLabel ;
         luc:score ?score .
