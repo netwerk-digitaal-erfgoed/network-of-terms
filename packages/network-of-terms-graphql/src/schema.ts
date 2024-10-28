@@ -52,8 +52,8 @@ export const schema = `
     prefLabel: [String]!
     altLabel: [String]!
     hiddenLabel: [String]!
-    description: [String]!
-    "For the full description of the term, use \`description\` instead of scopeNote. The contents of \`scopeNote\` may change later."
+    definition: [String]!
+    "For the full definition of the term, use \`definition\` instead of \`scopeNote\`. The contents of \`scopeNote\` may change later."
     scopeNote: [String]!
     seeAlso: [String]!
     broader: [RelatedTerm]

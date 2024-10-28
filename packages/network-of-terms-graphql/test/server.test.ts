@@ -108,7 +108,7 @@ describe('Server', () => {
         term.uri === 'https://example.com/resources/artwork'
     );
     expect(artwork.seeAlso).toEqual(['https://example.com/html/artwork']);
-    expect(artwork.description).toEqual([
+    expect(artwork.definition).toEqual([
       'One of the most famous Dutch paintings',
     ]);
     expect(artwork.exactMatch).toEqual([
@@ -259,7 +259,7 @@ function termsQuery(sources: string[], query = 'nachtwacht') {
               prefLabel
               altLabel
               hiddenLabel
-              description
+              definition
               scopeNote
               seeAlso
               broader {
