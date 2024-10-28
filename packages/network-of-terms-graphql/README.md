@@ -111,6 +111,7 @@ query {
           prefLabel
           altLabel
           hiddenLabel
+          definition 
           scopeNote
           seeAlso
           broader {
@@ -166,6 +167,7 @@ query {
           prefLabel
           altLabel
           hiddenLabel
+          definition 
           scopeNote
           seeAlso
         }
@@ -210,6 +212,7 @@ query {
         prefLabel
         altLabel
         hiddenLabel
+        definition 
         scopeNote
         seeAlso
         broader {
