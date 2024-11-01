@@ -40,6 +40,10 @@ WHERE {
         FILTER(LANG(?scopeNote) = "nl")
     }
     OPTIONAL {
+        ?uri skos:definition ?scopeNote .
+        FILTER(LANG(?scopeNote) = "nl")
+    }
+    OPTIONAL {
         ?uri skos:broader ?broader_uri .
         ?broader_uri skos:prefLabel ?broader_prefLabel .
         FILTER(LANG(?broader_prefLabel) = "nl")

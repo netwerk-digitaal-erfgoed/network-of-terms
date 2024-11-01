@@ -1,0 +1,69 @@
+{
+  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "nl",
+      "@value": "Thesaurus Historische Persoonsgegevens"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "PiCoT"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Actoren-en-organismen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.cbg.nl"
+    }
+  ],
+  "url": [
+    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/"
+  ],
+  "mainEntityOfPage": [
+    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens"
+  ],
+  "description": [
+    {
+      "@language": "nl",
+      "@value": "Rollen voor het beschrijven van personen in historische documenten"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens",
+      "@type": "DataDownload",
+      "contentUrl": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

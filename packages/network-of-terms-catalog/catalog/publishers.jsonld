@@ -108,6 +108,12 @@
       "@type": "Organization",
       "name": "Amsterdam Time Machine",
       "alternateName": "ATM"
+    },
+    {
+      "@id": "https://www.cbg.nl",
+      "@type": "Organization",
+      "name": "Centrum voor familiegeschiedenis",
+      "alternateName": "CBG"
     }
   ]
 }
