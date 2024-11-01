@@ -32,7 +32,7 @@
     "@types/n3": "^1.16.5",
     "@types/rdf-ext": "^2.5.0",
     "gts": "^5.3.1",
-    "jsonld-streaming-parser": "^3.4.0",
+    "jsonld-streaming-parser": "^4.0.1",
     "rdf-data-factory": "^1.1.2",
     "rdf-ext": "^2.5.2",
     "rdf-validate-shacl": "^0.5.6"
