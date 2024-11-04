@@ -16,14 +16,17 @@ CONSTRUCT {
 WHERE {
     VALUES ?uri { ?uris }
 
-    ?uri schema:name ?naam ;
-        schema:identifier ?rijksmonumentnummer ;
+    ?uri schema:identifier ?rijksmonumentnummer ;
         schema:category ?monumentaard ;
         schema:postalCode ?postcode ;
         schema:additionalType ?functie ;
         schema:addressLocality ?woonplaats ;
         schema:addressRegion ?provincie ;
         schema:sameAs ?monument_url .
+
+    OPTIONAL {
+        ?uri schema:name ?naam .
+    }
 
     BIND(CONCAT("Rijksmonumentnummer ", ?rijksmonumentnummer) as ?rijksmonumentnummer_tn)
 
@@ -38,8 +41,8 @@ WHERE {
 
     BIND(
         CONCAT(
-            "Naam: ", STR(?naam),
-            " / Oorspronkelijke functie: ", STR(?functie),
+            IF(BOUND(?naam), CONCAT("Naam: ", STR(?naam), " / "), ""),
+            "Oorspronkelijke functie: ", STR(?functie),
             " / Type monument: ", STR(?monumentaard)
         ) AS ?scopeNote
     )
