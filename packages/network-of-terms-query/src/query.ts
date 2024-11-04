@@ -136,7 +136,7 @@ export class QueryTermsService {
           error
         );
 
-        if ('AbortError' === error.name) {
+        if (error.message.startsWith('Fetch timed out')) {
           sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
             distribution: distribution.iri.toString(),
             error: 'TimeoutError',
