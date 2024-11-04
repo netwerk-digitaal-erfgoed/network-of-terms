@@ -16,7 +16,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {fileURLToPath} from 'url';
 import {DataFactory} from 'rdf-data-factory';
-import {BindingsFactory} from '@comunica/bindings-factory';
+import {BindingsFactory} from '@comunica/utils-bindings-factory';
 import {Bindings} from '@rdfjs/types';
 
 export async function getCatalog(path?: string): Promise<Catalog> {

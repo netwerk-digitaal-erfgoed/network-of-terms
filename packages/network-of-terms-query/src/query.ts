@@ -9,7 +9,7 @@ import {Term, TermsTransformer} from './terms.js';
 import {QueryMode, queryVariants} from './search/query-mode.js';
 import {Dataset, Distribution, IRI} from './catalog.js';
 import {QueryEngine} from '@comunica/query-sparql';
-import {BindingsFactory} from '@comunica/bindings-factory';
+import {BindingsFactory} from '@comunica/utils-bindings-factory';
 import {DataFactory} from 'rdf-data-factory';
 import {sourceQueriesHistogram} from './instrumentation.js';
 import {config} from './config.js';
@@ -136,7 +136,7 @@ export class QueryTermsService {
           error
         );
 
-        if ('AbortError' === error.name) {
+        if (error.message.startsWith('Fetch timed out')) {
           sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
             distribution: distribution.iri.toString(),
             error: 'TimeoutError',
