@@ -33,7 +33,7 @@
   "description": [
     {
       "@language": "nl",
-      "@value": "Rollen voor het beschrijven van personen in historische documenten"
+      "@value": "Gestandaardiseerde termen voor het type bron waarop een persoon is vermeld en voor de rol die die persoon kan hebben op de bron. Onderdeel van de Persons in Context-standaard."
     }
   ],
   "inLanguage": "nl",
