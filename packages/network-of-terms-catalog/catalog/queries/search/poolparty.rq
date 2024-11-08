@@ -16,7 +16,8 @@ CONSTRUCT {
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
-    ?uri ?predicate ?label .
+    ?uri a skos:Concept ;
+        ?predicate ?label .
     VALUES ?predicate { skos:prefLabel skos:altLabel }
     FILTER(LANG(?label) = "nl")
     FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
