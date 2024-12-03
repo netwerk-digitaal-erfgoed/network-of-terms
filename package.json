@@ -21,7 +21,7 @@
   },
   "scripts": {
     "clean": "npm run clean --workspaces",
-    "compile": "npm run compile --workspaces",
+    "compile": "npm query .workspace | jq -r '.[].location' | xargs -L1 npm run compile --workspace",
     "check": "gts check",
     "fix": "gts fix",
     "commitlint": "commitlint --edit $1",
