@@ -39,7 +39,7 @@ export async function server(
   const server = fastify({logger, trustProxy: config.TRUST_PROXY as boolean});
   server.register(fastifyCors);
   server.register(formBodyPlugin, {parser});
-  server.register(fastifyAccepts);
+  server.register(fastifyAccepts, {decorateReply: true});
   server.decorateRequest('root', '');
   server.addHook('onRequest', (request, reply, done) => {
     request.root = request.protocol + '://' + request.hostname;
