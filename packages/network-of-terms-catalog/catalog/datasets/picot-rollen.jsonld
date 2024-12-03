@@ -1,17 +1,17 @@
 {
   "@context": "https://schema.org/docs/jsonldcontext.jsonld",
-  "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens",
+  "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/44",
   "@type": "Dataset",
   "name": [
     {
       "@language": "nl",
-      "@value": "Thesaurus Historische Persoonsgegevens"
+      "@value": "Thesaurus Historische Persoonsgegevens - rollen"
     }
   ],
   "alternateName": [
     {
       "@language": "en",
-      "@value": "PiCoT"
+      "@value": "PiCoT - rollen"
     }
   ],
   "genre": [
@@ -33,20 +33,20 @@
   "description": [
     {
       "@language": "nl",
-      "@value": "Gestandaardiseerde termen voor het type bron waarop een persoon is vermeld en voor de rol die die persoon kan hebben op de bron. Onderdeel van de Persons in Context-standaard."
+      "@value": "Gestandaardiseerde termen voor de rol die die persoon kan hebben op de bron. Onderdeel van de Persons in Context-standaard."
     }
   ],
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens",
+      "@id": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens#roles",
       "@type": "DataDownload",
       "contentUrl": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/poolparty.rq"
+          "query": "file://catalog/queries/search/picot.rq"
         },
         {
           "@type": "FindAction",
