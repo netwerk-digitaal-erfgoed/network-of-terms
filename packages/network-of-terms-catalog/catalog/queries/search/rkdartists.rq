@@ -5,17 +5,21 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
-        skos:altLabel ?altLabel ;
-        skos:scopeNote ?scopeNote ;
+        skos:altLabel ?altLabel_nl, ?altLabel_en ;
+        skos:scopeNote ?scopeNote_nl, ?scopeNote_en ;
+        skos:exactMatch ?exactMatch_uri ;
         rdfs:seeAlso ?seeAlso .
 }
 WHERE {
     {
         SELECT DISTINCT ?uri
             (GROUP_CONCAT(DISTINCT ?schema_description; separator="; ") as ?descriptions)
-            (GROUP_CONCAT(DISTINCT ?birthPlace; separator="/") as ?birthPlaces)
-            (GROUP_CONCAT(DISTINCT ?deathPlace; separator="/") as ?deathPlaces)
-            (GROUP_CONCAT(DISTINCT ?additionalType; separator=", ") as ?additionalTypes)
+            (GROUP_CONCAT(DISTINCT ?additionalType_nl; separator=", ") as ?additionalTypes_nl)
+            (GROUP_CONCAT(DISTINCT ?additionalType_en; separator=", ") as ?additionalTypes_en)
+            ?birthPlace_nl
+            ?birthPlace_en
+            ?deathPlace_nl
+            ?deathPlace_en
         WHERE {
             ?uri ?predicate ?label .
             ?label <bif:contains> ?virtuosoQuery .
@@ -25,13 +29,33 @@ WHERE {
             VALUES ?type { schema:Person schema:Organization }
 
             OPTIONAL { ?uri schema:description ?schema_description . }
-            OPTIONAL { ?uri schema:birthPlace ?birthPlace .
-                FILTER(langMatches(lang(?birthPlace), "nl")) }
-            OPTIONAL { ?uri schema:deathPlace ?deathPlace .
-                FILTER(langMatches(lang(?deathPlace), "nl"))}
-            OPTIONAL { ?uri schema:additionalType ?additionalType .
-                FILTER(langMatches(lang(?additionalType), "nl"))}
 
+            OPTIONAL {
+                ?uri schema:birthPlace ?birthPlace_nl .
+                FILTER(langMatches(lang(?birthPlace_nl), "nl"))
+            }
+            OPTIONAL {
+                ?uri schema:birthPlace ?birthPlace_en .
+                FILTER(langMatches(lang(?birthPlace_en), "en"))
+            }
+
+            OPTIONAL {
+                ?uri schema:deathPlace ?deathPlace_nl .
+                FILTER(langMatches(lang(?deathPlace_nl), "nl"))
+            }
+            OPTIONAL {
+                ?uri schema:deathPlace ?deathPlace_en .
+                FILTER(langMatches(lang(?deathPlace_en), "en"))
+            }
+
+            OPTIONAL {
+                ?uri schema:additionalType ?additionalType_nl .
+                FILTER(langMatches(lang(?additionalType_nl), "nl"))
+            }
+            OPTIONAL {
+                ?uri schema:additionalType ?additionalType_en .
+                FILTER(langMatches(lang(?additionalType_en), "en"))
+            }
         }
         #LIMIT#
     }
@@ -40,25 +64,83 @@ WHERE {
     OPTIONAL { ?uri schema:alternateName ?altLabel . }
     OPTIONAL { ?uri schema:birthDate ?birthDate . }
     OPTIONAL { ?uri schema:deathDate ?deathDate . }
+    OPTIONAL { ?uri rdfs:seeAlso ?exactMatch_uri . }
+
+    # schema:alternateName is not language-tagged.
+    BIND(STRLANG(?altLabel, "nl") AS ?altLabel_nl)
+    BIND(STRLANG(?altLabel, "en") AS ?altLabel_en)
 
     BIND(
-        CONCAT(
-          IF(BOUND(?birthDate) || STRLEN(?birthPlaces) > 0 ,
+        STRLANG(
             CONCAT(
-              IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
-              IF(STRLEN(?birthPlaces) > 0, CONCAT("(", ?birthPlaces, ") "), ""),
-              IF(BOUND(?deathDate) || STRLEN(?deathPlaces) > 0," - "," - ; ")),
-            ""),
-          IF(BOUND(?deathDate) || STRLEN(?deathPlaces) > 0,
+                IF(BOUND(?birthDate) || STRLEN(?birthPlace_nl) > 0,
+                    CONCAT(
+                        IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
+                        IF(STRLEN(?birthPlace_nl) > 0, CONCAT("(", ?birthPlace_nl, ") "), ""),
+                        IF(BOUND(?deathDate) || STRLEN(?deathPlace_nl) > 0," - "," – ; ")),
+                        ""
+                    ),
+                IF(BOUND(?deathDate) || STRLEN(?deathPlace_nl) > 0,
+                    CONCAT(
+                        IF(BOUND(?birthDate) || STRLEN(?birthPlace_nl) > 0, "", "– "),
+                        IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
+                        IF(STRLEN(?deathPlace_nl) > 0, CONCAT("(", ?deathPlace_nl, ")"), ""),
+                        "; "),
+                        ""
+                    ),
+                IF(STRLEN(?additionalTypes_nl) > 0, CONCAT(?additionalTypes_nl, ". "), ""),
+                IF(STRLEN(?descriptions) > 0, CONCAT(?descriptions, ". "), "")
+            ),
+            "nl"
+        ) as ?scopeNote_nl
+    )
+    BIND(
+        STRLANG(
             CONCAT(
-              IF(BOUND(?birthDate) || STRLEN(?birthPlaces) > 0 , "", "- "),
-              IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
-              IF(STRLEN(?deathPlaces) > 0, CONCAT("(", ?deathPlaces, ")"), ""),
-              "; "),
-            ""),
-            IF(STRLEN(?additionalTypes) > 0, CONCAT(?additionalTypes, ". "), ""),
-            IF(STRLEN(?descriptions) > 0, CONCAT(?descriptions, ". "), "")
-        ) as ?scopeNote
+                IF(BOUND(?birthDate) || STRLEN(?birthPlace_nl) > 0,
+                    CONCAT(
+                        IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
+                        IF(STRLEN(?birthPlace_nl) > 0, CONCAT("(", ?birthPlace_nl, ") "), ""),
+                        IF(BOUND(?deathDate) || BOUND(?deathPlace_nl)," - "," – ; ")),
+                        ""
+                    ),
+                IF(BOUND(?deathDate) || BOUND(?deathPlace_nl),
+                    CONCAT(
+                        IF(BOUND(?birthDate) || BOUND(?birthPlace_nl), "", "– "),
+                        IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
+                        IF(STRLEN(?deathPlace_nl) > 0, CONCAT("(", ?deathPlace_nl, ")"), ""),
+                        "; "),
+                        ""
+                    ),
+                IF(STRLEN(?additionalTypes_nl) > 0, CONCAT(?additionalTypes_nl, ". "), ""),
+                IF(STRLEN(?descriptions) > 0, CONCAT(?descriptions, ". "), "")
+            ),
+            "nl"
+        ) as ?scopeNote_nl
+    )
+    BIND(
+        STRLANG(
+            CONCAT(
+                IF(BOUND(?birthDate) || STRLEN(?birthPlace_en) > 0,
+                    CONCAT(
+                        IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
+                        IF(BOUND(?birthPlace_en), CONCAT("(", ?birthPlace_en, ") "), ""),
+                        IF(BOUND(?deathDate) || BOUND(?deathPlace_en)," - "," – ; ")),
+                        ""
+                    ),
+                IF(BOUND(?deathDate) || BOUND(?deathPlace_en),
+                    CONCAT(
+                        IF(BOUND(?birthDate) || BOUND(?birthPlace_en), "", "– "),
+                        IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
+                        IF(BOUND(?deathPlace_en), CONCAT("(", ?deathPlace_en, ")"), ""),
+                        "; "),
+                        ""
+                    ),
+                IF(STRLEN(?additionalTypes_en) > 0, CONCAT(?additionalTypes_en, ". "), ""),
+                IF(STRLEN(?descriptions) > 0, CONCAT(?descriptions, ". "), "")
+            ),
+            "en"
+        ) as ?scopeNote_en
     )
     BIND(STRAFTER(STR(?uri), "https://data.rkd.nl/artists/") AS ?identifier)
     BIND(IRI(CONCAT("https://rkd.nl/explore/artists/", ?identifier)) AS ?seeAlso)
