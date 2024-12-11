@@ -52,7 +52,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/muziekschatten.rq"
+          "query": "file://catalog/queries/lookup/muziekschatten-klassiekewerken.rq"
         },
         {
           "@type": "Action",

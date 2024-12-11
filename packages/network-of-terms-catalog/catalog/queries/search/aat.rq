@@ -28,7 +28,7 @@ WHERE {
     }
 
     {
-        SELECT ?uri WHERE {
+        SELECT DISTINCT ?uri WHERE {
             ?uri luc:term ?query ;
                 a ?type ;
                 void:inDataset <http://vocab.getty.edu/dataset/aat> .
@@ -39,7 +39,6 @@ WHERE {
                 skosxl:literalForm ?prefLabel
             ]
         }
-        GROUP BY ?uri
         #LIMIT#
     }
     ?uri skosxl:prefLabel [

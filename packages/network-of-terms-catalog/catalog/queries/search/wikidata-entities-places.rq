@@ -72,14 +72,14 @@ WHERE {
 
     OPTIONAL {
         ?item rdfs:label ?prefLabel .
-        FILTER(LANG(?prefLabel) = "nl")
+        FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
     }
     OPTIONAL {
         ?item skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl")
+        FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
         ?item schema:description ?schema_description
-        FILTER(LANG(?schema_description) = "nl")
+        FILTER(LANG(?schema_description) = "nl" || LANG(?schema_description) = "en")
     }
 }

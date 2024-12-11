@@ -5,7 +5,7 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
-        skos:altLabel ?altLabel_nl, ?altLabel_en ;
+        skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_nl, ?scopeNote_en ;
         skos:exactMatch ?exactMatch_uri ;
         rdfs:seeAlso ?seeAlso .
@@ -66,10 +66,6 @@ WHERE {
     OPTIONAL { ?uri schema:deathDate ?deathDate . }
     OPTIONAL { ?uri rdfs:seeAlso ?exactMatch_uri . }
 
-    # schema:alternateName is not language-tagged.
-    BIND(STRLANG(?altLabel, "nl") AS ?altLabel_nl)
-    BIND(STRLANG(?altLabel, "en") AS ?altLabel_en)
-
     BIND(
         STRLANG(
             CONCAT(
@@ -97,34 +93,10 @@ WHERE {
     BIND(
         STRLANG(
             CONCAT(
-                IF(BOUND(?birthDate) || STRLEN(?birthPlace_nl) > 0,
-                    CONCAT(
-                        IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
-                        IF(STRLEN(?birthPlace_nl) > 0, CONCAT("(", ?birthPlace_nl, ") "), ""),
-                        IF(BOUND(?deathDate) || BOUND(?deathPlace_nl)," - "," – ; ")),
-                        ""
-                    ),
-                IF(BOUND(?deathDate) || BOUND(?deathPlace_nl),
-                    CONCAT(
-                        IF(BOUND(?birthDate) || BOUND(?birthPlace_nl), "", "– "),
-                        IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
-                        IF(STRLEN(?deathPlace_nl) > 0, CONCAT("(", ?deathPlace_nl, ")"), ""),
-                        "; "),
-                        ""
-                    ),
-                IF(STRLEN(?additionalTypes_nl) > 0, CONCAT(?additionalTypes_nl, ". "), ""),
-                IF(STRLEN(?descriptions) > 0, CONCAT(?descriptions, ". "), "")
-            ),
-            "nl"
-        ) as ?scopeNote_nl
-    )
-    BIND(
-        STRLANG(
-            CONCAT(
                 IF(BOUND(?birthDate) || STRLEN(?birthPlace_en) > 0,
                     CONCAT(
                         IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
-                        IF(BOUND(?birthPlace_en), CONCAT("(", ?birthPlace_en, ") "), ""),
+                        IF(STRLEN(?birthPlace_en) > 0, CONCAT("(", ?birthPlace_en, ") "), ""),
                         IF(BOUND(?deathDate) || BOUND(?deathPlace_en)," - "," – ; ")),
                         ""
                     ),
@@ -132,11 +104,11 @@ WHERE {
                     CONCAT(
                         IF(BOUND(?birthDate) || BOUND(?birthPlace_en), "", "– "),
                         IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
-                        IF(BOUND(?deathPlace_en), CONCAT("(", ?deathPlace_en, ")"), ""),
+                        IF(STRLEN(?deathPlace_nl) > 0, CONCAT("(", ?deathPlace_en, ")"), ""),
                         "; "),
                         ""
                     ),
-                IF(STRLEN(?additionalTypes_en) > 0, CONCAT(?additionalTypes_en, ". "), ""),
+                IF(STRLEN(?additionalTypes_nl) > 0, CONCAT(?additionalTypes_en, ". "), ""),
                 IF(STRLEN(?descriptions) > 0, CONCAT(?descriptions, ". "), "")
             ),
             "en"
