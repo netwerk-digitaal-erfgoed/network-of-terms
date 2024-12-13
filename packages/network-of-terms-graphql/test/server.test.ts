@@ -98,7 +98,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists'
     );
-    expect(body.data.terms[0].source.inLanguage).toEqual(['nl']);
+    expect(body.data.terms[0].source.inLanguage).toEqual(['en', 'nl']);
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
     expect(body.data.terms[0].responseTimeMs).toBeGreaterThan(0);

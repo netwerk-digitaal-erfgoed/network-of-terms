@@ -30,10 +30,14 @@ export async function getCatalog(path?: string): Promise<Catalog> {
 export async function fromStore(store: RDF.Store): Promise<Catalog> {
   // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
   const properties =
-    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName ?mainEntityOfPage ?inLanguage';
+    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName ?mainEntityOfPage';
   const query = `
       PREFIX schema: <http://schema.org/>
-        SELECT ${properties} (GROUP_CONCAT(?genre) as ?genre) (GROUP_CONCAT(DISTINCT ?url) as ?url) WHERE {
+        SELECT ${properties} 
+            (GROUP_CONCAT(?genre) as ?genre)
+            (GROUP_CONCAT(DISTINCT ?url) as ?url)
+            (GROUP_CONCAT(DISTINCT ?inLanguage) as ?inLanguage) 
+        WHERE {
           ?dataset a schema:Dataset ;
             schema:name ?name ;
             schema:description ?description ;
@@ -83,7 +87,7 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
             .value.split(' ') // The single value is space-delineated.
             .map((url: string) => new IRI(url)),
           bindings.get('mainEntityOfPage')!.value,
-          bindings.get('inLanguage')!.value,
+          bindings.get('inLanguage')!.value.split(' '), // The single value is space-delineated.
           [
             new Organization(
               new IRI(bindings.get('creator')!.value),
