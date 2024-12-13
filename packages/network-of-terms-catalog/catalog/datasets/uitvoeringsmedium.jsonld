@@ -33,7 +33,7 @@
       "@value": "Termen voor het beschrijven van muziekinstrumenten, zangstemmen en ensembles (in enkelvoudige en meervoudige bezetting)"
     }
   ],
-  "inLanguage": "nl",
+  "inLanguage": ["en", "nl"],
   "distribution": [
     {
       "@id": "https://data.muziekschatten.nl/sparql/#uitvoeringsmedium",

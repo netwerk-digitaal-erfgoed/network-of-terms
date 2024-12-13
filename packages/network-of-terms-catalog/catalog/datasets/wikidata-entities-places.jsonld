@@ -30,7 +30,7 @@
       "@value": "Plaatsen in Nederland en België"
     }
   ],
-  "inLanguage": "nl",
+  "inLanguage": ["en", "nl"],
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-places",

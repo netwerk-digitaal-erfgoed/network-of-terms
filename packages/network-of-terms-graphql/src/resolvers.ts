@@ -144,7 +144,7 @@ async function source(distribution: Distribution, dataset: Dataset) {
     alternateName: dataset.alternateName,
     description: dataset.description,
     mainEntityOfPage: [dataset.mainEntityOfPage],
-    inLanguage: [dataset.inLanguage],
+    inLanguage: dataset.inLanguage,
     creators: dataset.creators.map(creator => ({
       uri: creator.iri,
       name: creator.name,

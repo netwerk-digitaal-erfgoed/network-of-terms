@@ -50,7 +50,7 @@ export class Dataset {
     readonly genres: IRI[],
     readonly termsPrefixes: IRI[],
     readonly mainEntityOfPage: string,
-    readonly inLanguage: string,
+    readonly inLanguage: string[],
     readonly creators: [Organization],
     readonly distributions: [Distribution],
     readonly alternateName?: string

@@ -30,7 +30,7 @@ export const testCatalog = (port: number) =>
       ],
       [new IRI('https://example.com/resources/')],
       'https://example.com/rkdartists',
-      'nl',
+      ['en', 'nl'],
       [
         new Organization(
           new IRI('https://rkd.nl'),
@@ -109,7 +109,7 @@ export const testCatalog = (port: number) =>
       ],
       [new IRI('https://data.cultureelerfgoed.nl/term/id/cht/')],
       'https://example.com/cht',
-      'nl',
+      ['nl'],
       [
         new Organization(
           new IRI('https://www.cultureelerfgoed.nl'),
@@ -143,7 +143,7 @@ export const testCatalog = (port: number) =>
       ],
       [new IRI('http://vocab.getty.edu/aat/')],
       'https://example.com/aat',
-      'nl',
+      ['nl'],
       [
         new Organization(
           new IRI('http://www.getty.edu/research/'),
@@ -171,7 +171,7 @@ export const testCatalog = (port: number) =>
       ],
       [new IRI('http://data.beeldengeluid.nl/gtaa/')],
       'https://example.com/gtaa',
-      'nl',
+      ['nl'],
       [
         new Organization(
           new IRI('https://www.beeldengeluid.nl/'),

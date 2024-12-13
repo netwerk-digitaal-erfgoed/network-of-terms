@@ -57,7 +57,7 @@
       "@value": "Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties"
     }
   ],
-  "inLanguage": "nl",
+  "inLanguage": ["en", "nl"],
   "distribution": [
     {
       "@id": "http://vocab.getty.edu/aat/sparql",
