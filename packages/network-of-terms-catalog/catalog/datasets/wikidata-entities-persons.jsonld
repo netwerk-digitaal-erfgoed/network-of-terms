@@ -30,7 +30,7 @@
       "@value": "Personen"
     }
   ],
-  "inLanguage": "nl",
+  "inLanguage": ["en", "nl"],
   "distribution": [
     {
       "@id": "https://query.wikidata.org/sparql#entities-persons",

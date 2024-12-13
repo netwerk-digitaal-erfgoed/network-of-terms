@@ -30,7 +30,7 @@
       "@value": "Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden"
     }
   ],
-  "inLanguage": "nl",
+  "inLanguage": ["nl", "en"],
   "distribution": [
     {
       "@id": "https://api.rkd.triply.cc/datasets/rkd/RKD-SDO-Knowledge-Graph/sparql",

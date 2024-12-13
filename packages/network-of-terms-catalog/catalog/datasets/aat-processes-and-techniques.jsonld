@@ -36,7 +36,7 @@
       "@value": "Selectie van AAT termen voor het beschrijven van processen en technieken in architectuur-, kunst- en cultuurhistorische collecties"
     }
   ],
-  "inLanguage": "nl",
+  "inLanguage": ["en", "nl"],
   "distribution": [
     {
       "@id": "http://vocab.getty.edu/aat/sparql/processes-and-techniques",

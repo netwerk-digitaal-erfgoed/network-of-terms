@@ -46,7 +46,7 @@ describe('Catalog', () => {
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht/'),
     ]);
     expect(cht.alternateName).toEqual('CHT');
-    expect(cht.inLanguage).toEqual('nl');
+    expect(cht.inLanguage).toEqual(['nl']);
     expect(cht.creators[0].name).toEqual(
       'Rijksdienst voor het Cultureel Erfgoed'
     );
