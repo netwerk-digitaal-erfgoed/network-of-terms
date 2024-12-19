@@ -12,13 +12,18 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
-    ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/stcn/printers> ;
-        schema:additionalType <http://www.productontology.org/id/Printer_%28publishing%29> ;   # Select printers.
-        rdfs:label ?rdfs_label .
+    {
+        SELECT ?uri ?rdfs_label WHERE {
+            ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/stcn/printers> ;
+                schema:additionalType <http://www.productontology.org/id/Printer_%28publishing%29> ;   # Select printers.
+                rdfs:label ?rdfs_label .
 
-    ?uri ?predicate ?label .
-    VALUES ?predicate { rdfs:label schema:name schema:alternateName }
-    ?label <bif:contains> ?virtuosoQuery .
+            ?uri ?predicate ?label .
+            VALUES ?predicate { rdfs:label schema:name schema:alternateName }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        #LIMIT#
+    }
     # STCN defines multiple URIs for the same printer.
     # The distinction between these URIs is based on the place where the printer lived and worked.
     # See for example "Plantijn"
@@ -34,4 +39,3 @@ WHERE {
         ?uri schema:sameAs ?exactMatch_uri . # Has no labels.
     }
 }
-LIMIT 1000

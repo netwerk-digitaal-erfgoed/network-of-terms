@@ -29,12 +29,17 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
-    ?uri a schema:Person .
-    # Require the presence of this property for quality purposes
-    ?uri som:NDEREC ?nderec ;
-        ?predicate ?label .
-    VALUES ?predicate { schema:name schema:alternateName }
-    ?label <bif:contains> ?virtuosoQuery .
+    {
+        SELECT DISTINCT ?uri WHERE {
+            ?uri a schema:Person .
+            # Require the presence of this property for quality purposes
+            ?uri som:NDEREC ?nderec ;
+                ?predicate ?label .
+            VALUES ?predicate { schema:name schema:alternateName }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        #LIMIT#
+    }
 
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
@@ -63,4 +68,4 @@ WHERE {
     BIND(CONCAT(?name, IF(?dates != "", CONCAT(" (", ?dates, ")"), "")) AS ?prefLabel)
     OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+

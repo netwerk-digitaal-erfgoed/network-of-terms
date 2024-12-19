@@ -57,11 +57,34 @@ export class QueryTermsService {
     this.logger = options.logger || Pino.pino();
   }
 
+  /**
+   * Parameterize the SPARQL query’s limit in two ways:
+   * - as a pre-bound variable ?limit (for GraphDB’s luc:limit, Wikidata and text:query);
+   * - by replacing the #LIMIT# placeholder (for LIMIT 123).
+   */
+  parameterizeLimit(args: {
+    query: string;
+    bindings: Record<string, RDF.Term>;
+    limit: number;
+  }): {queryWithLimit: string; bindingsWithLimit: Record<string, RDF.Term>} {
+    return {
+      queryWithLimit: args.query.replace('#LIMIT#', `LIMIT ${args.limit}`),
+      bindingsWithLimit: {
+        ...args.bindings,
+        limit: dataFactory.literal(
+          args.limit.toString(),
+          dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer')
+        ),
+      },
+    };
+  }
+
   async search(
     searchQuery: string,
     queryMode: QueryMode,
     dataset: Dataset,
     distribution: Distribution,
+    limit: number,
     timeoutMs: number
   ): Promise<TermsResponse> {
     const bindings = [...queryVariants(searchQuery, queryMode)].reduce(
@@ -73,11 +96,18 @@ export class QueryTermsService {
     );
     bindings['datasetUri'] = dataFactory.namedNode(dataset.iri.toString());
 
+    const {queryWithLimit, bindingsWithLimit} = this.parameterizeLimit({
+      query: distribution.searchQuery,
+      bindings,
+      limit,
+    });
+
     return this.run(
-      distribution.searchQuery,
+      // For plain SPARQL LIMIT (LIMIT 123) that cannot be pre-bound
+      queryWithLimit,
       distribution,
       timeoutMs,
-      bindings
+      bindingsWithLimit
     );
   }
 

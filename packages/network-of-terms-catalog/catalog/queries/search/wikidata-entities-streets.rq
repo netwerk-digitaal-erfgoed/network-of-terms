@@ -19,6 +19,7 @@ WHERE {
         bd:serviceParam wikibase:api "Search" .
         bd:serviceParam mwapi:language "nl" .
         bd:serviceParam mwapi:srsearch ?query .
+        bd:serviceParam wikibase:limit ?limit .
         ?item wikibase:apiOutputItem mwapi:title .
     }
     # Use UNION instead of VALUES because the latter doesn't properly restrict results.

@@ -110,6 +110,7 @@ export class QuerySourcesCommand extends Command {
       sources,
       query: flags.query,
       queryMode: QueryMode[flags.queryMode as keyof typeof QueryMode],
+      limit: 100,
       timeoutMs: flags.timeout,
     });
     this.render(results, catalog);

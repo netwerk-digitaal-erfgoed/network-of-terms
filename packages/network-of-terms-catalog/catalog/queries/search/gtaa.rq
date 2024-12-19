@@ -20,10 +20,16 @@ CONSTRUCT {
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
-    (?uri ?score) text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
-    ?uri skos:inScheme ?datasetUri ;
-        bengthes:status ?status .
-    FILTER(?status IN ('approved', 'candidate'))
+    {
+        SELECT ?uri (MAX(?sc) as ?score) {
+            (?uri ?sc) text:query (skos:prefLabel skos:altLabel skos:hiddenLabel ?query) .
+            ?uri skos:inScheme ?datasetUri ;
+                bengthes:status ?status .
+            FILTER(?status IN ('approved', 'candidate'))
+        }
+        GROUP BY ?uri
+        #LIMIT#
+    }
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
@@ -62,5 +68,3 @@ WHERE {
         FILTER(LANG(?exactMatch_prefLabel) = "nl")
     }
 }
-ORDER BY DESC(?score)
-LIMIT 10

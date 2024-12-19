@@ -12,11 +12,16 @@ CONSTRUCT {
     ?broader_uri skos:prefLabel ?broader_schema_name .
 }
 WHERE {
-    ?uri a skos:Concept ;
-        ?predicate ?label .
-
-    VALUES ?predicate { schema:name schema:keywords }
-    ?label <bif:contains> ?virtuosoQuery .
+    {
+        SELECT DISTINCT ?uri WHERE {
+            ?uri a skos:Concept ;
+                som:BASIS "1" .
+            ?uri ?predicate ?label .
+            VALUES ?predicate { schema:name schema:keywords }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        #LIMIT#
+    }
 
     OPTIONAL {
         ?uri schema:name ?schema_name .
@@ -41,7 +46,5 @@ WHERE {
         ) AS ?scopeNote
     )
 
-    ?uri som:BASIS "1" .
     OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000

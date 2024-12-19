@@ -14,9 +14,14 @@ CONSTRUCT {
         rdfs:seeAlso ?monument_url .
 }
 WHERE {
-    ?uri ?predicate ?label .
-    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
-    VALUES ?predicate { schema:addressLocality schema:identifier schema:address schema:name schema:addressRegion }
+    {
+        SELECT ?uri WHERE {
+            ?uri ?predicate ?label .
+            FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+            VALUES ?predicate { schema:addressLocality schema:identifier schema:address schema:name schema:addressRegion }
+        }
+        #LIMIT#
+    }
 
     ?uri schema:identifier ?rijksmonumentnummer ;
         schema:category ?monumentaard ;
@@ -56,4 +61,3 @@ WHERE {
         ) AS ?adres_lang
     )
 }
-LIMIT 200
