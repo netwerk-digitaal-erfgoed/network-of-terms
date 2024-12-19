@@ -1,3 +1,4 @@
+PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
@@ -16,12 +17,17 @@ CONSTRUCT {
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
 WHERE {
-    ?uri ?predicate ?label.
-    VALUES ?predicate { rdfs:label rdaw:P10086 rdaw:P10223 rdaw:P10333 rdaw:P10335 rdaw:P10047 }
-    ?label <bif:contains> ?virtuosoQuery .
+    {
+        SELECT ?uri WHERE {
+            ?uri a <http://rdaregistry.info/Elements/c/C10001> ;
+                ?predicate ?label .
+            VALUES ?predicate { rdfs:label rdaw:P10086 rdaw:P10223 rdaw:P10333 rdaw:P10335 rdaw:P10047 }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        #LIMIT#
+    }
 
-    ?uri a <http://rdaregistry.info/Elements/c/C10001>;
-        rdfs:label ?prefLabel .
+    ?uri rdfs:label ?prefLabel .
 
     OPTIONAL { ?uri rdaw:P10086 ?altLabel } # Varianttitel
     OPTIONAL { ?uri rdaw:P10219 ?eerste_datum }
@@ -46,4 +52,4 @@ WHERE {
         ) AS ?scopeNote
     )
 }
-LIMIT 1000
+

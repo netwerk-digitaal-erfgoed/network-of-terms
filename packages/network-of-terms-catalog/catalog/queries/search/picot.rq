@@ -16,12 +16,17 @@ CONSTRUCT {
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
-    ?uri a skos:Concept ;
-        skos:inScheme ?datasetUri ;
-        ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-    FILTER(LANG(?label) = "nl")
-    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+    {
+        SELECT DISTINCT ?uri WHERE {
+            ?uri a skos:Concept ;
+                skos:inScheme ?datasetUri ;
+                ?predicate ?label .
+            VALUES ?predicate { skos:prefLabel skos:altLabel }
+            FILTER(LANG(?label) = "nl")
+            FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+        }
+        #LIMIT#
+    }
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl")
@@ -65,4 +70,4 @@ WHERE {
         }
     }
 }
-LIMIT 1000
+

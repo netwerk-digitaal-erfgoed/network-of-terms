@@ -1,3 +1,4 @@
+#PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
@@ -13,9 +14,14 @@ CONSTRUCT {
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
 WHERE {
-    ?uri ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-    ?label <bif:contains> ?virtuosoQuery .
+    {
+        SELECT DISTINCT ?uri {
+            ?uri ?predicate ?label .
+            VALUES ?predicate { skos:prefLabel skos:altLabel }
+            ?label <bif:contains> ?virtuosoQuery
+        }
+        #LIMIT#
+    }
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
@@ -41,4 +47,3 @@ WHERE {
         ?uri skos:exactMatch ?exactMatch_uri . # Has no labels.
     }
 }
-LIMIT 1000

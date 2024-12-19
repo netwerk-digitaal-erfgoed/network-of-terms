@@ -1,5 +1,6 @@
 # Do not remove this prefix - KB data uses old version of SKOS
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
@@ -16,12 +17,17 @@ CONSTRUCT {
     ?related_uri skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    ?uri a skos:Concept .
-    ?uri skos:inScheme <http://data.bibliotheken.nl/id/scheme/brinkman> .
-    ?uri ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-    FILTER(LANG(?label) = "nl")
-    ?label <bif:contains> ?virtuosoQuery .
+    {
+        SELECT ?uri WHERE {
+            ?uri a skos:Concept ;
+                skos:inScheme <http://data.bibliotheken.nl/id/scheme/brinkman> ;
+                ?predicate ?label .
+            VALUES ?predicate { skos:prefLabel skos:altLabel }
+            FILTER(LANG(?label) = "nl")
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        #LIMIT#
+    }
 
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
@@ -56,4 +62,3 @@ WHERE {
     }
     OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000

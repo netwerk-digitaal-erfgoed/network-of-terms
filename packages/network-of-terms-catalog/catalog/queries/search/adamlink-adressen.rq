@@ -19,12 +19,15 @@ CONSTRUCT {
 }
 WHERE {
     GRAPH <https://lod.uba.uva.nl/ATM/Adamlink/graphs/addresses> {
-        ?uri a hg:Address .
-        ?uri ?predicate ?label .
-
-        VALUES ?predicate { rdfs:label skos:prefLabel skos:altLabel }
-
-        ?label <bif:contains> ?virtuosoQuery .
+        {
+            SELECT ?uri WHERE {
+                ?uri a hg:Address ;
+                    ?predicate ?label .
+                VALUES ?predicate { rdfs:label skos:prefLabel skos:altLabel }
+                ?label <bif:contains> ?virtuosoQuery .
+            }
+            #LIMIT#
+        }
 
         OPTIONAL { ?uri rdfs:label ?prefLabel }
         OPTIONAL { ?uri skos:altLabel ?altLabel }
@@ -34,10 +37,10 @@ WHERE {
             BIND(CONCAT("Adres afkomstig van ", ?source_name) AS ?scopeNote)
         }
         OPTIONAL { ?uri owl:sameAs ?exactMatch_uri }
-        OPTIONAL { 
+        OPTIONAL {
             ?exactMatch_uri a bag:Pand ;
                             schema:geoContains ?geo .
-            ?uri schema:geoContains ?geo . 
+            ?uri schema:geoContains ?geo .
         } # A historical address is very similar to a bag:Pand
         OPTIONAL {
             ?uri schema:geoContains ?geo .
@@ -46,4 +49,3 @@ WHERE {
         }
     }
 }
-LIMIT 1000

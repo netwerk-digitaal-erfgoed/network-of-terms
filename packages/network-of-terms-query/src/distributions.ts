@@ -7,32 +7,34 @@ import {Catalog, IRI} from './catalog.js';
 import {comunica} from './index.js';
 import {clientQueriesCounter} from './instrumentation.js';
 
-export interface QueryOptions {
-  source: IRI;
+interface BaseQueryOptions {
   query: string;
   queryMode: QueryMode;
+  limit: number;
   timeoutMs: number;
 }
 
-const schemaQuery = Joi.object({
-  source: Joi.object().required(),
+export interface QueryOptions extends BaseQueryOptions {
+  source: IRI;
+}
+
+export interface QueryAllOptions extends BaseQueryOptions {
+  sources: IRI[];
+}
+
+const schemaBase = Joi.object({
   query: Joi.string().required(),
   queryMode: Joi.string().required(),
+  limit: Joi.number().integer(),
   timeoutMs: Joi.number().integer(),
 });
 
-export interface QueryAllOptions {
-  sources: IRI[];
-  query: string;
-  queryMode: QueryMode;
-  timeoutMs: number;
-}
+const schemaQuery = schemaBase.append({
+  source: Joi.object().required(),
+});
 
-const schemaQueryAll = Joi.object({
+const schemaQueryAll = schemaBase.append({
   sources: Joi.array().items(Joi.object().required()).min(1).required(),
-  query: Joi.string().required(),
-  queryMode: Joi.string().required(),
-  timeoutMs: Joi.number().integer(),
 });
 
 export class DistributionsService {
@@ -67,6 +69,7 @@ export class DistributionsService {
       args.queryMode,
       dataset,
       distribution,
+      args.limit,
       args.timeoutMs
     );
   }
@@ -82,6 +85,7 @@ export class DistributionsService {
         source,
         query: args.query,
         queryMode: args.queryMode,
+        limit: args.limit,
         timeoutMs: args.timeoutMs,
       })
     );

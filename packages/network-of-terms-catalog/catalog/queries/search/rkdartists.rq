@@ -10,17 +10,17 @@ CONSTRUCT {
         rdfs:seeAlso ?seeAlso .
 }
 WHERE {
-    ?uri ?predicate ?label .
-    ?label <bif:contains> ?virtuosoQuery .
-    VALUES ?predicate { schema:name schema:alternateName }
-
     {
-        SELECT ?uri
+        SELECT DISTINCT ?uri
             (GROUP_CONCAT(DISTINCT ?schema_description; separator="; ") as ?descriptions)
             (GROUP_CONCAT(DISTINCT ?birthPlace; separator="/") as ?birthPlaces)
             (GROUP_CONCAT(DISTINCT ?deathPlace; separator="/") as ?deathPlaces)
             (GROUP_CONCAT(DISTINCT ?additionalType; separator=", ") as ?additionalTypes)
         WHERE {
+            ?uri ?predicate ?label .
+            ?label <bif:contains> ?virtuosoQuery .
+            VALUES ?predicate { schema:name schema:alternateName }
+
             ?uri a ?type .
             VALUES ?type { schema:Person schema:Organization }
 
@@ -32,7 +32,8 @@ WHERE {
             OPTIONAL { ?uri schema:additionalType ?additionalType .
                 FILTER(langMatches(lang(?additionalType), "nl"))}
 
-        } GROUP BY ?uri
+        }
+        #LIMIT#
     }
 
     OPTIONAL { ?uri schema:name ?prefLabel . }
@@ -62,4 +63,3 @@ WHERE {
     BIND(STRAFTER(STR(?uri), "https://data.rkd.nl/artists/") AS ?identifier)
     BIND(IRI(CONCAT("https://rkd.nl/explore/artists/", ?identifier)) AS ?seeAlso)
 }
-LIMIT 1000
