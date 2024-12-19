@@ -12,12 +12,15 @@ CONSTRUCT {
 }
 WHERE {
     GRAPH <https://lod.uba.uva.nl/ATM/Adamlink/graphs/streets> {
-        ?uri a hg:Street .
-        ?uri ?predicate ?label .
-
-        VALUES ?predicate { skos:prefLabel skos:altLabel }
-
-        ?label <bif:contains> ?virtuosoQuery .
+        {
+            SELECT ?uri WHERE {
+                ?uri a hg:Street ;
+                    ?predicate ?label .
+                VALUES ?predicate { skos:prefLabel skos:altLabel }
+                ?label <bif:contains> ?virtuosoQuery .
+            }
+            #LIMIT#
+        }
 
         OPTIONAL { ?uri skos:prefLabel ?prefLabel }
         OPTIONAL { ?uri skos:altLabel ?altLabel }
@@ -28,4 +31,3 @@ WHERE {
         OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
     }
 }
-LIMIT 1000

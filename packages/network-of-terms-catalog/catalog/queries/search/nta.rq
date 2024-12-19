@@ -13,10 +13,15 @@ CONSTRUCT {
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
-    ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/persons> ;
-        ?predicate ?label .
-    VALUES ?predicate { rdfs:label schema:name schema:alternateName }
-    ?label <bif:contains> ?virtuosoQuery .
+    {
+        SELECT DISTINCT ?uri WHERE {
+            ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/persons> ;
+                ?predicate ?label .
+            VALUES ?predicate { rdfs:label schema:name schema:alternateName }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        #LIMIT#
+    }
 
     OPTIONAL { ?uri rdfs:label ?rdfs_label }
     OPTIONAL { ?uri schema:name ?schema_name }
@@ -30,4 +35,3 @@ WHERE {
         }
     }
 }
-LIMIT 1000

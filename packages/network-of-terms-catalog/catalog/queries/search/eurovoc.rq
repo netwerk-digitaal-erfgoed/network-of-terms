@@ -15,14 +15,19 @@ CONSTRUCT {
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
-    ?uri a eurovoc:ThesaurusConcept .
-    ?uri ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-    FILTER(LANG(?label) = "nl")
-    # The http://publications.europa.eu/webapi/rdf/sparql endpoint
-    # is based on Virtuoso but it looks like fulltext search support
-    # is not enabled therefore fallback to the standard CONTAINS function
-    FILTER (CONTAINS(LCASE(STR(?label)),LCASE(?query)))
+    {
+        SELECT * WHERE {
+            ?uri a eurovoc:ThesaurusConcept ;
+                ?predicate ?label .
+            VALUES ?predicate { skos:prefLabel skos:altLabel }
+            FILTER(LANG(?label) = "nl")
+            # The http://publications.europa.eu/webapi/rdf/sparql endpoint
+            # is based on Virtuoso but it looks like fulltext search support
+            # is not enabled therefore fallback to the standard CONTAINS function
+            FILTER (CONTAINS(LCASE(STR(?label)), LCASE(?query)))
+        }
+        #LIMIT#
+    }
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl")
@@ -52,4 +57,3 @@ WHERE {
         FILTER(LANG(?exactMatch_prefLabel) = "nl")
     }
 }
-LIMIT 1000

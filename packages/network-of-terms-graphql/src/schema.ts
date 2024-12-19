@@ -78,6 +78,9 @@ export const schema = `
 
       "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."      
       queryMode: QueryMode = OPTIMIZED
+      
+      "Maximum number of terms to return."
+      limit: Int = 100,
 
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000

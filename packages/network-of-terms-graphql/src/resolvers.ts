@@ -42,6 +42,7 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     sources: args.sources.map((datasetIri: string) => new IRI(datasetIri)),
     query: args.query,
     queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
+    limit: args.limit,
     timeoutMs: args.timeoutMs,
   });
   return resolveTermsResponse(results, context.catalog);

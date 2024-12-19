@@ -1,7 +1,9 @@
 PREFIX bd: <http://www.bigdata.com/rdf#>
 PREFIX mwapi: <https://www.mediawiki.org/ontology#API/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX vrank: <http://purl.org/voc/vrank#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 
 CONSTRUCT {
@@ -11,6 +13,7 @@ CONSTRUCT {
     ?item skos:prefLabel ?rdfs_label .
     ?item skos:altLabel ?altLabel .
     ?item skos:scopeNote ?schema_description .
+    ?item vrank:simpleRank ?score .
 }
 WHERE {
     SERVICE wikibase:mwapi {
@@ -18,7 +21,9 @@ WHERE {
         bd:serviceParam wikibase:api "EntitySearch" .
         bd:serviceParam mwapi:language "nl" .
         bd:serviceParam mwapi:search ?query .
+        bd:serviceParam wikibase:limit ?limit .
         ?item wikibase:apiOutputItem mwapi:item .
+        ?ordinal wikibase:apiOrdinal true.
     }
     ?item rdfs:label ?rdfs_label .
     FILTER(LANG(?rdfs_label) = "nl")
@@ -30,5 +35,7 @@ WHERE {
         ?item schema:description ?schema_description
         FILTER(LANG(?schema_description) = "nl")
     }
+    BIND(-?ordinal AS ?score)
 }
-LIMIT 1000
+ORDER BY ASC(?ordinal)
+
