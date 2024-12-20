@@ -3,6 +3,7 @@ PREFIX mwapi: <https://www.mediawiki.org/ontology#API/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX vrank: <http://purl.org/voc/vrank#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -14,23 +15,35 @@ CONSTRUCT {
     ?item skos:prefLabel ?prefLabel .
     ?item skos:altLabel ?altLabel .
     ?item skos:scopeNote ?description .
+    ?item vrank:simpleRank ?score .
 }
 WHERE {
-    SERVICE wikibase:mwapi {
-        bd:serviceParam wikibase:endpoint "www.wikidata.org" .
-        # Instead of using the "EntitySearch" API we use a more generic text search option
-        # To avoid noise we will filter the resultset on the occurence of the search string
-        # in either prefLabel or altLabel
-        bd:serviceParam wikibase:api "Search" .
-        bd:serviceParam mwapi:language "nl" .
-        bd:serviceParam mwapi:srsearch ?query .
-        ?item wikibase:apiOutputItem mwapi:title .
-    }
-    # Only select instances of type "human"
-    ?item wdt:P31 wd:Q5 .
+    {
+        SELECT DISTINCT ?item ?score WHERE {
+            SERVICE wikibase:mwapi {
+                bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+                # Instead of using the "EntitySearch" API we use a more generic text search option
+                # To avoid noise we will filter the resultset on the occurence of the search string
+                # in either prefLabel or altLabel
+                bd:serviceParam wikibase:api "Search" .
+                bd:serviceParam mwapi:language "nl" .
+                bd:serviceParam mwapi:srsearch ?query .
+                ?item wikibase:apiOutputItem mwapi:title .
+                ?ordinal wikibase:apiOrdinal true.
+            }
 
-    ?item rdfs:label ?prefLabel .
-    FILTER(LANG(?prefLabel) = "nl")
+            BIND(-?ordinal AS ?score)
+            # Only select instances of type "human"
+            ?item wdt:P31 wd:Q5 .
+        }
+        ORDER BY ASC(?ordinal)
+        #LIMIT#
+    }
+
+    OPTIONAL {
+        ?item rdfs:label ?prefLabel .
+        FILTER(LANG(?prefLabel) = "nl")
+    }
     OPTIONAL {
         ?item skos:altLabel ?altLabel .
         FILTER(LANG(?altLabel) = "nl"||LANG(?altLabel) = "en")
@@ -39,7 +52,4 @@ WHERE {
         ?item schema:description ?description
         FILTER(LANG(?description) = "nl")
     }
-    # limit the result set to matches in the prefLabels or altLabels
-    FILTER(CONTAINS(LCASE(?prefLabel),LCASE(?query))||CONTAINS(LCASE(?altLabel),LCASE(?query)))
 }
-LIMIT 1000

@@ -149,6 +149,17 @@ describe('Server', () => {
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
   });
 
+  it('respects GraphQL terms query limit', async () => {
+    const body = await query(
+      termsQuery(
+        ['https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'],
+        '.*',
+        1
+      )
+    );
+    expect(body.data.terms[0].result.terms).toHaveLength(1); // Terms found.
+  });
+
   it('responds to GraphQL lookup query', async () => {
     const body = await query(
       lookupQuery(
@@ -233,12 +244,13 @@ async function query(query: string): Promise<any> {
   return JSON.parse(response.body);
 }
 
-function termsQuery(sources: string[], query = 'nachtwacht') {
+function termsQuery(sources: string[], query = 'nachtwacht', limit = 100) {
   return `
     query {
       terms(
         sources: [${sources.map(source => `"${source}"`).join(',')}],
         query: "${query}"
+        limit: ${limit}
         timeoutMs: 1000
       ) {
         source {

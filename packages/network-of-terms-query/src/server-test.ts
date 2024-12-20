@@ -59,7 +59,7 @@ export const testCatalog = (port: number) =>
               ?match skos:prefLabel ?match_label .
             }
           }
-          LIMIT 1000`,
+          #LIMIT#`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
           CONSTRUCT {

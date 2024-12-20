@@ -33,6 +33,7 @@ export async function reconciliationQuery(
         QueryMode.OPTIMIZED,
         dataset,
         distribution,
+        100,
         10000
       );
       const terms =

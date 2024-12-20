@@ -11,15 +11,21 @@ CONSTRUCT {
     ?broader_uri skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
-    ?uri a skos:Concept ;
-        skos:inScheme som:Uitvoeringsmedium ;
-        skos:prefLabel ?prefLabel .
+    {
+        SELECT ?uri ?prefLabel WHERE {
+            ?uri a skos:Concept ;
+                skos:inScheme som:Uitvoeringsmedium ;
+                skos:prefLabel ?prefLabel .
 
-    FILTER(LANG(?prefLabel) = "nl")
+            FILTER(LANG(?prefLabel) = "nl")
 
-    ?uri ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-    ?label <bif:contains> ?virtuosoQuery .
+            ?uri ?predicate ?label .
+            VALUES ?predicate { skos:prefLabel skos:altLabel }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        GROUP BY ?uri
+        #LIMIT#
+    }
 
     OPTIONAL {
         ?uri skos:scopeNote ?scopeNote
@@ -38,4 +44,3 @@ WHERE {
 
     OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000

@@ -9,14 +9,19 @@ CONSTRUCT {
         skos:scopeNote ?schema_description, ?scopeNote .
 }
 WHERE {
-    ?uri a schema:LandmarksOrHistoricalBuildings .
-    ?uri ?predicate ?label .
-    VALUES ?predicate { schema:name schema:alternateName skos:hiddenLabel skos:scopeNote}
-    FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+    {
+        SELECT * WHERE {
+            ?uri a schema:LandmarksOrHistoricalBuildings ;
+                ?predicate ?label .
+            VALUES ?predicate { schema:name schema:alternateName skos:hiddenLabel skos:scopeNote}
+            FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+        }
+        #LIMIT#
+    }
+
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
     OPTIONAL { ?uri skos:scopeNote ?scopeNote}
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
     OPTIONAL { ?uri schema:description ?schema_description }
 }
-LIMIT 1000

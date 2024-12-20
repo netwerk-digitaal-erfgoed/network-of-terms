@@ -12,10 +12,15 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
-    ?uri a schema:MusicGroup ;
-        ?predicate ?label .
-    VALUES ?predicate { skos:prefLabel skos:altLabel }
-    ?label <bif:contains> ?virtuosoQuery .
+    {
+        SELECT DISTINCT ?uri WHERE {
+            ?uri a schema:MusicGroup ;
+                ?predicate ?label .
+            VALUES ?predicate { skos:prefLabel skos:altLabel }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+        #LIMIT#
+    }
 
     OPTIONAL { ?uri skos:prefLabel ?prefLabel }
     OPTIONAL { ?uri skos:altLabel ?altLabel }
@@ -23,4 +28,3 @@ WHERE {
     OPTIONAL { ?uri schema:description ?schema_description }
     OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000

@@ -13,16 +13,23 @@ CONSTRUCT {
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
-    (?uri ?score) text:query (gn:name gn:alternateName ?query 100) .
-    ?uri a gn:Feature ;
-        gn:featureClass ?featureClass ;
-        gn:name ?prefLabel ;
+    {
+        SELECT ?uri (MAX(?sc) as ?score) WHERE {
+            (?uri ?sc) text:query (gn:name gn:alternateName ?query) .
+            ?uri a gn:Feature ;
+                gn:featureClass ?featureClass ;
+            # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
+            VALUES ?featureClass { gn:P gn:L gn:A gn:H }
+        }
+        GROUP BY ?uri
+        ORDER BY DESC(?score)
+        #LIMIT#
+    }
+
+    ?uri gn:name ?prefLabel ;
         gn:countryCode ?countryCode .
 
     BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
-
-    # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
-    VALUES ?featureClass { gn:P gn:L gn:A gn:H }
 
     OPTIONAL {
         ?uri gn:alternateName ?altLabel .
@@ -41,4 +48,3 @@ WHERE {
         ?uri gn:featureCode/gn:name ?scopeNote .
     }
 }
-LIMIT 1000
