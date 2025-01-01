@@ -7,7 +7,7 @@
   "type": "module",
   "devDependencies": {
     "@commitlint/cli": "^19.5.0",
-    "@commitlint/config-conventional": "^19.2.2",
+    "@commitlint/config-conventional": "^19.6.0",
     "@qiwi/multi-semantic-release": "^5.0.0",
     "@rdfjs/types": "^1.1.2",
     "@swc/jest": "^0.2.36",
