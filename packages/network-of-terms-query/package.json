@@ -51,7 +51,7 @@
     "@comunica/types": "^4.0.2",
     "@jest/globals": "^29.6.2",
     "asynciterator": "^3.9.0",
-    "jest-dev-server": "10.1.4",
+    "jest-dev-server": "11.0.0",
     "spawnd": "^10.1.1"
   },
   "engines": {
