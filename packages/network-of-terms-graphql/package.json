@@ -13,7 +13,7 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/data-model": "2.1.0",
     "env-schema": "6.0.0",
-    "fastify": "5.1.0",
+    "fastify": "5.2.1",
     "joi": "17.13.3",
     "mercurius": "15.1.0",
     "mercurius-logging": "2.0.0"
