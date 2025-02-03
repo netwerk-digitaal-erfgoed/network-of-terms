@@ -53,7 +53,7 @@
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
       "@type": "DataDownload",
-      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/abr",
+      "contentUrl": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/abr",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
