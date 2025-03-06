@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://data.bibliotheken.nl/id/dataset/persons",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Dutch National Thesaurus for Author Names"
+    },
     {
       "@language": "nl",
       "@value": "Nederlandse Thesaurus van Auteursnamen"
@@ -31,6 +35,10 @@
     "https://data.bibliotheken.nl/doc/dataset/persons"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Names and other personal data of authors"
+    },
     {
       "@language": "nl",
       "@value": "Naams- en andere persoonsgegevens van auteurs"

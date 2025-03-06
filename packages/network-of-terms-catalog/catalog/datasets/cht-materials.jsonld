@@ -1,14 +1,22 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.cultureelerfgoed.nl/term/id/cht#materials",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Cultural-historical Thesaurus - Materials"
+    },
     {
       "@language": "nl",
       "@value": "Cultuurhistorische Thesaurus - Materialen"
     }
   ],
   "alternateName": [
+    {
+      "@language": "en",
+      "@value": "CHT - materials"
+    },
     {
       "@language": "nl",
       "@value": "CHT - materialen"
@@ -32,8 +40,12 @@
   ],
   "description": [
     {
+      "@language": "en",
+      "@value": "Subjects for describing material features of cultural heritage"
+    },
+    {
       "@language": "nl",
-      "@value": "Onderwerpen voor het beschrijven van materiaal kenmerken van cultureel erfgoed objecten."
+      "@value": "Onderwerpen voor het beschrijven van materiaalkenmerken van cultureel erfgoed"
     }
   ],
   "inLanguage": "nl",

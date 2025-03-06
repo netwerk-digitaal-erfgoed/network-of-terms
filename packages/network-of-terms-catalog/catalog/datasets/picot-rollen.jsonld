@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/44",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Thesaurus Historische Persoonsgegevens - roles"
+    },
     {
       "@language": "nl",
       "@value": "Thesaurus Historische Persoonsgegevens - rollen"
@@ -11,6 +15,10 @@
   "alternateName": [
     {
       "@language": "en",
+      "@value": "PiCoT - roles"
+    },
+    {
+      "@language": "nl",
       "@value": "PiCoT - rollen"
     }
   ],
@@ -32,8 +40,12 @@
   ],
   "description": [
     {
+      "@language": "en",
+      "@value": "Standardized terms for the role that a person can have in the source. Part of the Persons in Context standard"
+    },
+    {
       "@language": "nl",
-      "@value": "Gestandaardiseerde termen voor de rol die die persoon kan hebben op de bron. Onderdeel van de Persons in Context-standaard."
+      "@value": "Gestandaardiseerde termen voor de rol die die persoon kan hebben op de bron. Onderdeel van de Persons in Context-standaard"
     }
   ],
   "inLanguage": "nl",

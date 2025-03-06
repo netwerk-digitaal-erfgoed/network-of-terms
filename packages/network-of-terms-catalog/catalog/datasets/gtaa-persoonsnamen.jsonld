@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://data.beeldengeluid.nl/gtaa/Persoonsnamen",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "GTAA: personal names"
+    },
     {
       "@language": "nl",
       "@value": "GTAA: persoonsnamen"
@@ -25,6 +29,10 @@
     "https://www.beeldengeluid.nl/kennis/kennisthemas/metadata/gemeenschappelijke-thesaurus-audiovisuele-archieven"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Persons for describing audiovisual material"
+    },
     {
       "@language": "nl",
       "@value": "Personen voor het beschrijven van audiovisueel materiaal"

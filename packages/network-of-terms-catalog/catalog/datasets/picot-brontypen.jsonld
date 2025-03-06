@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/523",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Thesaurus Historische Persoonsgegevens - source types"
+    },
     {
       "@language": "nl",
       "@value": "Thesaurus Historische Persoonsgegevens - brontypes"
@@ -11,6 +15,10 @@
   "alternateName": [
     {
       "@language": "en",
+      "@value": "PiCoT - source types"
+    },
+    {
+      "@language": "nl",
       "@value": "PiCoT - brontypes"
     }
   ],
@@ -32,8 +40,12 @@
   ],
   "description": [
     {
+      "@language": "en",
+      "@value": "Standardized terms for the type of source in which a person is mentioned. Part of the Persons in Context standard"
+    },
+    {
       "@language": "nl",
-      "@value": "Gestandaardiseerde termen voor het type bron waarop een persoon is vermeld. Onderdeel van de Persons in Context-standaard."
+      "@value": "Gestandaardiseerde termen voor het type bron waarop een persoon is vermeld. Onderdeel van de Persons in Context-standaard"
     }
   ],
   "inLanguage": "nl",

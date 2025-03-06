@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.europa.eu/data/datasets/eurovoc",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "EuroVoc - thesaurus of the European Union"
+    },
     {
       "@language": "nl",
       "@value": "EuroVoc - thesaurus van de Europese Unie"
@@ -31,6 +35,10 @@
     "https://data.europa.eu/data/datasets/eurovoc"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects about all areas in which the European Union operates, with an emphasis on parliamentary activities of the EU"
+    },
     {
       "@language": "nl",
       "@value": "Onderwerpen over alle gebieden waarop de Europese Unie actief is. De nadruk ligt op de parlementaire activiteiten van de EU"

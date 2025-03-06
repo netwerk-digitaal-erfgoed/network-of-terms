@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.ihlia.nl/homosaurus",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Homosaurus"
+    },
     {
       "@language": "nl",
       "@value": "Homosaurus"
@@ -25,6 +29,10 @@
     "https://homosaurus.org"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing LGBTIQ (Lesbian/Gay/Bisexual/Transgender/Intersex/Queer) publications and heritage"
+    },
     {
       "@language": "nl",
       "@value": "Termen voor het beschrijven van LHBTIQ (Lesbisch/Homo/Biseksueel/Transgender/Intersekse/Queer)-publicaties en -erfgoed"

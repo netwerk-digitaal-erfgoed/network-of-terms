@@ -1,14 +1,22 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://data.bibliotheken.nl/id/dataset/brinkman",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Brinkman subjects"
+    },
     {
       "@language": "nl",
       "@value": "Brinkman trefwoordenthesaurus"
     }
   ],
   "alternateName": [
+    {
+      "@language": "en",
+      "@value": "Brinkman"
+    },
     {
       "@language": "nl",
       "@value": "Brinkman"
@@ -31,6 +39,10 @@
     "https://data.bibliotheken.nl/doc/dataset/brinkman"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects that the National Library of the Netherlands assigns to publications"
+    },
     {
       "@language": "nl",
       "@value": "Onderwerpen die de Koninklijke Bibliotheek aan publicaties toekent"

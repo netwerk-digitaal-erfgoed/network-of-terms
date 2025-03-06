@@ -26,9 +26,13 @@ import {dereferenceGenre} from '@netwerk-digitaal-erfgoed/network-of-terms-catal
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
-  return context.catalog.datasets.flatMap((dataset: Dataset) =>
-    dataset.distributions.map(distribution => source(distribution, dataset))
-  );
+  return context.catalog
+    .getDatasetsSortedByName(context.catalogLanguage)
+    .flatMap((dataset: Dataset) =>
+      dataset.distributions.map(distribution =>
+        source(distribution, dataset, context.catalogLanguage)
+      )
+    );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +49,11 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
     limit: args.limit,
     timeoutMs: args.timeoutMs,
   });
-  return resolveTermsResponse(results, context.catalog);
+  return resolveTermsResponse(
+    results,
+    context.catalog,
+    context.catalogLanguage
+  );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +77,8 @@ async function lookupTerms(object: any, args: any, context: any) {
               result.distribution,
               context.catalog.getDatasetByDistributionIri(
                 result.distribution.iri
-              )!
+              )!,
+              context.catalogLanguage
             ),
       result:
         result.result instanceof Term ? term(result.result) : result.result,
@@ -78,13 +87,20 @@ async function lookupTerms(object: any, args: any, context: any) {
   });
 }
 
-function resolveTermsResponse(results: TermsResponse[], catalog: Catalog) {
+function resolveTermsResponse(
+  results: TermsResponse[],
+  catalog: Catalog,
+  catalogLanguage: string
+) {
   return results.map((response: TermsResponse) => {
     if (response.result instanceof Error) {
       return {
         source: source(
           response.result.distribution,
-          catalog.getDatasetByDistributionIri(response.result.distribution.iri)!
+          catalog.getDatasetByDistributionIri(
+            response.result.distribution.iri
+          )!,
+          catalogLanguage
         ),
         result: response.result,
         responseTimeMs: response.responseTimeMs,
@@ -97,7 +113,8 @@ function resolveTermsResponse(results: TermsResponse[], catalog: Catalog) {
     return {
       source: source(
         response.result.distribution,
-        catalog.getDatasetByDistributionIri(response.result.distribution.iri)!
+        catalog.getDatasetByDistributionIri(response.result.distribution.iri)!,
+        catalogLanguage
       ),
       result: {
         terms: terms,
@@ -138,18 +155,24 @@ function term(term: Term) {
   };
 }
 
-async function source(distribution: Distribution, dataset: Dataset) {
+async function source(
+  distribution: Distribution,
+  dataset: Dataset,
+  catalogLanguage: string
+) {
   return {
     uri: dataset.iri,
-    name: dataset.name,
-    alternateName: dataset.alternateName,
-    description: dataset.description,
+    name: dataset.name[catalogLanguage],
+    alternateName: dataset.alternateName?.[catalogLanguage],
+    description: dataset.description[catalogLanguage],
     mainEntityOfPage: [dataset.mainEntityOfPage],
     inLanguage: dataset.inLanguage,
     creators: dataset.creators.map(creator => ({
       uri: creator.iri,
-      name: creator.name,
-      alternateName: creator.alternateName,
+      name: creator.name[catalogLanguage] ?? Object.entries(creator.name)[0][1],
+      alternateName:
+        creator.alternateName[catalogLanguage] ??
+        Object.entries(creator.alternateName)[0][1],
     })),
     genres: dataset.genres.map(async genre => ({
       uri: genre.toString(),

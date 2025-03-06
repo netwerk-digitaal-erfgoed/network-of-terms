@@ -64,7 +64,7 @@ export class QuerySourcesCommand extends Command {
             datasetTitle:
               catalog.getDatasetByDistributionIri(
                 response.result.distribution.iri
-              )?.name ?? '',
+              )?.name.nl ?? '',
             termUri: term.id!.value,
             prefLabels: term.prefLabels
               .map(prefLabel => prefLabel.value)
