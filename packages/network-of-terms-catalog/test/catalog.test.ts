@@ -50,7 +50,7 @@ describe('Catalog', () => {
     expect(cht.creators[0].name.nl).toEqual(
       'Rijksdienst voor het Cultureel Erfgoed'
     );
-    expect(cht.creators[0].alternateName.nl).toEqual('RCE');
+    expect(cht.creators[0].alternateName['']).toEqual('RCE');
     expect(cht.distributions[0].features[0].type).toEqual(
       FeatureType.RECONCILIATION
     );

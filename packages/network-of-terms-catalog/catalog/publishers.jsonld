@@ -29,10 +29,7 @@
           "@value": "Rijksdienst voor het Cultureel Erfgoed"
         }
       ],
-      "alternateName": {
-        "@language": "nl",
-        "@value": "RCE"
-      }
+      "alternateName": "RCE"
     },
     {
       "@id": "https://www.niod.nl",
