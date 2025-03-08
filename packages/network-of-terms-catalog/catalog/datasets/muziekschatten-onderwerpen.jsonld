@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.muziekschatten.nl/#onderwerpen",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Muziekschatten: subjects"
+    },
     {
       "@language": "nl",
       "@value": "Muziekschatten: onderwerpen"
@@ -28,6 +32,10 @@
     "https://data.muziekschatten.nl/"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects in the catalog of the sheet music collection of Stichting Omroep Muziek"
+    },
     {
       "@language": "nl",
       "@value": "Onderwerpen in de catalogus van de bladmuziekcollectie van Stichting Omroep Muziek"

@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Rijksmonumentenregister"
+    },
     {
       "@language": "nl",
       "@value": "Rijksmonumentenregister"
@@ -25,6 +29,10 @@
     "https://monumentenregister.cultureelerfgoed.nl/"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "National monuments in the Netherlands"
+    },
     {
       "@language": "nl",
       "@value": "Rijksmonumenten"

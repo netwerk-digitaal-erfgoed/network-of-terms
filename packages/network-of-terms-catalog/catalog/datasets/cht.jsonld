@@ -1,14 +1,22 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.cultureelerfgoed.nl/term/id/cht",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Cultural-historical Thesaurus"
+    },
     {
       "@language": "nl",
       "@value": "Cultuurhistorische Thesaurus"
     }
   ],
   "alternateName": [
+    {
+      "@language": "en",
+      "@value": "CHT"
+    },
     {
       "@language": "nl",
       "@value": "CHT"
@@ -55,6 +63,10 @@
     "https://kennis.cultureelerfgoed.nl/index.php/Thesauri_bij_de_RCE_-_Cultuurhistorische_Thesaurus"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects for describing cultural heritage"
+    },
     {
       "@language": "nl",
       "@value": "Onderwerpen voor het beschrijven van cultureel erfgoed"

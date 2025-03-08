@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://data.beeldengeluid.nl/gtaa/OnderwerpenBenG",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "GTAA: subjects sound-vision"
+    },
     {
       "@language": "nl",
       "@value": "GTAA: onderwerpen beeld-geluid"
@@ -28,6 +32,10 @@
     "https://www.beeldengeluid.nl/kennis/kennisthemas/metadata/gemeenschappelijke-thesaurus-audiovisuele-archieven"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects that are only applied to shots/clips/sounds for describing audiovisual material"
+    },
     {
       "@language": "nl",
       "@value": "Onderwerpen die slechts voor shots/clips/geluiden worden toegepast voor het beschrijven van audiovisueel materiaal"

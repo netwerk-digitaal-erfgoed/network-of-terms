@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://www.goudatijdmachine.nl/id/straten",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Gouda streets"
+    },
     {
       "@language": "nl",
       "@value": "Goudse straten"
@@ -16,8 +20,17 @@
   "creator": [
     {
       "@id": "https://www.goudatijdmachine.nl",
-      "@type": "http://schema.org/Organization",
-      "name": "Gouda Tijdmachine",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Gouda Time Machine"
+        },
+        {
+          "@language": "nl",
+          "@value": "Gouda Tijdmachine"
+        }
+      ],
       "alternateName": "GTM"
     }
   ],
@@ -28,6 +41,10 @@
     "https://www.goudatijdmachine.nl/omeka/s/data/page/straten"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Streets in Gouda"
+    },
     {
       "@language": "nl",
       "@value": "Straten in Gouda"

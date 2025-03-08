@@ -1,14 +1,22 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://vocab.getty.edu/aat#materials",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Art & Architecture Thesaurus - materials"
+    },
     {
       "@language": "nl",
       "@value": "Art & Architecture Thesaurus - materialen"
     }
   ],
   "alternateName": [
+    {
+      "@language": "en",
+      "@value": "AAT - materials"
+    },
     {
       "@language": "nl",
       "@value": "AAT - materialen"
@@ -32,6 +40,10 @@
   ],
   "description": [
     {
+      "@language": "en",
+      "@value": "Selection of AAT terms for describing materials in architectural, art and cultural-historical collections"
+    },
+    {
       "@language": "nl",
       "@value": "Selectie van AAT termen voor het beschrijven van materialen in architectuur-, kunst- en cultuurhistorische collecties"
     }
@@ -41,15 +53,17 @@
     {
       "@id": "http://vocab.getty.edu/aat/sparql/materials",
       "@type": "DataDownload",
-      "contentUrl": "http://vocab.getty.edu/sparql",
+      "contentUrl": "https://vocab.getty.edu/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
+          "name": "search",
           "query": "file://catalog/queries/search/aat-materials.rq"
         },
         {
           "@type": "FindAction",
+          "name": "lookup",
           "query": "file://catalog/queries/lookup/aat.rq"
         },
         {

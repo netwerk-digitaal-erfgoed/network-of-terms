@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://www.wikidata.org#entities-all",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Wikidata: all entities"
+    },
     {
       "@language": "nl",
       "@value": "Wikidata: alle entiteiten"
@@ -31,6 +35,10 @@
     "https://www.wikidata.org"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "All entities in Wikidata, such as professions, movies or artworks"
+    },
     {
       "@language": "nl",
       "@value": "Alle entiteiten in Wikidata, zoals beroepen, films of kunstwerken"

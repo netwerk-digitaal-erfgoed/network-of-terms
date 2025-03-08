@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.indischherinneringscentrum.nl/ied",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Dutch East Indies Heritage Thesaurus"
+    },
     {
       "@language": "nl",
       "@value": "Indisch Erfgoed Thesaurus"
@@ -40,6 +44,10 @@
     "https://data.indischherinneringscentrum.nl/ied.html"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing collections from the period 1930–1970 around the former Dutch East Indies, independent Indonesia and postcolonial migration of persons to the Netherlands"
+    },
     {
       "@language": "nl",
       "@value": "Termen voor het beschrijven van collecties uit de periode 1930–1970 rondom voormalig Nederlands-Indië, onafhankelijk Indonesië en de postkoloniale migratie van personen naar Nederland"

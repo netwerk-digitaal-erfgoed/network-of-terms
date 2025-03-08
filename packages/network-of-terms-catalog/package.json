@@ -47,6 +47,7 @@
     "@comunica/utils-bindings-factory": "^4.0.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "globby": "^14.0.2",
+    "ldkit": "^2.1.0",
     "memoize": "^10.0.0",
     "rdf-parse": "^3.0.0",
     "rdf-store-stream": "^2.0.1"

@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://iconclass.org",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Iconclass"
+    },
     {
       "@language": "nl",
       "@value": "Iconclass"
@@ -31,6 +35,10 @@
     "https://iconclass.org"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing the content of images"
+    },
     {
       "@language": "nl",
       "@value": "Termen voor het beschrijven van de inhoud van afbeeldingen"

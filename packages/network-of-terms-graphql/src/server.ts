@@ -1,4 +1,8 @@
-import fastify, {FastifyInstance, FastifyLoggerOptions} from 'fastify';
+import fastify, {
+  FastifyInstance,
+  FastifyLoggerOptions,
+  FastifyRequest,
+} from 'fastify';
 import mercurius from 'mercurius';
 import {resolvers} from './resolvers.js';
 import {schema} from './schema.js';
@@ -11,6 +15,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {EnvSchemaData} from 'env-schema';
 import mercuriusLogging from 'mercurius-logging';
+import fastifyAccepts from '@fastify/accepts';
 
 export async function server(
   catalog: Catalog,
@@ -21,17 +26,19 @@ export async function server(
     level: 'info',
   });
   const server = fastify({logger, trustProxy: config.TRUST_PROXY as boolean});
+  server.register(fastifyAccepts);
   server.register(mercurius, {
     schema,
     resolvers,
     graphiql: true,
-    context: (): Promise<object> =>
-      new Promise(resolve => {
-        resolve({
-          catalog,
-          comunica,
-        });
-      }),
+    context: async (req: FastifyRequest) => {
+      return {
+        catalog,
+        comunica,
+        catalogLanguage: req.language(['nl', 'en']) || 'nl',
+        termLanguages: req.languages(),
+      };
+    },
   });
   server.register(fastifyCors);
   server.register(mercuriusLogging, {

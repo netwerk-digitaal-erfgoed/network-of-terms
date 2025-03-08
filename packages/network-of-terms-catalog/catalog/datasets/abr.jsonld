@@ -1,14 +1,22 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.cultureelerfgoed.nl/term/id/abr",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Archaeological Basic Register"
+    },
     {
       "@language": "nl",
       "@value": "Archeologisch Basisregister"
     }
   ],
   "alternateName": [
+    {
+      "@language": "en",
+      "@value": "ABR"
+    },
     {
       "@language": "nl",
       "@value": "ABR"

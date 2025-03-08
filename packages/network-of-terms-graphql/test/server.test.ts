@@ -45,15 +45,15 @@ describe('Server', () => {
       `
     );
     expect(body.data.sources).toHaveLength(catalog.datasets.length);
-    expect(body.data.sources[0].uri).toEqual('https://data.rkd.nl/rkdartists');
-    expect(body.data.sources[0].mainEntityOfPage).toEqual([
+    expect(body.data.sources[3].uri).toEqual('https://data.rkd.nl/rkdartists');
+    expect(body.data.sources[3].mainEntityOfPage).toEqual([
       'https://example.com/rkdartists',
     ]);
-    expect(body.data.sources[0].features).toContainEqual({
+    expect(body.data.sources[3].features).toContainEqual({
       type: 'RECONCILIATION',
       url: 'https://example.com/reconcile/rkd',
     });
-    expect(body.data.sources[0].genres).toContainEqual({
+    expect(body.data.sources[3].genres).toContainEqual({
       uri: 'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
       name: 'Personen',
     });

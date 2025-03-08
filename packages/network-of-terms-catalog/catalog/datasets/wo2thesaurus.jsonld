@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.niod.nl/WO2_Thesaurus",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Thesaurus WW2"
+    },
     {
       "@language": "nl",
       "@value": "WO2-thesaurus"
@@ -34,6 +38,10 @@
     "https://www.niod.nl/nl/collecties/wo2-thesaurus"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Events, places, concepts and objects from the Second World War"
+    },
     {
       "@language": "nl",
       "@value": "Gebeurtenissen, plaatsen, begrippen en objecten uit de Tweede Wereldoorlog"

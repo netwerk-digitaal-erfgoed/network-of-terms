@@ -21,8 +21,10 @@ export const testCatalog = (port: number) =>
   new Catalog([
     new Dataset(
       new IRI('https://data.rkd.nl/rkdartists'),
-      'RKDartists',
-      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+      {nl: 'RKDartists'},
+      {
+        nl: 'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+      },
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'
@@ -34,8 +36,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('https://rkd.nl'),
-          'RKD – Nederlands Instituut voor Kunstgeschiedenis',
-          'RKD'
+          {nl: 'RKD – Nederlands Instituut voor Kunstgeschiedenis'},
+          {nl: 'RKD'}
         ),
       ],
       [
@@ -96,12 +98,12 @@ export const testCatalog = (port: number) =>
           ]
         ),
       ],
-      'RKD'
+      {nl: 'RKD'}
     ),
     new Dataset(
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
-      'Cultuurhistorische Thesaurus',
-      'Onderwerpen voor het beschrijven van cultureel erfgoed',
+      {nl: 'Cultuurhistorische Thesaurus'},
+      {nl: 'Onderwerpen voor het beschrijven van cultureel erfgoed'},
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
@@ -113,8 +115,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('https://www.cultureelerfgoed.nl'),
-          'Rijksdienst voor het Cultureel Erfgoed',
-          'RCE'
+          {nl: 'Rijksdienst voor het Cultureel Erfgoed'},
+          {nl: 'RCE'}
         ),
       ],
       [
@@ -134,8 +136,10 @@ export const testCatalog = (port: number) =>
     ),
     new Dataset(
       new IRI('http://vocab.getty.edu/aat'),
-      'Art & Architecture Thesaurus',
-      'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
+      {nl: 'Art & Architecture Thesaurus'},
+      {
+        nl: 'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
+      },
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
@@ -147,8 +151,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('http://www.getty.edu/research/'),
-          'Getty Research Institute',
-          'Getty'
+          {nl: 'Getty Research Institute'},
+          {nl: 'Getty'}
         ),
       ],
       [
@@ -162,8 +166,8 @@ export const testCatalog = (port: number) =>
     ),
     new Dataset(
       new IRI('http://data.beeldengeluid.nl/gtaa/Persoonsnamen'),
-      'GTAA: persoonsnamen',
-      'Personen voor het beschrijven van audiovisueel materiaal',
+      {nl: 'GTAA: persoonsnamen'},
+      {nl: 'Personen voor het beschrijven van audiovisueel materiaal'},
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
@@ -175,8 +179,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('https://www.beeldengeluid.nl/'),
-          'Nederlands Instituut voor Beeld en Geluid',
-          'Beeld en Geluid'
+          {nl: 'Nederlands Instituut voor Beeld en Geluid'},
+          {nl: 'Beeld en Geluid'}
         ),
       ],
       [

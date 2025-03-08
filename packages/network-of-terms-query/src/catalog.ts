@@ -14,6 +14,12 @@ export class Catalog {
     );
   }
 
+  public getDatasetsSortedByName(languageCode: string): Dataset[] {
+    return [...this.datasets].sort((a, b) =>
+      a.name[languageCode].localeCompare(b.name[languageCode])
+    );
+  }
+
   public getDatasetByDistributionIri(iri: IRI): Dataset | undefined {
     return this.datasets.find(
       dataset => dataset.getDistributionByIri(iri) !== undefined
@@ -42,18 +48,20 @@ export class Catalog {
   }
 }
 
+export type StringDictionary = Record<string, string>;
+
 export class Dataset {
   constructor(
     readonly iri: IRI,
-    readonly name: string,
-    readonly description: string,
+    readonly name: StringDictionary,
+    readonly description: StringDictionary,
     readonly genres: IRI[],
     readonly termsPrefixes: IRI[],
     readonly mainEntityOfPage: string,
     readonly inLanguage: string[],
     readonly creators: [Organization],
     readonly distributions: [Distribution],
-    readonly alternateName?: string
+    readonly alternateName: StringDictionary = {}
   ) {}
 
   public getSparqlDistribution(): Distribution | undefined {
@@ -72,8 +80,8 @@ export class Dataset {
 export class Organization {
   constructor(
     readonly iri: IRI,
-    readonly name: string,
-    readonly alternateName: string
+    readonly name: StringDictionary,
+    readonly alternateName: StringDictionary
   ) {}
 }
 

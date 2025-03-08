@@ -1,5 +1,6 @@
 {
   "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "schema": "http://schema.org/",
     "sh": "http://www.w3.org/ns/shacl#"
   },
@@ -14,12 +15,20 @@
           "sh:path": {
             "@id": "schema:name"
           },
+          "sh:datatype": {
+            "@id": "rdf:langString"
+          },
+          "sh:uniqueLang": true,
           "sh:minCount": 1
         },
         {
           "sh:path": {
             "@id": "schema:alternateName"
           },
+          "sh:datatype": {
+            "@id": "rdf:langString"
+          },
+          "sh:uniqueLang": true,
           "sh:minCount": 0
         },
         {
@@ -80,6 +89,10 @@
           "sh:path": {
             "@id": "schema:description"
           },
+          "sh:datatype": {
+            "@id": "rdf:langString"
+          },
+          "sh:uniqueLang": true,
           "sh:minCount": 1
         }
       ]
@@ -151,6 +164,10 @@
           "sh:path": {
             "@id": "schema:name"
           },
+          "sh:datatype": {
+            "@id": "rdf:langString"
+          },
+          "sh:uniqueLang": true,
           "sh:minCount": 1
         },
         {

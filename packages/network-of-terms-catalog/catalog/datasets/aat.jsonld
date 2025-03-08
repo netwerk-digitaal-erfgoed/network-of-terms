@@ -1,16 +1,24 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://vocab.getty.edu/aat",
   "@type": "Dataset",
   "name": [
     {
       "@language": "en",
       "@value": "Art & Architecture Thesaurus"
+    },
+    {
+      "@language": "nl",
+      "@value": "Art & Architecture Thesaurus"
     }
   ],
   "alternateName": [
     {
       "@language": "en",
+      "@value": "AAT"
+    },
+    {
+      "@language": "nl",
       "@value": "AAT"
     }
   ],
@@ -52,6 +60,10 @@
     "https://www.getty.edu/research/tools/vocabularies/aat/about.html"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects for describing architectural, art and cultural-historical collections"
+    },
     {
       "@language": "nl",
       "@value": "Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties"
