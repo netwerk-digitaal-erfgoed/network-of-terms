@@ -54,6 +54,10 @@
     {
       "@language": "nl",
       "@value": "Onderwerpen voor het beschrijven van onderzoeken, vondsten en sporen"
+    },
+    {
+      "@language": "en",
+      "@value": "Subjects for describing research, finds and traces"
     }
   ],
   "inLanguage": "nl",
