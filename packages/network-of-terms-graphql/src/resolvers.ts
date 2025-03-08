@@ -16,7 +16,6 @@ import {
   ServerError,
   SourceNotFoundError,
   SourceResult,
-  StringDictionary,
   Term,
   TermsResponse,
   TermsResult,
@@ -170,8 +169,9 @@ async function source(
     inLanguage: dataset.inLanguage,
     creators: dataset.creators.map(creator => ({
       uri: creator.iri,
-      name: languageValue(creator.name, catalogLanguage),
-      alternateName: languageValue(creator.alternateName, catalogLanguage),
+      name: creator.name[catalogLanguage],
+      alternateName:
+        creator.alternateName[catalogLanguage] ?? creator.alternateName[''],
     })),
     genres: dataset.genres.map(async genre => ({
       uri: genre.toString(),
@@ -232,10 +232,3 @@ export const resolvers = {
     },
   },
 };
-
-/**
- * Return the requested language or fall back to any language.
- */
-function languageValue(value: StringDictionary, language: string) {
-  return value[language] ?? Object.values(value)[0];
-}
