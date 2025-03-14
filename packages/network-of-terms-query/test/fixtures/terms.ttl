@@ -4,9 +4,9 @@
 
 <https://example.com/resources/artwork>
     a skos:Concept ;
-    skos:prefLabel "Nachtwacht" ;
-    skos:altLabel "Nachtwacht alt" ;
-    skos:scopeNote "One of the most famous Dutch paintings" ;
+    skos:prefLabel "Nachtwacht"@nl ;
+    skos:altLabel "Nachtwacht alt"@en ;
+    skos:scopeNote "One of the most famous Dutch paintings"@en ;
     skos:hiddenLabel "art" ;
     skos:broader <https://example.com/resources/2> ;
     skos:related <https://example.com/resources/painter> ,
@@ -20,25 +20,25 @@
 <https://example.com/resources/painting>
     a <http://www.w3.org/2008/05/skos#Concept> ;
     skos:altLabel
-        "painted things that can be beautiful",
-        "another altLabel" ;
+        "painted things that can be beautiful"@en,
+        "another altLabel"@en ;
     skos:related <https://example.com/resources/art> ;
     skos:broader <https://example.com/resources/art> .
 
 <https://example.com/resources/painter>
     a <http://www.w3.org/2008/05/skos#Concept> ;
-    skos:prefLabel "Rembrandt" ;
+    skos:prefLabel "Rembrandt"@en ;
     vrank:simpleRank 20.5 .
 
 <https://example.com/resources/art>
     a skos:Concept ;
-    skos:prefLabel "All things art" ;
-    skos:altLabel "Art" ;
+    skos:prefLabel "All things art"@en ;
+    skos:altLabel "Art"@en ;
     skos:narrower <https://example.com/resources/artwork> .
 
 <https://example.com/resources/alphabet>
     a skos:Concept ;
-    skos:altLabel "Resource without prefLabel" .
+    skos:altLabel "Resource without prefLabel"@en .
 
 <https://example.com/resources/match>
-    skos:prefLabel "Exact match" .
+    skos:prefLabel "Exact match"@en .

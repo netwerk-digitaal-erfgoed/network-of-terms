@@ -26,7 +26,7 @@
     }
   ],
   "url": [
-    "https://data.muziekschatten.nl/som/"
+    "https://data.muziekschatten.nl/som/d"
   ],
   "mainEntityOfPage": [
     "https://data.muziekschatten.nl/"
@@ -55,7 +55,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/muziekschatten.rq"
+          "query": "file://catalog/queries/lookup/muziekschatten-onderwerpen.rq"
         },
         {
           "@type": "Action",

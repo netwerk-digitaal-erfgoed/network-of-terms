@@ -128,31 +128,50 @@ function resolveTermsResponse(
 function term(term: Term) {
   return {
     uri: term.id!.value,
-    prefLabel: term.prefLabels.map((prefLabel: RDF.Term) => prefLabel.value),
-    altLabel: term.altLabels.map((altLabel: RDF.Term) => altLabel.value),
-    hiddenLabel: term.hiddenLabels.map(
-      (hiddenLabel: RDF.Term) => hiddenLabel.value
-    ),
-    definition: term.scopeNotes.map((scopeNote: RDF.Term) => scopeNote.value),
-    scopeNote: term.scopeNotes.map((scopeNote: RDF.Term) => scopeNote.value),
+    prefLabel: literalValues(term.prefLabels),
+    altLabel: literalValues(term.altLabels),
+    hiddenLabel: literalValues(term.hiddenLabels),
+    definition: literalValues(term.scopeNotes),
+    scopeNote: literalValues(term.scopeNotes),
     seeAlso: term.seeAlso.map((seeAlso: RDF.NamedNode) => seeAlso.value),
     broader: term.broaderTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+      prefLabel: literalValues(related.prefLabels),
     })),
     narrower: term.narrowerTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+      prefLabel: literalValues(related.prefLabels),
     })),
     related: term.relatedTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: related.prefLabels.map(prefLabel => prefLabel.value),
+      prefLabel: literalValues(related.prefLabels),
     })),
     exactMatch: term.exactMatches.map(exactMatch => ({
       uri: exactMatch.id.value,
-      prefLabel: exactMatch.prefLabels.map(prefLabel => prefLabel.value),
+      prefLabel: literalValues(exactMatch.prefLabels),
     })),
   };
+}
+
+function literalValues(literals: RDF.Literal[], languages = ['nl']) {
+  const languageLiterals = literals
+    .filter(literal => languages.includes(literal.language))
+    .map(literal => literal.value);
+
+  if (languageLiterals.length > 0) {
+    return languageLiterals;
+  }
+
+  // Fall back to English for sources that provide no Dutch labels.
+  const englishLiteralValues = literals
+    .filter(literal => literal.language === 'en')
+    .map(literal => literal.value);
+  if (englishLiteralValues.length > 0) {
+    return englishLiteralValues;
+  }
+
+  // Fall back to plain, non-language tagged strings.
+  return literals.map(literal => literal.value);
 }
 
 async function source(
@@ -169,7 +188,7 @@ async function source(
     inLanguage: dataset.inLanguage,
     creators: dataset.creators.map(creator => ({
       uri: creator.iri,
-      name: creator.name[catalogLanguage],
+      name: creator.name[catalogLanguage] ?? Object.values(creator.name)[0],
       alternateName:
         creator.alternateName[catalogLanguage] ?? creator.alternateName[''],
     })),

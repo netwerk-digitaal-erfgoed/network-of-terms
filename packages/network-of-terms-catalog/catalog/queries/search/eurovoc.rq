@@ -20,7 +20,9 @@ WHERE {
             ?uri a eurovoc:ThesaurusConcept ;
                 ?predicate ?label .
             VALUES ?predicate { skos:prefLabel skos:altLabel }
-            FILTER(LANG(?label) = "nl")
+
+            # TODO: define a search language. For example NL ‘brussel’ should not return ‘bladgroente’ with altLabel ‘Brussels sprouts’.
+            FILTER(LANG(?label) = "nl" || LANG(?label) = "en")
             # The http://publications.europa.eu/webapi/rdf/sparql endpoint
             # is based on Virtuoso but it looks like fulltext search support
             # is not enabled therefore fallback to the standard CONTAINS function
@@ -30,30 +32,30 @@ WHERE {
     }
     OPTIONAL {
         ?uri skos:prefLabel ?prefLabel .
-        FILTER(LANG(?prefLabel) = "nl")
+        FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
     }
     OPTIONAL {
         ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl")
+        FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
         ?uri skos:broader ?broader_uri .
         ?broader_uri skos:prefLabel ?broader_prefLabel .
-        FILTER(LANG(?broader_prefLabel) = "nl")
+        FILTER(LANG(?broader_prefLabel) = "nl" || LANG(?broader_prefLabel) = "en")
     }
     OPTIONAL {
         ?uri skos:narrower ?narrower_uri .
         ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-        FILTER(LANG(?narrower_prefLabel) = "nl")
+        FILTER(LANG(?narrower_prefLabel) = "nl" || LANG(?narrower_prefLabel) = "en")
     }
     OPTIONAL {
         ?uri skos:related ?related_uri .
         ?related_uri skos:prefLabel ?related_prefLabel .
-        FILTER(LANG(?related_prefLabel) = "nl")
+        FILTER(LANG(?related_prefLabel) = "nl" || LANG(?related_prefLabel) = "en")
     }
     OPTIONAL {
         ?uri skos:exactMatch ?exactMatch_uri .
         ?exactMatch_uri skos:exactMatch ?exactMatch_prefLabel .
-        FILTER(LANG(?exactMatch_prefLabel) = "nl")
+        FILTER(LANG(?exactMatch_prefLabel) = "nl" || LANG(?exactMatch_prefLabel) = "en")
     }
 }

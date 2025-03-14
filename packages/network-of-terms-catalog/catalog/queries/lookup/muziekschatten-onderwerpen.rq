@@ -1,4 +1,5 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX som: <https://data.muziekschatten.nl/som/>
@@ -12,16 +13,10 @@ CONSTRUCT {
     ?broader_uri skos:prefLabel ?broader_schema_name .
 }
 WHERE {
-    {
-        SELECT DISTINCT ?uri WHERE {
-            ?uri a skos:Concept ;
-                som:BASIS "1" .
-            ?uri ?predicate ?label .
-            VALUES ?predicate { schema:name schema:keywords }
-            ?label <bif:contains> ?virtuosoQuery .
-        }
-        #LIMIT#
-    }
+    VALUES ?uri { ?uris }
+
+    ?uri a skos:Concept
+    BIND(<https://data.muziekschatten.nl/#onderwerpen> AS ?datasetUri).
 
     OPTIONAL {
         ?uri schema:name ?prefLabel .
@@ -60,3 +55,4 @@ WHERE {
 
     OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
+LIMIT 1000
