@@ -112,6 +112,10 @@ describe('Catalog', () => {
     ).toEqual('https://username:password@gtaa.apis.beeldengeluid.nl/sparql');
   });
 
+  it('returns all languages', async () => {
+    expect(catalog.getLanguages()).toEqual(['en', 'nl']);
+  });
+
   it('loads catalog from a path', async () => {
     const catalog = await getCatalog(
       resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/')

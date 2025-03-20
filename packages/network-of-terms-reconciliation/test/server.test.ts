@@ -76,10 +76,10 @@ describe('Server', () => {
 
     // Results must be sorted by score in decreasing order.
     expect(results.q2.result).toHaveLength(2);
-    expect(results.q2.result[0].name).toEqual('All things art');
+    expect(results.q2.result[0].name).toEqual('Kunstige dingen');
     expect(results.q2.result[0].score).toEqual(62.5); // Match of ‘things’ in prefLabel ‘All things art’.
     expect(results.q2.result[1].description).toEqual(
-      'painted things that can be beautiful • another altLabel'
+      'mooie geschilderde dingen • en nog meer'
     ); // Result has no prefLabel.
     expect(results.q2.result[1].score).toEqual(28.57); // Match of ‘things’ in altLabel ‘painted things that can be beautiful’.
 
@@ -156,14 +156,14 @@ describe('Server', () => {
   });
 
   it('returns data extension response for terms', async () => {
-    const response = await dataExtensionQuery('/extend');
+    const response = await dataExtensionQuery({url: '/extend', language: 'en'});
     expect(response.statusCode).toEqual(200);
     const results = JSON.parse(response.body);
 
     // This is what OpenRefine currently expects.
-    const response2 = await dataExtensionQuery(
-      '/reconcile/https://data.rkd.nl/rkdartists/extend'
-    );
+    const response2 = await dataExtensionQuery({
+      url: '/reconcile/https://data.rkd.nl/rkdartists/extend',
+    });
     expect(response2.statusCode).toEqual(200);
     const results2 = JSON.parse(response.body);
 
@@ -171,8 +171,8 @@ describe('Server', () => {
 
     expect(results.rows).toEqual({
       'https://example.com/resources/artwork': {
-        prefLabels: [{str: 'Nachtwacht'}],
-        altLabels: [{str: 'Nachtwacht alt'}],
+        prefLabels: [{str: 'The Night Watch'}],
+        altLabels: [{str: 'Night Watch alt'}],
         scopeNotes: [{str: 'One of the most famous Dutch paintings'}],
       },
       'https://example.com/resources/painter': {
@@ -190,10 +190,10 @@ describe('Server', () => {
     });
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
-    expect(response.body).toMatch('<h1>Nachtwacht</h1>');
+    expect(response.body).toMatch('<h1>The Night Watch</h1>');
     expect(response.body).toMatch('One of the most famous Dutch paintings');
     expect(response.body).toMatch(
-      '<dt>Alternative labels</dt><dd>Nachtwacht alt</dd>'
+      '<dt>Alternative labels</dt><dd>Night Watch alt</dd>'
     );
     expect(response.body).toMatch(
       new RegExp(
@@ -269,21 +269,28 @@ async function reconciliationQuery(
   });
 }
 
-async function dataExtensionQuery(
+async function dataExtensionQuery({
   url = '/extend',
-  query: DataExtensionQuery = {
+  query = {
     ids: [
       'https://example.com/resources/artwork',
       'https://example.com/resources/painter',
     ],
     properties: [{id: 'altLabel'}],
-  }
-) {
+  },
+  language,
+}: {
+  url: string;
+  query: DataExtensionQuery;
+  language?: string;
+}) {
+  const headers = {
+    'Content-Type': 'application/json',
+    'Accept-Language': language === undefined ? '*' : language,
+  };
   return httpServer.inject({
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers,
     url,
     payload: query,
   });

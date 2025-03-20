@@ -21,7 +21,7 @@ export const testCatalog = (port: number) =>
   new Catalog([
     new Dataset(
       new IRI('https://data.rkd.nl/rkdartists'),
-      {nl: 'RKDartists'},
+      {nl: 'RKDartists', en: 'RKDartists'},
       {
         nl: 'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
       },
@@ -51,17 +51,23 @@ export const testCatalog = (port: number) =>
           CONSTRUCT { 
             ?s ?p ?o 
           }
-          WHERE { 
-            ?s ?p ?o ;
-              ?labelPredicate ?label .
-            VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-            FILTER (regex(?label, ?query, "i"))
+          WHERE {
+            {
+              SELECT DISTINCT ?s WHERE {
+                ?s ?labelPredicate ?label .
+                VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
+                FILTER (regex(?label, ?query, "i"))            
+              }
+              #LIMIT#
+            }
+              
+            ?s ?p ?o .
+           
             OPTIONAL { 
               ?s skos:exactMatch ?match .
               ?match skos:prefLabel ?match_label .
-            }
-          }
-          #LIMIT#`,
+            }  
+          }`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
           CONSTRUCT {

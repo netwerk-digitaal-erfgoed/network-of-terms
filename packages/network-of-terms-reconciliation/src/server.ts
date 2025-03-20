@@ -71,20 +71,23 @@ export async function server(
       },
     },
     async (request, reply) => {
+      const language = request.languages(['nl', 'en']) || 'nl';
       // BC for Reconciliation API spec 0.2.
       if (request.body.ids) {
         await extendQuery(
           (request.body as DataExtensionQuery).ids.map(
             termIri => new IRI(termIri)
           ),
-          lookupService
+          lookupService,
+          language
         );
         reply.send(
           await extendQuery(
             (request.body as DataExtensionQuery).ids.map(
               termIri => new IRI(termIri)
             ),
-            lookupService
+            lookupService,
+            language
           )
         );
         return;
@@ -101,7 +104,8 @@ export async function server(
           dataset,
           request.body as ReconciliationQueryBatch,
           catalog,
-          queryTermsService
+          queryTermsService,
+          language
         )
       );
     }
@@ -125,7 +129,8 @@ export async function server(
       reply.send(
         await extendQuery(
           request.body.ids.map(termIri => new IRI(termIri)),
-          lookupService
+          lookupService,
+          request.languages(['nl', 'en']) || 'nl'
         )
       );
     }
@@ -141,7 +146,7 @@ export async function server(
 
     reply
       .type('text/html')
-      .send(preview(lookupResult, source, locales[language]));
+      .send(preview(lookupResult, source, locales[language], language));
   });
 
   return server;

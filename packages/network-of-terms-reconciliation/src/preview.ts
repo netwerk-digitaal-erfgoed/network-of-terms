@@ -11,7 +11,8 @@ import {locale} from './server.js';
 export function preview(
   lookupResult: LookupQueryResult,
   source: Dataset,
-  locale: locale
+  locale: locale,
+  language: string
 ) {
   const term = lookupResult.result;
   if (term instanceof Term) {
@@ -25,12 +26,12 @@ export function preview(
       </style>
     </head>
     <body>
-      <h1>${literal(term.prefLabels)}</h1>
-      <p>${literal(term.scopeNotes)}</p>
+      <h1>${literal(term.prefLabels, language)}</h1>
+      <p>${literal(term.scopeNotes, language)}</p>
       <dl>
         ${
           term.altLabels.length > 0
-            ? `<dt>${locale.altLabels}</dt><dd>${literal(term.altLabels)}</dd>`
+            ? `<dt>${locale.altLabels}</dt><dd>${literal(term.altLabels, language)}</dd>`
             : ''
         }
         ${relatedTerms(locale.broader, term.broaderTerms)}
@@ -49,8 +50,11 @@ export function preview(
   }
 }
 
-const literal = (values: Literal[]) =>
-  values.map(literal => literal.value).join(' • ');
+const literal = (values: Literal[], language: string) =>
+  values
+    .filter(value => value.language === language)
+    .map(literal => literal.value)
+    .join(' • ');
 
 function relatedTerms(label: string, terms: RelatedTerm[]) {
   const termsWithPrefLabel = terms.filter(term => term.prefLabels.length > 0);

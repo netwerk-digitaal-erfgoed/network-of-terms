@@ -54,6 +54,19 @@ export class Catalog {
   }
 
   /**
+   * Get all languages provided by datasets in this catalog.
+   */
+  public getLanguages(): string[] {
+    return [
+      ...new Set(
+        this.datasets.reduce<string[]>((acc, dataset) => {
+          return [...acc, ...dataset.inLanguage];
+        }, [])
+      ),
+    ];
+  }
+
+  /**
    * Index the prefixes of all datasets by their string length in descending order for matching
    * term IRIs against during lookup. When looking up terms, we want to match the longest possible prefix
    * in case prefixes overlap.
