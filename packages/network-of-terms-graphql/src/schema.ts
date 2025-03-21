@@ -1,4 +1,4 @@
-export const schema = `
+export const schema = (languages: string[]) => `
   """
   A term source is a collection of terms.
   """
@@ -10,7 +10,7 @@ export const schema = `
     creators: [Creator]!
     features: [Feature]!
     genres: [Genre]!
-    inLanguage: [String]!
+    inLanguage: [Language]!
     mainEntityOfPage: [String]!
   }
 
@@ -45,7 +45,7 @@ export const schema = `
   }
 
   """
-  A description of a concept or entity, expressed in the SKOS vocabulary, used to describe objects.
+  A description of a concept or entity, expressed in the SKOS vocabulary.
   """
   type Term {
     uri: ID!
@@ -66,6 +66,10 @@ export const schema = `
     uri: ID!
     prefLabel: [String]!
   }
+  
+  enum Language {
+    ${languages.join(' ')}
+  }
 
   type Query {
     "Query one or more sources for terms."
@@ -77,7 +81,10 @@ export const schema = `
       query: String!,
 
       "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."      
-      queryMode: QueryMode = OPTIMIZED
+      queryMode: QueryMode = OPTIMIZED,
+      
+      "List of languages in which to return terms. If one or more languages are specified, terms are returned as \`TranslatedTerm\`s."
+      languages: [Language],
       
       "Maximum number of terms to return."
       limit: Int = 100,
@@ -120,10 +127,38 @@ export const schema = `
     responseTimeMs: Int!
   }
 
-  union TermsResult = Terms | TimeoutError | ServerError
+  union TermsResult = Terms | TranslatedTerms | TimeoutError | ServerError
 
   type Terms {
     terms: [Term]
+  }
+  
+  type TranslatedTerms {
+    terms: [TranslatedTerm]
+  }
+  
+  type TranslatedTerm {
+    uri: ID!
+    prefLabel: [LanguageString]!
+    altLabel: [LanguageString]!
+    hiddenLabel: [LanguageString]!
+    definition: [LanguageString]!
+    scopeNote: [LanguageString]!
+    seeAlso: [String]!
+    broader: [TranslatedRelatedTerm]
+    narrower: [TranslatedRelatedTerm]
+    related: [TranslatedRelatedTerm]
+    exactMatch: [TranslatedRelatedTerm]
+  }
+  
+  type TranslatedRelatedTerm {
+    uri: ID!
+    prefLabel: [LanguageString]!
+  }
+  
+  type LanguageString {
+    language: Language!
+    value: String!
   }
 
   type LookupQueryResult {

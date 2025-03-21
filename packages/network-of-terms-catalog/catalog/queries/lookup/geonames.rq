@@ -5,7 +5,7 @@ CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel_ext ;
         skos:altLabel ?altLabel ;
-        skos:scopeNote ?scopeNote ;
+        skos:scopeNote ?scopeNote_en ;
         skos:broader ?broader .
     ?broader skos:prefLabel ?broader_prefLabel .
 }
@@ -17,7 +17,7 @@ WHERE {
         gn:countryCode ?countryCode ;
         gn:name ?prefLabel .
 
-    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext) 
+    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
 
     OPTIONAL {
         ?uri gn:alternateName ?altLabel .
@@ -34,6 +34,8 @@ WHERE {
 
     OPTIONAL {
         ?uri gn:featureCode/gn:name ?scopeNote .
+        # scopeNote is always in English.
+        BIND(STRLANG(?scopeNote, "en") as ?scopeNote_en)
     }
 }
 LIMIT 1000

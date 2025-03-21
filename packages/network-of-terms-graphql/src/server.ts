@@ -28,7 +28,7 @@ export async function server(
   const server = fastify({logger, trustProxy: config.TRUST_PROXY as boolean});
   server.register(fastifyAccepts);
   server.register(mercurius, {
-    schema,
+    schema: schema(catalog.getLanguages()),
     resolvers,
     graphiql: true,
     context: async (req: FastifyRequest) => {

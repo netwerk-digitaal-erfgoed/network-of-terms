@@ -23,6 +23,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
 import {dereferenceGenre} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import Literal from '@rdfjs/data-model/lib/Literal.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -35,8 +36,19 @@ async function listSources(object: any, args: any, context: any): Promise<any> {
     );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function queryTerms(object: any, args: any, context: any): Promise<any> {
+async function queryTerms(
+  _: unknown,
+  args: {
+    sources: string[];
+    query: string;
+    queryMode: string;
+    limit: number;
+    timeoutMs: number;
+    languages: string[];
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context: any
+): Promise<unknown> {
   const service = new DistributionsService({
     logger: context.app.log,
     catalog: context.catalog,
@@ -52,7 +64,10 @@ async function queryTerms(object: any, args: any, context: any): Promise<any> {
   return resolveTermsResponse(
     results,
     context.catalog,
-    context.catalogLanguage
+    (args.languages ?? []).length > 0
+      ? args.languages[0]
+      : context.catalogLanguage,
+    args.languages
   );
 }
 
@@ -81,7 +96,9 @@ async function lookupTerms(object: any, args: any, context: any) {
               context.catalogLanguage
             ),
       result:
-        result.result instanceof Term ? term(result.result) : result.result,
+        result.result instanceof Term
+          ? mapTerm(result.result, args.languages)
+          : result.result,
       responseTimeMs: result.responseTimeMs,
     };
   });
@@ -90,7 +107,8 @@ async function lookupTerms(object: any, args: any, context: any) {
 function resolveTermsResponse(
   results: TermsResponse[],
   catalog: Catalog,
-  catalogLanguage: string
+  catalogLanguage: string,
+  resultLanguages: string[]
 ) {
   return results.map((response: TermsResponse) => {
     if (response.result instanceof Error) {
@@ -108,7 +126,9 @@ function resolveTermsResponse(
       };
     }
 
-    const terms = response.result.terms.map(term);
+    const terms = response.result.terms.map(term =>
+      mapTerm(term, resultLanguages)
+    );
 
     return {
       source: source(
@@ -116,62 +136,109 @@ function resolveTermsResponse(
         catalog.getDatasetByDistributionIri(response.result.distribution.iri)!,
         catalogLanguage
       ),
-      result: {
-        terms: terms,
-      },
+      result:
+        resultLanguages === undefined
+          ? {terms}
+          : new TranslatedTerms(
+              response.result.terms.map(term =>
+                mapTranslatedTerm(term, resultLanguages)
+              )
+            ),
       responseTimeMs: response.responseTimeMs,
       terms, // For BC.
     };
   });
 }
 
-function term(term: Term) {
+class TranslatedTerms {
+  constructor(readonly terms: object[]) {}
+}
+
+function mapTranslatedTerm(term: Term, languages: string[]) {
   return {
     uri: term.id!.value,
-    prefLabel: literalValues(term.prefLabels),
-    altLabel: literalValues(term.altLabels),
-    hiddenLabel: literalValues(term.hiddenLabels),
-    definition: literalValues(term.scopeNotes),
-    scopeNote: literalValues(term.scopeNotes),
+    prefLabel: filterLiterals(term.prefLabels, languages).map(mapLiterals),
+    altLabel: filterLiterals(term.altLabels, languages),
+    hiddenLabel: filterLiterals(term.hiddenLabels, languages),
+    definition: filterLiterals(term.scopeNotes, languages),
+    scopeNote: filterLiterals(term.scopeNotes, languages),
     seeAlso: term.seeAlso.map((seeAlso: RDF.NamedNode) => seeAlso.value),
     broader: term.broaderTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: literalValues(related.prefLabels),
+      prefLabel: filterLiterals(related.prefLabels, languages),
     })),
     narrower: term.narrowerTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: literalValues(related.prefLabels),
+      prefLabel: filterLiterals(related.prefLabels, languages),
     })),
     related: term.relatedTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: literalValues(related.prefLabels),
+      prefLabel: filterLiterals(related.prefLabels, languages),
     })),
     exactMatch: term.exactMatches.map(exactMatch => ({
       uri: exactMatch.id.value,
-      prefLabel: literalValues(exactMatch.prefLabels),
+      prefLabel: filterLiterals(exactMatch.prefLabels, languages),
     })),
   };
 }
 
-function literalValues(literals: RDF.Literal[], languages = ['nl']) {
-  const languageLiterals = literals
-    .filter(literal => languages.includes(literal.language))
-    .map(literal => literal.value);
+function mapTerm(term: Term, languages: string[]) {
+  return {
+    uri: term.id!.value,
+    prefLabel: literalValues(term.prefLabels, languages),
+    altLabel: literalValues(term.altLabels, languages),
+    hiddenLabel: literalValues(term.hiddenLabels, languages),
+    definition: literalValues(term.scopeNotes, languages),
+    scopeNote: literalValues(term.scopeNotes, languages),
+    seeAlso: term.seeAlso.map((seeAlso: RDF.NamedNode) => seeAlso.value),
+    broader: term.broaderTerms.map(related => ({
+      uri: related.id.value,
+      prefLabel: literalValues(related.prefLabels, languages),
+    })),
+    narrower: term.narrowerTerms.map(related => ({
+      uri: related.id.value,
+      prefLabel: literalValues(related.prefLabels, languages),
+    })),
+    related: term.relatedTerms.map(related => ({
+      uri: related.id.value,
+      prefLabel: literalValues(related.prefLabels, languages),
+    })),
+    exactMatch: term.exactMatches.map(exactMatch => ({
+      uri: exactMatch.id.value,
+      prefLabel: literalValues(exactMatch.prefLabels, languages),
+    })),
+  };
+}
 
+function filterLiterals(literals: RDF.Literal[], languages: string[]) {
+  const preferredLanguageLiterals = literals.filter(literal =>
+    languages.includes(literal.language)
+  );
+  if (preferredLanguageLiterals.length > 0) {
+    return preferredLanguageLiterals;
+  }
+
+  // If literal has no language tag, we assume it is in the Network of Terms’ default language, Dutch.
+  return literals
+    .filter(literal => literal.language === '')
+    .map(literal => new Literal(literal.value, 'nl'));
+}
+
+function mapLiterals(literal: RDF.Literal) {
+  return {
+    language: literal.language,
+    value: literal.value,
+  };
+}
+
+function literalValues(literals: RDF.Literal[], languages: string[] = ['nl']) {
+  const languageLiterals = filterLiterals(literals, languages);
   if (languageLiterals.length > 0) {
-    return languageLiterals;
+    return languageLiterals.map(literal => literal.value);
   }
 
   // Fall back to English for sources that provide no Dutch labels.
-  const englishLiteralValues = literals
-    .filter(literal => literal.language === 'en')
-    .map(literal => literal.value);
-  if (englishLiteralValues.length > 0) {
-    return englishLiteralValues;
-  }
-
-  // Fall back to plain, non-language tagged strings.
-  return literals.map(literal => literal.value);
+  return filterLiterals(literals, ['en']).map(literal => literal.value);
 }
 
 async function source(
@@ -219,6 +286,10 @@ export const resolvers = {
 
       if (result instanceof ServerError) {
         return 'ServerError';
+      }
+
+      if (result instanceof TranslatedTerms) {
+        return 'TranslatedTerms';
       }
 
       return 'Terms';
