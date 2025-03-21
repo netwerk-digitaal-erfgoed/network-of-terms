@@ -101,6 +101,9 @@ export const schema = (languages: string[]) => `
       "List of term URIs."
       uris: [ID]!,
       
+      "List of languages in which to return the term. If one or more languages are specified, any term found is returned as a \`TranslatedTerm\`."
+      languages: [Language],
+      
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000
     ): [LookupQueryResult]
@@ -177,7 +180,7 @@ export const schema = (languages: string[]) => `
 
   union SourceResult = Source | SourceNotFoundError
 
-  union LookupResult = Term | NotFoundError | TimeoutError | ServerError
+  union LookupResult = Term | TranslatedTerm | NotFoundError | TimeoutError | ServerError
 
   """
   The term source failed to respond within the timeout period.

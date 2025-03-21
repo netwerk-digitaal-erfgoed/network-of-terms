@@ -187,13 +187,15 @@ describe('Server', () => {
 
   it('responds to GraphQL lookup query', async () => {
     const body = await query(
-      lookupQuery(
-        'https://example.com/resources/art',
-        'https://example.com/resources/iri-does-not-exist-in-dataset',
-        'https://example.com/does-not-exist',
-        'https://data.cultureelerfgoed.nl/term/id/cht/server-error',
-        'http://vocab.getty.edu/aat/timeout'
-      )
+      lookupQuery({
+        uris: [
+          'https://example.com/resources/art',
+          'https://example.com/resources/iri-does-not-exist-in-dataset',
+          'https://example.com/does-not-exist',
+          'https://data.cultureelerfgoed.nl/term/id/cht/server-error',
+          'http://vocab.getty.edu/aat/timeout',
+        ],
+      })
     );
 
     const term = body.data.lookup[0];
@@ -230,6 +232,23 @@ describe('Server', () => {
     const timeoutError = body.data.lookup[4];
     expect(timeoutError.uri).toEqual('http://vocab.getty.edu/aat/timeout');
     expect(timeoutError.result.__typename).toEqual('TimeoutError');
+  });
+
+  it('responds to successful multilingual GraphQL lookup query', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/art'],
+        languages: ['en'],
+      })
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('TranslatedTerm');
+    expect(term.result.prefLabel).toEqual([
+      {
+        language: 'en',
+        value: 'All things art',
+      },
+    ]);
   });
 
   it('responds to GraphQL playground requests', async () => {
@@ -356,12 +375,19 @@ function termsQuery({
     }`;
 }
 
-function lookupQuery(...iris: string[]) {
+function lookupQuery({
+  uris,
+  languages,
+}: {
+  uris: string[];
+  languages?: string[];
+}) {
   return `
     query {
       lookup(
-        uris: [${iris.map(iri => `"${iri}"`).join(',')}],
+        uris: [${uris.map(uri => `"${uri}"`).join(',')}],
         timeoutMs: 1000
+        ${languages !== undefined ? `languages: [${languages.join(',')}]` : ''}
       ) {
         uri
         source {
@@ -382,6 +408,9 @@ function lookupQuery(...iris: string[]) {
         }        
         result {
           __typename
+          ${
+            languages === undefined
+              ? `
           ... on Term {
             uri
             prefLabel
@@ -393,6 +422,22 @@ function lookupQuery(...iris: string[]) {
               uri
               prefLabel
             }
+          }
+          `
+              : `
+          ... on TranslatedTerm {
+            uri
+            prefLabel { language value }
+            altLabel { language value }
+            hiddenLabel { language value }
+            scopeNote { language value }
+            seeAlso
+            broader {
+              uri
+              prefLabel { language value }
+            }
+          }
+          `
           }
           ... on Error {
             message
