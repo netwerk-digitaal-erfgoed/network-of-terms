@@ -1,118 +1,271 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@graph": [
     {
       "@id": "http://www.getty.edu/research/",
       "@type": "Organization",
-      "name": "Getty Research Institute",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Getty Research Institute"
+        },
+        {
+          "@language": "nl",
+          "@value": "Getty Research Institute"
+        }
+      ],
       "alternateName": "Getty"
     },
     {
       "@id": "https://www.cultureelerfgoed.nl",
       "@type": "Organization",
-      "name": "Rijksdienst voor het Cultureel Erfgoed",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Cultural Heritage Agency"
+        },
+        {
+          "@language": "nl",
+          "@value": "Rijksdienst voor het Cultureel Erfgoed"
+        }
+      ],
       "alternateName": "RCE"
     },
     {
       "@id": "https://www.niod.nl",
       "@type": "Organization",
-      "name": "Instituut voor Oorlogs-, Holocaust- en Genocidestudies",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Institute for war, holocaust and genocide studies"
+        },
+        {
+          "@language": "nl",
+          "@value": "Instituut voor oorlogs-, holocaust- en genocidestudies"
+        }
+      ],
       "alternateName": "NIOD"
     },
     {
       "@id": "http://www.wereldculturen.nl",
       "@type": "Organization",
-      "name": "Stichting Nationaal Museum van Wereldculturen",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "National Museum of World Cultures"
+        },
+        {
+          "@language": "nl",
+          "@value": "Stichting Nationaal Museum van Wereldculturen"
+        }
+      ],
       "alternateName": "NMVW"
     },
     {
       "@id": "http://data.bibliotheken.nl/doc/thes/p075301482",
       "@type": "Organization",
-      "name": "Koninklijke Bibliotheek",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "National Library of the Netherlands"
+        },
+        {
+          "@language": "nl",
+          "@value": "Koninklijke Bibliotheek"
+        }
+      ],
       "alternateName": "KB"
     },
     {
       "@id": "https://rkd.nl",
       "@type": "Organization",
-      "name": "RKD – Nederlands Instituut voor Kunstgeschiedenis",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "RKD – Netherlands Institute for Art History"
+        },
+        {
+          "@language": "nl",
+          "@value": "RKD – Nederlands Instituut voor Kunstgeschiedenis"
+        }
+      ],
       "alternateName": "RKD"
     },
     {
       "@id": "https://www.wikidata.org/entity/Q180",
       "@type": "Organization",
-      "name": "Wikidata",
-      "alternateName": "Wikidata"
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Wikimedia Foundation"
+        },
+        {
+          "@language": "nl",
+          "@value": "Wikimedia Foundation"
+        }
+      ],
+      "alternateName": "Wikimedia"
     },
     {
       "@id": "https://www.muziekweb.nl",
       "@type": "Organization",
-      "name": "Muziekweb",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Muziekweb"
+        },
+        {
+          "@language": "nl",
+          "@value": "Muziekweb"
+        }
+      ],
       "alternateName": "Muziekweb"
     },
     {
       "@id": "https://www.omroepmuziek.nl",
       "@type": "Organization",
-      "name": "Stichting Omroep Muziek",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Stichting Omroep Muziek"
+        },
+        {
+          "@language": "nl",
+          "@value": "Stichting Omroep Muziek"
+        }
+      ],
       "alternateName": "SOM"
     },
     {
       "@id": "https://www.beeldengeluid.nl/",
       "@type": "Organization",
-      "name": "Nederlands Instituut voor Beeld en Geluid",
-      "alternateName": "Beeld en Geluid"
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Netherlands Institute for Sound and Vision"
+        },
+        {
+          "@language": "nl",
+          "@value": "Nederlands Instituut voor Beeld en Geluid"
+        }
+      ],
+      "alternateName": [
+        {
+          "@language": "en",
+          "@value": "Sound & Vision"
+        },
+        {
+          "@language": "nl",
+          "@value": "Beeld & Geluid"
+        }
+      ]
     },
     {
       "@id": "https://op.europa.eu/",
       "@type": "Organization",
-      "name": "Bureau voor publicaties van de Europese Unie",
-      "alternateName": "Europese Unie"
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Publications Office of the European Union"
+        },
+        {
+          "@language": "nl",
+          "@value": "Bureau voor publicaties van de Europese Unie"
+        }
+      ],
+      "alternateName": [
+        {
+          "@language": "en",
+          "@value": "European Union"
+        },
+        {
+          "@language": "nl",
+          "@value": "Europese Unie"
+        }
+      ]
     },
     {
       "@id": "https://www.erfgoedbrabant.nl",
       "@type": "Organization",
-      "name": "Erfgoed Brabant",
+      "name": {
+        "@language": "nl",
+        "@value": "Erfgoed Brabant"
+      },
       "alternateName": "Erfgoed Brabant"
     },
     {
       "@id": "https://www.geonames.org/team.html",
       "@type": "Organization",
-      "name": "GeoNames",
+      "name": {
+        "@language": "en",
+        "@value": "Geonames"
+      },
       "alternateName": "GeoNames"
     },
     {
       "@id": "https://ihlia.nl",
       "@type": "Organization",
-      "name": "IHLIA",
+      "name": {
+        "@language": "en",
+        "@value": "IHLIA LGBTI Heritage"
+      },
       "alternateName": "IHLIA"
     },
     {
       "@id": "https://www.indischherinneringscentrum.nl/",
       "@type": "Organization",
-      "name": "Indisch Herinneringscentrum",
+      "name": {
+        "@language": "nl",
+        "@value": "Indisch Herinneringscentrum"
+      },
       "alternateName": "IHC"
     },
     {
       "@id": "https://henrivandewaalfoundation.org",
       "@type": "Organization",
-      "name": "Henri van de Waal Foundation",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Henri van de Waal Foundation"
+        },
+        {
+          "@language": "nl",
+          "@value": "Stichting Hendri van de Waal"
+        }
+      ],
       "alternateName": "Henri van de Waal"
     },
     {
       "@id": "https://www.podiumkunst.net",
       "@type": "Organization",
-      "name": "Podiumkunst.net",
+      "name": {
+        "@language": "nl",
+        "@value": "Podiumkunst.net"
+      },
       "alternateName": "Podiumkunst.net"
     },
     {
       "@id": "https://www.amsterdamtimemachine.nl",
       "@type": "Organization",
-      "name": "Amsterdam Time Machine",
+      "name": {
+        "@language": "en",
+        "@value": "Amsterdam Time Machine"
+      },
       "alternateName": "ATM"
     },
     {
       "@id": "https://www.cbg.nl",
       "@type": "Organization",
-      "name": "Centrum voor familiegeschiedenis",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Center for family history"
+        },
+        {
+          "@language": "nl",
+          "@value": "Centrum voor familiegeschiedenis"
+        }
+      ],
       "alternateName": "CBG"
     }
   ]

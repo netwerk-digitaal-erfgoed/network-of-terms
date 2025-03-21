@@ -18,9 +18,9 @@ describe('Catalog', () => {
 
   it('lists datasets in alphabetical order', () => {
     expect(catalog.datasets.length).toBeGreaterThan(3);
-    const datasetNames = catalog.datasets.map(dataset =>
-      dataset.name.toLowerCase()
-    );
+    const datasetNames = catalog
+      .getDatasetsSortedByName('nl')
+      .map(dataset => dataset.name.nl.toLowerCase());
     expect(datasetNames).toEqual([...datasetNames].sort());
   });
 
@@ -33,8 +33,8 @@ describe('Catalog', () => {
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht')
     )!;
     expect(cht).toBeInstanceOf(Dataset);
-    expect(cht.name).toEqual('Cultuurhistorische Thesaurus');
-    expect(cht.description).toEqual(
+    expect(cht.name.nl).toEqual('Cultuurhistorische Thesaurus');
+    expect(cht.description.nl).toEqual(
       'Onderwerpen voor het beschrijven van cultureel erfgoed'
     );
     expect(cht.genres).toContainEqual(
@@ -45,12 +45,12 @@ describe('Catalog', () => {
     expect(cht.termsPrefixes).toEqual([
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht/'),
     ]);
-    expect(cht.alternateName).toEqual('CHT');
+    expect(cht.alternateName.nl).toEqual('CHT');
     expect(cht.inLanguage).toEqual(['nl']);
-    expect(cht.creators[0].name).toEqual(
+    expect(cht.creators[0].name.nl).toEqual(
       'Rijksdienst voor het Cultureel Erfgoed'
     );
-    expect(cht.creators[0].alternateName).toEqual('RCE');
+    expect(cht.creators[0].alternateName['']).toEqual('RCE');
     expect(cht.distributions[0].features[0].type).toEqual(
       FeatureType.RECONCILIATION
     );
@@ -110,6 +110,10 @@ describe('Catalog', () => {
     expect(
       dataset.getDistributionByIri(distributionIri)?.endpoint.toString()
     ).toEqual('https://username:password@gtaa.apis.beeldengeluid.nl/sparql');
+  });
+
+  it('returns all languages', async () => {
+    expect(catalog.getLanguages()).toEqual(['en', 'nl']);
   });
 
   it('loads catalog from a path', async () => {

@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://data.beeldengeluid.nl/gtaa/Namen",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "GTAA: names"
+    },
     {
       "@language": "nl",
       "@value": "GTAA: namen"
@@ -28,6 +32,10 @@
     "https://www.beeldengeluid.nl/kennis/kennisthemas/metadata/gemeenschappelijke-thesaurus-audiovisuele-archieven"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Various types of proper names for describing audiovisual material"
+    },
     {
       "@language": "nl",
       "@value": "Diverse soorten eigennamen voor het beschrijven van audiovisueel materiaal"

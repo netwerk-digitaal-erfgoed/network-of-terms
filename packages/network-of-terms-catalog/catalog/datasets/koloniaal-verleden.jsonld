@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.cultureelerfgoed.nl/koloniaalverleden/",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Colonial Past"
+    },
     {
       "@language": "nl",
       "@value": "Koloniaal Verleden"
@@ -37,6 +41,10 @@
     "https://www.cultureelerfgoed.nl/onderwerpen/slavernijverleden/documenten/publicaties/2021/01/01/handreiking-onderzoek-naar-sporen-van-slavernij-en-het-koloniale-verleden-in-de-collectieregistratie"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing museum collections about the colonial past"
+    },
     {
       "@language": "nl",
       "@value": "Termen voor het beschrijven van museale collecties over het koloniaal verleden"

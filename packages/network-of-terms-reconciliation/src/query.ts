@@ -17,7 +17,8 @@ export async function reconciliationQuery(
   datasetIri: IRI,
   query: ReconciliationQueryBatch,
   catalog: Catalog,
-  queryTermsService: QueryTermsService
+  queryTermsService: QueryTermsService,
+  language: string
 ): Promise<ReconciliationResultBatch> {
   const dataset = catalog.getDatasetByIri(datasetIri)!;
   const distribution = dataset.distributions[0];
@@ -42,9 +43,15 @@ export async function reconciliationQuery(
         result: terms
           .map(term => ({
             id: term.id.value.toString(),
-            name: term.prefLabels.map(label => label.value).join(' • '), // Join similarly to network-of-terms-demo.
+            name: term.prefLabels
+              .filter(prefLabel => prefLabel.language === language)
+              .map(label => label.value)
+              .join(' • '), // Join similarly to network-of-terms-demo.
             score: score(queryString, term),
-            description: term.altLabels.map(label => label.value).join(' • '),
+            description: term.altLabels
+              .filter(prefLabel => prefLabel.language === language)
+              .map(label => label.value)
+              .join(' • '),
           }))
           .sort((a, b) => b.score - a.score)
           .slice(0, limit),

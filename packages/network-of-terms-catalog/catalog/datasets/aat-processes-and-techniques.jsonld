@@ -1,14 +1,22 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://vocab.getty.edu/aat#processes-and-techniques",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Art & Architecture Thesaurus - processes and techniques"
+    },
     {
       "@language": "nl",
       "@value": "Art & Architecture Thesaurus - processen en technieken"
     }
   ],
   "alternateName": [
+    {
+      "@language": "en",
+      "@value": "AAT - processes and techniques"
+    },
     {
       "@language": "nl",
       "@value": "AAT - processen en technieken"
@@ -31,6 +39,10 @@
     "https://www.getty.edu/research/tools/vocabularies/aat/about.html"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Selection of AAT terms for describing processes and techniques in architectural, art and cultural-historical collections"
+    },
     {
       "@language": "nl",
       "@value": "Selectie van AAT termen voor het beschrijven van processen en technieken in architectuur-, kunst- en cultuurhistorische collecties"

@@ -22,48 +22,63 @@ CONSTRUCT {
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
+    VALUES ?language {
+        aat:300388256 # Dutch
+        aat:300388277 # English
+    }
+
     {
-        SELECT * WHERE {
+        SELECT DISTINCT ?uri WHERE {
             ?uri luc:term ?query ;
                 a ?type ;
                 void:inDataset <http://vocab.getty.edu/dataset/aat> .
             ?type rdfs:subClassOf gvp:Subject .
             FILTER (?type != gvp:Subject) .
-            ?uri skosxl:prefLabel ?prefLabel_uri .
-            ?prefLabel_uri dcterms:language aat:300388256 . # Dutch (language)
-            ?prefLabel_uri skosxl:literalForm ?prefLabel .
+            ?uri skosxl:prefLabel [
+                dcterms:language ?language ; # Faster than FILTER(langMatches(...): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
+                skosxl:literalForm ?prefLabel
+            ]
         }
         #LIMIT#
     }
+    ?uri skosxl:prefLabel [
+        dcterms:language ?language ; # Faster than FILTER(langMatches(...): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
+        skosxl:literalForm ?prefLabel
+    ]
     OPTIONAL {
-        ?uri skosxl:altLabel ?altLabel_uri .
-        ?altLabel_uri dcterms:language aat:300388256 . # Dutch (language)
-        ?altLabel_uri skosxl:literalForm ?altLabel .
+        ?uri skosxl:altLabel [
+            dcterms:language ?language ;
+            skosxl:literalForm ?altLabel
+        ]
     }
     OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote_uri .
-        ?scopeNote_uri dcterms:language aat:300388256 . # Dutch (language)
-        ?scopeNote_uri rdf:value ?scopeNote .
+        ?uri skos:scopeNote [
+            dcterms:language ?language ;
+            rdf:value ?scopeNote
+        ]
     }
     OPTIONAL {
         ?uri rdfs:seeAlso ?rdfs_seeAlso
     }
     OPTIONAL {
         ?uri gvp:broaderPreferred ?broader_uri .
-        ?broader_uri skosxl:prefLabel ?broader_uri_skosxl .
-        ?broader_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
-        ?broader_uri_skosxl skosxl:literalForm ?broader_prefLabel .
+        ?broader_uri skosxl:prefLabel [
+            dcterms:language ?language ;
+            skosxl:literalForm ?broader_prefLabel
+        ]
     }
     OPTIONAL {
         ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri skosxl:prefLabel ?narrower_uri_skosxl .
-        ?narrower_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
-        ?narrower_uri_skosxl skosxl:literalForm ?narrower_prefLabel .
+        ?narrower_uri skosxl:prefLabel [
+            dcterms:language ?language ;
+            skosxl:literalForm ?narrower_prefLabel
+        ]
     }
     OPTIONAL {
         ?uri skos:exactMatch ?exactMatch_uri .
-        ?exactMatch_uri skosxl:prefLabel ?exactMatch_uri_skosxl .
-        ?exactMatch_uri_skosxl dcterms:language aat:300388256 . # Dutch (language)
-        ?exactMatch_uri_skosxl skosxl:literalForm ?exactMatch_prefLabel .
+        ?exactMatch_uri skosxl:prefLabel [
+            dcterms:language ?language ;
+            skosxl:literalForm ?exactMatch_prefLabel
+        ]
     }
 }

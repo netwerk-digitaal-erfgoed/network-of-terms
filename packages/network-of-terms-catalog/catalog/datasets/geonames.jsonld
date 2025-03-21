@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://www.geonames.org",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "GeoNames: geographical names in The Netherlands, Belgium and Germany"
+    },
     {
       "@language": "nl",
       "@value": "GeoNames: geografische namen in Nederland, België en Duitsland"
@@ -25,6 +29,10 @@
     "https://www.geonames.org/about.html"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Selection of geographical names such as places, administrative divisions (municipalities, provinces) and water bodies (rivers, streams, lakes etc.)"
+    },
     {
       "@language": "nl",
       "@value": "Selectie van geografische namen zoals plaatsen, administratieve eenheden (gemeentes, provincies) en waterlichamen (rivieren, beken, meren etc.)"

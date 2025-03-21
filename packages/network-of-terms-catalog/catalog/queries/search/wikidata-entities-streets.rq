@@ -52,36 +52,15 @@ WHERE {
         #LIMIT#
     }
     OPTIONAL {
-        ?item wdt:P276 ?location .
-        ?location rdfs:label ?locationName .
-        FILTER LANGMATCHES(LANG(?locationName),"nl")
-    }
-    OPTIONAL {
-        ?item schema:description ?description
-        FILTER(LANG(?description) = "nl")
+        ?item rdfs:label ?streetName .
+         FILTER(LANG(?streetName) = "nl" || LANG(?streetName) = "en")
     }
     OPTIONAL {
         ?item skos:altLabel ?altLabel
-        FILTER(LANG(?altLabel) = "nl")
+        FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
-        ?item rdfs:label ?streetName .
-        FILTER LANGMATCHES(LANG(?streetName), "nl")
+        ?item schema:description ?description
+        FILTER(LANG(?description) = "nl" || LANG(?description) = "en")
     }
-    OPTIONAL {
-        ?item wdt:P131/rdfs:label ?administrationName .
-        FILTER LANGMATCHES(LANG(?administrationName), "nl")
-    }
-
-    # Some streets come with altLabel ‘Street name (Place name)’. For those that don’t, construct the altLabel manually.
-    BIND(
-        COALESCE(
-            ?altLabel,
-            IF(
-                BOUND(?locationName),
-                CONCAT(?streetName," (",?locationName,")"),
-                CONCAT(?streetName," (",?administrationName,")")
-            )
-        ) as ?altLabel
-    )
 }

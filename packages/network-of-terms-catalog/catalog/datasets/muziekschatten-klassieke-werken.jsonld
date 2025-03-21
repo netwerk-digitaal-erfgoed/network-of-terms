@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "https://data.muziekschatten.nl/som/Klassiekewerken",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "Muziekschatten: classical music works"
+    },
     {
       "@language": "nl",
       "@value": "Muziekschatten: klassieke muziekwerken"
@@ -26,6 +30,10 @@
   ],
   "description": [
     {
+      "@language": "en",
+      "@value": "Terms for describing (Dutch) classical music works"
+    },
+    {
       "@language": "nl",
       "@value": "Termen voor het beschrijven van (Nederlandse) klassieke muziekwerken"
     }
@@ -44,7 +52,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/muziekschatten.rq"
+          "query": "file://catalog/queries/lookup/muziekschatten-klassiekewerken.rq"
         },
         {
           "@type": "Action",

@@ -1,25 +1,8 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX som: <https://data.muziekschatten.nl/som/>
-
-# Persons for testing the query
-# No birth year:
-# <https://data.muziekschatten.nl/som/da6866c6ba20fb11f6e2617d4a971b91>
-# No death year:
-# <https://data.muziekschatten.nl/som/ae7b2de42c4158219176d464008dfd49>
-# No birth year, no death year:
-# <https://data.muziekschatten.nl/som/ed25d29466903394c982dd3dc185bd80>
-# Both a birth year and a death year:
-# <https://data.muziekschatten.nl/som/ff20e6a4c17dbb9cddbffedc97c292e0>
-# No family name:
-# <https://data.muziekschatten.nl/som/4275e51d7d94b224928da9b7707a170a>
-# No given name:
-# <https://data.muziekschatten.nl/som/b101ea3b20de7f9b40070ea9191d98bd>
-# No family name, no given name:
-# <https://data.muziekschatten.nl/som/c5f95197941d9bb4f68a1e25c379f081>
-# Both a family name and a given name:
-# <https://data.muziekschatten.nl/som/b7bc6d966287e0f0e0f491752ff65ba5>
 
 CONSTRUCT {
     ?uri a skos:Concept;
@@ -29,17 +12,9 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
 }
 WHERE {
-    {
-        SELECT DISTINCT ?uri WHERE {
-            ?uri a schema:Person .
-            # Require the presence of this property for quality purposes
-            ?uri som:NDEREC ?nderec ;
-                ?predicate ?label .
-            VALUES ?predicate { schema:name schema:alternateName }
-            ?label <bif:contains> ?virtuosoQuery .
-        }
-        #LIMIT#
-    }
+    VALUES ?uri { ?uris }
+
+    ?uri a schema:Person .
 
     OPTIONAL { ?uri schema:name ?schema_name }
     OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
@@ -71,4 +46,4 @@ WHERE {
     BIND(CONCAT(?name, IF(?dates != "", CONCAT(" (", ?dates, ")"), "")) AS ?prefLabel)
     OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
-
+LIMIT 1000

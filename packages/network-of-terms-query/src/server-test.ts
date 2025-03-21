@@ -21,8 +21,10 @@ export const testCatalog = (port: number) =>
   new Catalog([
     new Dataset(
       new IRI('https://data.rkd.nl/rkdartists'),
-      'RKDartists',
-      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+      {nl: 'RKDartists', en: 'RKDartists'},
+      {
+        nl: 'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+      },
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'
@@ -34,8 +36,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('https://rkd.nl'),
-          'RKD – Nederlands Instituut voor Kunstgeschiedenis',
-          'RKD'
+          {nl: 'RKD – Nederlands Instituut voor Kunstgeschiedenis'},
+          {nl: 'RKD'}
         ),
       ],
       [
@@ -49,17 +51,23 @@ export const testCatalog = (port: number) =>
           CONSTRUCT { 
             ?s ?p ?o 
           }
-          WHERE { 
-            ?s ?p ?o ;
-              ?labelPredicate ?label .
-            VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-            FILTER (regex(?label, ?query, "i"))
+          WHERE {
+            {
+              SELECT DISTINCT ?s WHERE {
+                ?s ?labelPredicate ?label .
+                VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
+                FILTER (regex(?label, ?query, "i"))            
+              }
+              #LIMIT#
+            }
+              
+            ?s ?p ?o .
+           
             OPTIONAL { 
               ?s skos:exactMatch ?match .
               ?match skos:prefLabel ?match_label .
-            }
-          }
-          #LIMIT#`,
+            }  
+          }`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
           CONSTRUCT {
@@ -96,12 +104,12 @@ export const testCatalog = (port: number) =>
           ]
         ),
       ],
-      'RKD'
+      {nl: 'RKD'}
     ),
     new Dataset(
       new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
-      'Cultuurhistorische Thesaurus',
-      'Onderwerpen voor het beschrijven van cultureel erfgoed',
+      {nl: 'Cultuurhistorische Thesaurus'},
+      {nl: 'Onderwerpen voor het beschrijven van cultureel erfgoed'},
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
@@ -113,8 +121,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('https://www.cultureelerfgoed.nl'),
-          'Rijksdienst voor het Cultureel Erfgoed',
-          'RCE'
+          {nl: 'Rijksdienst voor het Cultureel Erfgoed'},
+          {nl: 'RCE'}
         ),
       ],
       [
@@ -134,8 +142,10 @@ export const testCatalog = (port: number) =>
     ),
     new Dataset(
       new IRI('http://vocab.getty.edu/aat'),
-      'Art & Architecture Thesaurus',
-      'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
+      {nl: 'Art & Architecture Thesaurus'},
+      {
+        nl: 'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
+      },
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
@@ -147,8 +157,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('http://www.getty.edu/research/'),
-          'Getty Research Institute',
-          'Getty'
+          {nl: 'Getty Research Institute'},
+          {nl: 'Getty'}
         ),
       ],
       [
@@ -162,8 +172,8 @@ export const testCatalog = (port: number) =>
     ),
     new Dataset(
       new IRI('http://data.beeldengeluid.nl/gtaa/Persoonsnamen'),
-      'GTAA: persoonsnamen',
-      'Personen voor het beschrijven van audiovisueel materiaal',
+      {nl: 'GTAA: persoonsnamen'},
+      {nl: 'Personen voor het beschrijven van audiovisueel materiaal'},
       [
         new IRI(
           'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
@@ -175,8 +185,8 @@ export const testCatalog = (port: number) =>
       [
         new Organization(
           new IRI('https://www.beeldengeluid.nl/'),
-          'Nederlands Instituut voor Beeld en Geluid',
-          'Beeld en Geluid'
+          {nl: 'Nederlands Instituut voor Beeld en Geluid'},
+          {nl: 'Beeld en Geluid'}
         ),
       ],
       [

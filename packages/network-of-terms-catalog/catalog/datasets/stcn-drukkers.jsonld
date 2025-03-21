@@ -1,8 +1,12 @@
 {
-  "@context": "https://schema.org/docs/jsonldcontext.jsonld",
+  "@context": "https://schema.org",
   "@id": "http://data.bibliotheken.nl/id/dataset/stcn/printers",
   "@type": "Dataset",
   "name": [
+    {
+      "@language": "en",
+      "@value": "STCN: printers"
+    },
     {
       "@language": "nl",
       "@value": "STCN: drukkers"
@@ -25,6 +29,10 @@
     "https://data.bibliotheken.nl/doc/dataset/stcn/printers"
   ],
   "description": [
+    {
+      "@language": "en",
+      "@value": "Printers, a subset of Short-Title Catalogue Netherlands (STCN)"
+    },
     {
       "@language": "nl",
       "@value": "Uitgevers, een subset van Short-Title Catalogue Netherlands (STCN)"

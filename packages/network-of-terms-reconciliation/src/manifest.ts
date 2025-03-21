@@ -47,7 +47,7 @@ export function findManifest(
     source &&
     source.getSparqlDistribution()?.hasFeature(FeatureType.RECONCILIATION)
   ) {
-    return new ServiceManifest(source.name, source.iri, root);
+    return new ServiceManifest(source.name.nl, source.iri, root);
   }
 
   return undefined;

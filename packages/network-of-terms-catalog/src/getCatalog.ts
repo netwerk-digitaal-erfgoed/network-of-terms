@@ -15,9 +15,8 @@ import {
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import {fileURLToPath} from 'url';
-import {DataFactory} from 'rdf-data-factory';
-import {BindingsFactory} from '@comunica/utils-bindings-factory';
-import {Bindings} from '@rdfjs/types';
+import {ldkit, rdf, schema} from 'ldkit/namespaces';
+import {createLens} from 'ldkit';
 
 export async function getCatalog(path?: string): Promise<Catalog> {
   const directory = (
@@ -27,108 +26,147 @@ export async function getCatalog(path?: string): Promise<Catalog> {
   return fromStore(store);
 }
 
+const catalogSchema = {
+  '@type': schema.Dataset,
+  name: {
+    '@id': schema.name,
+    '@multilang': true,
+  },
+  alternateName: {
+    '@id': schema.alternateName,
+    '@multilang': true,
+    '@optional': true,
+  },
+  description: {
+    '@id': schema.description,
+    '@multilang': true,
+  },
+  inLanguage: {
+    '@id': schema.inLanguage,
+    '@array': true,
+  },
+  genres: {
+    '@id': schema.genre,
+    '@array': true,
+  },
+  creator: {
+    '@id': schema.creator,
+    '@schema': {
+      '@type': schema.Organization,
+      name: {
+        '@id': schema.name,
+        '@multilang': true,
+      },
+      alternateName: {
+        '@id': schema.alternateName,
+        '@multilang': true,
+      },
+    },
+  },
+  distribution: {
+    '@id': schema.distribution,
+    '@schema': {
+      encodingFormat: schema.encodingFormat,
+      contentUrl: schema.contentUrl,
+      potentialAction: {
+        '@array': true,
+        '@id': schema.potentialAction,
+        '@schema': {
+          // '@type': schema.Action,
+          types: {
+            '@id': rdf.type,
+            '@type': ldkit.IRI,
+            '@array': true,
+          },
+          query: {
+            '@id': schema.query,
+            '@optional': true,
+          },
+          target: {
+            '@id': schema.target,
+            '@optional': true,
+            '@schema': {
+              actionApplication: {
+                '@id': schema.actionApplication,
+                '@schema': {
+                  '@type': schema.SoftwareApplication,
+                },
+              },
+              urlTemplate: {
+                '@id': schema.urlTemplate,
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  mainEntityOfPage: schema.mainEntityOfPage,
+  url: schema.url,
+} as const;
+
+const engine = new QueryEngine();
+
 export async function fromStore(store: RDF.Store): Promise<Catalog> {
-  // Collect all properties for SELECT and GROUP BY so we can flatten the schema:url values into a single value.
-  const properties =
-    '?dataset ?name ?description ?creator ?creatorName ?creatorAlternateName ?distribution ?endpointUrl ?searchQuery ?lookupQuery ?reconciliationUrlTemplate ?alternateName ?mainEntityOfPage';
-  const query = `
-      PREFIX schema: <http://schema.org/>
-        SELECT ${properties} 
-            (GROUP_CONCAT(?genre) as ?genre)
-            (GROUP_CONCAT(DISTINCT ?url) as ?url)
-            (GROUP_CONCAT(DISTINCT ?inLanguage) as ?inLanguage) 
-        WHERE {
-          ?dataset a schema:Dataset ;
-            schema:name ?name ;
-            schema:description ?description ;
-            schema:genre ?genre ;
-            schema:inLanguage ?inLanguage ;
-            schema:creator ?creator ;
-            schema:distribution ?distribution ;
-            schema:url ?url ;
-            schema:mainEntityOfPage ?mainEntityOfPage .
-          ?creator schema:name ?creatorName ;
-            schema:alternateName ?creatorAlternateName .
-          ?distribution schema:encodingFormat "application/sparql-query" ;
-            schema:contentUrl ?endpointUrl ;
-            schema:potentialAction
-                [a schema:SearchAction ; schema:query ?searchQuery ] ,
-                [a schema:FindAction ; schema:query ?lookupQuery ] .
-            OPTIONAL { 
-                ?distribution schema:potentialAction/schema:target ?entryPoint .
-                ?entryPoint schema:actionApplication ?reconciliationIri ;
-                    schema:urlTemplate ?reconciliationUrlTemplate .
-            }
-          OPTIONAL { ?dataset schema:alternateName ?alternateName . }
-        }
-        GROUP BY ${properties}
-        ORDER BY LCASE(?name)`;
-  const bindingsStream = await new QueryEngine().queryBindings(query, {
+  const lens = createLens(catalogSchema, {
     sources: [store],
-    initialBindings: bindingsFactory.fromRecord({
-      reconciliationIri: dataFactory.namedNode(FeatureType.RECONCILIATION),
-    }) as unknown as Bindings,
+    engine,
   });
 
-  const promise: Promise<Dataset[]> = new Promise((resolve, reject) => {
-    const datasets: Dataset[] = [];
-    bindingsStream.on('data', (bindings: RDF.Bindings) => {
-      datasets.push(
+  const datasets = await lens.find(); // where Only makes it slower.
+
+  return new Catalog(
+    datasets.map(
+      dataset =>
         new Dataset(
-          new IRI(bindings.get('dataset')!.value),
-          bindings.get('name')!.value,
-          bindings.get('description')!.value,
-          bindings
-            .get('genre')!
-            .value.split(' ') // The single value is space-delineated.
-            .map((genre: string) => new IRI(genre)),
-          bindings
-            .get('url')!
-            .value.split(' ') // The single value is space-delineated.
-            .map((url: string) => new IRI(url)),
-          bindings.get('mainEntityOfPage')!.value,
-          bindings.get('inLanguage')!.value.split(' '), // The single value is space-delineated.
+          new IRI(dataset.$id),
+          dataset.name,
+          dataset.description,
+          dataset.genres.map(genre => new IRI(genre)),
+          [new IRI(dataset.url)],
+          dataset.mainEntityOfPage,
+          dataset.inLanguage,
           [
             new Organization(
-              new IRI(bindings.get('creator')!.value),
-              bindings.get('creatorName')!.value,
-              bindings.get('creatorAlternateName')!.value
+              new IRI(dataset.creator.$id),
+              dataset.creator.name,
+              dataset.creator.alternateName
             ),
           ],
           [
             new SparqlDistribution(
-              new IRI(bindings.get('distribution')!.value),
-              new IRI(bindings.get('endpointUrl')!.value),
-              bindings.get('searchQuery')!.value,
-              bindings.get('lookupQuery')!.value,
-              [
-                ...(bindings.has('reconciliationUrlTemplate')
-                  ? [
-                      new Feature(
-                        FeatureType.RECONCILIATION,
-                        new URL(
-                          bindings
-                            .get('reconciliationUrlTemplate')!
-                            .value.replace(
-                              '{dataset}',
-                              bindings.get('dataset')!.value.replace('#', '%23') // Escape # in URL.
-                            )
+              new IRI(dataset.distribution.$id),
+              new IRI(dataset.distribution.contentUrl),
+              dataset.distribution.potentialAction.filter(action =>
+                action.types.includes(schema.SearchAction)
+              )[0].query!,
+              dataset.distribution.potentialAction.filter(action =>
+                action.types.includes(schema.FindAction)
+              )[0].query!,
+              dataset.distribution.potentialAction
+                .filter(
+                  action =>
+                    action.target?.actionApplication.$id ===
+                    'https://reconciliation-api.github.io/specs/latest/'
+                )
+                .map(
+                  reconciliation =>
+                    new Feature(
+                      FeatureType.RECONCILIATION,
+                      new URL(
+                        reconciliation.target!.urlTemplate!.replace(
+                          '{dataset}',
+                          dataset.$id.replace('#', '%23') // Escape # in URL.
                         )
-                      ),
-                    ]
-                  : []),
-              ]
+                      )
+                    )
+                )
             ),
           ],
-          bindings.get('alternateName')?.value
+          dataset.alternateName
         )
-      );
-    });
-    bindingsStream.on('end', () => resolve(datasets));
-    bindingsStream.on('error', () => reject);
-  });
-
-  return new Catalog(await promise);
+    )
+  );
 }
 
 /**
@@ -188,6 +226,7 @@ class InlineFiles extends Transform {
  */
 class SubstituteCredentialsFromEnvironmentVariables extends Transform {
   private regex = new RegExp('\\$(.+)(?=@)');
+
   constructor() {
     super({objectMode: true});
   }
@@ -209,6 +248,3 @@ class SubstituteCredentialsFromEnvironmentVariables extends Transform {
     callback();
   }
 }
-
-const dataFactory = new DataFactory();
-const bindingsFactory = new BindingsFactory(dataFactory);

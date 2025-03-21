@@ -27,7 +27,11 @@ export const dataExtensionProperties: {
   },
 ];
 
-export async function extendQuery(terms: IRI[], lookupService: LookupService) {
+export async function extendQuery(
+  terms: IRI[],
+  lookupService: LookupService,
+  language: string
+) {
   const lookupResults = (await lookupService.lookup(terms, 10000)).filter(
     lookupResult => lookupResult.result instanceof Term
   );
@@ -38,9 +42,11 @@ export async function extendQuery(terms: IRI[], lookupService: LookupService) {
       id: lookupResult.uri.toString(),
       properties: dataExtensionProperties.map(property => ({
         id: property.id,
-        values: (lookupResult.result as Term)[property.id].map(literal => ({
-          str: literal.value,
-        })),
+        values: (lookupResult.result as Term)[property.id]
+          .filter(literal => literal.language === language)
+          .map(literal => ({
+            str: literal.value,
+          })),
       })),
     })),
   };

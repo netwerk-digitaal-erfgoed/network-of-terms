@@ -7,7 +7,6 @@ CONSTRUCT {
     ?uri a skos:Concept ;
     	skos:prefLabel ?rdfs_label ;
         skos:altLabel ?altLabel ;
-    	skos:altLabel ?altLabelStreetName ;
     	skos:scopeNote ?schema_description .
 }
 WHERE {
@@ -19,33 +18,15 @@ WHERE {
     VALUES ?uri { ?uris }
 
     ?uri rdfs:label ?rdfs_label .
-    FILTER(LANG(?rdfs_label) = "nl")
+    FILTER(LANG(?rdfs_label) = "nl" || LANG(?rdfs_label) = "en")
 
     OPTIONAL {
         ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl")
+        FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
         ?uri schema:description ?schema_description
-        FILTER(LANG(?schema_description) = "nl")
+        FILTER(LANG(?schema_description) = "nl" || LANG(?schema_description) = "en")
     }
-    # For streets
-    OPTIONAL {
-        ?uri wdt:P276/rdfs:label ?locationName .
-        FILTER(LANG(?locationName) = "nl")
-    }
-    # For streets
-    OPTIONAL {
-        ?uri wdt:P131/rdfs:label ?administrationName .
-        FILTER(LANG(?administrationName) = "nl")
-    }
-    # For streets
-    BIND(
-        COALESCE(
-            IF(BOUND(?locationName), CONCAT(?rdfs_label, " (", ?locationName, ")"), 1/0),
-            IF(BOUND(?administrationName), CONCAT(?rdfs_label, " (", ?administrationName, ")"), 1/0)
-        )
-        AS ?altLabelStreetName
-    )
 }
 LIMIT 1000

@@ -7,7 +7,7 @@ CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel_ext ;
         skos:altLabel ?altLabel ;
-        skos:scopeNote ?scopeNote ;
+        skos:scopeNote ?scopeNote_en ;
         skos:broader ?broader ;
         vrank:simpleRank ?score .
     ?broader skos:prefLabel ?broader_prefLabel .
@@ -46,5 +46,7 @@ WHERE {
 
     OPTIONAL {
         ?uri gn:featureCode/gn:name ?scopeNote .
+        # scopeNote is always in English.
+        BIND(STRLANG(?scopeNote, "en") as ?scopeNote_en)
     }
 }
