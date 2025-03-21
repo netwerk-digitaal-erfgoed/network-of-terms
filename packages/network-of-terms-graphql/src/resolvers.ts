@@ -64,9 +64,7 @@ async function queryTerms(
   return resolveTermsResponse(
     results,
     context.catalog,
-    (args.languages ?? []).length > 0
-      ? args.languages[0]
-      : context.catalogLanguage,
+    [...(args.languages ?? []), context.catalogLanguage][0],
     args.languages
   );
 }
@@ -97,7 +95,9 @@ async function lookupTerms(object: any, args: any, context: any) {
             ),
       result:
         result.result instanceof Term
-          ? mapTerm(result.result, args.languages)
+          ? args.languages === undefined
+            ? mapToTerm(result.result, [])
+            : mapToTranslatedTerm(result.result, args.languages)
           : result.result,
       responseTimeMs: result.responseTimeMs,
     };
@@ -127,7 +127,7 @@ function resolveTermsResponse(
     }
 
     const terms = response.result.terms.map(term =>
-      mapTerm(term, resultLanguages)
+      mapToTerm(term, resultLanguages)
     );
 
     return {
@@ -141,7 +141,7 @@ function resolveTermsResponse(
           ? {terms}
           : new TranslatedTerms(
               response.result.terms.map(term =>
-                mapTranslatedTerm(term, resultLanguages)
+                mapToTranslatedTerm(term, resultLanguages)
               )
             ),
       responseTimeMs: response.responseTimeMs,
@@ -154,10 +154,11 @@ class TranslatedTerms {
   constructor(readonly terms: object[]) {}
 }
 
-function mapTranslatedTerm(term: Term, languages: string[]) {
+function mapToTranslatedTerm(term: Term, languages: string[]) {
   return {
+    type: 'TranslatedTerm',
     uri: term.id!.value,
-    prefLabel: filterLiterals(term.prefLabels, languages).map(mapLiterals),
+    prefLabel: filterLiterals(term.prefLabels, languages),
     altLabel: filterLiterals(term.altLabels, languages),
     hiddenLabel: filterLiterals(term.hiddenLabels, languages),
     definition: filterLiterals(term.scopeNotes, languages),
@@ -182,7 +183,7 @@ function mapTranslatedTerm(term: Term, languages: string[]) {
   };
 }
 
-function mapTerm(term: Term, languages: string[]) {
+function mapToTerm(term: Term, languages: string[]) {
   return {
     uri: term.id!.value,
     prefLabel: literalValues(term.prefLabels, languages),
@@ -222,13 +223,6 @@ function filterLiterals(literals: RDF.Literal[], languages: string[]) {
   return literals
     .filter(literal => literal.language === '')
     .map(literal => new Literal(literal.value, 'nl'));
-}
-
-function mapLiterals(literal: RDF.Literal) {
-  return {
-    language: literal.language,
-    value: literal.value,
-  };
 }
 
 function literalValues(literals: RDF.Literal[], languages: string[] = ['nl']) {
@@ -305,7 +299,7 @@ export const resolvers = {
     },
   },
   LookupResult: {
-    resolveType(result: LookupResult) {
+    resolveType(result: LookupResult | {type: 'TranslatedTerm'}) {
       if (result instanceof NotFoundError) {
         return 'NotFoundError';
       }
@@ -316,6 +310,10 @@ export const resolvers = {
 
       if (result instanceof ServerError) {
         return 'ServerError';
+      }
+
+      if (result.type === 'TranslatedTerm') {
+        return 'TranslatedTerm';
       }
 
       return 'Term';
