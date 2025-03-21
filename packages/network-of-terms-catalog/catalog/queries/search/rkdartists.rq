@@ -97,18 +97,18 @@ WHERE {
                     CONCAT(
                         IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
                         IF(STRLEN(?birthPlace_en) > 0, CONCAT("(", ?birthPlace_en, ") "), ""),
-                        IF(BOUND(?deathDate) || BOUND(?deathPlace_en)," - "," – ; ")),
+                        IF(BOUND(?deathDate) || STRLEN(?deathPlace_en) >0, " - ", " – ; ")),
                         ""
                     ),
-                IF(BOUND(?deathDate) || BOUND(?deathPlace_en),
+                IF(BOUND(?deathDate) || STRLEN(?deathPlace_en) > 0,
                     CONCAT(
-                        IF(BOUND(?birthDate) || BOUND(?birthPlace_en), "", "– "),
+                        IF(BOUND(?birthDate) || STRLEN(?birthPlace_en) > 0, "", "– "),
                         IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
-                        IF(STRLEN(?deathPlace_nl) > 0, CONCAT("(", ?deathPlace_en, ")"), ""),
+                        IF(STRLEN(?deathPlace_en) > 0, CONCAT("(", ?deathPlace_en, ")"), ""),
                         "; "),
                         ""
                     ),
-                IF(STRLEN(?additionalTypes_nl) > 0, CONCAT(?additionalTypes_en, ". "), ""),
+                IF(STRLEN(?additionalTypes_en) > 0, CONCAT(?additionalTypes_en, ". "), ""),
                 IF(STRLEN(?descriptions) > 0, CONCAT(?descriptions, ". "), "")
             ),
             "en"
