@@ -76,6 +76,7 @@ WHERE {
     }
     OPTIONAL {
         ?uri skos:exactMatch ?exactMatch_uri .
+        FILTER(?exactMatch_uri != ?uri) # Exclude self-reference.
         ?exactMatch_uri skosxl:prefLabel [
             dcterms:language ?language ;
             skosxl:literalForm ?exactMatch_prefLabel
