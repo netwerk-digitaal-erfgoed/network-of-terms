@@ -96,7 +96,7 @@ async function lookupTerms(object: any, args: any, context: any) {
       result:
         result.result instanceof Term
           ? args.languages === undefined
-            ? mapToTerm(result.result, [])
+            ? mapToTerm(result.result, ['nl'])
             : mapToTranslatedTerm(result.result, args.languages)
           : result.result,
       responseTimeMs: result.responseTimeMs,

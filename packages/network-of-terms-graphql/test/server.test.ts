@@ -204,6 +204,7 @@ describe('Server', () => {
     expect(term.source.uri).toEqual('https://data.rkd.nl/rkdartists');
     expect(term.result.__typename).toEqual('Term');
     expect(term.result.uri).toEqual('https://example.com/resources/art');
+    expect(term.result.prefLabel).toEqual(['Kunstige dingen']);
     expect(term.responseTimeMs).toBeGreaterThan(0);
 
     const termNotFound = body.data.lookup[1];
