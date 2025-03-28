@@ -3,6 +3,7 @@ import {QueryEngine} from '@comunica/query-sparql';
 import memoize from 'memoize';
 
 const queryEngine = new QueryEngine();
+const timeout = 10_000;
 
 export class Genre {
   constructor(
@@ -15,10 +16,14 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre | null> => {
   // We have to fetch first using a single Accept header value of application/rdf+xml, because the Poolparty server
   // does not properly handle complex Accept headers such as those sent by Comunica.
   const result = await fetch(genre.toString(), {
+    signal: AbortSignal.timeout(timeout),
     headers: {
       Accept: 'application/rdf+xml',
     },
   });
+  if (!result.ok) {
+    return null;
+  }
   const xml = await result.text();
   try {
     const data = await queryEngine.queryBindings(
