@@ -72,7 +72,7 @@
       "@value": "Onderwerpen voor het beschrijven van cultureel erfgoed"
     }
   ],
-  "inLanguage": "nl",
+  "inLanguage": ["nl", "en"],
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
@@ -82,11 +82,11 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/cht.rq"
+          "query": "file://catalog/queries/search/poolparty.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/cht.rq"
+          "query": "file://catalog/queries/lookup/poolparty.rq"
         },
         {
           "@type": "Action",
