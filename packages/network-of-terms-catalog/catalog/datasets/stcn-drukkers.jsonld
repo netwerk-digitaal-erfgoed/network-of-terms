@@ -19,14 +19,14 @@
   ],
   "creator": [
     {
-      "@id": "http://data.bibliotheken.nl/doc/thes/p075301482"
+      "@id": "http://data.bibliotheken.nl/id/thes/p075301482"
     }
   ],
   "url": [
     "http://data.bibliotheken.nl/id/thes/"
   ],
   "mainEntityOfPage": [
-    "https://data.bibliotheken.nl/doc/dataset/stcn/printers"
+    "https://data.bibliotheken.nl/KB/-/stories/STCN-persons"
   ],
   "description": [
     {
