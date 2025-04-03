@@ -54,7 +54,7 @@ const shaclValidator = async (): Promise<typeof SHACLValidator> => {
   const shapes = await rdf
     .dataset()
     .import(jsonLdParser.import(fs.createReadStream(shaclPath)));
-  return new SHACLValidator(shapes, {factory: rdf});
+  return new SHACLValidator(shapes);
 };
 
 expect.extend({
