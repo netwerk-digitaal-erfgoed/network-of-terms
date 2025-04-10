@@ -255,7 +255,7 @@ async function source(
     })),
     genres: dataset.genres.map(async genre => ({
       uri: genre.toString(),
-      name: (await dereferenceGenre(genre))?.name ?? 'Unknown',
+      name: (await dereferenceGenre(genre))?.name[catalogLanguage] ?? 'Unknown',
     })),
     features: distribution.features.map((feature: Feature) => ({
       type: Object.entries(FeatureType).find(
