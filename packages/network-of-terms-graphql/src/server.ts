@@ -36,7 +36,6 @@ export async function server(
         catalog,
         comunica,
         catalogLanguage: req.language(['nl', 'en']) || 'nl',
-        termLanguages: req.languages(),
       };
     },
   });
