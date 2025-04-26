@@ -43,7 +43,7 @@
     {
       "@id": "https://data.ihlia.nl/PoolParty/sparql/homosaurus",
       "@type": "DataDownload",
-      "contentUrl": "https://data.ihlia.nl/PoolParty/sparql/homosaurus",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/Homosaurus/services/homosaurus/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
