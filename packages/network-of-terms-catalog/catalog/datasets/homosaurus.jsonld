@@ -43,7 +43,7 @@
     {
       "@id": "https://data.ihlia.nl/PoolParty/sparql/homosaurus",
       "@type": "DataDownload",
-      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/Homosaurus/services/homosaurus/sparql",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/homosaurus/services/homosaurus-virtuoso/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
