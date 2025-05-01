@@ -30,7 +30,7 @@
   "devDependencies": {
     "@comunica/types": "^4.0.2",
     "@types/n3": "^1.24.2",
-    "@types/rdf-ext": "^2.5.0",
+    "@types/rdf-ext": "^2.5.2",
     "gts": "^5.3.1",
     "jsonld-streaming-parser": "^5.0.0",
     "rdf-data-factory": "^2.0.2",
