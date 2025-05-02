@@ -1,0 +1,87 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.kampwesterbork.nl/thesaurus",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Thesaurus Camp Westerbork"
+    },
+    {
+      "@language": "nl",
+      "@value": "Thesaurus Kamp Westerbork"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "westerbork"
+    },
+    {
+      "@language": "nl",
+      "@value": "westerbork"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Gebeurtenissen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://kampwesterbork.nl/"
+    }
+  ],
+  "url": [
+    "https://digitaalerfgoed.poolparty.biz/westerbork/"
+  ],
+  "mainEntityOfPage": [
+    "https://digitaalerfgoed.poolparty.biz/westerbork.html"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects for describing the history of WW2 and Camp Westerbork"
+    },
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen voor het beschrijven van de geschiedenis van de Tweede Wereldoorlog en Kamp Westerbork"
+    }
+  ],
+  "inLanguage": ["nl"],
+  "distribution": [
+    {
+      "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/westerbork",
+      "@type": "DataDownload",
+      "contentUrl": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/westerbork",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
