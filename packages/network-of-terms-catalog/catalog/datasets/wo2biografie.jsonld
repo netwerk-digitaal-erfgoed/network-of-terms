@@ -43,7 +43,7 @@
     {
       "@id": "https://data.niod.nl/PoolParty/sparql/WO2_biografieen",
       "@type": "DataDownload",
-      "contentUrl": "https://data.niod.nl/PoolParty/sparql/WO2_biografieen",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/oorlogsbronnen/services/oorlogsbronnen-virtuoso/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
