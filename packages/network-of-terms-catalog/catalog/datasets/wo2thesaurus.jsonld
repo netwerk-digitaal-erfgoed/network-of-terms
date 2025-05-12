@@ -52,7 +52,7 @@
     {
       "@id": "https://data.niod.nl/PoolParty/sparql/WO2_Thesaurus",
       "@type": "DataDownload",
-      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/oorlogsbronnen/services/oorlogsbronnen-virtuoso/sparql",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/oorlogsbronnen/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
