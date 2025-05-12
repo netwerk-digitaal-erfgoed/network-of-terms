@@ -32,6 +32,21 @@
       "alternateName": "RCE"
     },
     {
+      "@id": "https://kampwesterbork.nl",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Camp Westerbork Memorial Centre"
+        },
+        {
+          "@language": "nl",
+          "@value": "Herinneringscentrum Kamp Westerbork"
+        }
+      ],
+      "alternateName": "Westerbork"
+    },
+    {
       "@id": "https://www.niod.nl",
       "@type": "Organization",
       "name": [
