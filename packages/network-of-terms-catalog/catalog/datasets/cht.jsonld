@@ -77,7 +77,7 @@
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
       "@type": "DataDownload",
-      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/cht/services/cht-virtuoso/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
