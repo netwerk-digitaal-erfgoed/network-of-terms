@@ -53,7 +53,7 @@
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht/materials",
       "@type": "DataDownload",
-      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/cht/services/cht-virtuoso/sparql",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/cht/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
