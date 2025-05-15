@@ -82,7 +82,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/poolparty.rq"
+          "query": "file://catalog/queries/search/cht.rq"
         },
         {
           "@type": "FindAction",
