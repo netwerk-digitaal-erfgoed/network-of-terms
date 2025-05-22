@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://www.geonames.org/full-fuseki",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "GeoNames (Fuseki)"
+    },
+    {
+      "@language": "nl",
+      "@value": "GeoNames (Fuseki)"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.geonames.org/team.html"
+    }
+  ],
+  "url": [
+    "https://sws.geonames.org/"
+  ],
+  "mainEntityOfPage": [
+    "https://www.geonames.org/about.html"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Selection of geographical names such as places, administrative divisions (municipalities, provinces) and water bodies (rivers, streams, lakes etc.)"
+    },
+    {
+      "@language": "nl",
+      "@value": "Selectie van geografische namen zoals plaatsen, administratieve eenheden (gemeentes, provincies) en waterlichamen (rivieren, beken, meren etc.)"
+    }
+  ],
+  "inLanguage": "en",
+  "distribution": [
+    {
+      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames2",
+      "@type": "DataDownload",
+      "contentUrl": "https://demo.netwerkdigitaalerfgoed.nl/geonames2/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://catalog/queries/search/geonames.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://catalog/queries/lookup/geonames.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

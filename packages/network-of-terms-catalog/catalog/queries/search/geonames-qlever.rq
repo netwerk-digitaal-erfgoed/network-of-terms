@@ -1,0 +1,55 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX gn: <https://www.geonames.org/ontology#>
+PREFIX ql: <http://qlever.cs.uni-freiburg.de/builtin-functions/>
+PREFIX text: <http://jena.apache.org/text#>
+PREFIX vrank: <http://purl.org/voc/vrank#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel_ext ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote_en ;
+        skos:broader ?broader ;
+        vrank:simpleRank ?score .
+    ?broader skos:prefLabel ?broader_prefLabel .
+}
+WHERE {
+    {
+        SELECT DISTINCT ?uri (COUNT(?text) as ?score) WHERE {
+            ?uri a gn:Feature ;
+                gn:featureClass ?featureClass .
+            # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
+            VALUES ?featureClass { gn:P gn:L gn:A gn:H }
+
+            ?text ql:contains-entity ?uri ;
+                ql:contains-word ?query .
+        }
+        GROUP BY ?uri
+        ORDER BY DESC(?score)
+        #LIMIT#
+    }
+
+    ?uri gn:name ?prefLabel ;
+        gn:countryCode ?countryCode .
+
+    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
+
+    OPTIONAL {
+        ?uri gn:alternateName ?altLabel .
+        FILTER(?altLabel != "")
+    }
+
+    OPTIONAL {
+        ?uri ?parents ?broader .
+        ?broader gn:name ?broader_prefLabel
+        VALUES ?parents { gn:parentADM1 gn:parentADM2 }
+        # filter out the circular links in the converted data
+        FILTER(?uri != ?broader)
+    }
+
+    OPTIONAL {
+        ?uri gn:featureCode/gn:name ?scopeNote .
+        # scopeNote is always in English.
+        BIND(STRLANG(?scopeNote, "en") as ?scopeNote_en)
+    }
+}
