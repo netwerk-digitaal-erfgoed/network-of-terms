@@ -1,15 +1,15 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://www.geonames.org",
+  "@id": "https://www.geonames.org#nl-be-de",
   "@type": "Dataset",
   "name": [
     {
       "@language": "en",
-      "@value": "GeoNames: global geographical names"
+      "@value": "GeoNames: geographical names in The Netherlands, Belgium and Germany"
     },
     {
       "@language": "nl",
-      "@value": "GeoNames: geografische namen wereldwijd"
+      "@value": "GeoNames: geografische namen in Nederland, België en Duitsland"
     }
   ],
   "genre": [
@@ -41,9 +41,9 @@
   "inLanguage": "en",
   "distribution": [
     {
-      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames2",
+      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames",
       "@type": "DataDownload",
-      "contentUrl": "https://demo.netwerkdigitaalerfgoed.nl/geonames2/sparql",
+      "contentUrl": "https://demo.netwerkdigitaalerfgoed.nl/geonames/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
