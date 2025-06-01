@@ -23,7 +23,7 @@
     "@types/rdfjs__data-model": "2.0.9",
     "jest-dev-server": "11.0.0",
     "ts-node-dev": "2.0.0",
-    "tsc-watch": "6.2.1"
+    "tsc-watch": "7.1.1"
   },
   "scripts": {
     "check": "gts check",
