@@ -50,6 +50,6 @@
     "ldkit": "^2.1.1",
     "memoize": "^10.0.0",
     "rdf-parse": "^3.0.0",
-    "rdf-store-stream": "^2.0.1"
+    "rdf-store-stream": "^3.0.0"
   }
 }
