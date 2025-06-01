@@ -44,7 +44,7 @@
     "pino-pretty": "^13.0.0",
     "pretty-ms": "^9.2.0",
     "rdf-data-factory": "^2.0.2",
-    "rdf-store-stream": "^2.0.1"
+    "rdf-store-stream": "^3.0.0"
   },
   "devDependencies": {
     "@comunica/query-sparql-file": "^4.1.0",
