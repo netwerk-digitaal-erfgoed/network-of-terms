@@ -59,7 +59,22 @@
           "@value": "Instituut voor oorlogs-, holocaust- en genocidestudies"
         }
       ],
-      "alternateName": "NIOD | WO2NET"
+      "alternateName": "NIOD | WO2Net"
+    },
+    {
+      "@id": "https://www.wo2net.nl",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "WO2Net"
+        },
+        {
+          "@language": "nl",
+          "@value": "WO2Net"
+        }
+      ],
+      "alternateName": "WO2Net"
     },
     {
       "@id": "http://www.wereldculturen.nl",
