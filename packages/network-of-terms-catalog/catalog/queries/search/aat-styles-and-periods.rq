@@ -35,6 +35,8 @@ WHERE {
             gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300015646> . # limit results to the "styles and periodes hierarchy name (300015646)"
             ?type rdfs:subClassOf gvp:Subject .
             FILTER (?type != gvp:Subject) .
+#voor het filteren van de gidstermen zodat deze niet toegepast worden in de CMS.
+            FILTER NOT EXISTS { ?uri a gvp:GuideTerm }
             ?uri skosxl:prefLabel [
                 dcterms:language ?language ; # Faster than FILTER(langMatches(...): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
                 skosxl:literalForm ?prefLabel
