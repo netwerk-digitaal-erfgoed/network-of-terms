@@ -23,6 +23,9 @@ WHERE {
     # Bicycles: <http://vocab.getty.edu/aat/300212636>
     # Wars: <http://vocab.getty.edu/aat/300055314>
     VALUES ?uri { ?uris }
+	
+#voor het filteren van de gidstermen zodat deze niet toegepast worden in de CMS.
+    FILTER NOT EXISTS { ?uri a gvp:GuideTerm }
 
     VALUES ?language {
         aat:300388256 # Dutch
