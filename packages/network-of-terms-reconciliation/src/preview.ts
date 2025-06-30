@@ -39,7 +39,7 @@ export function preview(
         ${relatedTerms(locale.narrower, term.narrowerTerms, language)}
         ${relatedTerms(locale.related, term.relatedTerms, language)}
         <dt>${locale.source}</dt>
-        <dd>${source.name} (${source.creators[0]?.alternateName})</dd>
+        <dd>${source.name[language]} (${source.creators[0]?.alternateName[language] ?? source.creators[0]?.alternateName['']})</dd>
       </dl>
       </p><a target="_blank" href="https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=${
         term.id.value

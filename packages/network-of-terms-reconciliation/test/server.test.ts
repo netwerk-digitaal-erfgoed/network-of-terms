@@ -197,6 +197,7 @@ describe('Server', () => {
         '<dt>Gerelateerde termen</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>'
       )
     );
+    expect(response.body).toContain('RKDartists');
   });
 
   it('shows HTML term preview if term has no altLabels', async () => {
