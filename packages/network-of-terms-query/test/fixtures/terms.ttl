@@ -34,7 +34,7 @@
 
 <https://example.com/resources/art>
     a skos:Concept ;
-    skos:prefLabel "All things art"@en, "Kunstige dingen"@nl ;
+    skos:prefLabel "All things art"@en, "Kunstige dingen" ; # last value is fallback and has no language tag on purpose
     skos:altLabel "Art"@en ;
     skos:narrower <https://example.com/resources/artwork> .
 
