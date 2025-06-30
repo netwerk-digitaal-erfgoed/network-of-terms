@@ -1,5 +1,6 @@
 export * from './query.js';
 export * from './catalog.js';
+export * from './literal.js';
 export * from './lookup/lookup.js';
 export * from './terms.js';
 export * from './search/query-mode.js';

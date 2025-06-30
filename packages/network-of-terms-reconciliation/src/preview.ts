@@ -1,5 +1,6 @@
 import {
   Dataset,
+  literalValues,
   LookupQueryResult,
   RelatedTerm,
   Term,
@@ -16,7 +17,7 @@ export function preview(
 ) {
   const term = lookupResult.result;
   if (term instanceof Term) {
-    return `<html>
+    return `<html :lang="language">
     <head>
       <meta charset="utf-8" />
       <style>
@@ -34,9 +35,9 @@ export function preview(
             ? `<dt>${locale.altLabels}</dt><dd>${literal(term.altLabels, language)}</dd>`
             : ''
         }
-        ${relatedTerms(locale.broader, term.broaderTerms)}
-        ${relatedTerms(locale.narrower, term.narrowerTerms)}
-        ${relatedTerms(locale.related, term.relatedTerms)}
+        ${relatedTerms(locale.broader, term.broaderTerms, language)}
+        ${relatedTerms(locale.narrower, term.narrowerTerms, language)}
+        ${relatedTerms(locale.related, term.relatedTerms, language)}
         <dt>${locale.source}</dt>
         <dd>${source.name} (${source.creators[0]?.alternateName})</dd>
       </dl>
@@ -51,12 +52,9 @@ export function preview(
 }
 
 const literal = (values: Literal[], language: string) =>
-  values
-    .filter(value => value.language === language)
-    .map(literal => literal.value)
-    .join(' • ');
+  literalValues(values, [language]).join(' • ');
 
-function relatedTerms(label: string, terms: RelatedTerm[]) {
+function relatedTerms(label: string, terms: RelatedTerm[], language: string) {
   const termsWithPrefLabel = terms.filter(term => term.prefLabels.length > 0);
   if (termsWithPrefLabel.length === 0) {
     return '';
@@ -64,6 +62,9 @@ function relatedTerms(label: string, terms: RelatedTerm[]) {
 
   return `<dt>${label}</dt>
       <dd>${escapeHtml(
-        termsWithPrefLabel.map(term => term.prefLabels[0].value).join(' • ')
+        literal(
+          termsWithPrefLabel.map(term => term.prefLabels[0]),
+          language
+        )
       )}</dd>`;
 }

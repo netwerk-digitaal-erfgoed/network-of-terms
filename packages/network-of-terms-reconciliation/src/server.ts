@@ -41,8 +41,12 @@ export async function server(
   server.register(formBodyPlugin, {parser});
   server.register(fastifyAccepts, {decorateReply: true});
   server.decorateRequest('root', '');
+  server.decorateRequest('preferredLanguage', 'nl');
   server.addHook('onRequest', (request, reply, done) => {
     request.root = request.protocol + '://' + request.hostname;
+    request.preferredLanguage = (request.languages(['nl', 'en']) || 'nl') as
+      | 'nl'
+      | 'en';
     done();
   });
 
@@ -71,7 +75,6 @@ export async function server(
       },
     },
     async (request, reply) => {
-      const language = request.languages(['nl', 'en']) || 'nl';
       // BC for Reconciliation API spec 0.2.
       if (request.body.ids) {
         await extendQuery(
@@ -79,7 +82,7 @@ export async function server(
             termIri => new IRI(termIri)
           ),
           lookupService,
-          language
+          request.preferredLanguage
         );
         reply.send(
           await extendQuery(
@@ -87,7 +90,7 @@ export async function server(
               termIri => new IRI(termIri)
             ),
             lookupService,
-            language
+            request.preferredLanguage
           )
         );
         return;
@@ -105,7 +108,7 @@ export async function server(
           request.body as ReconciliationQueryBatch,
           catalog,
           queryTermsService,
-          language
+          request.preferredLanguage
         )
       );
     }
@@ -130,14 +133,13 @@ export async function server(
         await extendQuery(
           request.body.ids.map(termIri => new IRI(termIri)),
           lookupService,
-          request.languages(['nl', 'en']) || 'nl'
+          request.preferredLanguage
         )
       );
     }
   );
 
   server.get<{Params: {'*': string}}>('/preview/*', async (request, reply) => {
-    const language = (request.language(['en', 'nl']) || 'en') as 'nl' | 'en';
     const termIri = new IRI(request.params['*']);
     const [lookupResult] = await lookupService.lookup([termIri], 10000);
     const source = catalog.getDatasetByDistributionIri(
@@ -146,7 +148,14 @@ export async function server(
 
     reply
       .type('text/html')
-      .send(preview(lookupResult, source, locales[language], language));
+      .send(
+        preview(
+          lookupResult,
+          source,
+          locales[request.preferredLanguage],
+          request.preferredLanguage
+        )
+      );
   });
 
   return server;
@@ -166,5 +175,6 @@ const parser = (string: string) => {
 declare module 'fastify' {
   interface FastifyRequest extends Accepts {
     root: string;
+    preferredLanguage: 'nl' | 'en';
   }
 }

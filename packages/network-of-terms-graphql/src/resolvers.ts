@@ -1,4 +1,6 @@
 import {
+  filterLiteralsByLanguage,
+  literalValues,
   Catalog,
   Dataset,
   Distribution,
@@ -23,7 +25,6 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
 import {dereferenceGenre} from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
-import Literal from '@rdfjs/data-model/lib/Literal.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -158,27 +159,27 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
   return {
     type: 'TranslatedTerm',
     uri: term.id!.value,
-    prefLabel: filterLiterals(term.prefLabels, languages),
-    altLabel: filterLiterals(term.altLabels, languages),
-    hiddenLabel: filterLiterals(term.hiddenLabels, languages),
-    definition: filterLiterals(term.scopeNotes, languages),
-    scopeNote: filterLiterals(term.scopeNotes, languages),
+    prefLabel: filterLiteralsByLanguage(term.prefLabels, languages),
+    altLabel: filterLiteralsByLanguage(term.altLabels, languages),
+    hiddenLabel: filterLiteralsByLanguage(term.hiddenLabels, languages),
+    definition: filterLiteralsByLanguage(term.scopeNotes, languages),
+    scopeNote: filterLiteralsByLanguage(term.scopeNotes, languages),
     seeAlso: term.seeAlso.map((seeAlso: RDF.NamedNode) => seeAlso.value),
     broader: term.broaderTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: filterLiterals(related.prefLabels, languages),
+      prefLabel: filterLiteralsByLanguage(related.prefLabels, languages),
     })),
     narrower: term.narrowerTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: filterLiterals(related.prefLabels, languages),
+      prefLabel: filterLiteralsByLanguage(related.prefLabels, languages),
     })),
     related: term.relatedTerms.map(related => ({
       uri: related.id.value,
-      prefLabel: filterLiterals(related.prefLabels, languages),
+      prefLabel: filterLiteralsByLanguage(related.prefLabels, languages),
     })),
     exactMatch: term.exactMatches.map(exactMatch => ({
       uri: exactMatch.id.value,
-      prefLabel: filterLiterals(exactMatch.prefLabels, languages),
+      prefLabel: filterLiteralsByLanguage(exactMatch.prefLabels, languages),
     })),
   };
 }
@@ -209,30 +210,6 @@ function mapToTerm(term: Term, languages: string[]) {
       prefLabel: literalValues(exactMatch.prefLabels, languages),
     })),
   };
-}
-
-function filterLiterals(literals: RDF.Literal[], languages: string[]) {
-  const preferredLanguageLiterals = literals.filter(literal =>
-    languages.includes(literal.language)
-  );
-  if (preferredLanguageLiterals.length > 0) {
-    return preferredLanguageLiterals;
-  }
-
-  // If literal has no language tag, we assume it is in the Network of Terms’ default language, Dutch.
-  return literals
-    .filter(literal => literal.language === '')
-    .map(literal => new Literal(literal.value, 'nl'));
-}
-
-function literalValues(literals: RDF.Literal[], languages: string[] = ['nl']) {
-  const languageLiterals = filterLiterals(literals, languages);
-  if (languageLiterals.length > 0) {
-    return languageLiterals.map(literal => literal.value);
-  }
-
-  // Fall back to English for sources that provide no Dutch labels.
-  return filterLiterals(literals, ['en']).map(literal => literal.value);
 }
 
 async function source(
