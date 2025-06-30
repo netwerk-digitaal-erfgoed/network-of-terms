@@ -274,17 +274,11 @@ async function reconciliationQuery(
 
 async function dataExtensionQuery({
   url = '/extend',
-  query = {
-    ids: [
-      'https://example.com/resources/artwork',
-      'https://example.com/resources/painter',
-    ],
-    properties: [{id: 'altLabel'}],
-  },
+  query,
   language,
 }: {
   url: string;
-  query: DataExtensionQuery;
+  query?: DataExtensionQuery;
   language?: string;
 }) {
   const headers = {
@@ -295,6 +289,12 @@ async function dataExtensionQuery({
     method: 'POST',
     headers,
     url,
-    payload: query,
+    payload: query ?? {
+      ids: [
+        'https://example.com/resources/artwork',
+        'https://example.com/resources/painter',
+      ],
+      properties: [{id: 'altLabel'}],
+    },
   });
 }
