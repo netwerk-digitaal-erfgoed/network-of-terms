@@ -1,0 +1,15 @@
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+CONSTRUCT {
+  ?s ?p ?o
+}
+WHERE {
+  GRAPH <https://fryslan.regiotermen.nl/personen> {
+    ?s skos:prefLabel ?label ;
+       skos:altLabel ?altLabel ;
+       ?p ?o .
+  }
+  BIND(LCASE(CONCAT(STR(?label), STR(?altLabel))) AS ?text)
+  FILTER(CONTAINS(?text, LCASE(?query)))
+}
+LIMIT 1000
+
