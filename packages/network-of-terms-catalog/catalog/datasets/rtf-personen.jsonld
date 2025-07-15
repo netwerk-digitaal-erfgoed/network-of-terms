@@ -1,0 +1,134 @@
+[
+    {
+        "@id": "https://fryslan.regiotermen.nl/personen",
+        "@type": [
+            "http://schema.org/Dataset"
+        ],
+        "http://schema.org/creator": [
+            {
+                "@id": "https://www.tresoar.nl",
+                "@type": "Organization",
+                "name": [
+                    {
+                        "@language": "en",
+                        "@value": "Tresoar: museum, archive and library Friesland"
+                    },
+                    {
+                        "@language": "nl",
+                        "@value": "Tresoar: museum, archief en bibliotheek Fryslân"
+                    },
+                    {
+                        "@language": "fy",
+                        "@value": "Tresoar: museum, argyf en biblioteek Fryslân"
+                    }
+                ],
+                "alternateName": "Tresoar"
+            }
+        ],
+        "http://schema.org/description": [
+            {
+                "@language": "en",
+                "@value": "Frysian historical persons, a collection of historical figures from the Dutch region of Fryslân."
+            },
+            {
+                "@language": "nl",
+                "@value": "Friese historische personen, een verzameling van historische figuren uit de Nederlandse regio Fryslân."
+            }
+        ],
+        "http://schema.org/distribution": [
+            {
+                "@id": "https://omeka.tresoar.xentropics.cloud/files/datadumps/friese_personen.ttl",
+                "@type": [
+                    "http://schema.org/DataDownload"
+                ],
+                "http://schema.org/contentUrl": [
+                    {
+                        "@id": "https://graph.friesland.regiotermen.nl/repositories/friese_thesaurus"
+                    }
+                ],
+                "http://schema.org/encodingFormat": [
+                    {
+                        "@value": "application/sparql-query"
+                    }
+                ],
+                "http://schema.org/potentialAction": [
+                    {
+                        "@type": [
+                            "http://schema.org/SearchAction"
+                        ],
+                        "http://schema.org/query": [
+                            {
+                                "@value": "file://catalog/queries/search/rtf-personen.rq"
+                            }
+                        ]
+                    },
+                    {
+                        "@type": [
+                            "http://schema.org/FindAction"
+                        ],
+                        "http://schema.org/query": [
+                            {
+                                "@value": "file://catalog/queries/lookup/rtf-personen.rq"
+                            }
+                        ]
+                    },
+                    {
+                        "@type": [
+                            "http://schema.org/Action"
+                        ],
+                        "http://schema.org/target": [
+                            {
+                                "@type": [
+                                    "http://schema.org/EntryPoint"
+                                ],
+                                "http://schema.org/actionApplication": [
+                                    {
+                                        "@id": "https://reconciliation-api.github.io/specs/latest/",
+                                        "@type": [
+                                            "http://schema.org/SoftwareApplication"
+                                        ]
+                                    }
+                                ],
+                                "http://schema.org/urlTemplate": [
+                                    {
+                                        "@value": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "http://schema.org/genre": [
+            {
+                "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+            }
+        ],
+        "http://schema.org/inLanguage": [
+            {
+                "@value": "nl"
+            }
+        ],
+        "http://schema.org/mainEntityOfPage": [
+            {
+                "@id": "https://fryslan.regiotermen.nl/personen"
+            }
+        ],
+        "http://schema.org/name": [
+            {
+                "@language": "en",
+                "@value": "Regiotermen Fryslân: Persons"
+            },
+            {
+                "@language": "nl",
+                "@value": "Regiotermen Fryslân: Personen"
+            }
+        ],
+        "http://schema.org/url": [
+            {
+                "@id": "https://fryslan.regiotermen.nl/"
+            }
+        ]
+    }
+]

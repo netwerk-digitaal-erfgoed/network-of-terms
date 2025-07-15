@@ -297,6 +297,25 @@
         }
       ],
       "alternateName": "CBG"
+    },
+    {
+      "@id": "https://www.tresoar.nl",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Tresoar: museum, archive and library Friesland"
+        },
+        {
+          "@language": "nl",
+          "@value": "Tresoar: museum, archief en bibliotheek Fryslân"
+        },
+        {
+          "@language": "fy",
+          "@value": "Tresoar: museum, argyf en biblioteek Fryslân"
+        }
+      ],
+      "alternateName": "Tresoar"
     }
   ]
 }
