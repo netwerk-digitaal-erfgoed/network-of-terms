@@ -1,15 +1,29 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <https://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
 CONSTRUCT {
-  ?s ?p ?o
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:exactMatch ?exactMatch_uri ;
+        rdfs:seeAlso ?seeAlso_uri .
 }
 WHERE {
-  GRAPH <https://fryslan.regiotermen.nl/personen> {
-    ?s skos:prefLabel ?label ;
-       skos:altLabel ?altLabel ;
-       ?p ?o .
-  }
-  BIND(LCASE(CONCAT(STR(?label), STR(?altLabel))) AS ?text)
-  FILTER(CONTAINS(?text, LCASE(?query)))
-}
-LIMIT 1000
+    GRAPH <https://fryslan.regiotermen.nl/personen> {
+        SELECT * WHERE {
+            ?uri a skos:Concept ;
+                skos:prefLabel ?prefLabel ;
+                skos:altLabel ?altLabel .
 
+            OPTIONAL { ?uri skos:note ?scopeNote }
+
+            FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)) || CONTAINS(LCASE(?altlabel), LCASE(?query)))
+        }
+        #LIMIT#
+    }
+
+    OPTIONAL { ?uri schema:sameAs ?exactMatch_uri }
+    OPTIONAL { ?uri schema:mainEntityOfPage ?seeAlso_uri }
+}
