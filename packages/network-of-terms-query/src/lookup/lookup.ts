@@ -12,7 +12,7 @@ import {Term} from '../terms.js';
 import {clientQueriesCounter} from '../instrumentation.js';
 
 export type LookupQueryResult = {
-  uri: IRI;
+  uri: string;
   distribution: SourceResult;
   result: LookupResult;
 
@@ -26,7 +26,7 @@ export type LookupResult = Term | NotFoundError | TimeoutError | ServerError;
 export class SourceNotFoundError {
   readonly message: string;
 
-  constructor(readonly iri: IRI) {
+  constructor(readonly iri: string) {
     this.message = `No source found that can provide term with URI ${iri}`;
   }
 }
@@ -34,7 +34,7 @@ export class SourceNotFoundError {
 export class NotFoundError {
   readonly message: string;
 
-  constructor(readonly iri: IRI) {
+  constructor(readonly iri: string) {
     this.message = `No term found with URI ${iri}`;
   }
 }
@@ -46,7 +46,7 @@ export class LookupService {
   ) {}
 
   public async lookup(
-    iris: IRI[],
+    iris: string[],
     timeoutMs: number
   ): Promise<LookupQueryResult[]> {
     const irisToDataset = iris.reduce((acc, iri) => {
@@ -59,10 +59,7 @@ export class LookupService {
 
     const datasetToIris = [...irisToDataset].reduce(
       (datasetMap, [iri, dataset]) => {
-        datasetMap.set(dataset, [
-          ...(datasetMap.get(dataset) ?? []),
-          new IRI(iri),
-        ]);
+        datasetMap.set(dataset, [...(datasetMap.get(dataset) ?? []), iri]);
         return datasetMap;
       },
       new Map<Dataset, IRI[]>()
@@ -86,7 +83,7 @@ export class LookupService {
           for (const term of response.result.terms) {
             if (term.datasetIri !== undefined) {
               const termsDataset = this.catalog.getDatasetByIri(
-                new IRI(term.datasetIri.value)
+                term.datasetIri.value
               );
               if (termsDataset !== undefined) {
                 dataset = termsDataset;
@@ -135,7 +132,7 @@ export class LookupService {
   }
 }
 
-function result(result: TermsResult, iri: IRI): LookupResult {
+function result(result: TermsResult, iri: string): LookupResult {
   if (result instanceof Error) {
     return result;
   }

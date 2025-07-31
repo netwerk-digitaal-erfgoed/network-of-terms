@@ -10,7 +10,6 @@ import nl from './locales/nl.json' with {type: 'json'};
 import {
   Catalog,
   getHttpLogger,
-  IRI,
   LookupService,
   QueryTermsService,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -55,7 +54,7 @@ export async function server(
   });
 
   server.get<{Params: {'*': string}}>('/reconcile/*', (request, reply) => {
-    const dataset = new IRI(request.params['*']);
+    const dataset = request.params['*'];
     const manifest = findManifest(dataset, catalog, request.root);
     if (manifest === undefined) {
       reply.code(404).send();
@@ -78,24 +77,20 @@ export async function server(
       // BC for Reconciliation API spec 0.2.
       if (request.body.ids) {
         await extendQuery(
-          (request.body as DataExtensionQuery).ids.map(
-            termIri => new IRI(termIri)
-          ),
+          (request.body as DataExtensionQuery).ids.map(termIri => termIri),
           lookupService,
           request.preferredLanguage
         );
         reply.send(
           await extendQuery(
-            (request.body as DataExtensionQuery).ids.map(
-              termIri => new IRI(termIri)
-            ),
+            (request.body as DataExtensionQuery).ids.map(termIri => termIri),
             lookupService,
             request.preferredLanguage
           )
         );
         return;
       }
-      const dataset = new IRI(request.params['*']);
+      const dataset = request.params['*'];
       const manifest = findManifest(dataset, catalog, request.root);
       if (manifest === undefined) {
         reply.code(404).send();
@@ -131,7 +126,7 @@ export async function server(
     async (request, reply) => {
       reply.send(
         await extendQuery(
-          request.body.ids.map(termIri => new IRI(termIri)),
+          request.body.ids,
           lookupService,
           request.preferredLanguage
         )
@@ -140,7 +135,7 @@ export async function server(
   );
 
   server.get<{Params: {'*': string}}>('/preview/*', async (request, reply) => {
-    const termIri = new IRI(request.params['*']);
+    const termIri = request.params['*'];
     const [lookupResult] = await lookupService.lookup([termIri], 10000);
     const source = catalog.getDatasetByDistributionIri(
       lookupResult.distribution.iri

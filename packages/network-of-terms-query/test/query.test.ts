@@ -1,5 +1,5 @@
 import {testCatalog} from '../src/server-test.js';
-import {IRI, QueryMode, QueryTermsService} from '../src/index.js';
+import {QueryMode, QueryTermsService} from '../src/index.js';
 import {QueryEngine} from '@comunica/query-sparql';
 import {ArrayIterator} from 'asynciterator';
 import {jest} from '@jest/globals';
@@ -22,7 +22,7 @@ describe('Query', () => {
   });
   it('passes dataset IRI query parameter to Comunica', async () => {
     const config = await query(
-      new IRI('https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql')
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
     );
     expect(config.initialBindings.get('datasetUri')?.value).toEqual(
       'https://data.rkd.nl/rkdartists'
@@ -31,7 +31,7 @@ describe('Query', () => {
 
   it('supports HTTP authentication', async () => {
     const config = await query(
-      new IRI('https://data.beeldengeluid.nl/id/datadownload/0026')
+      'https://data.beeldengeluid.nl/id/datadownload/0026'
     );
 
     // Must not contain credentials in URL...
@@ -43,7 +43,7 @@ describe('Query', () => {
   });
 });
 
-const query = async (iri: IRI) => {
+const query = async (iri: string) => {
   const dataset = catalog.getDatasetByDistributionIri(iri)!;
   await service.search(
     'van gogh',

@@ -30,11 +30,11 @@ const schemaBase = Joi.object({
 });
 
 const schemaQuery = schemaBase.append({
-  source: Joi.object().required(),
+  source: Joi.string().required(),
 });
 
 const schemaQueryAll = schemaBase.append({
-  sources: Joi.array().items(Joi.object().required()).min(1).required(),
+  sources: Joi.array().items(Joi.string().required()).min(1).required(),
 });
 
 export class DistributionsService {

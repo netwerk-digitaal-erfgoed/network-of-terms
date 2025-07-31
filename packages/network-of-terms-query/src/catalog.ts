@@ -154,4 +154,4 @@ export enum FeatureType {
  */
 export type Distribution = SparqlDistribution;
 
-export class IRI extends URL {}
+export type IRI = string;
