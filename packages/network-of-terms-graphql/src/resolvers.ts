@@ -8,7 +8,6 @@ import {
   Error,
   Feature,
   FeatureType,
-  IRI,
   LookupQueryResult,
   LookupResult,
   LookupService,
@@ -56,7 +55,7 @@ async function queryTerms(
     comunica: context.comunica,
   });
   const results = await service.queryAll({
-    sources: args.sources.map((datasetIri: string) => new IRI(datasetIri)),
+    sources: args.sources,
     query: args.query,
     queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     limit: args.limit,
@@ -76,10 +75,7 @@ async function lookupTerms(object: any, args: any, context: any) {
     context.catalog,
     new QueryTermsService({comunica: context.comunica, logger: context.app.log})
   );
-  const results = await service.lookup(
-    args.uris.map((iri: string) => new IRI(iri)),
-    args.timeoutMs
-  );
+  const results = await service.lookup(args.uris, args.timeoutMs);
 
   return results.map((result: LookupQueryResult) => {
     return {

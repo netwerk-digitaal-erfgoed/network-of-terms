@@ -5,7 +5,6 @@ import {
   DistributionsService,
   Error,
   getCliLogger,
-  IRI,
   QueryMode,
   Term,
   TermsResponse,
@@ -98,7 +97,7 @@ export class QuerySourcesCommand extends Command {
     const {flags} = await this.parse(QuerySourcesCommand);
     const sources = flags.uris
       .split(',')
-      .map((distributionId: string) => new IRI(distributionId.trim()));
+      .map((distributionId: string) => distributionId.trim());
 
     const logger = getCliLogger({
       name: 'cli',
