@@ -146,6 +146,7 @@ export class QueryTermsService {
       log: logger,
       httpAuth: url.username === '' ? '' : url.username + ':' + url.password,
       httpTimeout: timeoutMs,
+      httpBodyTimeout: true,
       sources: [
         {
           type: 'sparql',
