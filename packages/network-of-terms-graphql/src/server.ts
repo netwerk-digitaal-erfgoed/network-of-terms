@@ -19,15 +19,15 @@ import fastifyAccepts from '@fastify/accepts';
 
 export async function server(
   catalog: Catalog,
-  config: EnvSchemaData
+  config: EnvSchemaData,
 ): Promise<FastifyInstance<Server>> {
   const logger: FastifyLoggerOptions = getHttpLogger({
     name: 'http',
     level: 'info',
   });
   const server = fastify({logger, trustProxy: config.TRUST_PROXY as boolean});
-  server.register(fastifyAccepts);
-  server.register(mercurius, {
+  await server.register(fastifyAccepts);
+  await server.register(mercurius, {
     schema: schema(catalog.getLanguages()),
     resolvers,
     graphiql: true,
@@ -39,15 +39,15 @@ export async function server(
       };
     },
   });
-  server.register(fastifyCors);
-  server.register(mercuriusLogging, {
+  await server.register(fastifyCors);
+  await server.register(mercuriusLogging, {
     logBody: true,
   });
   server.route({
     method: 'GET',
     url: '/',
     handler: (req, reply) => {
-      reply.redirect('/graphiql');
+      void reply.redirect('/graphiql');
     },
   });
 
@@ -56,7 +56,7 @@ export async function server(
     method: 'GET',
     url: '/playground',
     handler: (req, reply) => {
-      reply.redirect('/graphiql', 301);
+      void reply.redirect('/graphiql', 301);
     },
   });
 

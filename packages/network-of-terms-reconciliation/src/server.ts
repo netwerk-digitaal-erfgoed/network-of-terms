@@ -25,7 +25,7 @@ import {EnvSchemaData} from 'env-schema';
 
 export async function server(
   catalog: Catalog,
-  config: EnvSchemaData
+  config: EnvSchemaData,
 ): Promise<FastifyInstance> {
   const logger: FastifyLoggerOptions = getHttpLogger({
     name: 'http',
@@ -36,9 +36,9 @@ export async function server(
   const lookupService = new LookupService(catalog, queryTermsService);
 
   const server = fastify({logger, trustProxy: config.TRUST_PROXY as boolean});
-  server.register(fastifyCors);
-  server.register(formBodyPlugin, {parser});
-  server.register(fastifyAccepts, {decorateReply: true});
+  void server.register(fastifyCors);
+  void server.register(formBodyPlugin, {parser});
+  void server.register(fastifyAccepts, {decorateReply: true});
   server.decorateRequest('root', '');
   server.decorateRequest('preferredLanguage', 'nl');
   server.addHook('onRequest', (request, reply, done) => {
@@ -50,17 +50,17 @@ export async function server(
   });
 
   server.get('/reconcile', (request, reply) => {
-    reply.send('ok');
+    void reply.send('ok');
   });
 
   server.get<{Params: {'*': string}}>('/reconcile/*', (request, reply) => {
     const dataset = request.params['*'];
     const manifest = findManifest(dataset, catalog, request.root);
     if (manifest === undefined) {
-      reply.code(404).send();
+      void reply.code(404).send();
       return;
     }
-    reply.send(manifest);
+    void reply.send(manifest);
   });
 
   server.post<{
@@ -76,41 +76,36 @@ export async function server(
     async (request, reply) => {
       // BC for Reconciliation API spec 0.2.
       if (request.body.ids) {
-        await extendQuery(
-          (request.body as DataExtensionQuery).ids.map(termIri => termIri),
-          lookupService,
-          request.preferredLanguage
-        );
-        reply.send(
+        void reply.send(
           await extendQuery(
             (request.body as DataExtensionQuery).ids.map(termIri => termIri),
             lookupService,
-            request.preferredLanguage
-          )
+            request.preferredLanguage,
+          ),
         );
         return;
       }
       const dataset = request.params['*'];
       const manifest = findManifest(dataset, catalog, request.root);
       if (manifest === undefined) {
-        reply.code(404).send();
+        void reply.code(404).send();
         return;
       }
 
-      reply.send(
+      void reply.send(
         await reconciliationQuery(
           dataset,
           request.body as ReconciliationQueryBatch,
           catalog,
           queryTermsService,
-          request.preferredLanguage
-        )
+          request.preferredLanguage,
+        ),
       );
-    }
+    },
   );
 
   server.get('/extend/propose', (request, reply) => {
-    reply.send({
+    void reply.send({
       type: 'Concept',
       properties: dataExtensionProperties,
     });
@@ -124,32 +119,32 @@ export async function server(
       },
     },
     async (request, reply) => {
-      reply.send(
+      void reply.send(
         await extendQuery(
           request.body.ids,
           lookupService,
-          request.preferredLanguage
-        )
+          request.preferredLanguage,
+        ),
       );
-    }
+    },
   );
 
   server.get<{Params: {'*': string}}>('/preview/*', async (request, reply) => {
     const termIri = request.params['*'];
     const [lookupResult] = await lookupService.lookup([termIri], 10000);
     const source = catalog.getDatasetByDistributionIri(
-      lookupResult.distribution.iri
+      lookupResult.distribution.iri,
     )!;
 
-    reply
+    void reply
       .type('text/html')
       .send(
         preview(
           lookupResult,
           source,
           locales[request.preferredLanguage],
-          request.preferredLanguage
-        )
+          request.preferredLanguage,
+        ),
       );
   });
 

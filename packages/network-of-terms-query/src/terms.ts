@@ -14,14 +14,14 @@ export class Term {
     readonly relatedTerms: RelatedTerm[],
     readonly exactMatches: RelatedTerm[],
     readonly datasetIri: RDF.Term | undefined,
-    readonly score: RDF.Literal | undefined
+    readonly score: RDF.Literal | undefined,
   ) {}
 }
 
 export class RelatedTerm {
   constructor(
     readonly id: RDF.Term,
-    readonly prefLabels: RDF.Literal[]
+    readonly prefLabels: RDF.Literal[],
   ) {}
 }
 
@@ -110,12 +110,12 @@ export class TermsTransformer {
         term.seeAlso,
         this.mapRelatedTerms(term.broaderTerms).sort(alphabeticallyByPrefLabel),
         this.mapRelatedTerms(term.narrowerTerms).sort(
-          alphabeticallyByPrefLabel
+          alphabeticallyByPrefLabel,
         ),
         this.mapRelatedTerms(term.relatedTerms).sort(alphabeticallyByPrefLabel),
         this.mapRelatedTerms(term.exactMatches).sort(alphabeticallyByPrefLabel),
         term.inScheme,
-        term.score
+        term.score,
       );
     });
   }

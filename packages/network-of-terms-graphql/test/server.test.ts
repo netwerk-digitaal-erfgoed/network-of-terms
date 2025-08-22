@@ -43,7 +43,7 @@ describe('Server', () => {
             }
           }
         }
-      `
+      `,
     );
     expect(body.data.sources).toHaveLength(catalog.datasets.length);
     expect(body.data.sources[3].uri).toEqual('https://data.rkd.nl/rkdartists');
@@ -62,10 +62,10 @@ describe('Server', () => {
 
   it('responds to GraphQL terms query when source does not exist', async () => {
     const body = await query(
-      termsQuery({sources: ['https://example.com/does-not-exist']})
+      termsQuery({sources: ['https://example.com/does-not-exist']}),
     );
     expect(body.errors[0].message).toEqual(
-      'Source with URI "https://example.com/does-not-exist" not found'
+      'Source with URI "https://example.com/does-not-exist" not found',
     );
   });
 
@@ -73,7 +73,7 @@ describe('Server', () => {
     const body = await query(
       termsQuery({
         sources: ['https://example.com/distributions/endpoint-error'],
-      })
+      }),
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('ServerError');
@@ -86,7 +86,7 @@ describe('Server', () => {
           'https://example.com/distributions/timeout',
           'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
         ],
-      })
+      }),
     );
     expect(body.data.terms).toHaveLength(2);
     expect(body.data.terms[0].result.__typename).toEqual('TimeoutError');
@@ -96,12 +96,12 @@ describe('Server', () => {
 
   it('responds to successful GraphQL terms query', async () => {
     const body = await query(
-      termsQuery({sources: ['https://data.rkd.nl/rkdartists'], query: '.*'})
+      termsQuery({sources: ['https://data.rkd.nl/rkdartists'], query: '.*'}),
     );
     expect(body.data.terms).toHaveLength(1); // Source.
     expect(body.data.terms[0].source.name).toEqual('RKDartists');
     expect(body.data.terms[0].source.uri).toEqual(
-      'https://data.rkd.nl/rkdartists'
+      'https://data.rkd.nl/rkdartists',
     );
     expect(body.data.terms[0].source.inLanguage).toEqual(['en', 'nl']);
     expect(body.data.terms[0].result.__typename).toEqual('Terms');
@@ -110,7 +110,7 @@ describe('Server', () => {
 
     const artwork = body.data.terms[0].result.terms.find(
       (term: {uri: string}) =>
-        term.uri === 'https://example.com/resources/artwork'
+        term.uri === 'https://example.com/resources/artwork',
     );
     expect(artwork.seeAlso).toEqual(['https://example.com/html/artwork']);
     expect(artwork.definition).toEqual([
@@ -124,7 +124,7 @@ describe('Server', () => {
     ]);
 
     const prefLabels = body.data.terms[0].result.terms.map(
-      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
+      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? '',
     );
     expect(prefLabels).toEqual([
       'Rembrandt',
@@ -135,7 +135,7 @@ describe('Server', () => {
     ]); // Results with score must come first.
 
     const relatedPrefLabels = artwork.related.map(
-      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? ''
+      ({prefLabel}: {prefLabel: string[]}) => prefLabel[0] ?? '',
     );
     expect(relatedPrefLabels).toEqual(['', 'Kunstige dingen', 'Rembrandt']); // Sorted alphabetically.
   });
@@ -146,7 +146,7 @@ describe('Server', () => {
         sources: ['https://data.rkd.nl/rkdartists'],
         query: '.*',
         languages: ['en', 'nl'],
-      })
+      }),
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
@@ -164,11 +164,11 @@ describe('Server', () => {
           'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
         ],
         query: '.*',
-      })
+      }),
     );
     expect(body.data.terms).toHaveLength(1); // Source.
     expect(body.data.terms[0].source.uri).toEqual(
-      'https://data.rkd.nl/rkdartists'
+      'https://data.rkd.nl/rkdartists',
     );
     expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
   });
@@ -181,7 +181,7 @@ describe('Server', () => {
         ],
         query: '.*',
         limit: 1,
-      })
+      }),
     );
     expect(body.data.terms[0].result.terms).toHaveLength(1); // Terms found.
   });
@@ -196,7 +196,7 @@ describe('Server', () => {
           'https://data.cultureelerfgoed.nl/term/id/cht/server-error',
           'http://vocab.getty.edu/aat/timeout',
         ],
-      })
+      }),
     );
 
     const term = body.data.lookup[0];
@@ -210,7 +210,7 @@ describe('Server', () => {
 
     const termNotFound = body.data.lookup[1];
     expect(termNotFound.uri).toEqual(
-      'https://example.com/resources/iri-does-not-exist-in-dataset'
+      'https://example.com/resources/iri-does-not-exist-in-dataset',
     );
     expect(termNotFound.source.name).toEqual('RKDartists');
     expect(termNotFound.result.__typename).toEqual('NotFoundError');
@@ -218,16 +218,16 @@ describe('Server', () => {
     const sourceNotFound = body.data.lookup[2];
     expect(sourceNotFound.source.__typename).toEqual('SourceNotFoundError');
     expect(sourceNotFound.source.message).toEqual(
-      'No source found that can provide term with URI https://example.com/does-not-exist'
+      'No source found that can provide term with URI https://example.com/does-not-exist',
     );
     expect(sourceNotFound.result.__typename).toEqual('NotFoundError');
     expect(sourceNotFound.result.message).toEqual(
-      'No term found with URI https://example.com/does-not-exist'
+      'No term found with URI https://example.com/does-not-exist',
     );
 
     const serverError = body.data.lookup[3];
     expect(serverError.uri).toEqual(
-      'https://data.cultureelerfgoed.nl/term/id/cht/server-error'
+      'https://data.cultureelerfgoed.nl/term/id/cht/server-error',
     );
     expect(serverError.result.__typename).toEqual('ServerError');
 
@@ -241,7 +241,7 @@ describe('Server', () => {
       lookupQuery({
         uris: ['https://example.com/resources/art'],
         languages: ['en'],
-      })
+      }),
     );
     const term = body.data.lookup[0];
     expect(term.result.__typename).toEqual('TranslatedTerm');
@@ -273,7 +273,7 @@ describe('Server', () => {
       });
       expect(response.statusCode).toEqual(statusCode);
       expect(response.headers.location).toEqual('/graphiql');
-    }
+    },
   );
 });
 

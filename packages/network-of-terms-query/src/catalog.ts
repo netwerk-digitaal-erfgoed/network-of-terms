@@ -13,20 +13,20 @@ export class Catalog {
   public getDatasetByIri(iri: IRI): Dataset | undefined {
     return (
       this.datasets.find(
-        dataset => dataset.iri.toString() === iri.toString()
+        dataset => dataset.iri.toString() === iri.toString(),
       ) ?? this.getDatasetByDistributionIri(iri)
     );
   }
 
   public getDatasetsSortedByName(languageCode: string): Dataset[] {
     return [...this.datasets].sort((a, b) =>
-      a.name[languageCode].localeCompare(b.name[languageCode])
+      a.name[languageCode].localeCompare(b.name[languageCode]),
     );
   }
 
   public getDatasetByDistributionIri(iri: IRI): Dataset | undefined {
     return this.datasets.find(
-      dataset => dataset.getDistributionByIri(iri) !== undefined
+      dataset => dataset.getDistributionByIri(iri) !== undefined,
     );
   }
 
@@ -41,13 +41,13 @@ export class Catalog {
   }
 
   public getDistributionsProvidingFeature(
-    featureType: FeatureType
+    featureType: FeatureType,
   ): Distribution[] {
     return this.datasets.reduce<Distribution[]>((acc, dataset) => {
       return [
         ...acc,
         ...dataset.distributions.filter(distribution =>
-          distribution.hasFeature(featureType)
+          distribution.hasFeature(featureType),
         ),
       ];
     }, []);
@@ -61,7 +61,7 @@ export class Catalog {
       ...new Set(
         this.datasets.reduce<string[]>((acc, dataset) => {
           return [...acc, ...dataset.inLanguage];
-        }, [])
+        }, []),
       ),
     ];
   }
@@ -82,7 +82,7 @@ export class Catalog {
             return acc;
           }, new Map<string, IRI>())
           .entries(),
-      ].sort(([a], [b]) => b.localeCompare(a))
+      ].sort(([a], [b]) => b.localeCompare(a)),
     );
   }
 }
@@ -100,18 +100,18 @@ export class Dataset {
     readonly inLanguage: string[],
     readonly creators: [Organization],
     readonly distributions: [Distribution],
-    readonly alternateName: StringDictionary = {}
+    readonly alternateName: StringDictionary = {},
   ) {}
 
   public getSparqlDistribution(): Distribution | undefined {
     return this.distributions.find(
-      distribution => distribution instanceof SparqlDistribution
+      distribution => distribution instanceof SparqlDistribution,
     );
   }
 
   public getDistributionByIri(iri: IRI): Distribution | undefined {
     return this.distributions.find(
-      distribution => distribution.iri.toString() === iri.toString()
+      distribution => distribution.iri.toString() === iri.toString(),
     );
   }
 }
@@ -120,7 +120,7 @@ export class Organization {
   constructor(
     readonly iri: IRI,
     readonly name: StringDictionary,
-    readonly alternateName: StringDictionary
+    readonly alternateName: StringDictionary,
   ) {}
 }
 
@@ -130,7 +130,7 @@ export class SparqlDistribution {
     readonly endpoint: IRI,
     readonly searchQuery: string,
     readonly lookupQuery: string,
-    readonly features: Feature[] = []
+    readonly features: Feature[] = [],
   ) {}
 
   public hasFeature(feature: FeatureType) {
@@ -141,7 +141,7 @@ export class SparqlDistribution {
 export class Feature {
   constructor(
     readonly type: FeatureType,
-    readonly url: URL
+    readonly url: URL,
   ) {}
 }
 

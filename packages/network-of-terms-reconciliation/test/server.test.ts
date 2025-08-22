@@ -53,14 +53,14 @@ describe('Server', () => {
 
     // This distribution exists, but does not have reconciliation enabled.
     const notFoundResponse = await reconciliationQuery(
-      'https://example.com/distributions/timeout'
+      'https://example.com/distributions/timeout',
     );
     expect(notFoundResponse.statusCode).toEqual(404);
   });
 
   it('responds to successful reconciliation API requests', async () => {
     const response = await reconciliationQuery(
-      'https://data.rkd.nl/rkdartists'
+      'https://data.rkd.nl/rkdartists',
     );
     expect(response.statusCode).toEqual(200);
     const results = JSON.parse(response.body);
@@ -79,7 +79,7 @@ describe('Server', () => {
     expect(results.q2.result[0].name).toEqual('Kunstige dingen');
     expect(results.q2.result[0].score).toEqual(62.5); // Match of ‘things’ in prefLabel ‘All things art’.
     expect(results.q2.result[1].description).toEqual(
-      'mooie geschilderde dingen • en nog meer'
+      'mooie geschilderde dingen • en nog meer',
     ); // Result has no prefLabel.
     expect(results.q2.result[1].score).toEqual(28.57); // Match of ‘things’ in altLabel ‘painted things that can be beautiful’.
 
@@ -88,7 +88,7 @@ describe('Server', () => {
 
   it('responds to successful reconciliation API request with backwards compatible distribution URI', async () => {
     const response = await reconciliationQuery(
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
     );
     expect(response.statusCode).toEqual(200);
     const results = JSON.parse(response.body);
@@ -114,7 +114,7 @@ describe('Server', () => {
           query: 'art',
           limit: 1,
         },
-      }
+      },
     );
     expect(response.statusCode).toEqual(200);
     const results = JSON.parse(response.body);
@@ -132,17 +132,17 @@ describe('Server', () => {
           // @ts-ignore string on purpose where a number should be.
           limit: 'not a valid a limit',
         },
-      }
+      },
     );
     expect(response.statusCode).toEqual(400);
     expect(JSON.parse(response.body).message).toEqual(
-      "body/q1/limit must be integer, body must have required property 'ids', body must match a schema in anyOf"
+      "body/q1/limit must be integer, body must have required property 'ids', body must match a schema in anyOf",
     );
   });
 
   it('handles source timeouts for reconciliation requests', async () => {
     const response = await reconciliationQuery(
-      'https://example.com/distributions/endpoint-error'
+      'https://example.com/distributions/endpoint-error',
     );
     expect(response.statusCode).toEqual(200);
   });
@@ -194,8 +194,8 @@ describe('Server', () => {
     expect(response.body).toMatch('One of the most famous Dutch paintings');
     expect(response.body).toMatch(
       new RegExp(
-        '<dt>Gerelateerde termen</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>'
-      )
+        '<dt>Gerelateerde termen</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>',
+      ),
     );
     expect(response.body).toContain('RKDartists');
   });
@@ -226,12 +226,12 @@ describe('Server', () => {
     expect(response.body).toMatch('<h1>The Night Watch</h1>');
     expect(response.body).toMatch('One of the most famous Dutch paintings');
     expect(response.body).toMatch(
-      '<dt>Alternative labels</dt><dd>Night Watch alt</dd>'
+      '<dt>Alternative labels</dt><dd>Night Watch alt</dd>',
     );
     expect(response.body).toMatch(
       new RegExp(
-        '<dt>Related terms</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>'
-      )
+        '<dt>Related terms</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>',
+      ),
     );
   });
 
@@ -258,7 +258,7 @@ async function reconciliationQuery(
     q3: {
       query: 'This yields no results',
     },
-  }
+  },
 ) {
   return httpServer.inject({
     method: 'POST',

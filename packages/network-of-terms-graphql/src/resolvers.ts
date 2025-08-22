@@ -31,8 +31,8 @@ async function listSources(object: any, args: any, context: any): Promise<any> {
     .getDatasetsSortedByName(context.catalogLanguage)
     .flatMap((dataset: Dataset) =>
       dataset.distributions.map(distribution =>
-        source(distribution, dataset, context.catalogLanguage)
-      )
+        source(distribution, dataset, context.catalogLanguage),
+      ),
     );
 }
 
@@ -47,7 +47,7 @@ async function queryTerms(
     languages: string[];
   },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  context: any
+  context: any,
 ): Promise<unknown> {
   const service = new DistributionsService({
     logger: context.app.log,
@@ -65,7 +65,7 @@ async function queryTerms(
     results,
     context.catalog,
     [...(args.languages ?? []), context.catalogLanguage][0],
-    args.languages
+    args.languages,
   );
 }
 
@@ -73,7 +73,10 @@ async function queryTerms(
 async function lookupTerms(object: any, args: any, context: any) {
   const service = new LookupService(
     context.catalog,
-    new QueryTermsService({comunica: context.comunica, logger: context.app.log})
+    new QueryTermsService({
+      comunica: context.comunica,
+      logger: context.app.log,
+    }),
   );
   const results = await service.lookup(args.uris, args.timeoutMs);
 
@@ -86,9 +89,9 @@ async function lookupTerms(object: any, args: any, context: any) {
           : source(
               result.distribution,
               context.catalog.getDatasetByDistributionIri(
-                result.distribution.iri
+                result.distribution.iri,
               )!,
-              context.catalogLanguage
+              context.catalogLanguage,
             ),
       result:
         result.result instanceof Term
@@ -105,7 +108,7 @@ function resolveTermsResponse(
   results: TermsResponse[],
   catalog: Catalog,
   catalogLanguage: string,
-  resultLanguages: string[]
+  resultLanguages: string[],
 ) {
   return results.map((response: TermsResponse) => {
     if (response.result instanceof Error) {
@@ -113,9 +116,9 @@ function resolveTermsResponse(
         source: source(
           response.result.distribution,
           catalog.getDatasetByDistributionIri(
-            response.result.distribution.iri
+            response.result.distribution.iri,
           )!,
-          catalogLanguage
+          catalogLanguage,
         ),
         result: response.result,
         responseTimeMs: response.responseTimeMs,
@@ -124,22 +127,22 @@ function resolveTermsResponse(
     }
 
     const terms = response.result.terms.map(term =>
-      mapToTerm(term, resultLanguages)
+      mapToTerm(term, resultLanguages),
     );
 
     return {
       source: source(
         response.result.distribution,
         catalog.getDatasetByDistributionIri(response.result.distribution.iri)!,
-        catalogLanguage
+        catalogLanguage,
       ),
       result:
         resultLanguages === undefined
           ? {terms}
           : new TranslatedTerms(
               response.result.terms.map(term =>
-                mapToTranslatedTerm(term, resultLanguages)
-              )
+                mapToTranslatedTerm(term, resultLanguages),
+              ),
             ),
       responseTimeMs: response.responseTimeMs,
       terms, // For BC.
@@ -211,7 +214,7 @@ function mapToTerm(term: Term, languages: string[]) {
 async function source(
   distribution: Distribution,
   dataset: Dataset,
-  catalogLanguage: string
+  catalogLanguage: string,
 ) {
   return {
     uri: dataset.iri,
@@ -232,7 +235,7 @@ async function source(
     })),
     features: distribution.features.map((feature: Feature) => ({
       type: Object.entries(FeatureType).find(
-        ([_, val]) => val === feature.type
+        ([_, val]) => val === feature.type,
       )?.[0],
       url: feature.url.toString(),
     })),

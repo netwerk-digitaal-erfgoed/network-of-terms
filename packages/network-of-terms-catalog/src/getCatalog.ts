@@ -130,7 +130,7 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
             new Organization(
               dataset.creator.$id,
               dataset.creator.name,
-              dataset.creator.alternateName
+              dataset.creator.alternateName,
             ),
           ],
           [
@@ -138,16 +138,16 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
               dataset.distribution.$id,
               dataset.distribution.contentUrl,
               dataset.distribution.potentialAction.filter(action =>
-                action.types.includes(schema.SearchAction)
+                action.types.includes(schema.SearchAction),
               )[0].query!,
               dataset.distribution.potentialAction.filter(action =>
-                action.types.includes(schema.FindAction)
+                action.types.includes(schema.FindAction),
               )[0].query!,
               dataset.distribution.potentialAction
                 .filter(
                   action =>
                     action.target?.actionApplication.$id ===
-                    'https://reconciliation-api.github.io/specs/latest/'
+                    'https://reconciliation-api.github.io/specs/latest/',
                 )
                 .map(
                   reconciliation =>
@@ -156,16 +156,16 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
                       new URL(
                         reconciliation.target!.urlTemplate!.replace(
                           '{dataset}',
-                          dataset.$id.replace('#', '%23') // Escape # in URL.
-                        )
-                      )
-                    )
-                )
+                          dataset.$id.replace('#', '%23'), // Escape # in URL.
+                        ),
+                      ),
+                    ),
+                ),
             ),
           ],
-          dataset.alternateName
-        )
-    )
+          dataset.alternateName,
+        ),
+    ),
   );
 }
 
@@ -180,7 +180,7 @@ export async function fromFiles(directory: string): Promise<RDF.Store> {
     (previous, current) => {
       previous.import(current.match());
       return previous;
-    }
+    },
   );
 }
 
@@ -205,11 +205,11 @@ class InlineFiles extends Transform {
   async _transform(
     quad: RDF.Quad,
     encoding: BufferEncoding,
-    callback: TransformCallback
+    callback: TransformCallback,
   ) {
     if (quad.object.value.startsWith('file://')) {
       const file = fileURLToPath(
-        new URL('../' + quad.object.value.substr(7), import.meta.url)
+        new URL('../' + quad.object.value.substr(7), import.meta.url),
       );
       quad.object.value = await fs.promises.readFile(file, 'utf-8');
     }
@@ -234,12 +234,12 @@ class SubstituteCredentialsFromEnvironmentVariables extends Transform {
   async _transform(
     quad: RDF.Quad,
     encoding: BufferEncoding,
-    callback: TransformCallback
+    callback: TransformCallback,
   ) {
     if (quad.predicate.value === 'http://schema.org/contentUrl') {
       quad.object.value = quad.object.value.replace(
         this.regex,
-        (match, envVar) => process.env[envVar] ?? ''
+        (match, envVar) => process.env[envVar] ?? '',
       );
     }
 

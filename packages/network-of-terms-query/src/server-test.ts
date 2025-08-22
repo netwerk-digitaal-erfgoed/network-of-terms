@@ -32,7 +32,7 @@ export const testCatalog = (port: number) =>
         new Organization(
           'https://rkd.nl',
           {nl: 'RKD – Nederlands Instituut voor Kunstgeschiedenis'},
-          {nl: 'RKD'}
+          {nl: 'RKD'},
         ),
       ],
       [
@@ -92,12 +92,12 @@ export const testCatalog = (port: number) =>
           [
             new Feature(
               FeatureType.RECONCILIATION,
-              new URL('https://example.com/reconcile/rkd')
+              new URL('https://example.com/reconcile/rkd'),
             ),
-          ]
+          ],
         ),
       ],
-      {nl: 'RKD'}
+      {nl: 'RKD'},
     ),
     new Dataset(
       'https://data.cultureelerfgoed.nl/term/id/cht',
@@ -113,7 +113,7 @@ export const testCatalog = (port: number) =>
         new Organization(
           'https://www.cultureelerfgoed.nl',
           {nl: 'Rijksdienst voor het Cultureel Erfgoed'},
-          {nl: 'RCE'}
+          {nl: 'RCE'},
         ),
       ],
       [
@@ -125,11 +125,11 @@ export const testCatalog = (port: number) =>
           [
             new Feature(
               FeatureType.RECONCILIATION,
-              new URL('https://example.com/reconcile/cht')
+              new URL('https://example.com/reconcile/cht'),
             ),
-          ]
+          ],
         ),
-      ]
+      ],
     ),
     new Dataset(
       'http://vocab.getty.edu/aat',
@@ -147,7 +147,7 @@ export const testCatalog = (port: number) =>
         new Organization(
           'http://www.getty.edu/research/',
           {nl: 'Getty Research Institute'},
-          {nl: 'Getty'}
+          {nl: 'Getty'},
         ),
       ],
       [
@@ -155,9 +155,9 @@ export const testCatalog = (port: number) =>
           'https://example.com/distributions/timeout',
           'https://httpbin.org/delay/3',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
-          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
         ),
-      ]
+      ],
     ),
     new Dataset(
       'http://data.beeldengeluid.nl/gtaa/Persoonsnamen',
@@ -173,7 +173,7 @@ export const testCatalog = (port: number) =>
         new Organization(
           'https://www.beeldengeluid.nl/',
           {nl: 'Nederlands Instituut voor Beeld en Geluid'},
-          {nl: 'Beeld en Geluid'}
+          {nl: 'Beeld en Geluid'},
         ),
       ],
       [
@@ -181,18 +181,18 @@ export const testCatalog = (port: number) =>
           'https://data.beeldengeluid.nl/id/datadownload/0026',
           'https://username:password@gtaa.apis.beeldengeluid.nl/sparql',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
-          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
         ),
-      ]
+      ],
     ),
   ]);
 
 export async function startDistributionSparqlEndpoint(
-  port: number
+  port: number,
 ): Promise<void> {
   servers = await setup({
     command: `npx comunica-sparql-file-http ${dirname(
-      fileURLToPath(import.meta.url)
+      fileURLToPath(import.meta.url),
     )}/../test/fixtures/terms.ttl -p ${port}`,
     port,
     launchTimeout: 20000,

@@ -3,7 +3,7 @@ import {calculateMatchingScore} from '../src/score.js';
 describe('Score', () => {
   it('ignores punctuation', () => {
     expect(
-      calculateMatchingScore('pieter de hooch', ['Hooch, Pieter de'])
+      calculateMatchingScore('pieter de hooch', ['Hooch, Pieter de']),
     ).toEqual(91.67);
   });
 

@@ -19,28 +19,28 @@ export type TermsResult = Terms | TimeoutError | ServerError;
 export class TermsResponse {
   constructor(
     readonly result: TermsResult,
-    readonly responseTimeMs: number
+    readonly responseTimeMs: number,
   ) {}
 }
 
 export class Terms {
   constructor(
     readonly distribution: Distribution,
-    readonly terms: Term[]
+    readonly terms: Term[],
   ) {}
 }
 
 export class Error {
   constructor(
     readonly distribution: Distribution,
-    readonly message: string
+    readonly message: string,
   ) {}
 }
 
 export class TimeoutError extends Error {
   constructor(
     readonly distribution: Distribution,
-    timeoutMs: number
+    timeoutMs: number,
   ) {
     super(distribution, `Source timed out after ${timeoutMs}ms`);
   }
@@ -73,7 +73,7 @@ export class QueryTermsService {
         ...args.bindings,
         limit: dataFactory.literal(
           args.limit.toString(),
-          dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer')
+          dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer'),
         ),
       },
     };
@@ -85,14 +85,14 @@ export class QueryTermsService {
     dataset: Dataset,
     distribution: Distribution,
     limit: number,
-    timeoutMs: number
+    timeoutMs: number,
   ): Promise<TermsResponse> {
     const bindings = [...queryVariants(searchQuery, queryMode)].reduce(
       (record: Record<string, RDF.Term>, [k, v]) => {
         record[k] = dataFactory.literal(v);
         return record;
       },
-      {}
+      {},
     );
     bindings['datasetUri'] = dataFactory.namedNode(dataset.iri.toString());
 
@@ -107,7 +107,7 @@ export class QueryTermsService {
       queryWithLimit,
       distribution,
       timeoutMs,
-      bindingsWithLimit
+      bindingsWithLimit,
     );
   }
 
@@ -115,10 +115,10 @@ export class QueryTermsService {
     return this.run(
       distribution.lookupQuery.replace(
         '?uris',
-        iris.map(iri => `<${iri}>`).join(' ')
+        iris.map(iri => `<${iri}>`).join(' '),
       ),
       distribution,
-      timeoutMs
+      timeoutMs,
     );
   }
 
@@ -126,7 +126,7 @@ export class QueryTermsService {
     query: string,
     distribution: Distribution,
     timeoutMs: number,
-    bindings: Record<string, RDF.Term> = {}
+    bindings: Record<string, RDF.Term> = {},
   ): Promise<TermsResponse> {
     Joi.attempt(
       timeoutMs,
@@ -134,7 +134,7 @@ export class QueryTermsService {
         .integer()
         .min(1)
         .max(config.MAX_QUERY_TIMEOUT)
-        .default(config.DEFAULT_QUERY_TIMEOUT)
+        .default(config.DEFAULT_QUERY_TIMEOUT),
     );
 
     const timer = new Hoek.Bench();
@@ -155,7 +155,7 @@ export class QueryTermsService {
         },
       ],
       initialBindings: bindingsFactory.fromRecord(
-        bindings
+        bindings,
       ) as unknown as Bindings,
     });
 
@@ -165,7 +165,7 @@ export class QueryTermsService {
         const elapsed = Math.round(timer.elapsed());
         this.logger.error(
           `An error occurred when querying "${distribution.endpoint}": ${error} with %o`,
-          error
+          error,
         );
 
         if (error.message.startsWith('Fetch timed out')) {
@@ -176,8 +176,8 @@ export class QueryTermsService {
           resolve(
             new TermsResponse(
               new TimeoutError(distribution, timeoutMs),
-              elapsed
-            )
+              elapsed,
+            ),
           );
         } else {
           sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
@@ -188,10 +188,10 @@ export class QueryTermsService {
             new TermsResponse(
               new ServerError(
                 distribution,
-                obfuscateHttpCredentials(error.message)
+                obfuscateHttpCredentials(error.message),
               ),
-              elapsed
-            )
+              elapsed,
+            ),
           );
         }
       });
@@ -205,7 +205,7 @@ export class QueryTermsService {
         this.logger.info(
           `Found ${terms.length} terms matching "${query}" in "${
             distribution.endpoint
-          }" in ${PrettyMilliseconds(timer.elapsed())}`
+          }" in ${PrettyMilliseconds(timer.elapsed())}`,
         );
         sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
           distribution: distribution.iri.toString(),
@@ -213,8 +213,8 @@ export class QueryTermsService {
         resolve(
           new TermsResponse(
             new Terms(distribution, terms),
-            Math.round(timer.elapsed())
-          )
+            Math.round(timer.elapsed()),
+          ),
         );
       });
     });

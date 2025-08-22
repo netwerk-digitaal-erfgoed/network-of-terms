@@ -19,7 +19,7 @@ export class ServiceManifest {
   constructor(
     public readonly name: string,
     public readonly identifierSpace: IRI,
-    readonly root: string
+    readonly root: string,
   ) {
     this.preview = {
       width: 300,
@@ -40,7 +40,7 @@ export class ServiceManifest {
 export function findManifest(
   dataset: IRI,
   catalog: Catalog,
-  root: string
+  root: string,
 ): ServiceManifest | undefined {
   const source = catalog.getDatasetByIri(dataset);
   if (

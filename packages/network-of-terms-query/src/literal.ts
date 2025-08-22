@@ -3,10 +3,10 @@ import Literal from '@rdfjs/data-model/lib/Literal.js';
 
 export function filterLiteralsByLanguage(
   literals: RDF.Literal[],
-  languages: string[]
+  languages: string[],
 ) {
   const preferredLanguageLiterals = literals.filter(literal =>
-    languages.includes(literal.language)
+    languages.includes(literal.language),
   );
   if (preferredLanguageLiterals.length > 0) {
     return preferredLanguageLiterals;
@@ -26,7 +26,7 @@ export function filterLiteralsByLanguage(
  */
 export function literalValues(
   literals: RDF.Literal[],
-  languages: string[] = ['nl']
+  languages: string[] = ['nl'],
 ) {
   const languageLiterals = filterLiteralsByLanguage(literals, languages);
   if (languageLiterals.length > 0) {
@@ -35,6 +35,6 @@ export function literalValues(
 
   // Fall back to English for sources that provide no Dutch labels.
   return filterLiteralsByLanguage(literals, ['en']).map(
-    literal => literal.value
+    literal => literal.value,
   );
 }
