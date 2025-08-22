@@ -34,7 +34,7 @@ export class ListSourcesCommand extends Command {
       dataset.distributions.map(distribution => ({
         dataset,
         distribution,
-      }))
+      })),
     );
 
     this.render(distributions);

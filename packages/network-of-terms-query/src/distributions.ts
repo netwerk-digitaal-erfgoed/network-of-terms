@@ -70,7 +70,7 @@ export class DistributionsService {
       dataset,
       distribution,
       args.limit,
-      args.timeoutMs
+      args.timeoutMs,
     );
   }
 
@@ -87,7 +87,7 @@ export class DistributionsService {
         queryMode: args.queryMode,
         limit: args.limit,
         timeoutMs: args.timeoutMs,
-      })
+      }),
     );
     return Promise.all(requests);
   }

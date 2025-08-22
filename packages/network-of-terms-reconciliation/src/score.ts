@@ -8,17 +8,17 @@ import stringComparison from 'string-comparison';
 export const score = (searchString: string, term: Term): number => {
   return calculateMatchingScore(
     searchString.toLowerCase(),
-    [...term.prefLabels, ...term.altLabels].map(literal => literal.value)
+    [...term.prefLabels, ...term.altLabels].map(literal => literal.value),
   );
 };
 
 export const calculateMatchingScore = (
   searchString: string,
-  againstStrings: string[]
+  againstStrings: string[],
 ): number => {
   const scores = stringComparison.diceCoefficient.sortMatch(
     normalize(searchString),
-    againstStrings.map(normalize)
+    againstStrings.map(normalize),
   );
   const maxScore = Math.max(...scores.map(score => score.rating));
 

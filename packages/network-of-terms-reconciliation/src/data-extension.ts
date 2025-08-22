@@ -30,10 +30,10 @@ export const dataExtensionProperties: {
 export async function extendQuery(
   terms: IRI[],
   lookupService: LookupService,
-  language: string
+  language: string,
 ) {
   const lookupResults = (await lookupService.lookup(terms, 10000)).filter(
-    lookupResult => lookupResult.result instanceof Term
+    lookupResult => lookupResult.result instanceof Term,
   );
 
   const futureSpecResult = {
@@ -55,7 +55,7 @@ export async function extendQuery(
 }
 
 const downcastToReconciliationSpecV0_2 = (
-  futureSpecResult: DataExtensionResult
+  futureSpecResult: DataExtensionResult,
 ) => ({
   meta: futureSpecResult.meta,
   rows: futureSpecResult.rows.reduce(
@@ -65,11 +65,11 @@ const downcastToReconciliationSpecV0_2 = (
           acc[current.id] = current.values;
           return acc;
         },
-        {}
+        {},
       );
       return acc;
     },
-    {}
+    {},
   ),
 });
 

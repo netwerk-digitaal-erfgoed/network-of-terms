@@ -19,7 +19,7 @@ export async function reconciliationQuery(
   query: ReconciliationQueryBatch,
   catalog: Catalog,
   queryTermsService: QueryTermsService,
-  language: string
+  language: string,
 ): Promise<ReconciliationResultBatch> {
   const dataset = catalog.getDatasetByIri(datasetIri)!;
   const distribution = dataset.distributions[0];
@@ -27,7 +27,7 @@ export async function reconciliationQuery(
   return Object.entries(query).reduce(
     async (
       resultsPromise: Promise<ReconciliationResultBatch>,
-      [queryId, {query: queryString, limit}]
+      [queryId, {query: queryString, limit}],
     ) => {
       const results = await resultsPromise;
       const response = await queryTermsService.search(
@@ -36,7 +36,7 @@ export async function reconciliationQuery(
         dataset,
         distribution,
         100,
-        10000
+        10000,
       );
       const terms =
         response.result instanceof Terms ? response.result.terms : [];
@@ -53,7 +53,7 @@ export async function reconciliationQuery(
       };
       return results;
     },
-    Promise.resolve({})
+    Promise.resolve({}),
   );
 }
 

@@ -18,7 +18,7 @@ describe('Dataset', () => {
       .import(
         fs
           .createReadStream(catalogPath + '/publishers.jsonld')
-          .pipe(jsonLdParser)
+          .pipe(jsonLdParser),
       );
 
     for (const dataset of datasets) {
@@ -29,7 +29,7 @@ describe('Dataset', () => {
           .import(
             fs
               .createReadStream(catalogPath + '/datasets/' + dataset)
-              .pipe(jsonLdParser)
+              .pipe(jsonLdParser),
           )
       ).addAll(base);
       expect(containsDatasetNode(data)).toBe(true);
@@ -46,7 +46,7 @@ const containsDatasetNode = (data: DatasetCore): boolean =>
   data.match(
     null,
     rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'),
-    rdf.namedNode('http://schema.org/Dataset')
+    rdf.namedNode('http://schema.org/Dataset'),
   ).size > 0;
 
 const shaclValidator = async (): Promise<typeof SHACLValidator> => {
@@ -69,7 +69,7 @@ expect.extend({
             ' for ' +
             result.path.value +
             ' at ' +
-            result.focusNode.value
+            result.focusNode.value,
         ),
     };
   },
@@ -77,9 +77,9 @@ expect.extend({
 
 const catalogPath = resolve(
   dirname(fileURLToPath(import.meta.url)),
-  '../catalog'
+  '../catalog',
 );
 const shaclPath = resolve(
   dirname(fileURLToPath(import.meta.url)),
-  '../shacl/dataset.jsonld'
+  '../shacl/dataset.jsonld',
 );

@@ -9,7 +9,7 @@ const catalog = testCatalog(1000);
 const comunicaMock = jest.mocked({
   queryQuads: jest.fn(
     (_query: string, _config: object) =>
-      new ArrayIterator([], {autoStart: false})
+      new ArrayIterator([], {autoStart: false}),
   ),
 });
 const service = new QueryTermsService({
@@ -22,21 +22,21 @@ describe('Query', () => {
   });
   it('passes dataset IRI query parameter to Comunica', async () => {
     const config = await query(
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
+      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
     );
     expect(config.initialBindings.get('datasetUri')?.value).toEqual(
-      'https://data.rkd.nl/rkdartists'
+      'https://data.rkd.nl/rkdartists',
     );
   });
 
   it('supports HTTP authentication', async () => {
     const config = await query(
-      'https://data.beeldengeluid.nl/id/datadownload/0026'
+      'https://data.beeldengeluid.nl/id/datadownload/0026',
     );
 
     // Must not contain credentials in URL...
     expect(config.sources[0].value).toEqual(
-      'https://gtaa.apis.beeldengeluid.nl/sparql'
+      'https://gtaa.apis.beeldengeluid.nl/sparql',
     );
     // ... but in separate httpAuth context element.
     expect(config.httpAuth).toEqual('username:password');
@@ -50,7 +50,7 @@ const query = async (iri: string) => {
     QueryMode.OPTIMIZED,
     dataset,
     dataset.getDistributionByIri(iri)!,
-    10000
+    10000,
   );
 
   return comunicaMock.queryQuads.mock.calls[0][1] as {

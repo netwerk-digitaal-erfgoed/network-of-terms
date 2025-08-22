@@ -42,12 +42,12 @@ export class NotFoundError {
 export class LookupService {
   constructor(
     private catalog: Catalog,
-    private queryService: QueryTermsService
+    private queryService: QueryTermsService,
   ) {}
 
   public async lookup(
     iris: string[],
-    timeoutMs: number
+    timeoutMs: number,
   ): Promise<LookupQueryResult[]> {
     const irisToDataset = iris.reduce((acc, iri) => {
       const dataset = this.catalog.getDatasetByTermIri(iri);
@@ -62,11 +62,11 @@ export class LookupService {
         datasetMap.set(dataset, [...(datasetMap.get(dataset) ?? []), iri]);
         return datasetMap;
       },
-      new Map<Dataset, IRI[]>()
+      new Map<Dataset, IRI[]>(),
     );
 
     const lookups = [...datasetToIris].map(([dataset]) =>
-      this.queryService.lookup(iris, dataset.distributions[0], timeoutMs)
+      this.queryService.lookup(iris, dataset.distributions[0], timeoutMs),
     );
 
     const termsPerSource: TermsResponse[] = await Promise.all(lookups);
@@ -74,7 +74,7 @@ export class LookupService {
     const datasetToTerms = termsPerSource.reduce(
       (acc, response: TermsResponse) => {
         let dataset = this.catalog.getDatasetByDistributionIri(
-          response.result.distribution.iri
+          response.result.distribution.iri,
         )!;
         if (response.result instanceof Terms) {
           const termsResult =
@@ -83,7 +83,7 @@ export class LookupService {
           for (const term of response.result.terms) {
             if (term.datasetIri !== undefined) {
               const termsDataset = this.catalog.getDatasetByIri(
-                term.datasetIri.value
+                term.datasetIri.value,
               );
               if (termsDataset !== undefined) {
                 dataset = termsDataset;
@@ -94,17 +94,17 @@ export class LookupService {
           }
           acc.set(
             dataset,
-            new TermsResponse(termsResult, response.responseTimeMs)
+            new TermsResponse(termsResult, response.responseTimeMs),
           );
         } else {
           const dataset = this.catalog.getDatasetByDistributionIri(
-            response.result.distribution.iri
+            response.result.distribution.iri,
           )!;
           acc.set(dataset, response);
         }
         return acc;
       },
-      new Map<Dataset, TermsResponse>()
+      new Map<Dataset, TermsResponse>(),
     );
 
     return iris.map(iri => {

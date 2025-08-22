@@ -6,7 +6,7 @@ describe('Search query', () => {
       new Map([
         ['query', 'test'],
         ['virtuosoQuery', "'test'"],
-      ])
+      ]),
     );
   });
 
@@ -15,7 +15,7 @@ describe('Search query', () => {
       new Map([
         ['query', 'dr. h. colijnstraat'],
         ['virtuosoQuery', "'dr.' AND 'h.' AND 'colijnstraat'"],
-      ])
+      ]),
     );
   });
 
@@ -24,7 +24,7 @@ describe('Search query', () => {
       new Map([
         ['query', 'a b c'],
         ['virtuosoQuery', "'a' AND 'b' AND 'c'"],
-      ])
+      ]),
     );
   });
 
@@ -33,13 +33,13 @@ describe('Search query', () => {
       new Map([
         ['query', 'a and b c or d'],
         ['virtuosoQuery', "'a' and 'b' AND 'c' or 'd'"],
-      ])
+      ]),
     );
   });
 
   it('escapes quotation marks', () => {
     expect(
-      queryVariants("Rex Stewart's 'Big' Eight", QueryMode.OPTIMIZED)
+      queryVariants("Rex Stewart's 'Big' Eight", QueryMode.OPTIMIZED),
     ).toEqual(
       new Map([
         ['query', "rex stewart's 'big' eight"],
@@ -47,7 +47,7 @@ describe('Search query', () => {
           'virtuosoQuery',
           "'rex' AND 'stewart\\'s' AND '\\'big\\'' AND 'eight'",
         ],
-      ])
+      ]),
     );
   });
 
@@ -56,7 +56,7 @@ describe('Search query', () => {
       new Map([
         ['query', 'sammy dowds & leslie'],
         ['virtuosoQuery', "'sammy' AND 'dowds' AND 'leslie'"],
-      ])
+      ]),
     );
   });
 
@@ -65,7 +65,7 @@ describe('Search query', () => {
       new Map([
         ['query', "Rex Stewart's Big Eight"],
         ['virtuosoQuery', "Rex Stewart's Big Eight"],
-      ])
+      ]),
     );
   });
 });
