@@ -13,7 +13,7 @@ let catalog: Catalog;
 describe('Catalog', () => {
   beforeAll(async () => {
     catalog = await getCatalog();
-  });
+  }, 100_000);
 
   it('lists datasets in alphabetical order', () => {
     expect(catalog.datasets.length).toBeGreaterThan(3);
