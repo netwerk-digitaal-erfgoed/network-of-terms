@@ -29,8 +29,8 @@
   "keywords": [],
   "description": "Engine for querying sources in the Network of Terms",
   "dependencies": {
-    "@comunica/query-sparql": "^4.1.0",
-    "@comunica/utils-bindings-factory": "^4.0.2",
+    "@comunica/query-sparql": "^4.3.0",
+    "@comunica/utils-bindings-factory": "^4.2.0",
     "@hapi/hoek": "^11.0.7",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/exporter-metrics-otlp-proto": "0.201.1",
@@ -47,8 +47,8 @@
     "rdf-store-stream": "^3.0.0"
   },
   "devDependencies": {
-    "@comunica/query-sparql-file": "^4.1.0",
-    "@comunica/types": "^4.0.2",
+    "@comunica/query-sparql-file": "^4.3.0",
+    "@comunica/types": "^4.2.0",
     "@jest/globals": "^29.6.2",
     "asynciterator": "^3.9.0",
     "jest-dev-server": "11.0.0",

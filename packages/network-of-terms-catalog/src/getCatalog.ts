@@ -110,6 +110,7 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
   const lens = createLens(catalogSchema, {
     sources: [store],
     engine,
+    distinctConstruct: true,
   });
 
   const datasets = await lens.find(); // where Only makes it slower.
