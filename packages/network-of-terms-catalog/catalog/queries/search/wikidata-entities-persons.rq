@@ -5,29 +5,24 @@ PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX vrank: <http://purl.org/voc/vrank#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 CONSTRUCT {
-    # Wikidata seems to have a problem with the short syntax for construct queries
-    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
-    ?item a skos:Concept .
-    ?item skos:prefLabel ?prefLabel .
-    ?item skos:altLabel ?altLabel .
-    ?item skos:scopeNote ?description .
-    ?item vrank:simpleRank ?score .
+    ?item a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?description ;
+        vrank:simpleRank ?score .
 }
 WHERE {
     {
         SELECT DISTINCT ?item ?score WHERE {
             SERVICE wikibase:mwapi {
-                bd:serviceParam wikibase:endpoint "www.wikidata.org" .
-                # Instead of using the "EntitySearch" API we use a more generic text search option
-                # To avoid noise we will filter the resultset on the occurence of the search string
-                # in either prefLabel or altLabel
-                bd:serviceParam wikibase:api "Search" .
-                bd:serviceParam mwapi:language "nl" .
-                bd:serviceParam mwapi:srsearch ?query .
+                bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
+                    wikibase:api "Search" ;
+                    mwapi:language "nl" ;
+                    mwapi:srsearch ?query .
                 ?item wikibase:apiOutputItem mwapi:title .
                 ?ordinal wikibase:apiOrdinal true.
             }
@@ -46,10 +41,10 @@ WHERE {
     }
     OPTIONAL {
         ?item skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl"|| LANG(?altLabel) = "en")
+        FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
-        ?item schema:description ?description
+        ?item schema:description ?description .
         FILTER(LANG(?description) = "nl" || LANG(?description) = "en")
     }
 }

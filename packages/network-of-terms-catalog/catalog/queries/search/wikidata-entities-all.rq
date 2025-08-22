@@ -7,33 +7,31 @@ PREFIX vrank: <http://purl.org/voc/vrank#>
 PREFIX wikibase: <http://wikiba.se/ontology#>
 
 CONSTRUCT {
-    # Wikidata seems to have a problem with the short syntax for construct queries
-    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
-    ?item a skos:Concept .
-    ?item skos:prefLabel ?rdfs_label .
-    ?item skos:altLabel ?altLabel .
-    ?item skos:scopeNote ?schema_description .
-    ?item vrank:simpleRank ?score .
+    ?item a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?description ;
+        vrank:simpleRank ?score .
 }
 WHERE {
     SERVICE wikibase:mwapi {
-        bd:serviceParam wikibase:endpoint "www.wikidata.org" .
-        bd:serviceParam wikibase:api "EntitySearch" .
-        bd:serviceParam mwapi:language "nl" .
-        bd:serviceParam mwapi:search ?query .
-        bd:serviceParam wikibase:limit ?limit .
+        bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
+            wikibase:api "EntitySearch" ;
+            mwapi:language "nl" ;
+            mwapi:search ?query ;
+            wikibase:limit ?limit .
         ?item wikibase:apiOutputItem mwapi:item .
         ?ordinal wikibase:apiOrdinal true.
     }
-    ?item rdfs:label ?rdfs_label .
-    FILTER(LANG(?rdfs_label) = "nl" || LANG(?rdfs_label) = "en")
+    ?item rdfs:label ?prefLabel .
+    FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
     OPTIONAL {
         ?item skos:altLabel ?altLabel .
         FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
-        ?item schema:description ?schema_description
-        FILTER(LANG(?schema_description) = "nl" || LANG(?schema_description) = "en")
+        ?item schema:description ?description .
+        FILTER(LANG(?description) = "nl" || LANG(?description) = "en")
     }
     BIND(-?ordinal AS ?score)
 }

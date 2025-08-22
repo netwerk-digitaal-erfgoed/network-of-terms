@@ -4,31 +4,29 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX vrank: <http://purl.org/voc/vrank#>
-PREFIX wikibase: <http://wikiba.se/ontology#>
-PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
 
 CONSTRUCT {
-    # Wikidata seems to have a problem with the short syntax for construct queries
-    # so always use full syntax: "?s ?p ?o ." else you end up with an empty result list!
-    ?item a skos:Concept .
-    ?item skos:prefLabel ?prefLabel .
-    ?item skos:altLabel ?altLabel .
-    ?item skos:scopeNote ?schema_description .
-    ?item vrank:simpleRank ?score .
+    ?item a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?description ;
+        vrank:simpleRank ?score .
 }
 WHERE {
     {
         SELECT DISTINCT ?item ?score WHERE {
             SERVICE wikibase:mwapi {
-                bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+                bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
                 # The search seems to be done with a "starts with" function,
                 # where by default the English pref and alt labels are searched.
                 # Setting the required language to something else than "en"
                 # results in an additional search in the pref and alt labels for this language.
-                bd:serviceParam wikibase:api "EntitySearch" .
-                bd:serviceParam mwapi:language "nl" .
-                bd:serviceParam mwapi:search ?query .
+                    wikibase:api "EntitySearch" ;
+                    mwapi:language "nl" ;
+                    mwapi:search ?query .
                 ?item wikibase:apiOutputItem mwapi:item .
                 ?ordinal wikibase:apiOrdinal true.
             }
@@ -79,7 +77,7 @@ WHERE {
         FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
-        ?item schema:description ?schema_description
-        FILTER(LANG(?schema_description) = "nl" || LANG(?schema_description) = "en")
+        ?item schema:description ?description .
+        FILTER(LANG(?description) = "nl" || LANG(?description) = "en")
     }
 }

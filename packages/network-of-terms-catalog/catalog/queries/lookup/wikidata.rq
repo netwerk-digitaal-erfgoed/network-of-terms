@@ -5,9 +5,9 @@ PREFIX wdt: <http://www.wikidata.org/prop/direct/>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
-    	skos:prefLabel ?rdfs_label ;
+        skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
-    	skos:scopeNote ?schema_description .
+        skos:scopeNote ?description .
 }
 WHERE {
     # For example:
@@ -17,16 +17,16 @@ WHERE {
     # Street: <http://www.wikidata.org/entity/Q19573969>
     VALUES ?uri { ?uris }
 
-    ?uri rdfs:label ?rdfs_label .
-    FILTER(LANG(?rdfs_label) = "nl" || LANG(?rdfs_label) = "en")
+    ?uri rdfs:label ?prefLabel .
+    FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
 
     OPTIONAL {
         ?uri skos:altLabel ?altLabel .
         FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
     }
     OPTIONAL {
-        ?uri schema:description ?schema_description
-        FILTER(LANG(?schema_description) = "nl" || LANG(?schema_description) = "en")
+        ?uri schema:description ?description .
+        FILTER(LANG(?description) = "nl" || LANG(?description) = "en")
     }
 }
 LIMIT 1000
