@@ -25,6 +25,7 @@ WHERE {
                 # Setting the required language to something else than "en"
                 # results in an additional search in the pref and alt labels for this language.
                     wikibase:api "EntitySearch" ;
+                    wikibase:limit "once" ; # Disabling continuation improves performance.
                     mwapi:language "nl" ;
                     mwapi:search ?query .
                 ?item wikibase:apiOutputItem mwapi:item .
