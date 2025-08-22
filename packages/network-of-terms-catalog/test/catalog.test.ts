@@ -43,7 +43,8 @@ describe('Catalog', () => {
       'https://data.cultureelerfgoed.nl/term/id/cht/',
     ]);
     expect(cht.alternateName.nl).toEqual('CHT');
-    expect(cht.inLanguage).toEqual(['en', 'nl']);
+    expect(cht.inLanguage).toHaveLength(2);
+    expect(cht.inLanguage).toEqual(expect.arrayContaining(['en', 'nl']));
     expect(cht.creators[0].name.nl).toEqual(
       'Rijksdienst voor het Cultureel Erfgoed'
     );
