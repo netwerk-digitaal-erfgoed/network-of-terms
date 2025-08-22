@@ -1,6 +1,7 @@
 import {
   Catalog,
   IRI,
+  literalValues,
   QueryMode,
   QueryTermsService,
   Terms,
@@ -43,15 +44,9 @@ export async function reconciliationQuery(
         result: terms
           .map(term => ({
             id: term.id.value.toString(),
-            name: term.prefLabels
-              .filter(prefLabel => prefLabel.language === language)
-              .map(label => label.value)
-              .join(' • '), // Join similarly to network-of-terms-demo.
+            name: literalValues(term.prefLabels, [language]).join(' • '), // Join similarly to network-of-terms-demo.
             score: score(queryString, term),
-            description: term.altLabels
-              .filter(prefLabel => prefLabel.language === language)
-              .map(label => label.value)
-              .join(' • '),
+            description: literalValues(term.altLabels, [language]).join(' • '),
           }))
           .sort((a, b) => b.score - a.score)
           .slice(0, limit),

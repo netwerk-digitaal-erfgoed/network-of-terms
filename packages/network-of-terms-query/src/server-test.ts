@@ -3,7 +3,6 @@ import {
   Dataset,
   Feature,
   FeatureType,
-  IRI,
   Organization,
   SparqlDistribution,
 } from './index.js';
@@ -20,32 +19,26 @@ let servers: SpawndChildProcess[];
 export const testCatalog = (port: number) =>
   new Catalog([
     new Dataset(
-      new IRI('https://data.rkd.nl/rkdartists'),
+      'https://data.rkd.nl/rkdartists',
       {nl: 'RKDartists', en: 'RKDartists'},
       {
         nl: 'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
       },
-      [
-        new IRI(
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'
-        ),
-      ],
-      [new IRI('https://example.com/resources/')],
+      ['https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'],
+      ['https://example.com/resources/'],
       'https://example.com/rkdartists',
       ['en', 'nl'],
       [
         new Organization(
-          new IRI('https://rkd.nl'),
+          'https://rkd.nl',
           {nl: 'RKD – Nederlands Instituut voor Kunstgeschiedenis'},
           {nl: 'RKD'}
         ),
       ],
       [
         new SparqlDistribution(
-          new IRI(
-            'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql'
-          ),
-          new IRI(`http://localhost:${port}/sparql`),
+          'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+          `http://localhost:${port}/sparql`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
           CONSTRUCT { 
@@ -107,28 +100,26 @@ export const testCatalog = (port: number) =>
       {nl: 'RKD'}
     ),
     new Dataset(
-      new IRI('https://data.cultureelerfgoed.nl/term/id/cht'),
+      'https://data.cultureelerfgoed.nl/term/id/cht',
       {nl: 'Cultuurhistorische Thesaurus'},
       {nl: 'Onderwerpen voor het beschrijven van cultureel erfgoed'},
       [
-        new IRI(
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
-        ),
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
       ],
-      [new IRI('https://data.cultureelerfgoed.nl/term/id/cht/')],
+      ['https://data.cultureelerfgoed.nl/term/id/cht/'],
       'https://example.com/cht',
       ['nl'],
       [
         new Organization(
-          new IRI('https://www.cultureelerfgoed.nl'),
+          'https://www.cultureelerfgoed.nl',
           {nl: 'Rijksdienst voor het Cultureel Erfgoed'},
           {nl: 'RCE'}
         ),
       ],
       [
         new SparqlDistribution(
-          new IRI('https://example.com/distributions/endpoint-error'),
-          new IRI('http://does-not-resolve'),
+          'https://example.com/distributions/endpoint-error',
+          'http://does-not-resolve',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           [
@@ -141,60 +132,54 @@ export const testCatalog = (port: number) =>
       ]
     ),
     new Dataset(
-      new IRI('http://vocab.getty.edu/aat'),
+      'http://vocab.getty.edu/aat',
       {nl: 'Art & Architecture Thesaurus'},
       {
         nl: 'Onderwerpen voor het beschrijven van architectuur-, kunst- en cultuurhistorische collecties',
       },
       [
-        new IRI(
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
-        ),
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
       ],
-      [new IRI('http://vocab.getty.edu/aat/')],
+      ['http://vocab.getty.edu/aat/'],
       'https://example.com/aat',
       ['nl'],
       [
         new Organization(
-          new IRI('http://www.getty.edu/research/'),
+          'http://www.getty.edu/research/',
           {nl: 'Getty Research Institute'},
           {nl: 'Getty'}
         ),
       ],
       [
         new SparqlDistribution(
-          new IRI('https://example.com/distributions/timeout'),
-          new IRI('https://httpbin.org/delay/3'),
+          'https://example.com/distributions/timeout',
+          'https://httpbin.org/delay/3',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
         ),
       ]
     ),
     new Dataset(
-      new IRI('http://data.beeldengeluid.nl/gtaa/Persoonsnamen'),
+      'http://data.beeldengeluid.nl/gtaa/Persoonsnamen',
       {nl: 'GTAA: persoonsnamen'},
       {nl: 'Personen voor het beschrijven van audiovisueel materiaal'},
       [
-        new IRI(
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
-        ),
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
       ],
-      [new IRI('http://data.beeldengeluid.nl/gtaa/')],
+      ['http://data.beeldengeluid.nl/gtaa/'],
       'https://example.com/gtaa',
       ['nl'],
       [
         new Organization(
-          new IRI('https://www.beeldengeluid.nl/'),
+          'https://www.beeldengeluid.nl/',
           {nl: 'Nederlands Instituut voor Beeld en Geluid'},
           {nl: 'Beeld en Geluid'}
         ),
       ],
       [
         new SparqlDistribution(
-          new IRI('https://data.beeldengeluid.nl/id/datadownload/0026'),
-          new IRI(
-            'https://username:password@gtaa.apis.beeldengeluid.nl/sparql'
-          ),
+          'https://data.beeldengeluid.nl/id/datadownload/0026',
+          'https://username:password@gtaa.apis.beeldengeluid.nl/sparql',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }'
         ),

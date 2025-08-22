@@ -10,7 +10,6 @@ import {
   Dataset,
   Feature,
   FeatureType,
-  IRI,
   Organization,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -111,6 +110,7 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
   const lens = createLens(catalogSchema, {
     sources: [store],
     engine,
+    distinctConstruct: true,
   });
 
   const datasets = await lens.find(); // where Only makes it slower.
@@ -119,24 +119,24 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
     datasets.map(
       dataset =>
         new Dataset(
-          new IRI(dataset.$id),
+          dataset.$id,
           dataset.name,
           dataset.description,
-          dataset.genres.map(genre => new IRI(genre)),
-          [new IRI(dataset.url)],
+          dataset.genres,
+          [dataset.url],
           dataset.mainEntityOfPage,
           dataset.inLanguage,
           [
             new Organization(
-              new IRI(dataset.creator.$id),
+              dataset.creator.$id,
               dataset.creator.name,
               dataset.creator.alternateName
             ),
           ],
           [
             new SparqlDistribution(
-              new IRI(dataset.distribution.$id),
-              new IRI(dataset.distribution.contentUrl),
+              dataset.distribution.$id,
+              dataset.distribution.contentUrl,
               dataset.distribution.potentialAction.filter(action =>
                 action.types.includes(schema.SearchAction)
               )[0].query!,
