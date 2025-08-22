@@ -9,4 +9,4 @@ export * from './helpers/logger.js';
 
 import {QueryEngine} from '@comunica/query-sparql';
 
-export const comunica = new QueryEngine();
+export const comunica = () => new QueryEngine();
