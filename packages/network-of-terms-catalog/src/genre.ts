@@ -12,7 +12,7 @@ const timeout = 10_000;
 export class Genre {
   constructor(
     public readonly iri: IRI,
-    public readonly name: StringDictionary
+    public readonly name: StringDictionary,
   ) {}
 }
 
@@ -28,7 +28,7 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre | null> => {
         sources: [`${genre.toString()}.rdf`],
         httpTimeout: timeout,
         httpBodyTimeout: true,
-      }
+      },
     );
     const bindings = await data.toArray();
 
@@ -38,7 +38,7 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre | null> => {
         acc[(binding.get('prefLabel') as Literal)!.language] =
           binding.get('prefLabel')!.value;
         return acc;
-      }, {})
+      }, {}),
     );
   } catch (error) {
     console.error(error);

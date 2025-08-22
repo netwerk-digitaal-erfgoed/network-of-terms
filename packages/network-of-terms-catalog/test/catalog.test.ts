@@ -25,19 +25,19 @@ describe('Catalog', () => {
 
   it('can retrieve datasets by IRI', () => {
     expect(
-      catalog.getDatasetByDistributionIri('https://nope.com')
+      catalog.getDatasetByDistributionIri('https://nope.com'),
     ).toBeUndefined();
 
     const cht = catalog.getDatasetByIri(
-      'https://data.cultureelerfgoed.nl/term/id/cht'
+      'https://data.cultureelerfgoed.nl/term/id/cht',
     )!;
     expect(cht).toBeInstanceOf(Dataset);
     expect(cht.name.nl).toEqual('Cultuurhistorische Thesaurus');
     expect(cht.description.nl).toEqual(
-      'Onderwerpen voor het beschrijven van cultureel erfgoed'
+      'Onderwerpen voor het beschrijven van cultureel erfgoed',
     );
     expect(cht.genres).toContainEqual(
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen'
+      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
     );
     expect(cht.termsPrefixes).toEqual([
       'https://data.cultureelerfgoed.nl/term/id/cht/',
@@ -46,14 +46,14 @@ describe('Catalog', () => {
     expect(cht.inLanguage).toHaveLength(2);
     expect(cht.inLanguage).toEqual(expect.arrayContaining(['en', 'nl']));
     expect(cht.creators[0].name.nl).toEqual(
-      'Rijksdienst voor het Cultureel Erfgoed'
+      'Rijksdienst voor het Cultureel Erfgoed',
     );
     expect(cht.creators[0].alternateName['']).toEqual('RCE');
     expect(cht.distributions[0].features[0].type).toEqual(
-      FeatureType.RECONCILIATION
+      FeatureType.RECONCILIATION,
     );
     expect(cht.distributions[0].features[0].url.toString()).toEqual(
-      `https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/${cht.iri}`
+      `https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/${cht.iri}`,
     );
   });
 
@@ -77,10 +77,10 @@ describe('Catalog', () => {
 
   it('retrieves distributions providing feature', () => {
     const reconciliationApis = catalog.getDistributionsProvidingFeature(
-      FeatureType.RECONCILIATION
+      FeatureType.RECONCILIATION,
     );
     expect(reconciliationApis[0].features[0].type).toEqual(
-      FeatureType.RECONCILIATION
+      FeatureType.RECONCILIATION,
     );
   });
 
@@ -89,15 +89,15 @@ describe('Catalog', () => {
     const store = await fromFile(
       resolve(
         dirname(fileURLToPath(import.meta.url)),
-        'fixtures/credentials.jsonld'
-      )
+        'fixtures/credentials.jsonld',
+      ),
     );
     const catalog = await fromStore(store);
     const distributionIri =
       'https://data.beeldengeluid.nl/id/datadownload/0027';
     const dataset = catalog.getDatasetByDistributionIri(distributionIri)!;
     expect(
-      dataset.getDistributionByIri(distributionIri)?.endpoint.toString()
+      dataset.getDistributionByIri(distributionIri)?.endpoint.toString(),
     ).toEqual('https://username:password@gtaa.apis.beeldengeluid.nl/sparql');
   });
 
@@ -107,7 +107,7 @@ describe('Catalog', () => {
 
   it('loads catalog from a path', async () => {
     const catalog = await getCatalog(
-      resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/')
+      resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/'),
     );
     expect(catalog.datasets.length).toBeGreaterThan(3);
   });

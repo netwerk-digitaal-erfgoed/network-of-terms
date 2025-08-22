@@ -13,7 +13,7 @@ export function preview(
   lookupResult: LookupQueryResult,
   source: Dataset,
   locale: locale,
-  language: string
+  language: string,
 ) {
   const term = lookupResult.result;
   if (term instanceof Term) {
@@ -64,7 +64,7 @@ function relatedTerms(label: string, terms: RelatedTerm[], language: string) {
       <dd>${escapeHtml(
         literal(
           termsWithPrefLabel.map(term => term.prefLabels[0]),
-          language
-        )
+          language,
+        ),
       )}</dd>`;
 }

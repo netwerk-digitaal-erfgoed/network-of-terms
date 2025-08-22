@@ -62,7 +62,7 @@ export class QuerySourcesCommand extends Command {
           return {
             datasetTitle:
               catalog.getDatasetByDistributionIri(
-                response.result.distribution.iri
+                response.result.distribution.iri,
               )?.name.nl ?? '',
             termUri: term.id!.value,
             prefLabels: term.prefLabels
@@ -73,7 +73,7 @@ export class QuerySourcesCommand extends Command {
               .join(' / '),
           };
         });
-      }
+      },
     );
     const rows = ([] as Row[]).concat(...rowsPerDistribution); // Flatten array
 

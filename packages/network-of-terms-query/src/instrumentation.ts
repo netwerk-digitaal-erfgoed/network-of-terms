@@ -14,7 +14,7 @@ const sourceQueriesHistogramName = 'queries.source';
 
 const meterProvider = new MeterProvider({
   resource: defaultResource().merge(
-    resourceFromAttributes({[ATTR_SERVICE_NAME]: 'network-of-terms'})
+    resourceFromAttributes({[ATTR_SERVICE_NAME]: 'network-of-terms'}),
   ),
   readers:
     'test' === process.env.NODE_ENV
@@ -38,7 +38,7 @@ export const clientQueriesCounter = meter.createCounter(
   {
     description: 'Number of user queries',
     valueType: ValueType.INT,
-  }
+  },
 );
 
 export const sourceQueriesHistogram = meter.createHistogram(
@@ -47,5 +47,5 @@ export const sourceQueriesHistogram = meter.createHistogram(
     description: 'Queries to terminology sources and their response times',
     valueType: ValueType.INT,
     unit: 'ms',
-  }
+  },
 );
