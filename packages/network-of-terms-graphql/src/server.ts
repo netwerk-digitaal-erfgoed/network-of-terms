@@ -34,7 +34,9 @@ export async function server(
     context: async (req: FastifyRequest) => {
       return {
         catalog,
-        comunica,
+        // Use a fresh Comunica instance for each request to prevent Comunica's rate-limiting from delaying requests.
+        // We need requests to fail within the user-supplied timeoutMs.
+        comunica: comunica(),
         catalogLanguage: req.language(['nl', 'en']) || 'nl',
       };
     },

@@ -49,7 +49,7 @@ export class DistributionsService {
   }) {
     this.logger = options.logger;
     this.catalog = options.catalog;
-    this.comunica = options.comunica || comunica;
+    this.comunica = options.comunica || comunica();
   }
 
   async query(options: QueryOptions): Promise<TermsResponse> {
