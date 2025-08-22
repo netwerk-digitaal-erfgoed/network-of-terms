@@ -183,10 +183,43 @@ describe('Server', () => {
     });
   });
 
-  it('shows HTML term preview', async () => {
+  it('shows HTML term preview, defaulting to Dutch', async () => {
     const response = await httpServer.inject({
       method: 'GET',
       url: '/preview/https://example.com/resources/artwork',
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.headers['content-type']).toEqual('text/html');
+    expect(response.body).toContain('<h1>Nachtwacht</h1>');
+    expect(response.body).toMatch('One of the most famous Dutch paintings');
+    expect(response.body).toMatch(
+      new RegExp(
+        '<dt>Gerelateerde termen</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>'
+      )
+    );
+    expect(response.body).toContain('RKDartists');
+  });
+
+  it('shows HTML term preview if term has no altLabels', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/painter',
+      headers: {
+        'accept-language': 'de', // Should default to nl.
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.headers['content-type']).toEqual('text/html');
+    expect(response.body).toMatch('Bekijk in Termennetwerk');
+  });
+
+  it('translates HTML preview', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/artwork',
+      headers: {
+        'accept-language': 'en',
+      },
     });
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
@@ -202,36 +235,6 @@ describe('Server', () => {
     );
   });
 
-  it('shows HTML term preview if term has no altLabels', async () => {
-    const response = await httpServer.inject({
-      method: 'GET',
-      url: '/preview/https://example.com/resources/painter',
-      headers: {
-        'accept-language': 'de', // Should default to en.
-      },
-    });
-    expect(response.statusCode).toEqual(200);
-    expect(response.headers['content-type']).toEqual('text/html');
-    expect(response.body).toMatch('View at Network of Terms');
-  });
-
-  it('translates HTML preview', async () => {
-    const response = await httpServer.inject({
-      method: 'GET',
-      url: '/preview/https://example.com/resources/artwork',
-      headers: {
-        'accept-language': 'nl',
-      },
-    });
-    expect(response.statusCode).toEqual(200);
-    expect(response.headers['content-type']).toEqual('text/html');
-    expect(response.body).toMatch(
-      new RegExp(
-        '<dt>Gerelateerde termen</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>'
-      )
-    );
-  });
-
   it('shows empty HTML term preview if term is not found', async () => {
     const response = await httpServer.inject({
       method: 'GET',
@@ -239,7 +242,7 @@ describe('Server', () => {
     });
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
-    expect(response.body).toEqual('Not found');
+    expect(response.body).toEqual('Niet gevonden');
   });
 });
 
@@ -271,17 +274,11 @@ async function reconciliationQuery(
 
 async function dataExtensionQuery({
   url = '/extend',
-  query = {
-    ids: [
-      'https://example.com/resources/artwork',
-      'https://example.com/resources/painter',
-    ],
-    properties: [{id: 'altLabel'}],
-  },
+  query,
   language,
 }: {
   url: string;
-  query: DataExtensionQuery;
+  query?: DataExtensionQuery;
   language?: string;
 }) {
   const headers = {
@@ -292,6 +289,12 @@ async function dataExtensionQuery({
     method: 'POST',
     headers,
     url,
-    payload: query,
+    payload: query ?? {
+      ids: [
+        'https://example.com/resources/artwork',
+        'https://example.com/resources/painter',
+      ],
+      properties: [{id: 'altLabel'}],
+    },
   });
 }

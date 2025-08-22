@@ -28,7 +28,7 @@
   "author": "Netwerk Digitaal Erfgoed",
   "license": "EUPL-1.2",
   "devDependencies": {
-    "@comunica/types": "^4.0.2",
+    "@comunica/types": "^4.2.0",
     "@types/n3": "^1.24.2",
     "@types/rdf-ext": "^2.5.2",
     "gts": "^6.0.2",
@@ -42,12 +42,12 @@
   },
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms-catalog#readme",
   "dependencies": {
-    "@comunica/query-sparql": "^4.1.0",
-    "@comunica/query-sparql-rdfjs": "^4.1.0",
-    "@comunica/utils-bindings-factory": "^4.0.2",
+    "@comunica/query-sparql": "^4.3.0",
+    "@comunica/query-sparql-rdfjs": "^4.3.0",
+    "@comunica/utils-bindings-factory": "^4.2.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "globby": "^14.0.2",
-    "ldkit": "^2.1.1",
+    "ldkit": "^2.5.1",
     "memoize": "^10.0.0",
     "rdf-parse": "^3.0.0",
     "rdf-store-stream": "^3.0.0"

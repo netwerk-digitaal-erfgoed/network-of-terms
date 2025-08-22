@@ -1,0 +1,29 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <https://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:exactMatch ?exactMatch_uri ;
+        rdfs:seeAlso ?seeAlso_uri .
+}
+WHERE {
+    GRAPH <https://fryslan.regiotermen.nl/personen> {
+        SELECT * WHERE {
+            VALUES ?uri { ?uris }
+
+            ?uri a skos:Concept ;
+                skos:prefLabel ?prefLabel ;
+                skos:altLabel ?altLabel .
+
+            OPTIONAL { ?uri skos:note ?scopeNote }
+        }
+        #LIMIT#
+    }
+
+    OPTIONAL { ?uri schema:sameAs ?exactMatch_uri }
+    OPTIONAL { ?uri schema:mainEntityOfPage ?seeAlso_uri }
+}

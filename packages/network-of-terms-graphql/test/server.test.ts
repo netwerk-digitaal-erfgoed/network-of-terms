@@ -6,6 +6,7 @@ import {
   testCatalog,
   teardown,
 } from '../../network-of-terms-query/src/server-test.js';
+import {IRI} from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3000);
@@ -295,7 +296,7 @@ function termsQuery({
   limit = 100,
   languages,
 }: {
-  sources: string[];
+  sources: IRI[];
   query?: string;
   limit?: number;
   languages?: string[];

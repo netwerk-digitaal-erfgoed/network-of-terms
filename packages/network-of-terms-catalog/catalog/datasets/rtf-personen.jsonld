@@ -1,15 +1,15 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://data.niod.nl/WO2_biografieen",
+  "@id": "https://fryslan.regiotermen.nl/personen",
   "@type": "Dataset",
   "name": [
     {
       "@language": "en",
-      "@value": "WW2 biographies"
+      "@value": "Regiotermen Fryslân: Persons"
     },
     {
       "@language": "nl",
-      "@value": "WO2-biografieën"
+      "@value": "Regiotermen Fryslân: Personen"
     }
   ],
   "genre": [
@@ -19,40 +19,40 @@
   ],
   "creator": [
     {
-      "@id": "https://www.wo2net.nl"
+      "@id": "https://www.tresoar.nl"
     }
   ],
   "url": [
-    "https://data.niod.nl/WO2_biografieen/"
+    "https://fryslan.regiotermen.nl/"
   ],
   "mainEntityOfPage": [
-    "https://www.oorlogsbronnen.nl/nieuws/project-wo2-thesaurus"
+    "https://fryslan.regiotermen.nl/personen"
   ],
   "description": [
     {
       "@language": "en",
-      "@value": "Short biographies of persons who played a key role in World War II"
+      "@value": "Frysian historical persons, a collection of historical figures from the Dutch region of Fryslân."
     },
     {
       "@language": "nl",
-      "@value": "Korte biografieën van personen die een sleutelrol speelden in de Tweede Wereldoorlog"
+      "@value": "Friese historische personen, een verzameling van historische figuren uit de Nederlandse regio Fryslân."
     }
   ],
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://data.niod.nl/PoolParty/sparql/WO2_biografieen",
+      "@id": "https://graph.friesland.regiotermen.nl/repositories/friese_thesaurus",
       "@type": "DataDownload",
-      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/oorlogsbronnen-biografieen/sparql",
+      "contentUrl": "https://graph.friesland.regiotermen.nl/repositories/friese_thesaurus",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://catalog/queries/search/poolparty.rq"
+          "query": "file://catalog/queries/search/rtf-personen.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://catalog/queries/lookup/poolparty.rq"
+          "query": "file://catalog/queries/lookup/rtf-personen.rq"
         },
         {
           "@type": "Action",
