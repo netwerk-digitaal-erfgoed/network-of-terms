@@ -8,7 +8,7 @@ CONSTRUCT {
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote ;
         skos:exactMatch ?exactMatch_uri ;
-        rdfs:seeAlso ?seeAlso_uri .
+        rdfs:seeAlso ?uri .
 }
 WHERE {
     GRAPH <https://fryslan.regiotermen.nl/personen> {
@@ -25,5 +25,5 @@ WHERE {
     }
 
     OPTIONAL { ?uri schema:sameAs ?exactMatch_uri }
-    OPTIONAL { ?uri schema:mainEntityOfPage ?seeAlso_uri }
+
 }
