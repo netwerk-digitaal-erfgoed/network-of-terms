@@ -8,7 +8,7 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.1",
-    "@qiwi/multi-semantic-release": "^5.0.0",
+    "@qiwi/multi-semantic-release": "^7.1.2",
     "@rdfjs/types": "^2.0.1",
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.14",
