@@ -39,31 +39,38 @@ const catalogSchema = {
   description: {
     '@id': schema.description,
     '@multilang': true,
+    '@optional': true, // Not strictly optional, but required properties cause slower SPARQL JOINs.
   },
   inLanguage: {
     '@id': schema.inLanguage,
     '@array': true,
+    '@optional': true,
   },
   genres: {
     '@id': schema.genre,
     '@array': true,
+    '@optional': true,
   },
   creator: {
     '@id': schema.creator,
+    '@optional': true,
     '@schema': {
       '@type': schema.Organization,
       name: {
         '@id': schema.name,
         '@multilang': true,
+        '@optional': true,
       },
       alternateName: {
         '@id': schema.alternateName,
         '@multilang': true,
+        '@optional': true,
       },
     },
   },
   distribution: {
     '@id': schema.distribution,
+    '@optional': true,
     '@schema': {
       encodingFormat: schema.encodingFormat,
       contentUrl: schema.contentUrl,
@@ -113,7 +120,7 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
     distinctConstruct: true,
   });
 
-  const datasets = await lens.find(); // where Only makes it slower.
+  const datasets = await lens.find();
 
   return new Catalog(
     datasets.map(
@@ -128,23 +135,23 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
           dataset.inLanguage,
           [
             new Organization(
-              dataset.creator.$id,
-              dataset.creator.name,
-              dataset.creator.alternateName,
+              dataset.creator!.$id,
+              dataset.creator!.name,
+              dataset.creator!.alternateName,
             ),
           ],
           [
             new SparqlDistribution(
-              dataset.distribution.$id,
-              dataset.distribution.contentUrl,
-              dataset.distribution.potentialAction.filter(action =>
+              dataset.distribution!.$id,
+              dataset.distribution!.contentUrl,
+              dataset.distribution!.potentialAction.filter(action =>
                 action.types.includes(schema.SearchAction),
               )[0].query!,
-              dataset.distribution.potentialAction.filter(action =>
+              dataset.distribution!.potentialAction.filter(action =>
                 action.types.includes(schema.FindAction),
               )[0].query!,
-              dataset.distribution.potentialAction
-                .filter(
+              dataset
+                .distribution!.potentialAction.filter(
                   action =>
                     action.target?.actionApplication.$id ===
                     'https://reconciliation-api.github.io/specs/latest/',
