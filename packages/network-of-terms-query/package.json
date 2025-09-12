@@ -52,6 +52,7 @@
     "@jest/globals": "^29.6.2",
     "asynciterator": "^3.9.0",
     "jest-dev-server": "11.0.0",
+    "nock": "^14.0.10",
     "spawnd": "^11.0.0"
   },
   "engines": {

@@ -10,6 +10,13 @@ import {setup, teardown as teardownServer} from 'jest-dev-server';
 import {dirname} from 'path';
 import {fileURLToPath} from 'url';
 import {SpawndChildProcess} from 'spawnd';
+import nock from 'nock';
+
+nock('https://example.com')
+  .post('/distributions/timeout')
+  .delay(3000)
+  .reply(200)
+  .persist();
 
 export const teardown = async () => {
   await teardownServer(servers);
@@ -153,7 +160,7 @@ export const testCatalog = (port: number) =>
       [
         new SparqlDistribution(
           'https://example.com/distributions/timeout',
-          'https://httpbin.org/delay/3',
+          'https://example.com/distributions/timeout',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
         ),

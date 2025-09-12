@@ -102,7 +102,7 @@ describe('Catalog', () => {
   });
 
   it('returns all languages', async () => {
-    expect(catalog.getLanguages()).toEqual(['en', 'nl']);
+    expect(catalog.getLanguages().sort()).toEqual(['en', 'nl']);
   });
 
   it('loads catalog from a path', async () => {
