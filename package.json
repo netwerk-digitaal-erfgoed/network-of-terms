@@ -4,31 +4,46 @@
   "workspaces": [
     "./packages/*"
   ],
-  "type": "module",
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.1",
-    "@qiwi/multi-semantic-release": "^7.1.2",
+    "@nx/docker": "^21.5.2",
+    "@nx/esbuild": "^21.5.2",
+    "@nx/eslint": "^21.5.2",
+    "@nx/eslint-plugin": "^21.5.2",
+    "@nx/js": "^21.5.2",
+    "@nx/vite": "^21.5.2",
+    "@nx/web": "21.5.2",
     "@rdfjs/types": "^2.0.1",
-    "@swc/jest": "^0.2.36",
-    "@types/jest": "^29.5.14",
     "@types/node": "^22.15.3",
-    "gts": "^6.0.2",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.0.0",
+    "esbuild": "^0.19.2",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
-    "jest": "^29.7.0",
-    "jest-coverage-thresholds-bumper": "^1.1.0",
-    "typescript": "^5.8.3"
+    "jiti": "2.4.2",
+    "jsonc-eslint-parser": "^2.4.0",
+    "nodaemon": "^0.0.5",
+    "nx": "21.5.2",
+    "prettier": "^3.6.2",
+    "prettier-plugin-packagejson": "^2.5.19",
+    "tslib": "^2.3.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.44.0",
+    "vitest": "^3.2.4"
   },
-  "scripts": {
-    "check": "gts check",
-    "fix": "gts fix",
-    "commitlint": "commitlint --edit $1",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest ${1}",
-    "posttest": "jest-coverage-thresholds-bumper --silent",
-    "release": "npx multi-semantic-release",
-    "prepare": "husky"
-  },
-  "engines": {
-    "node": ">=16.15.0"
+  "nx": {
+    "includedScripts": [],
+    "targets": {
+      "local-registry": {
+        "executor": "@nx/js:verdaccio",
+        "options": {
+          "port": 4873,
+          "config": ".verdaccio/config.yml",
+          "storage": "tmp/local-registry/storage"
+        }
+      }
+    }
   }
 }

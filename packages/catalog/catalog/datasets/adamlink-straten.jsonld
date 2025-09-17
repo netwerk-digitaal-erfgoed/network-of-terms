@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://adamlink.nl/geo/streets/list",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Adamlink: streets in Amsterdam"
+    },
+    {
+      "@language": "nl",
+      "@value": "Adamlink: straten in Amsterdam"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.amsterdamtimemachine.nl"
+    }
+  ],
+  "url": [
+    "https://adamlink.nl/geo/street/"
+  ],
+  "mainEntityOfPage": [
+    "https://adamlink.nl"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Streets in Amsterdam"
+    },
+    {
+      "@language": "nl",
+      "@value": "Straten in Amsterdam"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql#adamlink-streets",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.lod.uba.uva.nl/datasets/ATM/ATM-KG/services/ATM-KG/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/adamlink-straten.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/adamlink-straten.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

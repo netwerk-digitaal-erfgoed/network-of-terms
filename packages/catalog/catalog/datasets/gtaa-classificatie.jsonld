@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@id": "http://data.beeldengeluid.nl/gtaa/Classificatie",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "GTAA: classification"
+    },
+    {
+      "@language": "nl",
+      "@value": "GTAA: classificatie"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.beeldengeluid.nl/"
+    }
+  ],
+  "url": [
+    "http://data.beeldengeluid.nl/gtaa/"
+  ],
+  "mainEntityOfPage": [
+    "https://www.beeldengeluid.nl/kennis/kennisthemas/metadata/gemeenschappelijke-thesaurus-audiovisuele-archieven"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Classifications for describing audiovisual material"
+    },
+    {
+      "@language": "nl",
+      "@value": "Classificaties voor het beschrijven van audiovisueel materiaal"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://data.beeldengeluid.nl/id/datadownload/0027",
+      "@type": "DataDownload",
+      "contentUrl": "https://$GTAA_CREDENTIALS@gtaa.apis.beeldengeluid.nl/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/gtaa.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/gtaa.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

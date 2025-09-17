@@ -1,0 +1,77 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://iconclass.org",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Iconclass"
+    },
+    {
+      "@language": "nl",
+      "@value": "Iconclass"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Genres"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://henrivandewaalfoundation.org"
+    }
+  ],
+  "url": [
+    "https://iconclass.org/"
+  ],
+  "mainEntityOfPage": [
+    "https://iconclass.org"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing the content of images"
+    },
+    {
+      "@language": "nl",
+      "@value": "Termen voor het beschrijven van de inhoud van afbeeldingen"
+    }
+  ],
+  "inLanguage": "en",
+  "distribution": [
+    {
+      "@id": "https://iconclass.org/sparql",
+      "@type": "DataDownload",
+      "contentUrl": "https://iconclass.org/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/iconclass.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/iconclass.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

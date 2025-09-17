@@ -1,22 +1,30 @@
 name: QA
 
 on:
-  pull_request:
+  push:
     branches:
       - master
+  pull_request:
+
+permissions:
+  actions: read
+  contents: read
 
 jobs:
-  test:
+  main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
+          filter: tree:0
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v5
         with:
           node-version: lts/*
+          cache: 'npm'
+
       - run: npm ci
-      - run: npm run check
-      - run: npm test
-      - run: npm run compile --workspaces
-      - run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - uses: nrwl/nx-set-shas@v4
+
+      - run: npx nx affected -t lint test typecheck build

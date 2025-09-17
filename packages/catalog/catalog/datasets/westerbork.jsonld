@@ -1,0 +1,87 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.kampwesterbork.nl/thesaurus",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Thesaurus Camp Westerbork"
+    },
+    {
+      "@language": "nl",
+      "@value": "Thesaurus Kamp Westerbork"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "Westerbork"
+    },
+    {
+      "@language": "nl",
+      "@value": "Westerbork"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Gebeurtenissen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://kampwesterbork.nl"
+    }
+  ],
+  "url": [
+    "https://digitaalerfgoed.poolparty.biz/westerbork/"
+  ],
+  "mainEntityOfPage": [
+    "https://digitaalerfgoed.poolparty.biz/westerbork.html"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing and contextualising collections relating to the history of Camp Westerbork (1939-1971) and dealing with the historical site (1971-present)"
+    },
+    {
+      "@language": "nl",
+      "@value": "Termen voor het beschrijven en contextualiseren van collecties die betrekking hebben op de geschiedenis van kamp Westerbork (1939-1971) en omgang met de historische plek (1971-heden)"
+    }
+  ],
+  "inLanguage": ["nl"],
+  "distribution": [
+    {
+      "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/westerbork",
+      "@type": "DataDownload",
+      "contentUrl": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/westerbork",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

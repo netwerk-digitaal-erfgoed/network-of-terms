@@ -1,0 +1,81 @@
+{
+  "@context": "https://schema.org",
+  "@id": "http://data.bibliotheken.nl/id/dataset/brinkman",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Brinkman subjects"
+    },
+    {
+      "@language": "nl",
+      "@value": "Brinkman trefwoordenthesaurus"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "Brinkman"
+    },
+    {
+      "@language": "nl",
+      "@value": "Brinkman"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Genres"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "http://data.bibliotheken.nl/id/thes/p075301482"
+    }
+  ],
+  "url": [
+    "http://data.bibliotheken.nl/id/thes/"
+  ],
+  "mainEntityOfPage": [
+    "https://data.bibliotheken.nl/KB/-/stories/Brinkman-trefwoordenthesaurus"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects that the National Library of the Netherlands assigns to publications"
+    },
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen die de Koninklijke Bibliotheek aan publicaties toekent"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "http://data.bibliotheken.nl/thes/brinkman/sparql",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.bibliotheken.nl/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/brinkman.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/brinkman-nta-stcn.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

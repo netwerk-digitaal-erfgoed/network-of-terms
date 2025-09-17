@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.niod.nl/WO2_biografieen",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "WW2 biographies"
+    },
+    {
+      "@language": "nl",
+      "@value": "WO2-biografieën"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.wo2net.nl"
+    }
+  ],
+  "url": [
+    "https://data.niod.nl/WO2_biografieen/"
+  ],
+  "mainEntityOfPage": [
+    "https://www.oorlogsbronnen.nl/nieuws/project-wo2-thesaurus"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Short biographies of persons who played a key role in World War II"
+    },
+    {
+      "@language": "nl",
+      "@value": "Korte biografieën van personen die een sleutelrol speelden in de Tweede Wereldoorlog"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://data.niod.nl/PoolParty/sparql/WO2_biografieen",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/oorlogsbronnen-biografieen/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

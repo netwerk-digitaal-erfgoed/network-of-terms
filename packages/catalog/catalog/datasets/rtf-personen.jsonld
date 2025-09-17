@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://fryslan.regiotermen.nl/personen",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Regiotermen Fryslân: Persons"
+    },
+    {
+      "@language": "nl",
+      "@value": "Regiotermen Fryslân: Personen"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.tresoar.nl"
+    }
+  ],
+  "url": [
+    "https://fryslan.regiotermen.nl/"
+  ],
+  "mainEntityOfPage": [
+    "https://fryslan.regiotermen.nl/personen"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Frysian historical persons, a collection of historical figures from the Dutch region of Fryslân."
+    },
+    {
+      "@language": "nl",
+      "@value": "Friese historische personen, een verzameling van historische figuren uit de Nederlandse regio Fryslân."
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://graph.friesland.regiotermen.nl/repositories/friese_thesaurus",
+      "@type": "DataDownload",
+      "contentUrl": "https://graph.friesland.regiotermen.nl/repositories/friese_thesaurus",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/rtf-personen.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/rtf-personen.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
