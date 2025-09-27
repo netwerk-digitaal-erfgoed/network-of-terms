@@ -85,11 +85,11 @@ jobs:
             case "$image" in
               *network-of-terms-graphql*)
                 echo "🚀 Deploying $image"
-                kubectl set image deployment/$image app=$image --record &
+                kubectl set image deployment/network-of-terms-graphql app=$image --record &
                 ;;
               *network-of-terms-reconciliation*)
                 echo "🚀 Deploying $image"
-                kubectl set image deployment/$image app=$image --record &
+                kubectl set image deployment/network-of-terms-reconciliation app=$image --record &
                 ;;
               *)
                 echo "⚠️ Unknown image pattern: $image - skipping"
