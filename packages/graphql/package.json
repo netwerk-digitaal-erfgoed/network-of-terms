@@ -1,0 +1,110 @@
+{
+  "name": "@netwerk-digitaal-erfgoed/network-of-terms-graphql",
+  "private": true,
+  "description": "Network of Terms GraphQL API",
+  "keywords": [],
+  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
+  "bugs": {
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
+  },
+  "license": "EUPL",
+  "author": "Netwerk Digitaal Erfgoed",
+  "type": "module",
+  "files": [
+    "build/"
+  ],
+  "dependencies": {
+    "@fastify/accepts": "^5.0.2",
+    "@fastify/cors": "11.0.1",
+    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
+    "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
+    "env-schema": "6.0.1",
+    "fastify": "5.3.2",
+    "graphql": "^16.11.0",
+    "mercurius": "15.1.0",
+    "mercurius-logging": "2.0.0"
+  },
+  "engines": {
+    "node": ">=16.15.0"
+  },
+  "nx": {
+    "release": {
+      "docker": {
+        "repositoryName": "network-of-terms-graphql"
+      }
+    },
+    "targets": {
+      "build": {
+        "executor": "@nx/esbuild:esbuild",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "defaultConfiguration": "production",
+        "options": {
+          "platform": "node",
+          "outputPath": "{projectRoot}/dist",
+          "main": "{projectRoot}/src/main.ts",
+          "declarationRootDir": "{projectRoot}/src",
+          "tsConfig": "packages/graphql/tsconfig.app.json",
+          "assets": [
+            {
+              "input": "packages/catalog/catalog",
+              "glob": "**/*",
+              "output": "catalog"
+            }
+          ],
+          "esbuildOptions": {
+            "sourcemap": true,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        },
+        "configurations": {
+          "development": {},
+          "production": {
+            "esbuildOptions": {
+              "sourcemap": false,
+              "outExtension": {
+                ".js": ".js"
+              }
+            }
+          }
+        }
+      },
+      "serve-dev": {
+        "continuous": true,
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build:development"
+          },
+          "production": {
+            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build:production"
+          }
+        }
+      },
+      "serve": {
+        "continuous": true,
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "npx nodemon --watch catalog/** --exec 'npx nx serve-dev network-of-terms-graphql'"
+        }
+      },
+      "copy-workspace-modules": {},
+      "prune-lockfile": {}
+    }
+  }
+}

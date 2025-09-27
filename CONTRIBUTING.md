@@ -11,4 +11,4 @@ changes.
 
 ## Adding a terminology source
 
-Please see the [network-of-terms-catalog package](packages/network-of-terms-catalog/).
+Please see the [catalog package](packages/catalog/).

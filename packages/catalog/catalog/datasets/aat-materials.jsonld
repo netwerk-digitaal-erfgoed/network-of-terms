@@ -1,0 +1,83 @@
+{
+  "@context": "https://schema.org",
+  "@id": "http://vocab.getty.edu/aat#materials",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Art & Architecture Thesaurus - materials"
+    },
+    {
+      "@language": "nl",
+      "@value": "Art & Architecture Thesaurus - materialen"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "AAT - materials"
+    },
+    {
+      "@language": "nl",
+      "@value": "AAT - materialen"
+    }
+  ],
+  "genre": [
+       {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "http://www.getty.edu/research/"
+    }
+  ],
+  "url": [
+    "http://vocab.getty.edu/aat/"
+  ],
+  "mainEntityOfPage": [
+    "https://www.getty.edu/research/tools/vocabularies/aat/about.html"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Selection of AAT terms for describing materials in architectural, art and cultural-historical collections"
+    },
+    {
+      "@language": "nl",
+      "@value": "Selectie van AAT termen voor het beschrijven van materialen in architectuur-, kunst- en cultuurhistorische collecties"
+    }
+  ],
+  "inLanguage": ["en", "nl"],
+  "distribution": [
+    {
+      "@id": "http://vocab.getty.edu/aat/sparql/materials",
+      "@type": "DataDownload",
+      "contentUrl": "https://vocab.getty.edu/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "name": "search",
+          "query": "file://../queries/search/aat-materials.rq"
+        },
+        {
+          "@type": "FindAction",
+          "name": "lookup",
+          "query": "file://../queries/lookup/aat.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

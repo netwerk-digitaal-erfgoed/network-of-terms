@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.rkd.nl/rkdartists",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "RKDartists"
+    },
+    {
+      "@language": "nl",
+      "@value": "RKDartists"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://rkd.nl"
+    }
+  ],
+  "url": [
+    "https://data.rkd.nl/artists/"
+  ],
+  "mainEntityOfPage": [
+    "https://rkd.nl/nl/explore/artists"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Biographical data of Dutch and foreign artists from the Middle Ages to the present"
+    },
+    {
+      "@language": "nl",
+      "@value": "Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden"
+    }
+  ],
+  "inLanguage": ["en", "nl"],
+  "distribution": [
+    {
+      "@id": "https://api.rkd.triply.cc/datasets/rkd/RKD-SDO-Knowledge-Graph/sparql",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.rkd.triply.cc/datasets/rkd/RKD-SDO-Knowledge-Graph/services/Virtuoso/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/rkdartists.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/rkdartists.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

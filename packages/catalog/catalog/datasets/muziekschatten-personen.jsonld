@@ -1,0 +1,71 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.muziekschatten.nl/#personen",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Muziekschatten: persons"
+    },
+    {
+      "@language": "nl",
+      "@value": "Muziekschatten: personen"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.omroepmuziek.nl"
+    }
+  ],
+  "url": [
+    "https://data.muziekschatten.nl/som/"
+  ],
+  "mainEntityOfPage": [
+    "https://data.muziekschatten.nl/som/"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Persons in the catalog of the sheet music collection of Stichting Omroep Muziek"
+    },
+    {
+      "@language": "nl",
+      "@value": "Personen in de catalogus van de bladmuziekcollectie van Stichting Omroep Muziek"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://data.muziekschatten.nl/sparql/#personen",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.muziekschatten.nl/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/muziekschatten-personen.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/muziekschatten-personen.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

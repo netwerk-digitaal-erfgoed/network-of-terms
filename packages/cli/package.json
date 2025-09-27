@@ -1,0 +1,27 @@
+{
+  "name": "@netwerk-digitaal-erfgoed/network-of-terms-cli",
+  "private": true,
+  "description": "Query the Network of Terms from the command line",
+  "keywords": [],
+  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/tree/master/packages/network-of-terms-cli#readme",
+  "bugs": {
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
+  },
+  "license": "EUPL-1.2",
+  "author": "",
+  "type": "module",
+  "bin": {
+    "network-of-terms-cli": "./bin/run"
+  },
+  "oclif": {
+    "commands": "./build"
+  },
+  "dependencies": {
+    "@oclif/core": "^4.2.0",
+    "cli-ux": "^6.0.9"
+  }
+}

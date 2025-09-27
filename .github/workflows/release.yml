@@ -5,19 +5,97 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+  id-token: write # needed for provenance data generation
+
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+        with:
+          # Need full git history for nx release to work properly.
+          fetch-depth: 0
+          filter: tree:0
+          token: ${{ secrets.PAT }}
+
+      - uses: actions/setup-node@v5
         with:
           node-version: lts/*
+          cache: 'npm'
+          registry-url: https://registry.npmjs.org/
+
       - run: npm ci
-      - run: npm run compile --workspaces
-      - run: npm run release
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - run: npx nx release --group libs
         env:
-          # Use a personal access token (PAT) so we can trigger downstream workflows (deploy.yml).
-          # See https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#triggering-a-workflow-from-a-workflow.
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }} # Needed for pushing release commits.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+
+      - run: npx nx affected -t docker:build --configuration=production
+
+      - name: Log in to Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
+
+      - name: Build and publish Docker images
+        id: docker
+        run: |
+          npx nx release --group apps --dockerVersionScheme=production --yes
+          {
+            echo 'images<<EOF'
+            docker image ls ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-* --format "{{.Repository}}:{{.Tag}}"
+            echo EOF
+          } >> $GITHUB_OUTPUT
+
+      - name: Tag latest images
+        if: steps.docker.outputs.images
+        run: |
+          echo "🏷️ Tagging images as latest..."
+          while IFS= read -r image; do
+            REPO=$(echo "$image" | cut -d':' -f1)
+            echo "Tagging $REPO:latest"
+            docker tag "$image" "$REPO:latest"
+            docker push "$REPO:latest"
+          done <<< "${{ steps.docker.outputs.images }}"
+
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Deploy to Kubernetes
+        if: steps.docker.outputs.images
+        run: |
+          doctl kubernetes cluster kubeconfig save nde
+          echo "🚀 Deploying discovered images to Kubernetes..."
+
+          while IFS= read -r image; do
+            case "$image" in
+              *network-of-terms-graphql*)
+                echo "🚀 Deploying $image"
+                kubectl set image deployment/$image app=$image --record &
+                ;;
+              *network-of-terms-reconciliation*)
+                echo "🚀 Deploying $image"
+                kubectl set image deployment/$image app=$image --record &
+                ;;
+              *)
+                echo "⚠️ Unknown image pattern: $image - skipping"
+                ;;
+            esac
+          done <<< "${{ steps.docker.outputs.images }}"
+
+          # Verify all deployments
+          echo "✅ Verifying deployments..."
+          kubectl rollout status deployment/network-of-terms-graphql deployment/network-of-terms-reconciliation 2>/dev/null || true
+          echo "✅ All deployments completed"

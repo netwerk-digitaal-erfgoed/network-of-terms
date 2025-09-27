@@ -1,9 +1,21 @@
 {
-  "extends": "./tsconfig.build.json",
-  "compilerOptions": {
-    "paths": {
-      // This is necessary for the tests to find local packages and for compilation to work in any order of packages.
-      "@netwerk-digitaal-erfgoed/*": ["./packages/*/src"]
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/catalog"
+    },
+    {
+      "path": "./packages/query"
+    },
+    {
+      "path": "./packages/graphql"
+    },
+    {
+      "path": "./packages/reconciliation"
+    },
+    {
+      "path": "./packages/cli"
     }
-  },
+  ]
 }

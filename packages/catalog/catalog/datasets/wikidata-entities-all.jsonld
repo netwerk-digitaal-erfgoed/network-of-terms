@@ -1,0 +1,66 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://www.wikidata.org#entities-all",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Wikidata: all entities"
+    },
+    {
+      "@language": "nl",
+      "@value": "Wikidata: alle entiteiten"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
+    },
+     {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.wikidata.org/entity/Q180"
+    }
+  ],
+  "url": [
+    "http://www.wikidata.org/entity/"
+  ],
+  "mainEntityOfPage": [
+    "https://www.wikidata.org"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "All entities in Wikidata, such as professions, movies or artworks"
+    },
+    {
+      "@language": "nl",
+      "@value": "Alle entiteiten in Wikidata, zoals beroepen, films of kunstwerken"
+    }
+  ],
+  "inLanguage": ["en", "nl"],
+  "distribution": [
+    {
+      "@id": "https://query.wikidata.org/sparql#entities-all",
+      "@type": "DataDownload",
+      "contentUrl": "https://query.wikidata.org/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/wikidata-entities-all.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/wikidata.rq"
+        }
+      ]
+    }
+  ]
+}

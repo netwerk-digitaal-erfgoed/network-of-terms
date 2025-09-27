@@ -1,0 +1,74 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.muziekschatten.nl/#onderwerpen",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Muziekschatten: subjects"
+    },
+    {
+      "@language": "nl",
+      "@value": "Muziekschatten: onderwerpen"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Genres"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.omroepmuziek.nl"
+    }
+  ],
+  "url": [
+    "https://data.muziekschatten.nl/som/d"
+  ],
+  "mainEntityOfPage": [
+    "https://data.muziekschatten.nl/"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects in the catalog of the sheet music collection of Stichting Omroep Muziek"
+    },
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen in de catalogus van de bladmuziekcollectie van Stichting Omroep Muziek"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://data.muziekschatten.nl/sparql/#onderwerpen",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.muziekschatten.nl/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/muziekschatten-onderwerpen.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/muziekschatten-onderwerpen.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

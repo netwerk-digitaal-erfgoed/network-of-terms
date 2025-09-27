@@ -1,0 +1,81 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/523",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Thesaurus Historische Persoonsgegevens - source types"
+    },
+    {
+      "@language": "nl",
+      "@value": "Thesaurus Historische Persoonsgegevens - brontypes"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "PiCoT - source types"
+    },
+    {
+      "@language": "nl",
+      "@value": "PiCoT - brontypes"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Actoren-en-organismen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.cbg.nl"
+    }
+  ],
+  "url": [
+    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/"
+  ],
+  "mainEntityOfPage": [
+    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Standardized terms for the type of source in which a person is mentioned. Part of the Persons in Context standard"
+    },
+    {
+      "@language": "nl",
+      "@value": "Gestandaardiseerde termen voor het type bron waarop een persoon is vermeld. Onderdeel van de Persons in Context-standaard"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens#source-types",
+      "@type": "DataDownload",
+      "contentUrl": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/picot.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.cultureelerfgoed.nl/term/id/cht#materials",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Cultural-historical Thesaurus - Materials"
+    },
+    {
+      "@language": "nl",
+      "@value": "Cultuurhistorische Thesaurus - Materialen"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "CHT - materials"
+    },
+    {
+      "@language": "nl",
+      "@value": "CHT - materialen"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.cultureelerfgoed.nl"
+    }
+  ],
+  "url": [
+    "https://data.cultureelerfgoed.nl/term/id/cht/"
+  ],
+  "mainEntityOfPage": [
+    "https://kennis.cultureelerfgoed.nl/index.php/Thesauri_bij_de_RCE_-_Cultuurhistorische_Thesaurus"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects for describing material features of cultural heritage"
+    },
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen voor het beschrijven van materiaalkenmerken van cultureel erfgoed"
+    }
+  ],
+  "inLanguage": ["nl", "en"],
+  "distribution": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/term/id/cht/materials",
+      "@type": "DataDownload",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/cht/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/cht-materials.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

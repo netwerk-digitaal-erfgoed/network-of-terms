@@ -1,0 +1,77 @@
+{
+  "@context": "https://schema.org",
+  "@id": "http://data.bibliotheken.nl/id/dataset/persons",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Dutch National Thesaurus for Author Names"
+    },
+    {
+      "@language": "nl",
+      "@value": "Nederlandse Thesaurus van Auteursnamen"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "nl",
+      "@value": "NTA"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "http://data.bibliotheken.nl/id/thes/p075301482"
+    }
+  ],
+  "url": [
+    "http://data.bibliotheken.nl/id/thes/"
+  ],
+  "mainEntityOfPage": [
+    "https://data.bibliotheken.nl/KB/-/stories/NTA"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Names and other personal data of authors"
+    },
+    {
+      "@language": "nl",
+      "@value": "Naams- en andere persoonsgegevens van auteurs"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "http://data.bibliotheken.nl/thesp/sparql",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.bibliotheken.nl/sparql",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/nta.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/brinkman-nta-stcn.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

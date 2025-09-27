@@ -1,0 +1,56 @@
+{
+  "name": "@netwerk-digitaal-erfgoed/network-of-terms-catalog",
+  "version": "10.16.0",
+  "description": "Catalog of Network of Terms datasets",
+  "keywords": [
+    "nde"
+  ],
+  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
+  "bugs": {
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms"
+  },
+  "license": "EUPL-1.2",
+  "author": "Netwerk Digitaal Erfgoed",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "catalog/",
+    "!**/*.tsbuildinfo"
+  ],
+  "dependencies": {
+    "@comunica/query-sparql": "^4.3.0",
+    "@comunica/query-sparql-rdfjs": "^4.3.0",
+    "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
+    "@rdfjs/types": "^2.0.1",
+    "globby": "^14.0.2",
+    "ldkit": "^2.5.1",
+    "memoize": "^10.0.0",
+    "rdf-parse": "^3.0.0",
+    "rdf-store-stream": "^3.0.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@comunica/types": "^4.2.0",
+    "@types/n3": "^1.24.2",
+    "@types/rdf-ext": "^2.5.2",
+    "jsonld-streaming-parser": "^5.0.0",
+    "rdf-ext": "^2.6.0",
+    "rdf-validate-shacl": "^0.6.5"
+  }
+}

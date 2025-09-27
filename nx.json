@@ -1,0 +1,122 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "production": [
+      "default",
+      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json"
+    ]
+  },
+  "defaultBase": "master",
+  "plugins": [
+    {
+      "plugin": "@nx/vite/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "testTargetName": "test",
+        "serveTargetName": "serve",
+        "devTargetName": "dev",
+        "previewTargetName": "preview",
+        "serveStaticTargetName": "serve-static",
+        "typecheckTargetName": "typecheck",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/docker",
+      "options": {
+        "buildTarget": "docker:build",
+        "runTarget": "docker:run"
+      }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        },
+        "build": {
+          "targetName": "build",
+          "configName": "tsconfig.lib.json",
+          "buildDepsName": "build-deps",
+          "watchDepsName": "watch-deps"
+        }
+      }
+    }
+  ],
+  "release": {
+    "groups": {
+      "libs": {
+        "projects": ["network-of-terms-catalog", "network-of-terms-query"],
+        "projectsRelationship": "independent",
+        "version": {
+          "preVersionCommand": "npx nx run-many -t build --projects=packages/*",
+          "conventionalCommits": true,
+          "fallbackCurrentVersionResolver": "disk"
+        },
+        "changelog": {
+          "projectChangelogs": {
+            "createRelease": "github"
+          },
+          "automaticFromRef": true
+        }
+      },
+      "apps": {
+        "projects": [
+          "network-of-terms-graphql",
+          "network-of-terms-reconciliation"
+        ],
+        "projectsRelationship": "independent",
+        "releaseTagPattern": "release/{projectName}/{version}",
+        "docker": {
+          "skipVersionActions": true,
+          "registryUrl": "ghcr.io/netwerk-digitaal-erfgoed",
+          "versionSchemes": {
+            "production": "{currentDate|YYYYMMDDHHmm}-{shortCommitSha}"
+          }
+        }
+      }
+    },
+    "version": {
+      "preVersionCommand": "npx nx run-many -t build"
+    }
+  },
+  "targetDefaults": {
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "copy-workspace-modules": {
+      "executor": "@nx/js:copy-workspace-modules",
+      "dependsOn": ["build"]
+    },
+    "prune-lockfile": {
+      "executor": "@nx/js:prune-lockfile",
+      "dependsOn": ["build"]
+    },
+    "docker:build": {
+      "dependsOn": ["copy-workspace-modules", "prune-lockfile"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    }
+  },
+  "generators": {
+    "@nx/js:library": {
+      "bundler": "tsc",
+      "linter": "eslint",
+      "publishable": true,
+      "unitTestRunner": "vitest"
+    }
+  }
+}

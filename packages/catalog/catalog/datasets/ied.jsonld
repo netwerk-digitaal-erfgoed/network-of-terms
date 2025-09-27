@@ -1,0 +1,86 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.indischherinneringscentrum.nl/ied",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Dutch East Indies Heritage Thesaurus"
+    },
+    {
+      "@language": "nl",
+      "@value": "Indisch Erfgoed Thesaurus"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "nl",
+      "@value": "IED"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Actoren-en-organismen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.indischherinneringscentrum.nl/"
+    }
+  ],
+  "url": [
+    "https://data.indischherinneringscentrum.nl/ied/"
+  ],
+  "mainEntityOfPage": [
+    "https://data.indischherinneringscentrum.nl/ied.html"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing collections from the period 1930–1970 around the former Dutch East Indies, independent Indonesia and postcolonial migration of persons to the Netherlands"
+    },
+    {
+      "@language": "nl",
+      "@value": "Termen voor het beschrijven van collecties uit de periode 1930–1970 rondom voormalig Nederlands-Indië, onafhankelijk Indonesië en de postkoloniale migratie van personen naar Nederland"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/ied",
+      "@type": "DataDownload",
+      "contentUrl": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/ied",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/ied.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/ied.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

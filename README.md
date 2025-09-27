@@ -26,15 +26,15 @@ flowchart TD
   ts2("Terminology source 2"):::ts
 
   style not fill:#D5E8D4,stroke:#82B366
-  style crs fill:#FFF2CC,stroke:#D6B656  
+  style crs fill:#FFF2CC,stroke:#D6B656
   classDef ts fill:#DAE8FC,stroke:#6C8EBF;
-  
+
   crs -- search query ---> not
   not -. search results -.-> crs
-   
+
   not -- search query ---> ts1
   ts1 -. search results -.-> not
-  
+
   not -- search query ---> ts2
   ts2 -. search results -.-> not
 ```
@@ -49,13 +49,13 @@ If you just want to search the Network of Terms using a web interface, have a lo
 
 ### For application developers
 
-If you’re a software developer who wants to implement terms search/lookup in your software (such as collection 
+If you’re a software developer who wants to implement terms search/lookup in your software (such as collection
 management systems), you probably want to use the Network of Terms
 [GraphQL API](packages/network-of-terms-graphql/README.md#for-application-developers).
 
 ### For Network of Terms developers
 
-If you want to make changes to the Network of Terms code or catalog, the best way to get started is to run the 
+If you want to make changes to the Network of Terms code or catalog, the best way to get started is to run the
 application [locally using Node](packages/network-of-terms-graphql/README.md#for-network-of-terms-developers)
 or [in a development Docker container](docs/docker.md).
 
@@ -63,13 +63,13 @@ or [in a development Docker container](docs/docker.md).
 
 This repository contains the following packages:
 
-- [network-of-terms-catalog](packages/network-of-terms-catalog): the catalog of terminology sources in the Network of
+- [network-of-terms-catalog](packages/catalog): the catalog of terminology sources in the Network of
   Terms that can be queried;
-- [network-of-terms-cli](packages/network-of-terms-cli): query the Network of Terms from the command line;
-- [network-of-terms-graphql](packages/network-of-terms-graphql): a GraphQL API to find terms;
-- [network-of-terms-query](packages/network-of-terms-query): core query logic which executes the queries to terminology
+- [network-of-terms-cli](packages/cli): query the Network of Terms from the command line;
+- [network-of-terms-graphql](packages/graphql): a GraphQL API to find terms;
+- [network-of-terms-query](packages/query): core query logic which executes the queries to terminology
   sources;
-- [network-of-terms-reconciliation](packages/network-of-terms-reconciliation): a Reconciliation Service API for matching
+- [network-of-terms-reconciliation](packages/reconciliation): a Reconciliation Service API for matching
   strings against terms with URIs.
 
 ### Contributing
@@ -78,4 +78,4 @@ You’re very welcome to contribute to this repository:
 
 - [create an issue](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues/new) if you encounter a problem
   or have suggestions;
-- read [CONTRIBUTING](CONTRIBUTING.md) if you wish to commit code. 
+- read [CONTRIBUTING](CONTRIBUTING.md) if you wish to commit code.
