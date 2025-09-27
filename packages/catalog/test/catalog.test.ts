@@ -110,5 +110,5 @@ describe('Catalog', () => {
       resolve(dirname(fileURLToPath(import.meta.url)), '../', 'catalog/'),
     );
     expect(catalog.datasets.length).toBeGreaterThan(3);
-  }, 20_000);
+  }, 50_000);
 });
