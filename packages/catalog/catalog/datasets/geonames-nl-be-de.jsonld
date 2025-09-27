@@ -48,7 +48,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://../queries/search/geonames.rq"
+          "query": "file://../queries/search/geonames-nl-be-de.rq"
         },
         {
           "@type": "FindAction",
