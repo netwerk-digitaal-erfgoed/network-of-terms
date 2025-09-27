@@ -28,8 +28,7 @@ If you want to make changes to the application, run it locally using Node (or in
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
     cd network-of-terms
     npm install
-    cd packages/network-of-terms-reconciliation
-    npm run dev
+    npx nx serve network-of-terms-reconciliation
 
 In both cases, Reconciliation endpoints will be available at `http://localhost:3123/reconcile/{distribution URI}`, for
 example http://localhost:3123/reconcile/https://data.rkd.nl/rkdartists.

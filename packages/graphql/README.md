@@ -37,8 +37,7 @@ application locally using Node (or in a [Docker container](../../docs/docker.md)
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
     cd network-of-terms
     npm install
-    cd packages/network-of-terms-graphql
-    npm run dev
+    npx nx serve network-of-terms-graphql
 
 and open http://localhost:3123 in your browser for the GraphQL Playground. See below for some example queries.
 
@@ -52,7 +51,7 @@ To run your own instance of the Network of Terms GraphQL API with a custom [cata
 1. create your custom catalog that matches the data structure of the [default catalog](../../packages/catalog)
 2. provide the path to your custom catalog in the `CATALOG_PATH` environment variable when starting the server:
 
-   CATALOG_PATH=my-custom-catalog/ npm run start
+   CATALOG_PATH=my-custom-catalog/ npx nx serve network-of-terms-graphql
 
 ## GraphQL API
 
