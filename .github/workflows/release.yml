@@ -35,14 +35,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - run: npx nx release --group libs
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }} # Needed for pushing release commits.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_CONFIG_PROVENANCE: true
-
-      - run: npx nx affected -t docker:build --configuration=production
-
       - name: Log in to Docker registry
         uses: docker/login-action@v3
         with:
@@ -50,10 +42,16 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
+      - run: npx nx affected -t docker:build --configuration=production
+
       - name: Build and publish Docker images
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }} # Needed for pushing release commits.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
         id: docker
         run: |
-          npx nx release --group apps --dockerVersionScheme=production --yes
+          npx nx release --dockerVersionScheme=production --yes
           {
             echo 'images<<EOF'
             docker image ls ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-* --format "{{.Repository}}:{{.Tag}}"
