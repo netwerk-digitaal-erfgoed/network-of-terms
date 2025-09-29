@@ -41,7 +41,7 @@
   "inLanguage": "en",
   "distribution": [
     {
-      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames",
+      "@id": "https://demo.netwerkdigitaalerfgoed.nl/geonames#nl-be-de",
       "@type": "DataDownload",
       "contentUrl": "https://demo.netwerkdigitaalerfgoed.nl/geonames/sparql",
       "encodingFormat": "application/sparql-query",
