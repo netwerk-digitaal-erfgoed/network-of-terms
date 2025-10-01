@@ -9,6 +9,8 @@ updates:
     directory: '/'
     schedule:
       interval: 'monthly'
+    ignore:
+      - dependency-name: 'jsonld-context-parser' # Must match the version that Comunica depends on: https://github.com/comunica/comunica/blob/master/packages/actor-rdf-parse-jsonld/package.json#L48
     groups:
       comunica:
         patterns:
