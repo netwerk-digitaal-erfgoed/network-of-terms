@@ -3,7 +3,6 @@ import { rdfParser } from 'rdf-parse';
 import { QueryEngine } from '@comunica/query-sparql-rdfjs';
 import { Transform, TransformCallback } from 'stream';
 import { globby } from 'globby';
-import { storeStream } from 'rdf-store-stream';
 import {
   Catalog,
   Dataset,
@@ -18,8 +17,9 @@ import { createLens } from 'ldkit';
 import type RDF from '@rdfjs/types';
 import { dirname, join } from 'node:path';
 import { KeysRdfParseJsonLd } from '@comunica/context-entries';
-import { FetchDocumentLoader } from 'jsonld-context-parser';
-import { IJsonLdContext } from 'jsonld-context-parser';
+import { FetchDocumentLoader, IJsonLdContext } from 'jsonld-context-parser';
+import { Readable } from 'node:stream';
+import { RdfStore } from 'rdf-stores';
 
 export async function getCatalog(path?: string): Promise<Catalog> {
   const directory = (
@@ -184,26 +184,29 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
  * Return a separate RDF.Store for each catalog file because merging them into a single store
  * causes blank nodes to be re-used instead of incremented when adding the next file.
  */
-export async function fromFiles(directory: string): Promise<RDF.Store> {
+async function fromFiles(directory: string): Promise<RDF.Store> {
   // Read all files except those in the queries/ directory.
   const files = await globby([directory, '!' + directory + '/queries']);
-  return (await Promise.all(files.map(fromFile))).reduce(
-    (previous, current) => {
-      previous.import(current.match());
-      return previous;
-    },
-  );
+  const store = RdfStore.createDefault();
+  for (const file of files) {
+    const stream = fromFile(file);
+    await new Promise((resolve, reject) => {
+      store.import(stream);
+      stream.on('end', resolve);
+      stream.on('error', reject);
+    });
+  }
+  return store;
 }
 
-export async function fromFile(file: string): Promise<RDF.Store> {
-  const quadStream = rdfParser
+function fromFile(file: string): RDF.Stream & Readable {
+  return rdfParser
     .parse(fs.createReadStream(file), {
       [KeysRdfParseJsonLd.documentLoader.name]: documentLoader,
       path: file,
     })
     .pipe(new InlineFiles(file))
     .pipe(new SubstituteCredentialsFromEnvironmentVariables());
-  return storeStream(quadStream);
 }
 
 /**

@@ -4,7 +4,7 @@ import {
   FeatureType,
   SparqlDistribution,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { fromFile, fromStore, getCatalog } from '../src/index.js';
+import { getCatalog } from '../src/index.js';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -86,13 +86,9 @@ describe('Catalog', () => {
 
   it('substitutes credentials from environment variables', async () => {
     process.env.DATASET_CREDENTIALS = 'username:password';
-    const store = await fromFile(
-      resolve(
-        dirname(fileURLToPath(import.meta.url)),
-        'fixtures/credentials.jsonld',
-      ),
+    const catalog = await getCatalog(
+      resolve(dirname(fileURLToPath(import.meta.url)), 'fixtures/credentials/'),
     );
-    const catalog = await fromStore(store);
     const distributionIri =
       'https://data.beeldengeluid.nl/id/datadownload/0027';
     const dataset = catalog.getDatasetByDistributionIri(distributionIri)!;
