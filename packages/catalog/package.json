@@ -45,8 +45,7 @@
     "memoize": "^10.0.0",
     "rdf-parse": "^3.0.0",
     "rdf-stores": "^2.1.1",
-    "tslib": "^2.3.0",
-    "vitest": "^3.2.4"
+    "tslib": "^2.3.0"
   },
   "devDependencies": {
     "@comunica/types": "^4.2.0",
