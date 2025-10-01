@@ -37,12 +37,8 @@
       "@id": "https://www.indischherinneringscentrum.nl/"
     }
   ],
-  "url": [
-    "https://data.indischherinneringscentrum.nl/ied/"
-  ],
-  "mainEntityOfPage": [
-    "https://data.indischherinneringscentrum.nl/ied.html"
-  ],
+  "url": ["https://data.indischherinneringscentrum.nl/ied/"],
+  "mainEntityOfPage": ["https://data.indischherinneringscentrum.nl/ied.html"],
   "description": [
     {
       "@language": "en",

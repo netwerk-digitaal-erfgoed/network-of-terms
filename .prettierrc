@@ -1,4 +1,12 @@
 {
   "singleQuote": true,
-  "plugins": ["prettier-plugin-packagejson"]
+  "plugins": ["prettier-plugin-packagejson"],
+  "overrides": [
+    {
+      "files": "*.jsonld",
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
 }

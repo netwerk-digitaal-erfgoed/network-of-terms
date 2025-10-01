@@ -22,12 +22,8 @@
       "@id": "https://www.geonames.org/team.html"
     }
   ],
-  "url": [
-    "https://sws.geonames.org/"
-  ],
-  "mainEntityOfPage": [
-    "https://www.geonames.org/about.html"
-  ],
+  "url": ["https://sws.geonames.org/"],
+  "mainEntityOfPage": ["https://www.geonames.org/about.html"],
   "description": [
     {
       "@language": "en",

@@ -22,12 +22,8 @@
       "@id": "https://www.wikidata.org/entity/Q180"
     }
   ],
-  "url": [
-    "http://www.wikidata.org/entity/"
-  ],
-  "mainEntityOfPage": [
-    "https://www.wikidata.org"
-  ],
+  "url": ["http://www.wikidata.org/entity/"],
+  "mainEntityOfPage": ["https://www.wikidata.org"],
   "description": [
     {
       "@language": "en",

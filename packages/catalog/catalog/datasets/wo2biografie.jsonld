@@ -22,9 +22,7 @@
       "@id": "https://www.wo2net.nl"
     }
   ],
-  "url": [
-    "https://data.niod.nl/WO2_biografieen/"
-  ],
+  "url": ["https://data.niod.nl/WO2_biografieen/"],
   "mainEntityOfPage": [
     "https://www.oorlogsbronnen.nl/nieuws/project-wo2-thesaurus"
   ],

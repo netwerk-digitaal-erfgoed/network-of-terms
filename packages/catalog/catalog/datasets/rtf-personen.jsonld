@@ -22,12 +22,8 @@
       "@id": "https://www.tresoar.nl"
     }
   ],
-  "url": [
-    "https://fryslan.regiotermen.nl/"
-  ],
-  "mainEntityOfPage": [
-    "https://fryslan.regiotermen.nl/personen"
-  ],
+  "url": ["https://fryslan.regiotermen.nl/"],
+  "mainEntityOfPage": ["https://fryslan.regiotermen.nl/personen"],
   "description": [
     {
       "@language": "en",

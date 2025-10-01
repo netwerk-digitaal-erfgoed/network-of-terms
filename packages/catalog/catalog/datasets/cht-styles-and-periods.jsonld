@@ -35,9 +35,7 @@
       "@id": "https://www.cultureelerfgoed.nl"
     }
   ],
-  "url": [
-    "https://data.cultureelerfgoed.nl/term/id/cht/"
-  ],
+  "url": ["https://data.cultureelerfgoed.nl/term/id/cht/"],
   "mainEntityOfPage": [
     "https://kennis.cultureelerfgoed.nl/index.php/Thesauri_bij_de_RCE_-_Cultuurhistorische_Thesaurus"
   ],

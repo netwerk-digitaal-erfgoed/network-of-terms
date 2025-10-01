@@ -25,12 +25,8 @@
       "@id": "https://www.podiumkunst.net"
     }
   ],
-  "url": [
-    "https://data.muziekschatten.nl/som/um"
-  ],
-  "mainEntityOfPage": [
-    "https://data.muziekschatten.nl/som/"
-  ],
+  "url": ["https://data.muziekschatten.nl/som/um"],
+  "mainEntityOfPage": ["https://data.muziekschatten.nl/som/"],
   "description": [
     {
       "@language": "en",

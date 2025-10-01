@@ -22,12 +22,8 @@
       "@id": "https://www.amsterdamtimemachine.nl"
     }
   ],
-  "url": [
-    "https://adamlink.nl/geo/street/"
-  ],
-  "mainEntityOfPage": [
-    "https://adamlink.nl"
-  ],
+  "url": ["https://adamlink.nl/geo/street/"],
+  "mainEntityOfPage": ["https://adamlink.nl"],
   "description": [
     {
       "@language": "en",
