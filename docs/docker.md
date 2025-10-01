@@ -1,12 +1,12 @@
 # Run in a development Docker container
 
 An alternative way to run the application for development purposes is in a Docker container. This is useful if you don’t
-want to install Node on your host machine. 
+want to install Node on your host machine.
 
 Start by cloning the repository:
 
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
-    cd network-of-terms    
+    cd network-of-terms
 
 Then start run the development container:
 

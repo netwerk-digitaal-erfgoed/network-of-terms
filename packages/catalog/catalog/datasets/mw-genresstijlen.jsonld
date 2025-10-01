@@ -25,9 +25,7 @@
       "@id": "https://www.muziekweb.nl"
     }
   ],
-  "url": [
-    "https://data.muziekweb.nl/Link/"
-  ],
+  "url": ["https://data.muziekweb.nl/Link/"],
   "mainEntityOfPage": [
     "https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb"
   ],

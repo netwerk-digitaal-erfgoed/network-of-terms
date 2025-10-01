@@ -22,12 +22,8 @@
       "@id": "https://www.omroepmuziek.nl"
     }
   ],
-  "url": [
-    "https://data.muziekschatten.nl/som/"
-  ],
-  "mainEntityOfPage": [
-    "https://data.muziekschatten.nl/som/"
-  ],
+  "url": ["https://data.muziekschatten.nl/som/"],
+  "mainEntityOfPage": ["https://data.muziekschatten.nl/som/"],
   "description": [
     {
       "@language": "en",

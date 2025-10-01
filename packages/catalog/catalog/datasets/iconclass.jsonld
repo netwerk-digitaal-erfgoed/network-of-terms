@@ -28,12 +28,8 @@
       "@id": "https://henrivandewaalfoundation.org"
     }
   ],
-  "url": [
-    "https://iconclass.org/"
-  ],
-  "mainEntityOfPage": [
-    "https://iconclass.org"
-  ],
+  "url": ["https://iconclass.org/"],
+  "mainEntityOfPage": ["https://iconclass.org"],
   "description": [
     {
       "@language": "en",

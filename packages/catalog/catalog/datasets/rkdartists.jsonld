@@ -22,12 +22,8 @@
       "@id": "https://rkd.nl"
     }
   ],
-  "url": [
-    "https://data.rkd.nl/artists/"
-  ],
-  "mainEntityOfPage": [
-    "https://rkd.nl/nl/explore/artists"
-  ],
+  "url": ["https://data.rkd.nl/artists/"],
+  "mainEntityOfPage": ["https://rkd.nl/nl/explore/artists"],
   "description": [
     {
       "@language": "en",

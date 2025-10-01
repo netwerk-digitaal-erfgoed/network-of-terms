@@ -25,9 +25,7 @@
   "url": [
     "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/"
   ],
-  "mainEntityOfPage": [
-    "https://monumentenregister.cultureelerfgoed.nl/"
-  ],
+  "mainEntityOfPage": ["https://monumentenregister.cultureelerfgoed.nl/"],
   "description": [
     {
       "@language": "en",

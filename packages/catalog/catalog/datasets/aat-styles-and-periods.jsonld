@@ -35,9 +35,7 @@
       "@id": "http://www.getty.edu/research/"
     }
   ],
-  "url": [
-    "http://vocab.getty.edu/aat/"
-  ],
+  "url": ["http://vocab.getty.edu/aat/"],
   "mainEntityOfPage": [
     "https://www.getty.edu/research/tools/vocabularies/aat/about.html"
   ],

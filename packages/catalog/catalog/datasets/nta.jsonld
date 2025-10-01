@@ -28,12 +28,8 @@
       "@id": "http://data.bibliotheken.nl/id/thes/p075301482"
     }
   ],
-  "url": [
-    "http://data.bibliotheken.nl/id/thes/"
-  ],
-  "mainEntityOfPage": [
-    "https://data.bibliotheken.nl/KB/-/stories/NTA"
-  ],
+  "url": ["http://data.bibliotheken.nl/id/thes/"],
+  "mainEntityOfPage": ["https://data.bibliotheken.nl/KB/-/stories/NTA"],
   "description": [
     {
       "@language": "en",

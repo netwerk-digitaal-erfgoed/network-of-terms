@@ -1,20 +1,20 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
 
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     ignore:
-      - dependency-name: "@qiwi/multi-semantic-release" # Version >= 6.0 ignores all packages except query and catalog.
+      - dependency-name: '@qiwi/multi-semantic-release' # Version >= 6.0 ignores all packages except query and catalog.
     groups:
       comunica:
         patterns:
-          - "@comunica/*"
+          - '@comunica/*'
       opentelemetry:
         patterns:
-          - "@opentelemetry/*"
+          - '@opentelemetry/*'
