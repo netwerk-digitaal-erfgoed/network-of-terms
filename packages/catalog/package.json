@@ -34,11 +34,13 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
+    "@comunica/context-entries": "^4.4.1",
     "@comunica/query-sparql": "^4.3.0",
     "@comunica/query-sparql-rdfjs": "^4.3.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/types": "^2.0.1",
     "globby": "^14.0.2",
+    "jsonld-context-parser": "^3.0.0",
     "ldkit": "^2.5.1",
     "memoize": "^10.0.0",
     "rdf-parse": "^3.0.0",
