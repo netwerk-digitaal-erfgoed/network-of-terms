@@ -15,6 +15,10 @@ updates:
       comunica:
         patterns:
           - '@comunica/*'
+      nx:
+        patterns:
+          - '@nx/*'
+          - 'nx'
       opentelemetry:
         patterns:
           - '@opentelemetry/*'
