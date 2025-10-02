@@ -198,7 +198,7 @@ export async function startDistributionSparqlEndpoint(
   port: number,
 ): Promise<void> {
   servers = await setup({
-    command: `npx comunica-sparql-file-http ${dirname(
+    command: `npx --no comunica-sparql-file-http ${dirname(
       fileURLToPath(import.meta.url),
     )}/../test/fixtures/terms.ttl -p ${port}`,
     port,
