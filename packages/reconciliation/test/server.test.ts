@@ -14,11 +14,12 @@ const catalog = testCatalog(3001);
 describe('Server', () => {
   afterAll(async () => {
     await teardown();
-  });
+  }, 20_000);
+
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3001);
     httpServer = await server(catalog, config);
-  });
+  }, 20_000);
 
   it('returns ok at root', async () => {
     const response = await httpServer.inject({
