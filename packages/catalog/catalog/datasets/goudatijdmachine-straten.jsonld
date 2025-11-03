@@ -53,7 +53,7 @@
     {
       "@id": "https://www.goudatijdmachine.nl/id/straten#streets",
       "@type": "DataDownload",
-      "contentUrl": "https://www.goudatijdmachine.nl/sparql/repositories/gtm",
+      "contentUrl": "https://www.goudatijdmachine.nl/sparql11",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
