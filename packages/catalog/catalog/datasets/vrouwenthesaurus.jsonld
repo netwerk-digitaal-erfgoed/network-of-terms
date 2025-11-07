@@ -12,16 +12,6 @@
       "@value": "Vrouwenthesaurus"
     }
   ],
-  "alternateName": [
-    {
-      "@language": "en",
-      "@value": "Atria Women’s Thesaurus"
-    },
-    {
-      "@language": "nl",
-      "@value": "Vrouwenthesaurus Atria"
-    }
-  ],
   "genre": [
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte%20begrippen"
@@ -32,7 +22,7 @@
       "@id": "https://atria.nl"
     }
   ],
-  "url": ["https://vrouwenthesaurus.org"],
+  "url": ["https://vrouwenthesaurus.org/conceptid/"],
   "mainEntityOfPage": ["https://vrouwenthesaurus.org/conceptid.html"],
   "description": [
     {
