@@ -46,6 +46,21 @@
       ],
       "alternateName": "Westerbork"
     },
+	    {
+      "@id": "https://atria.nl/",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Atria – institute on gender equality and women's history"
+        },
+        {
+          "@language": "nl",
+          "@value": "Atria – kennisinstituut voor emancipatie en vrouwengeschiedenis"
+        }
+      ],
+      "alternateName": "Atria"
+    },
     {
       "@id": "https://www.niod.nl",
       "@type": "Organization",
