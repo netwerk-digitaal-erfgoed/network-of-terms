@@ -1,0 +1,67 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://vrouwenthesaurus.org",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Women’s Thesaurus"
+    },
+    {
+      "@language": "nl",
+      "@value": "Vrouwenthesaurus"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte%20begrippen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://atria.nl"
+    }
+  ],
+  "url": ["https://vrouwenthesaurus.org/conceptid/"],
+  "mainEntityOfPage": ["https://vrouwenthesaurus.org/conceptid.html"],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Concepts for describing information about the position and experiences of women in all their diversity, emancipation, and women’s history."
+    },
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen voor het beschrijven van informatie over de positie van vrouwen in al hun diversiteit, emancipatie en vrouwengeschiedenis."
+    }
+  ],
+  "inLanguage": ["en", "nl"],
+  "distribution": [
+    {
+      "@id": "https://vrouwenthesaurus.org/PoolParty/sparql/conceptid",
+      "@type": "DataDownload",
+      "contentUrl": "https://vrouwenthesaurus.org/PoolParty/sparql/conceptid",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
