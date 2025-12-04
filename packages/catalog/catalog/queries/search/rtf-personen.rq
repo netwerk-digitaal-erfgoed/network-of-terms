@@ -19,7 +19,7 @@ WHERE {
             OPTIONAL { ?uri skos:scopeNote ?scopeNote }
             OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri }
 
-            FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)) || CONTAINS(LCASE(?altlabel), LCASE(?query)))
+            FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)) || CONTAINS(LCASE(?altLabel), LCASE(?query)))
         }
     }
 }
