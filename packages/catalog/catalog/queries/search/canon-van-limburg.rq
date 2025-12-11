@@ -15,19 +15,22 @@ CONSTRUCT {
 }
 WHERE {
     GRAPH <https://canonvanlimburg.limburgcollectie.nl> {
-        SELECT * WHERE {
-            ?uri a skos:Concept ;
-                skos:prefLabel ?prefLabel ;
-                skos:altLabel ?altLabel .
+        {
+            SELECT ?uri ?prefLabel ?altLabel WHERE {
+                ?uri a skos:Concept ;
+                    skos:prefLabel ?prefLabel ;
+                    skos:altLabel ?altLabel .
 
-            OPTIONAL { ?uri skos:scopeNote ?scopeNote }
-            OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri }
-            OPTIONAL { ?uri skos:broader ?broader_uri }
-            OPTIONAL { ?uri skos:narrower ?narrower_uri }
-            OPTIONAL { ?uri skos:related ?related_uri }
-            OPTIONAL { ?uri skos:seeAlso ?seeAlso_uri }
-
-            FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)) || CONTAINS(LCASE(?altLabel), LCASE(?query)))
+                FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)) || CONTAINS(LCASE(?altLabel), LCASE(?query)))
+            }
+            #LIMIT#
         }
+        
+        OPTIONAL { ?uri skos:scopeNote ?scopeNote }
+        OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri }
+        OPTIONAL { ?uri skos:broader ?broader_uri }
+        OPTIONAL { ?uri skos:narrower ?narrower_uri }
+        OPTIONAL { ?uri skos:related ?related_uri }
+        OPTIONAL { ?uri skos:seeAlso ?seeAlso_uri }
     }
 }
