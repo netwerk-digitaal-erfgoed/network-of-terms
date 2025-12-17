@@ -327,6 +327,21 @@
         }
       ],
       "alternateName": "Tresoar"
+    },
+    {
+      "@id": "https://lgog.nl",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Limburg Historical and Archeological Society"
+        },
+        {
+          "@language": "nl",
+          "@value": "Limburgs Geschied- en Oudheidkundig Genootschap"
+        }
+      ],
+      "alternateName": "LGOG"
     }
   ]
 }

@@ -1,0 +1,83 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://canonvanlimburg.limburgcollectie.nl",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Canon van Limburg"
+    },
+    {
+      "@language": "nl",
+      "@value": "Canon van Limburg"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Gebeurtenissen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Activiteiten"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://lgog.nl"
+    }
+  ],
+  "url": [
+    "https://www.canonvannederland.nl/nl/limburg/limburg-nieuw"
+  ],
+  "mainEntityOfPage": [
+    "https://www.canonvannederland.nl/nl/limburg/limburg-nieuw/colofon"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Windows from 'de Nieuwe Canon van Limburg'. This source also contains the periods from the Canon of the Netherlands."
+    },
+    {
+      "@language": "nl",
+      "@value": "Vensters uit de Nieuwe Canon van Limburg. Deze bron bevat tevens de tijdvakken uit de Canon van Nederland."
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://triplestore.linkedopenlimburg.nl/repositories/canon",
+      "@type": "DataDownload",
+      "contentUrl": "https://triplestore.linkedopenlimburg.nl/repositories/canon",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/canon-van-limburg.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/canon-van-limburg.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
