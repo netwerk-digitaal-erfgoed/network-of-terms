@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://canonvanlimburg.limburgcollectie.nl",
+  "@id": "https://www.canonvannederland.nl#nieuwe-canon-van-limburg",
   "@type": "Dataset",
   "name": [
     {
@@ -35,7 +35,7 @@
     }
   ],
   "url": [
-    "https://www.canonvannederland.nl/nl/limburg/limburg-nieuw"
+    "https://www.canonvannederland.nl/id/"
   ],
   "mainEntityOfPage": [
     "https://www.canonvannederland.nl/nl/limburg/limburg-nieuw/colofon"
