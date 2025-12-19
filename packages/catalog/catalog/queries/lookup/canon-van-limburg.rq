@@ -12,6 +12,11 @@ CONSTRUCT {
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri ;
         skos:seeAlso ?seeAlso_uri .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+    ?broader_uri skos:prefLabel ?broader_prefLabel .
+    ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+    ?related_uri skos:prefLabel ?related_prefLabel .
+    ?seeAlso_uri skos:prefLabel ?seeAlso_prefLabel .
 }
 WHERE {
     GRAPH <https://canonvanlimburg.limburgcollectie.nl> {
@@ -23,11 +28,26 @@ WHERE {
                 skos:altLabel ?altLabel .
 
             OPTIONAL { ?uri skos:scopeNote ?scopeNote }
-            OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri }
-            OPTIONAL { ?uri skos:broader ?broader_uri }
-            OPTIONAL { ?uri skos:narrower ?narrower_uri }
-            OPTIONAL { ?uri skos:related ?related_uri }
-            OPTIONAL { ?uri skos:seeAlso ?seeAlso_uri }
+            OPTIONAL { 
+                ?uri skos:exactMatch ?exactMatch_uri .
+                OPTIONAL { ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel }
+            }
+            OPTIONAL { 
+                ?uri skos:broader ?broader_uri .
+                OPTIONAL { ?broader_uri skos:prefLabel ?broader_prefLabel }
+            }
+            OPTIONAL { 
+                ?uri skos:narrower ?narrower_uri .
+                OPTIONAL { ?narrower_uri skos:prefLabel ?narrower_prefLabel }
+            }
+            OPTIONAL { 
+                ?uri skos:related ?related_uri .
+                OPTIONAL { ?related_uri skos:prefLabel ?related_prefLabel }
+            }
+            OPTIONAL { 
+                ?uri skos:seeAlso ?seeAlso_uri .
+                OPTIONAL { ?seeAlso_uri skos:prefLabel ?seeAlso_prefLabel }
+            }
             
         }
     }
