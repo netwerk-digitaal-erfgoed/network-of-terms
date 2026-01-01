@@ -33,7 +33,7 @@
     "tslib": "^2.3.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.44.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   },
   "nx": {
     "includedScripts": [],
