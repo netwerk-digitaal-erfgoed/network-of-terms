@@ -18,7 +18,7 @@
     "build/"
   ],
   "dependencies": {
-    "@fastify/accepts": "^5.0.2",
+    "@fastify/accepts": "^5.0.4",
     "@fastify/cors": "11.0.1",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
