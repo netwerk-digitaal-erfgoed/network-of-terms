@@ -30,7 +30,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@comunica/query-sparql": "^4.3.0",
+    "@comunica/query-sparql": "^4.5.0",
     "@comunica/types": "^4.2.0",
     "@comunica/utils-bindings-factory": "^4.2.0",
     "@hapi/hoek": "^11.0.7",
@@ -51,7 +51,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@comunica/query-sparql-file": "^4.3.0",
+    "@comunica/query-sparql-file": "^4.5.0",
     "asynciterator": "^3.9.0"
   }
 }
