@@ -22,3 +22,7 @@ updates:
       opentelemetry:
         patterns:
           - '@opentelemetry/*'
+      vitest:
+        patterns:
+          - '@vitest/*'
+          - 'vitest'
