@@ -49,7 +49,7 @@
   },
   "devDependencies": {
     "@comunica/types": "^4.2.0",
-    "@types/n3": "^1.24.2",
+    "@types/n3": "^1.26.1",
     "@types/rdf-ext": "^2.5.2",
     "jsonld-streaming-parser": "^5.0.0",
     "rdf-ext": "^2.6.0",
