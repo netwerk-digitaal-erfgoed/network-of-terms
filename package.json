@@ -18,8 +18,8 @@
     "@swc-node/core": "^1.14.1",
     "@swc-node/register": "^1.11.1",
     "@types/node": "^22.15.3",
-    "@vitest/coverage-v8": "^3.2.4",
-    "@vitest/ui": "^3.0.0",
+    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
     "esbuild": "^0.25.11",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
@@ -33,7 +33,7 @@
     "tslib": "^2.3.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.44.0",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.16"
   },
   "nx": {
     "includedScripts": [],
