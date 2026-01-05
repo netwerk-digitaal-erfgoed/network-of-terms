@@ -24,7 +24,7 @@ WHERE {
 
             VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
 
-            FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+            FILTER(CONTAINS(LCASE(?label), LCASE(?query)) || CONTAINS(LCASE(STR(?uri)), LCASE(?query)))
 
         }
         #LIMIT#
