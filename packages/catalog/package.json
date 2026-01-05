@@ -42,7 +42,7 @@
     "globby": "^14.0.2",
     "jsonld-context-parser": "^2.4.0",
     "ldkit": "^2.5.1",
-    "memoize": "^10.0.0",
+    "memoize": "^10.2.0",
     "rdf-parse": "^4.0.0",
     "rdf-stores": "^2.1.1",
     "tslib": "^2.3.0"
