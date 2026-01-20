@@ -1,0 +1,92 @@
+{
+  "name": "@netwerk-digitaal-erfgoed/network-of-terms-status",
+  "private": true,
+  "description": "SPARQL endpoint monitoring and LDES status stream for Network of Terms",
+  "keywords": [],
+  "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
+  "bugs": {
+    "url": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git"
+  },
+  "license": "EUPL",
+  "author": "Netwerk Digitaal Erfgoed",
+  "type": "module",
+  "dependencies": {
+    "@lde/sparql-monitor": "^0.1.0",
+    "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
+    "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
+    "env-schema": "6.0.1",
+    "n3": "^1.25.3",
+    "pino": "^9.7.0"
+  },
+  "devDependencies": {
+    "nock": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=16.15.0"
+  },
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/esbuild:esbuild",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "defaultConfiguration": "production",
+        "options": {
+          "platform": "node",
+          "outputPath": "{projectRoot}/dist",
+          "main": "{projectRoot}/src/main.ts",
+          "declarationRootDir": "{projectRoot}/src",
+          "tsConfig": "packages/status/tsconfig.app.json",
+          "assets": [
+            {
+              "input": "packages/catalog/catalog",
+              "glob": "**/*",
+              "output": "catalog"
+            }
+          ],
+          "esbuildOptions": {
+            "sourcemap": true,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        },
+        "configurations": {
+          "development": {},
+          "production": {
+            "esbuildOptions": {
+              "sourcemap": false,
+              "outExtension": {
+                ".js": ".js"
+              }
+            }
+          }
+        }
+      },
+      "serve-dev": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-status:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-status:build:development"
+          },
+          "production": {
+            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-status:build:production"
+          }
+        }
+      }
+    }
+  }
+}
