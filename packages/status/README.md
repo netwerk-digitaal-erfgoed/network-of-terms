@@ -1,6 +1,7 @@
 # Network of Terms Status
 
-This service monitors the availability of SPARQL endpoints for terminology sources in the [Network of Terms](../../README.md). It periodically checks each endpoint and exposes the results as an [LDES](https://semiceu.github.io/LinkedDataEventStreams/) (Linked Data Event Stream).
+This service monitors the availability of SPARQL endpoints for terminology sources in the [Network of Terms](../../README.md).
+It periodically checks each endpoint and exposes the results as an [LDES](https://semiceu.github.io/LinkedDataEventStreams/) (Linked Data Event Stream).
 
 ## How it works
 
@@ -18,8 +19,14 @@ The [GraphQL API](../graphql) consumes this service to show source availability 
 
 ### Using Docker
 
+First start a Postgres database:
+
+    docker compose up -d postrgres
+
+Then run the service:
+
     docker run -p 3000:3000 \
-      -e DATABASE_URL=postgres://user:pass@host:5432/db \
+      -e DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres \
       ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-status
 
 ### Using Node
@@ -33,13 +40,13 @@ The [GraphQL API](../graphql) consumes this service to show source availability 
 
 Configuration is done via environment variables:
 
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `DATABASE_URL` | Yes | - | PostgreSQL connection string |
-| `PORT` | No | `3000` | HTTP server port |
-| `POLLING_INTERVAL_SECONDS` | No | `300` | Interval between checks (5 minutes) |
-| `RUN_ON_START` | No | `true` | Run initial check on startup |
-| `LDES_BASE_URL` | No | `https://termennetwerk-api.netwerkdigitaalerfgoed.nl/status` | Base URL for LDES stream IRIs |
+| Variable                   | Required | Default                                                      | Description                         |
+| -------------------------- | -------- | ------------------------------------------------------------ | ----------------------------------- |
+| `DATABASE_URL`             | Yes      | -                                                            | PostgreSQL connection string        |
+| `PORT`                     | No       | `3000`                                                       | HTTP server port                    |
+| `POLLING_INTERVAL_SECONDS` | No       | `300`                                                        | Interval between checks (5 minutes) |
+| `RUN_ON_START`             | No       | `true`                                                       | Run initial check on startup        |
+| `LDES_BASE_URL`            | No       | `https://termennetwerk-api.netwerkdigitaalerfgoed.nl/status` | Base URL for LDES stream IRIs       |
 
 ## HTTP API
 
