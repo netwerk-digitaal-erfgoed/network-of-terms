@@ -27,6 +27,12 @@ WHERE {
         aat:300388277 # English
     }
 
+    # Pre-filter by language BEFORE the expensive subquery (based on Comunica query optimization).
+    ?uri skosxl:prefLabel [
+        dcterms:language ?language ; # Faster than FILTER(langMatches(...)): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
+        skosxl:literalForm ?prefLabel
+    ]
+
     {
         SELECT DISTINCT ?uri WHERE {
             ?uri luc:term ?query ;
@@ -35,17 +41,9 @@ WHERE {
             ?type rdfs:subClassOf gvp:Subject .
             FILTER (?type != gvp:Subject) .
             FILTER NOT EXISTS { ?uri a gvp:GuideTerm }
-            ?uri skosxl:prefLabel [
-                dcterms:language ?language ; # Faster than FILTER(langMatches(...): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
-                skosxl:literalForm ?prefLabel
-            ]
         }
         #LIMIT#
     }
-    ?uri skosxl:prefLabel [
-        dcterms:language ?language ; # Faster than FILTER(langMatches(...): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
-        skosxl:literalForm ?prefLabel
-    ]
     OPTIONAL {
         ?uri skosxl:altLabel [
             dcterms:language ?language ;
