@@ -13,20 +13,6 @@ function isChildDataset(dataset: Dataset): boolean {
 }
 
 /**
- * Strip credentials from a URL.
- */
-function stripCredentials(urlString: string): string {
-  try {
-    const url = new URL(urlString);
-    url.username = '';
-    url.password = '';
-    return url.toString();
-  } catch {
-    return urlString;
-  }
-}
-
-/**
  * Extract monitor configurations from catalog.
  * Creates one monitor per dataset, using the dataset IRI as the identifier.
  */
@@ -43,11 +29,9 @@ export function extractMonitorConfigs(catalog: Catalog): MonitorConfig[] {
       continue;
     }
 
-    const endpointUrl = stripCredentials(distribution.endpoint.toString());
-
     monitors.push({
       identifier: dataset.iri,
-      endpointUrl: new URL(endpointUrl),
+      endpointUrl: new URL(distribution.endpoint.toString()),
       query: distribution.searchQuery,
     });
   }
