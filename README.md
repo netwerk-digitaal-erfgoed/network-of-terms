@@ -70,7 +70,8 @@ This repository contains the following packages:
 - [network-of-terms-query](packages/query): core query logic which executes the queries to terminology
   sources;
 - [network-of-terms-reconciliation](packages/reconciliation): a Reconciliation Service API for matching
-  strings against terms with URIs.
+  strings against terms with URIs;
+- [network-of-terms-status](packages/status): monitors SPARQL endpoints of terminology sources.
 
 ### Contributing
 
