@@ -1,5 +1,9 @@
 import { testCatalog } from '../src/test-utils.js';
-import { QueryMode, QueryTermsService } from '../src/index.js';
+import {
+  buildSearchQuery,
+  QueryMode,
+  QueryTermsService,
+} from '../src/index.js';
 import { QueryEngine } from '@comunica/query-sparql';
 import { ArrayIterator } from 'asynciterator';
 import type { Term } from '@rdfjs/types';
@@ -66,3 +70,35 @@ const query = async (iri: string) => {
     initialBindings: Map<string, Term>;
   };
 };
+
+describe('buildSearchQuery', () => {
+  it('returns query and bindings', () => {
+    const result = buildSearchQuery({
+      template: 'SELECT * WHERE { ?s ?p ?o } #LIMIT#',
+      searchTerm: 'test',
+      queryMode: QueryMode.OPTIMIZED,
+      datasetIri: 'https://example.org/dataset',
+      limit: 10,
+    });
+
+    expect(result.query).toBe('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
+    expect(result.bindings['datasetUri'].value).toBe(
+      'https://example.org/dataset',
+    );
+    expect(result.bindings['limit'].value).toBe('10');
+    expect(result.bindings['query'].value).toBe('test');
+  });
+
+  it('creates Virtuoso-specific query variant', () => {
+    const result = buildSearchQuery({
+      template: 'SELECT * WHERE { ?s ?p ?o }',
+      searchTerm: 'van gogh',
+      queryMode: QueryMode.OPTIMIZED,
+      datasetIri: 'https://example.org/dataset',
+      limit: 100,
+    });
+
+    // Virtuoso format: 'word1' AND 'word2' for multi-word queries
+    expect(result.bindings['virtuosoQuery'].value).toBe("'van' AND 'gogh'");
+  });
+});

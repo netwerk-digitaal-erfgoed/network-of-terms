@@ -91,6 +91,53 @@ export class TimeoutError extends Error {
 
 export class ServerError extends Error {}
 
+export interface BuildSearchQueryOptions {
+  /** The SPARQL query template with placeholders. */
+  template: string;
+  /** The search term to bind. */
+  searchTerm: string;
+  /** Query mode for search term processing. */
+  queryMode: QueryMode;
+  /** Dataset IRI to bind to ?datasetUri. */
+  datasetIri: string;
+  /** Limit for results. */
+  limit: number;
+}
+
+export interface BuildSearchQueryResult {
+  /** The query with #LIMIT# replaced. */
+  query: string;
+  /** Bindings for SPARQL variables (?query, ?virtuosoQuery, ?datasetUri, ?limit). */
+  bindings: Record<string, RDF.Term>;
+}
+
+/**
+ * Build a SPARQL query and bindings from a template.
+ * Returns the query with #LIMIT# replaced and a set of bindings for variables.
+ * The bindings can be used with Comunica's initialBindings or serialized into the query.
+ */
+export function buildSearchQuery(
+  options: BuildSearchQueryOptions,
+): BuildSearchQueryResult {
+  const variants = queryVariants(options.searchTerm, options.queryMode);
+
+  // Replace #LIMIT# placeholder
+  const query = options.template.replace('#LIMIT#', `LIMIT ${options.limit}`);
+
+  // Build bindings record
+  const bindings: Record<string, RDF.Term> = {};
+  for (const [varName, value] of variants) {
+    bindings[varName] = dataFactory.literal(value);
+  }
+  bindings['datasetUri'] = dataFactory.namedNode(options.datasetIri);
+  bindings['limit'] = dataFactory.literal(
+    options.limit.toString(),
+    dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer'),
+  );
+
+  return { query, bindings };
+}
+
 export class QueryTermsService {
   private readonly logger: Pino.Logger;
   private readonly engine: QueryEngine;
