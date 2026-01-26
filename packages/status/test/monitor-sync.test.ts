@@ -94,7 +94,7 @@ describe('monitor-sync', () => {
       expect(monitors.length).toBe(2);
     });
 
-    it('should skip child datasets (those with # in IRI)', () => {
+    it('should include child datasets (those with # in IRI)', () => {
       const catalog = new Catalog([
         createDataset(
           'http://example.org/aat',
@@ -110,8 +110,13 @@ describe('monitor-sync', () => {
 
       const monitors = extractMonitorConfigs(catalog);
 
-      expect(monitors.length).toBe(1);
-      expect(monitors[0].identifier).toBe('http://example.org/aat');
+      expect(monitors.length).toBe(2);
+      expect(monitors.map((m) => m.identifier)).toContain(
+        'http://example.org/aat',
+      );
+      expect(monitors.map((m) => m.identifier)).toContain(
+        'http://example.org/aat#materials',
+      );
     });
 
     it('should preserve credentials in endpoint URLs (package converts to Auth header)', () => {
