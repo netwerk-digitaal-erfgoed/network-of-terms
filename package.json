@@ -4,6 +4,9 @@
   "workspaces": [
     "./packages/*"
   ],
+  "overrides": {
+    "@comunica/types": "5.1.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^20.3.0",

@@ -15,7 +15,7 @@
   "author": "",
   "type": "module",
   "exports": {
-    "./package.json": "./package.json",
+    "./package.json ": "./package.json",
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
@@ -30,9 +30,9 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "@comunica/query-sparql": "^4.5.0",
-    "@comunica/types": "^4.2.0",
-    "@comunica/utils-bindings-factory": "^4.2.0",
+    "@comunica/query-sparql": "^5.1.2",
+    "@comunica/types": "^5.1.0",
+    "@comunica/utils-bindings-factory": "^5.1.0",
     "@hapi/hoek": "^11.0.7",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/exporter-metrics-otlp-proto": "0.208.0",
@@ -51,7 +51,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@comunica/query-sparql-file": "^4.5.0",
+    "@comunica/query-sparql-file": "^5.1.2",
     "asynciterator": "^3.9.0"
   }
 }
