@@ -8,6 +8,11 @@ const schema = {
       type: 'string',
       description: 'PostgreSQL connection string',
     },
+    PORT: {
+      type: 'number',
+      default: 3000,
+      description: 'Port for HTTP server',
+    },
     POLLING_INTERVAL_SECONDS: {
       type: 'number',
       default: 300,
@@ -28,11 +33,13 @@ const schema = {
 
 interface Env {
   DATABASE_URL: string;
+  PORT: number;
   POLLING_INTERVAL_SECONDS: number;
   RUN_ON_START: boolean;
   LDES_BASE_URL: string;
 }
 
 export const config: Env = envSchema({
+  dotenv: true,
   schema,
 });

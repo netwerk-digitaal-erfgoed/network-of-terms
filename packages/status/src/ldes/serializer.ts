@@ -1,15 +1,14 @@
-import { DataFactory, Writer, Store } from 'n3';
+import { DataFactory, Store } from 'n3';
 import type { Observation, MonitorConfig } from '@lde/sparql-monitor';
+import { rdfSerializer } from 'rdf-serialize';
+import { Readable } from 'stream';
 import {
   sosa,
-  http,
   ldes,
   tree,
-  not,
+  status,
   rdf,
   xsd,
-  dcterms,
-  prefixes,
 } from './vocabulary.js';
 
 const { namedNode, literal, blankNode } = DataFactory;
@@ -32,9 +31,7 @@ export function enrichObservations(
   observations: Map<string, Observation>,
   monitors: MonitorConfig[],
 ): EnrichedObservation[] {
-  const monitorsByIdentifier = new Map(
-    monitors.map((m) => [m.identifier, m]),
-  );
+  const monitorsByIdentifier = new Map(monitors.map((m) => [m.identifier, m]));
 
   const enriched: EnrichedObservation[] = [];
 
@@ -53,17 +50,25 @@ export function enrichObservations(
   return enriched;
 }
 
+/**
+ * Get available content types from rdf-serialize.
+ */
+export async function getAvailableContentTypes(): Promise<string[]> {
+  return rdfSerializer.getContentTypes();
+}
+
 export class LdesSerializer {
   constructor(private readonly config: SerializerConfig) {}
 
   /**
-   * Serialize the LDES stream metadata and members.
+   * Serialize just the LDES stream metadata (links to view).
+   * Served at /
    */
-  async serializeStream(observations: EnrichedObservation[]): Promise<string> {
+  serializeStreamMetadata(contentType: string): NodeJS.ReadableStream {
     const store = new Store();
 
     const streamUri = namedNode(`${this.config.baseUrl}`);
-    const viewUri = namedNode(`${this.config.baseUrl}#LatestVersionSubset`);
+    const viewUri = namedNode(`${this.config.baseUrl}/observations/latest`);
 
     // Stream metadata
     store.addQuad(streamUri, rdf.type, ldes.EventStream);
@@ -76,11 +81,27 @@ export class LdesSerializer {
     store.addQuad(
       streamUri,
       ldes.versionOfPath,
-      namedNode(not.monitoredEndpoint.value),
+      namedNode(status.monitoredEndpoint.value),
     );
 
+    return rdfSerializer.serialize(Readable.from(store), { contentType });
+  }
+
+  /**
+   * Serialize the view with all observation members.
+   * Served at /observations/latest
+   */
+  serializeLatestView(
+    observations: EnrichedObservation[],
+    contentType: string,
+  ): NodeJS.ReadableStream {
+    const store = new Store();
+
+    const streamUri = namedNode(`${this.config.baseUrl}`);
+    const viewUri = namedNode(`${this.config.baseUrl}/observations/latest`);
+
     // View metadata (Latest Version Subset)
-    store.addQuad(viewUri, rdf.type, tree.Collection);
+    store.addQuad(viewUri, rdf.type, tree.Node);
     store.addQuad(viewUri, rdf.type, ldes.LatestVersionSubset);
 
     // Add members
@@ -94,13 +115,16 @@ export class LdesSerializer {
       this.addObservationTriples(store, observation, memberUri);
     }
 
-    return this.writeStore(store);
+    return rdfSerializer.serialize(Readable.from(store), { contentType });
   }
 
   /**
    * Serialize a single observation.
    */
-  async serializeObservation(observation: EnrichedObservation): Promise<string> {
+  serializeObservation(
+    observation: EnrichedObservation,
+    contentType: string,
+  ): NodeJS.ReadableStream {
     const store = new Store();
     const observationUri = namedNode(
       `${this.config.baseUrl}/observations/${observation.id}`,
@@ -108,16 +132,7 @@ export class LdesSerializer {
 
     this.addObservationTriples(store, observation, observationUri);
 
-    return this.writeStore(store);
-  }
-
-  /**
-   * Serialize just the latest statuses (for GraphQL/API use).
-   */
-  async serializeLatestStatuses(
-    observations: EnrichedObservation[],
-  ): Promise<string> {
-    return this.serializeStream(observations);
+    return rdfSerializer.serialize(Readable.from(store), { contentType });
   }
 
   private addObservationTriples(
@@ -125,16 +140,17 @@ export class LdesSerializer {
     observation: EnrichedObservation,
     observationUri: ReturnType<typeof namedNode>,
   ): void {
+    const datasetUri = namedNode(observation.datasetIri);
     const endpointUri = namedNode(observation.endpointUrl);
     const resultNode = blankNode();
 
     // Observation type and properties
     store.addQuad(observationUri, rdf.type, sosa.Observation);
-    store.addQuad(observationUri, sosa.hasFeatureOfInterest, endpointUri);
+    store.addQuad(observationUri, sosa.hasFeatureOfInterest, datasetUri);
     store.addQuad(
       observationUri,
       sosa.observedProperty,
-      not.endpointAvailability,
+      status.endpointAvailability,
     );
     store.addQuad(
       observationUri,
@@ -143,78 +159,29 @@ export class LdesSerializer {
     );
     store.addQuad(observationUri, sosa.hasResult, resultNode);
 
-    // Version tracking
-    store.addQuad(observationUri, not.monitoredEndpoint, endpointUri);
-    store.addQuad(observationUri, dcterms.isVersionOf, endpointUri);
+    // Version tracking (endpoint URL for LDES versioning)
+    store.addQuad(observationUri, status.monitoredEndpoint, endpointUri);
 
     // Result details
-    store.addQuad(resultNode, rdf.type, not.EndpointCheckResult);
+    store.addQuad(resultNode, rdf.type, status.EndpointCheckResult);
     store.addQuad(
       resultNode,
-      not.isAvailable,
+      status.isAvailable,
       literal(observation.success.toString(), xsd.boolean),
     );
 
     store.addQuad(
       resultNode,
-      not.responseTimeMs,
+      status.responseTimeMs,
       literal(observation.responseTimeMs.toString(), xsd.integer),
     );
 
     if (observation.errorMessage) {
       store.addQuad(
         resultNode,
-        not.errorMessage,
+        status.errorMessage,
         literal(observation.errorMessage),
       );
     }
-
-    // Dataset IRI
-    store.addQuad(observationUri, not.datasetIri, namedNode(observation.datasetIri));
-  }
-
-  private writeStore(store: Store): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const writer = new Writer({ prefixes });
-      for (const quad of store) {
-        writer.addQuad(quad);
-      }
-      writer.end((error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  }
-
-  /**
-   * Get JSON-LD context for the LDES.
-   */
-  getJsonLdContext(): object {
-    return {
-      '@context': {
-        sosa: sosa.namespace,
-        http: http.namespace,
-        ldes: ldes.namespace,
-        tree: tree.namespace,
-        not: not.namespace,
-        xsd: xsd.namespace,
-        dcterms: dcterms.namespace,
-        Observation: 'sosa:Observation',
-        hasFeatureOfInterest: { '@id': 'sosa:hasFeatureOfInterest', '@type': '@id' },
-        resultTime: { '@id': 'sosa:resultTime', '@type': 'xsd:dateTime' },
-        hasResult: 'sosa:hasResult',
-        observedProperty: { '@id': 'sosa:observedProperty', '@type': '@id' },
-        statusCodeValue: { '@id': 'http:statusCodeValue', '@type': 'xsd:integer' },
-        responseTimeMs: { '@id': 'not:responseTimeMs', '@type': 'xsd:integer' },
-        isAvailable: { '@id': 'not:isAvailable', '@type': 'xsd:boolean' },
-        errorMessage: 'not:errorMessage',
-        member: { '@id': 'tree:member', '@type': '@id' },
-        EventStream: 'ldes:EventStream',
-        isVersionOf: { '@id': 'dcterms:isVersionOf', '@type': '@id' },
-      },
-    };
   }
 }

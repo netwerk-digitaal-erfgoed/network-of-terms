@@ -33,17 +33,22 @@ export const tree = {
   prefix: 'tree',
   namespace: 'https://w3id.org/tree#',
   Collection: namedNode('https://w3id.org/tree#Collection'),
+  Node: namedNode('https://w3id.org/tree#Node'),
   member: namedNode('https://w3id.org/tree#member'),
   view: namedNode('https://w3id.org/tree#view'),
 };
 
-export const not = {
-  prefix: 'not',
+export const status = {
+  prefix: 'status',
   namespace: 'https://nde.nl/ns/status#',
-  EndpointCheckResult: namedNode('https://nde.nl/ns/status#EndpointCheckResult'),
+  EndpointCheckResult: namedNode(
+    'https://nde.nl/ns/status#EndpointCheckResult',
+  ),
   responseTimeMs: namedNode('https://nde.nl/ns/status#responseTimeMs'),
   isAvailable: namedNode('https://nde.nl/ns/status#isAvailable'),
-  endpointAvailability: namedNode('https://nde.nl/ns/status#endpointAvailability'),
+  endpointAvailability: namedNode(
+    'https://nde.nl/ns/status#endpointAvailability',
+  ),
   errorMessage: namedNode('https://nde.nl/ns/status#errorMessage'),
   monitoredEndpoint: namedNode('https://nde.nl/ns/status#monitoredEndpoint'),
   datasetIri: namedNode('https://nde.nl/ns/status#datasetIri'),
@@ -63,19 +68,11 @@ export const xsd = {
   boolean: namedNode('http://www.w3.org/2001/XMLSchema#boolean'),
 };
 
-export const dcterms = {
-  prefix: 'dcterms',
-  namespace: 'http://purl.org/dc/terms/',
-  isVersionOf: namedNode('http://purl.org/dc/terms/isVersionOf'),
-};
-
 export const prefixes = {
   sosa: sosa.namespace,
-  http: http.namespace,
   ldes: ldes.namespace,
   tree: tree.namespace,
-  not: not.namespace,
+  status: status.namespace,
   rdf: rdf.namespace,
   xsd: xsd.namespace,
-  dcterms: dcterms.namespace,
 };

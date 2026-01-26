@@ -12,13 +12,14 @@ export const schema = (languages: string[]) => `
     genres: [Genre]!
     inLanguage: [Language]!
     mainEntityOfPage: [String]!
+    status: SourceStatus
   }
 
   """
   The organization that provides and manages one or more term sources.
   """
   type Creator {
-    uri: ID!
+    uri: ID
     name: String!
     alternateName: String!
   }
@@ -42,6 +43,14 @@ export const schema = (languages: string[]) => `
   type Genre {
     uri: ID!
     name: String!
+  }
+  
+  """
+  The latest known status of the terminology source.
+  """
+  type SourceStatus {
+    isAvailable: Boolean!
+    lastChecked: String!
   }
 
   """

@@ -114,7 +114,7 @@ describe('monitor-sync', () => {
       expect(monitors[0].identifier).toBe('http://example.org/aat');
     });
 
-    it('should strip credentials from endpoint URLs', () => {
+    it('should preserve credentials in endpoint URLs (package converts to Auth header)', () => {
       const catalog = new Catalog([
         createDataset(
           'http://example.org/dataset',
@@ -127,7 +127,7 @@ describe('monitor-sync', () => {
 
       expect(monitors.length).toBe(1);
       expect(monitors[0].endpointUrl.toString()).toBe(
-        'http://example.org/sparql',
+        'http://user:pass@example.org/sparql',
       );
     });
 

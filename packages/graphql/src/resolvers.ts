@@ -24,6 +24,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
 import { dereferenceGenre } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import type { StatusClient } from './status.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -31,7 +32,12 @@ async function listSources(object: any, args: any, context: any): Promise<any> {
     .getDatasetsSortedByName(context.catalogLanguage)
     .flatMap((dataset: Dataset) =>
       dataset.distributions.map((distribution) =>
-        source(distribution, dataset, context.catalogLanguage),
+        source(
+          distribution,
+          dataset,
+          context.catalogLanguage,
+          context.statusClient,
+        ),
       ),
     );
 }
@@ -66,6 +72,7 @@ async function queryTerms(
     context.catalog,
     [...(args.languages ?? []), context.catalogLanguage][0],
     args.languages,
+    context.statusClient,
   );
 }
 
@@ -92,6 +99,7 @@ async function lookupTerms(object: any, args: any, context: any) {
                 result.distribution.iri,
               )!,
               context.catalogLanguage,
+              context.statusClient,
             ),
       result:
         result.result instanceof Term
@@ -109,6 +117,7 @@ function resolveTermsResponse(
   catalog: Catalog,
   catalogLanguage: string,
   resultLanguages: string[],
+  statusClient?: StatusClient,
 ) {
   return results.map((response: TermsResponse) => {
     if (response.result instanceof Error) {
@@ -119,6 +128,7 @@ function resolveTermsResponse(
             response.result.distribution.iri,
           )!,
           catalogLanguage,
+          statusClient,
         ),
         result: response.result,
         responseTimeMs: response.responseTimeMs,
@@ -135,6 +145,7 @@ function resolveTermsResponse(
         response.result.distribution,
         catalog.getDatasetByDistributionIri(response.result.distribution.iri)!,
         catalogLanguage,
+        statusClient,
       ),
       result:
         resultLanguages === undefined
@@ -211,10 +222,11 @@ function mapToTerm(term: Term, languages: string[]) {
   };
 }
 
-async function source(
+function source(
   distribution: Distribution,
   dataset: Dataset,
   catalogLanguage: string,
+  statusClient?: StatusClient,
 ) {
   return {
     uri: dataset.iri,
@@ -239,6 +251,7 @@ async function source(
       )?.[0],
       url: feature.url.toString(),
     })),
+    status: statusClient?.getStatus(dataset.iri) ?? null,
   };
 }
 
