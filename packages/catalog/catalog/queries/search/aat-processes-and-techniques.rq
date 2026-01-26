@@ -27,10 +27,9 @@ WHERE {
         aat:300388277 # English
     }
 
-    # Pre-filter by language BEFORE the expensive subquery (optimization for GraphDB query planner).
-    # Faster than FILTER(langMatches(...)): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
+    # Pre-filter by language BEFORE the expensive subquery (based on Comunica query optimization).
     ?uri skosxl:prefLabel [
-        dcterms:language ?language ;
+        dcterms:language ?language ; # Faster than FILTER(langMatches(...)): https://vocab.getty.edu/queries#Find_Terms_by_Language_Tag
         skosxl:literalForm ?prefLabel
     ]
 
