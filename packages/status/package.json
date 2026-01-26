@@ -33,7 +33,14 @@
     "node": ">=16.15.0"
   },
   "nx": {
+    "release": {
+      "docker": {
+        "repositoryName": "network-of-terms-status"
+      }
+    },
     "targets": {
+      "copy-workspace-modules": {},
+      "prune-lockfile": {},
       "build": {
         "executor": "@nx/esbuild:esbuild",
         "outputs": [
