@@ -41,7 +41,7 @@ try {
   const serializer = new LdesSerializer({ baseUrl: config.LDES_BASE_URL });
 
   // Initialize monitor service with 30s timeout per endpoint
-  const sparqlMonitor = new SparqlMonitor({ timeoutMs: 30000 });
+  const sparqlMonitor = new SparqlMonitor({ timeoutMs: 10000 });
   const monitorService = new MonitorService({
     store,
     monitors,
