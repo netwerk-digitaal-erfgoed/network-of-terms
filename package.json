@@ -17,7 +17,7 @@
     "@rdfjs/types": "^2.0.1",
     "@swc-node/core": "^1.14.1",
     "@swc-node/register": "^1.11.1",
-    "@types/node": "^22.15.3",
+    "@types/node": "^25.1.0",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.0.0",
     "esbuild": "^0.25.11",
