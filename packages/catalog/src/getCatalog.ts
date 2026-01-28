@@ -13,11 +13,9 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { fileURLToPath } from 'url';
 import { ldkit, rdf, schema } from 'ldkit/namespaces';
-import { createLens } from 'ldkit';
+import { createLens, type IQueryEngine } from 'ldkit';
 import type RDF from '@rdfjs/types';
 import { dirname, join } from 'node:path';
-import { KeysRdfParseJsonLd } from '@comunica/context-entries';
-import { FetchDocumentLoader, IJsonLdContext } from 'jsonld-context-parser';
 import { Readable } from 'node:stream';
 import { RdfStore } from 'rdf-stores';
 
@@ -120,7 +118,8 @@ const engine = new QueryEngine();
 export async function fromStore(store: RDF.Store): Promise<Catalog> {
   const lens = createLens(catalogSchema, {
     sources: [store],
-    engine,
+    // Cast needed: rdf-parse uses Comunica v4 types, incompatible with v5.
+    engine: engine as unknown as IQueryEngine,
     distinctConstruct: true,
   });
 
@@ -202,7 +201,6 @@ async function fromFiles(directory: string): Promise<RDF.Store> {
 function fromFile(file: string): RDF.Stream & Readable {
   return rdfParser
     .parse(fs.createReadStream(file), {
-      [KeysRdfParseJsonLd.documentLoader.name]: documentLoader,
       path: file,
     })
     .pipe(new InlineFiles(file))
@@ -264,19 +262,3 @@ class SubstituteCredentialsFromEnvironmentVariables extends Transform {
     callback();
   }
 }
-
-/**
- * TODO: https://github.com/comunica/comunica/issues/1635
- */
-class CachingDocumentLoader extends FetchDocumentLoader {
-  private cache: Record<string, IJsonLdContext> = {};
-
-  override async load(url: string): Promise<IJsonLdContext> {
-    if (this.cache[url]) {
-      return this.cache[url];
-    }
-
-    return (this.cache[url] = await super.load(url));
-  }
-}
-const documentLoader = new CachingDocumentLoader();
