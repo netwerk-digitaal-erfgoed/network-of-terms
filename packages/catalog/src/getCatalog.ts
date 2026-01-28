@@ -13,7 +13,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { fileURLToPath } from 'url';
 import { ldkit, rdf, schema } from 'ldkit/namespaces';
-import { createLens } from 'ldkit';
+import { createLens, type IQueryEngine } from 'ldkit';
 import type RDF from '@rdfjs/types';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -118,7 +118,8 @@ const engine = new QueryEngine();
 export async function fromStore(store: RDF.Store): Promise<Catalog> {
   const lens = createLens(catalogSchema, {
     sources: [store],
-    engine,
+    // Cast needed: rdf-parse uses Comunica v4 types, incompatible with v5.
+    engine: engine as unknown as IQueryEngine,
     distinctConstruct: true,
   });
 
