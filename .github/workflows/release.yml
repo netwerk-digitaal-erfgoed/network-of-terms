@@ -52,7 +52,6 @@ jobs:
         id: docker
         run: |
           npx nx release --dockerVersionScheme=production --yes
-          git push --follow-tags --no-verify --atomic
           {
             echo 'images<<EOF'
             docker image ls ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-* --format "{{.Repository}}:{{.Tag}}"
