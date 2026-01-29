@@ -1,6 +1,5 @@
 # Do not remove this prefix - KB data uses old version of SKOS
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;

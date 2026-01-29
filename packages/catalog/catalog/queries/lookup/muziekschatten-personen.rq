@@ -1,5 +1,4 @@
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX som: <https://data.muziekschatten.nl/som/>
