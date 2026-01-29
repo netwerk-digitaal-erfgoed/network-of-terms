@@ -21,11 +21,12 @@ describe('Query', () => {
     vi.clearAllMocks();
   });
   it('passes dataset IRI query parameter to Comunica', async () => {
+    // Use GTAA which doesn't have VALUES, so uses initialBindings (not string substitution)
     const config = await query(
-      'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
+      'https://data.beeldengeluid.nl/id/datadownload/0026',
     );
     expect(config.initialBindings.get('datasetUri')?.value).toEqual(
-      'https://data.rkd.nl/rkdartists',
+      'http://data.beeldengeluid.nl/gtaa/Persoonsnamen',
     );
   });
 
