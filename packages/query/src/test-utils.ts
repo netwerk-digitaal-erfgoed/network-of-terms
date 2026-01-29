@@ -187,7 +187,7 @@ export const testCatalog = (port: number) =>
         new SparqlDistribution(
           'https://data.beeldengeluid.nl/id/datadownload/0026',
           'https://username:password@gtaa.apis.beeldengeluid.nl/sparql',
-          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s skos:inScheme ?datasetUri ; ?p ?o }',
           'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
         ),
       ],
