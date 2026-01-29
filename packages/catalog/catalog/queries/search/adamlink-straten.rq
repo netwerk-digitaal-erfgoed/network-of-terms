@@ -1,6 +1,5 @@
 PREFIX hg: <http://rdf.histograph.io/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
-PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {

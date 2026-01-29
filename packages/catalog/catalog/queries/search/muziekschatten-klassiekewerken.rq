@@ -1,10 +1,6 @@
-PREFIX bif: <http://www.openlinksw.com/schemas/bif#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX schema: <http://schema.org/>
-PREFIX som: <https://data.muziekschatten.nl/som/>
 
 CONSTRUCT {
     ?uri a skos:Concept;
