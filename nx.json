@@ -54,6 +54,9 @@
     }
   ],
   "release": {
+    "git": {
+      "push": true
+    },
     "groups": {
       "libs": {
         "projects": ["network-of-terms-catalog", "network-of-terms-query"],
