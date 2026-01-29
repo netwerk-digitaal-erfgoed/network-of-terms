@@ -71,9 +71,6 @@
       "preVersionCommand": "npx nx run-many -t build",
       "conventionalCommits": true,
       "fallbackCurrentVersionResolver": "disk",
-      "generatorOptions": {
-        "updateDependents": "auto"
-      }
     },
     "changelog": {
       "projectChangelogs": {
