@@ -4,12 +4,6 @@
   "include": [],
   "references": [
     {
-      "path": "../query"
-    },
-    {
-      "path": "../catalog"
-    },
-    {
       "path": "./tsconfig.app.json"
     },
     {
