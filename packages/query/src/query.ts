@@ -14,11 +14,15 @@ import { sourceQueriesHistogram } from './instrumentation.js';
 import { config } from './config.js';
 
 /**
- * Check if a SPARQL query contains a SERVICE clause.
- * Comunica v5's initialBindings crashes with SERVICE clauses due to a bug in traqula.
+ * Check if a query requires string substitution instead of initialBindings.
+ * Workaround for Comunica v5 traqula bug that crashes with:
+ * - SERVICE clauses
+ * - VALUES combination
  */
-function hasServiceClause(query: string): boolean {
-  return /\bSERVICE\b/i.test(query);
+function requiresStringSubstitution(query: string): boolean {
+  const hasService = /\bSERVICE\b/i.test(query);
+  const hasValues = /\bVALUES\b/i.test(query);
+  return hasService || hasValues;
 }
 
 /**
@@ -181,10 +185,11 @@ export class QueryTermsService {
     // Extract HTTP credentials if the distribution URL contains any.
     const url = new URL(distribution.endpoint.toString());
 
-    // Workaround for https://github.com/comunica/comunica/issues/1655:
-    // initialBindings crashes with SERVICE clauses due to a bug in
-    // @traqula/algebra-transformations-1-1. Use string substitution instead.
-    const useStringSubstitution = hasServiceClause(query);
+    // Workaround for https://github.com/comunica/comunica/issues/1655, so use
+    // string substitution instead of initialBindings for:
+    // - SERVICE clauses crash with initialBindings
+    // - VALUES crashes in some combinations
+    const useStringSubstitution = requiresStringSubstitution(query);
     const finalQuery = useStringSubstitution
       ? substituteBindings(query, bindings)
       : query;
