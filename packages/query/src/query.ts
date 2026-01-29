@@ -4,7 +4,6 @@ import { LoggerPino } from './helpers/logger-pino.js';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from '@rdfjs/types';
-import { Bindings } from '@rdfjs/types';
 import { Term, TermsTransformer } from './terms.js';
 import { QueryMode, queryVariants } from './search/query-mode.js';
 import { Dataset, Distribution, IRI } from './catalog.js';
@@ -13,6 +12,46 @@ import { BindingsFactory } from '@comunica/utils-bindings-factory';
 import { DataFactory } from 'rdf-data-factory';
 import { sourceQueriesHistogram } from './instrumentation.js';
 import { config } from './config.js';
+
+/**
+ * Check if a SPARQL query contains a SERVICE clause.
+ * Comunica v5's initialBindings crashes with SERVICE clauses due to a bug in traqula.
+ */
+function hasServiceClause(query: string): boolean {
+  return /\bSERVICE\b/i.test(query);
+}
+
+/**
+ * Substitute bindings directly into a SPARQL query string.
+ * This is a workaround for Comunica v5's initialBindings bug with SERVICE clauses.
+ */
+function substituteBindings(
+  query: string,
+  bindings: Record<string, RDF.Term>,
+): string {
+  let result = query;
+  for (const [name, term] of Object.entries(bindings)) {
+    const pattern = new RegExp(`\\?${name}\\b`, 'g');
+    if (term.termType === 'NamedNode') {
+      result = result.replace(pattern, `<${term.value}>`);
+    } else if (term.termType === 'Literal') {
+      const literal = term as RDF.Literal;
+      const datatype = literal.datatype?.value;
+      if (
+        datatype &&
+        datatype !== 'http://www.w3.org/2001/XMLSchema#string' &&
+        datatype !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString'
+      ) {
+        result = result.replace(pattern, `"${term.value}"^^<${datatype}>`);
+      } else if (literal.language) {
+        result = result.replace(pattern, `"${term.value}"@${literal.language}`);
+      } else {
+        result = result.replace(pattern, `"${term.value}"`);
+      }
+    }
+  }
+  return result;
+}
 
 export type TermsResult = Terms | TimeoutError | ServerError;
 
@@ -141,10 +180,20 @@ export class QueryTermsService {
     const logger = new LoggerPino({ logger: this.logger });
     // Extract HTTP credentials if the distribution URL contains any.
     const url = new URL(distribution.endpoint.toString());
-    this.logger.info(`Querying "${url}" with "${query}"...`);
-    const quadStream = await this.engine.queryQuads(query, {
+
+    // Workaround for https://github.com/comunica/comunica/issues/1655:
+    // initialBindings crashes with SERVICE clauses due to a bug in
+    // @traqula/algebra-transformations-1-1. Use string substitution instead.
+    const useStringSubstitution = hasServiceClause(query);
+    const finalQuery = useStringSubstitution
+      ? substituteBindings(query, bindings)
+      : query;
+
+    this.logger.info(`Querying "${url}" with "${finalQuery}"...`);
+    const quadStream = await this.engine.queryQuads(finalQuery, {
       log: logger,
-      httpAuth: url.username === '' ? '' : url.username + ':' + url.password,
+      httpAuth:
+        url.username === '' ? undefined : url.username + ':' + url.password,
       httpTimeout: timeoutMs,
       noCache: true,
       sources: [
@@ -153,9 +202,10 @@ export class QueryTermsService {
           value: url.origin + url.pathname,
         },
       ],
-      initialBindings: bindingsFactory.fromRecord(
-        bindings,
-      ) as unknown as Bindings,
+      // Only pass initialBindings when NOT using string substitution
+      ...(useStringSubstitution
+        ? {}
+        : { initialBindings: bindingsFactory.fromRecord(bindings) }),
     });
 
     return new Promise((resolve) => {
