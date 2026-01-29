@@ -44,14 +44,15 @@ jobs:
 
       - run: npx nx affected -t docker:build --configuration=production
 
-      - name: Build and publish Docker images
+      - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }} # Needed for pushing release commits.
+          GITHUB_TOKEN: ${{ secrets.PAT }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         id: docker
         run: |
           npx nx release --dockerVersionScheme=production --yes
+          git push --follow-tags --no-verify --atomic
           {
             echo 'images<<EOF'
             docker image ls ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-* --format "{{.Repository}}:{{.Tag}}"
