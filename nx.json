@@ -78,7 +78,10 @@
     },
     "changelog": {
       "projectChangelogs": {
-        "createRelease": "github"
+        "createRelease": "github",
+        "renderOptions": {
+          "includeCommitBody": true
+        }
       },
       "automaticFromRef": true
     }
