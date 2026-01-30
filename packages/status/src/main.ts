@@ -10,14 +10,24 @@ import { rdfSerializer } from 'rdf-serialize';
 import pino from 'pino';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync, readFileSync } from 'fs';
 import { config } from './config.js';
 import { extractMonitorConfigs } from './sync/monitor-sync.js';
 import { LdesSerializer, enrichObservations } from './ldes/serializer.js';
 
 const logger = pino({ level: 'info' });
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Read version from package.json (same dir in Docker, one level up in dev)
+const packageJsonPath = existsSync(join(__dirname, 'package.json'))
+  ? join(__dirname, 'package.json')
+  : join(__dirname, '..', 'package.json');
+const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+const userAgent = `network-of-terms-status/${packageJson.version} (+https://github.com/netwerk-digitaal-erfgoed/network-of-terms)`;
+
 // Catalog path relative to the built main.js
-const catalogPath = join(dirname(fileURLToPath(import.meta.url)), 'catalog');
+const catalogPath = join(__dirname, 'catalog');
 
 try {
   logger.info('Starting SPARQL endpoint monitoring service...');
@@ -40,8 +50,11 @@ try {
   // Initialize LDES serializer
   const serializer = new LdesSerializer({ baseUrl: config.LDES_BASE_URL });
 
-  // Initialize monitor service with 30s timeout per endpoint
-  const sparqlMonitor = new SparqlMonitor({ timeoutMs: 10000 });
+  // Initialize monitor service with 10s timeout per endpoint
+  const sparqlMonitor = new SparqlMonitor({
+    timeoutMs: 10000,
+    headers: new Headers({ 'User-Agent': userAgent }),
+  });
   const monitorService = new MonitorService({
     store,
     monitors,
