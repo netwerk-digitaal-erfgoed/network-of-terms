@@ -1,6 +1,6 @@
 {
   "name": "@netwerk-digitaal-erfgoed/network-of-terms-status",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "SPARQL endpoint monitoring and LDES status stream for Network of Terms",
   "keywords": [],

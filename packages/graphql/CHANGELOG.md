@@ -1,3 +1,18 @@
+## 5.5.3 (2026-01-30)
+
+### 🩹 Fixes
+
+- **status:** update default status service URL ([#1713](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/pull/1713))
+
+### 🧱 Updated Dependencies
+
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-catalog to 10.17.6
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-query to 6.2.14
+
+### ❤️ Thank You
+
+- David de Boer @ddeboer
+
 ## 5.5.2 (2026-01-30)
 
 ### 🧱 Updated Dependencies
