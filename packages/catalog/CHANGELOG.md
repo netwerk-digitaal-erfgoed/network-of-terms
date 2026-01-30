@@ -1,3 +1,13 @@
+## 10.17.5 (2026-01-30)
+
+### 🚀 Features
+
+- **catalog:** add agrarische thesaurus ([#1712](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/pull/1712))
+
+### ❤️ Thank You
+
+- Joop Vanderheiden @jolietjakeblues
+
 ## 10.17.4 (2026-01-30)
 
 ### 🧱 Updated Dependencies

@@ -1,3 +1,9 @@
+## 5.5.2 (2026-01-30)
+
+### 🧱 Updated Dependencies
+
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-catalog to 10.17.5
+
 ## 5.5.1 (2026-01-30)
 
 ### 🚀 Features
