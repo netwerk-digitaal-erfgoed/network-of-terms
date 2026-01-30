@@ -13,50 +13,6 @@ import { DataFactory } from 'rdf-data-factory';
 import { sourceQueriesHistogram } from './instrumentation.js';
 import { config } from './config.js';
 
-/**
- * Check if a query requires string substitution instead of initialBindings.
- * Workaround for Comunica v5 traqula bug that crashes with:
- * - SERVICE clauses
- * - VALUES combination
- */
-function requiresStringSubstitution(query: string): boolean {
-  const hasService = /\bSERVICE\b/i.test(query);
-  const hasValues = /\bVALUES\b/i.test(query);
-  return hasService || hasValues;
-}
-
-/**
- * Substitute bindings directly into a SPARQL query string.
- * This is a workaround for Comunica v5's initialBindings bug with SERVICE clauses.
- */
-function substituteBindings(
-  query: string,
-  bindings: Record<string, RDF.Term>,
-): string {
-  let result = query;
-  for (const [name, term] of Object.entries(bindings)) {
-    const pattern = new RegExp(`\\?${name}\\b`, 'g');
-    if (term.termType === 'NamedNode') {
-      result = result.replace(pattern, `<${term.value}>`);
-    } else if (term.termType === 'Literal') {
-      const literal = term as RDF.Literal;
-      const datatype = literal.datatype?.value;
-      if (
-        datatype &&
-        datatype !== 'http://www.w3.org/2001/XMLSchema#string' &&
-        datatype !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString'
-      ) {
-        result = result.replace(pattern, `"${term.value}"^^<${datatype}>`);
-      } else if (literal.language) {
-        result = result.replace(pattern, `"${term.value}"@${literal.language}`);
-      } else {
-        result = result.replace(pattern, `"${term.value}"`);
-      }
-    }
-  }
-  return result;
-}
-
 export type TermsResult = Terms | TimeoutError | ServerError;
 
 export class TermsResponse {
@@ -231,18 +187,8 @@ export class QueryTermsService {
     const logger = new LoggerPino({ logger: this.logger });
     // Extract HTTP credentials if the distribution URL contains any.
     const url = new URL(distribution.endpoint.toString());
-
-    // Workaround for https://github.com/comunica/comunica/issues/1655, so use
-    // string substitution instead of initialBindings for:
-    // - SERVICE clauses crash with initialBindings
-    // - VALUES crashes in some combinations
-    const useStringSubstitution = requiresStringSubstitution(query);
-    const finalQuery = useStringSubstitution
-      ? substituteBindings(query, bindings)
-      : query;
-
-    this.logger.info(`Querying "${url}" with "${finalQuery}"...`);
-    const quadStream = await this.engine.queryQuads(finalQuery, {
+    this.logger.info(`Querying "${url}" with "${query}"...`);
+    const quadStream = await this.engine.queryQuads(query, {
       log: logger,
       httpAuth:
         url.username === '' ? undefined : url.username + ':' + url.password,
@@ -254,10 +200,7 @@ export class QueryTermsService {
           value: url.origin + url.pathname,
         },
       ],
-      // Only pass initialBindings when NOT using string substitution
-      ...(useStringSubstitution
-        ? {}
-        : { initialBindings: bindingsFactory.fromRecord(bindings) }),
+      initialBindings: bindingsFactory.fromRecord(bindings),
     });
 
     return new Promise((resolve) => {
