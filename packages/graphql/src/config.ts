@@ -18,7 +18,7 @@ const schema = {
     },
     STATUS_SERVICE_URL: {
       type: 'string',
-      default: 'https://termennetwerk-api.netwerkdigitaalerfgoed.nl/status',
+      default: 'https://status.termennetwerk.netwerkdigitaalerfgoed.nl',
       description: 'Base URL of the status service',
     },
   },

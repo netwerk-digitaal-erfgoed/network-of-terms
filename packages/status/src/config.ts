@@ -25,7 +25,7 @@ const schema = {
     },
     LDES_BASE_URL: {
       type: 'string',
-      default: 'https://termennetwerk-api.netwerkdigitaalerfgoed.nl/status',
+      default: 'https://status.termennetwerk.netwerkdigitaalerfgoed.nl',
       description: 'Base URL for LDES stream',
     },
   },
