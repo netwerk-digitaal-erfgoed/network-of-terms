@@ -46,6 +46,21 @@
       ],
       "alternateName": "Westerbork"
     },
+        {
+      "@id": "https://erfgoedgelderland.nl/",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Erfgoed Gelderland"
+        },
+        {
+          "@language": "nl",
+          "@value": "Erfgoed Gelderland"
+        }
+      ],
+      "alternateName": "Erfgoed Gelderland"
+    },
     {
       "@id": "https://atria.nl",
       "@type": "Organization",

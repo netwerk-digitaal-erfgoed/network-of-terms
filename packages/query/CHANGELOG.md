@@ -1,3 +1,13 @@
+## 6.2.13 (2026-01-30)
+
+### 🚀 Features
+
+- **status:** add SPARQL endpoint monitoring with LDES output ([#1694](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/pull/1694))
+
+### ❤️ Thank You
+
+- David de Boer @ddeboer
+
 ## 6.2.12 (2026-01-30)
 
 This was a version bump only for @netwerk-digitaal-erfgoed/network-of-terms-query to align it with other projects, there were no code changes.
