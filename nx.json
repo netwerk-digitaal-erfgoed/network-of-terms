@@ -61,6 +61,9 @@
       "network-of-terms-reconciliation"
     ],
     "projectsRelationship": "independent",
+    "releaseTag": {
+      "preferDockerVersion": false
+    },
     "docker": {
       "registryUrl": "ghcr.io/netwerk-digitaal-erfgoed",
       "versionSchemes": {
