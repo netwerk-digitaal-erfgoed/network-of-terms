@@ -1,5 +1,6 @@
 {
   "name": "@netwerk-digitaal-erfgoed/network-of-terms-reconciliation",
+  "version": "4.2.0",
   "private": true,
   "description": "A Reconciliation Service API for the Network of Terms",
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
