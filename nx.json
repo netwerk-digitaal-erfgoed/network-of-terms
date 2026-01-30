@@ -58,7 +58,8 @@
       "network-of-terms-catalog",
       "network-of-terms-query",
       "network-of-terms-graphql",
-      "network-of-terms-reconciliation"
+      "network-of-terms-reconciliation",
+      "network-of-terms-status"
     ],
     "projectsRelationship": "independent",
     "releaseTag": {

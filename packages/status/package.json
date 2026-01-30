@@ -1,8 +1,7 @@
 {
-  "name": "@netwerk-digitaal-erfgoed/network-of-terms-graphql",
-  "version": "5.5.0",
+  "name": "@netwerk-digitaal-erfgoed/network-of-terms-status",
   "private": true,
-  "description": "Network of Terms GraphQL API",
+  "description": "SPARQL endpoint monitoring and LDES status stream for Network of Terms",
   "keywords": [],
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
   "bugs": {
@@ -15,19 +14,20 @@
   "license": "EUPL",
   "author": "Netwerk Digitaal Erfgoed",
   "type": "module",
-  "files": [
-    "build/"
-  ],
   "dependencies": {
-    "@fastify/accepts": "^5.0.4",
-    "@fastify/cors": "11.2.0",
+    "@fastify/cors": "^11.0.0",
+    "@lde/sparql-monitor": "^0.4.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
+    "@rdfjs/types": "^2.0.1",
     "env-schema": "6.0.1",
-    "fastify": "5.6.2",
-    "graphql": "^16.11.0",
-    "mercurius": "16.6.0",
-    "mercurius-logging": "2.0.0"
+    "fastify": "^5.0.0",
+    "n3": "^1.25.3",
+    "pino": "^9.7.0",
+    "rdf-serialize": "^5.1.0"
+  },
+  "devDependencies": {
+    "nock": "^14.0.0"
   },
   "engines": {
     "node": ">=16.15.0"
@@ -35,10 +35,12 @@
   "nx": {
     "release": {
       "docker": {
-        "repositoryName": "network-of-terms-graphql"
+        "repositoryName": "network-of-terms-status"
       }
     },
     "targets": {
+      "copy-workspace-modules": {},
+      "prune-lockfile": {},
       "build": {
         "executor": "@nx/esbuild:esbuild",
         "outputs": [
@@ -50,7 +52,7 @@
           "outputPath": "{projectRoot}/dist",
           "main": "{projectRoot}/src/main.ts",
           "declarationRootDir": "{projectRoot}/src",
-          "tsConfig": "packages/graphql/tsconfig.app.json",
+          "tsConfig": "packages/status/tsconfig.app.json",
           "assets": [
             {
               "input": "packages/catalog/catalog",
@@ -77,39 +79,25 @@
           }
         }
       },
-      "serve-dev": {
-        "continuous": true,
+      "serve": {
         "executor": "@nx/js:node",
         "defaultConfiguration": "development",
         "dependsOn": [
           "build"
         ],
         "options": {
-          "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build",
+          "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-status:build",
           "runBuildTargetDependencies": false
         },
         "configurations": {
           "development": {
-            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build:development"
+            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-status:build:development"
           },
           "production": {
-            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build:production"
+            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-status:build:production"
           }
         }
-      },
-      "serve": {
-        "continuous": true,
-        "executor": "nx:run-commands",
-        "options": {
-          "commands": [
-            "nx watch --projects=network-of-terms-catalog -- nx build network-of-terms-graphql",
-            "nx serve-dev network-of-terms-graphql"
-          ],
-          "parallel": true
-        }
-      },
-      "copy-workspace-modules": {},
-      "prune-lockfile": {}
+      }
     }
   }
 }

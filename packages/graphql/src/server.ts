@@ -16,6 +16,7 @@ import {
 import { EnvSchemaData } from 'env-schema';
 import mercuriusLogging from 'mercurius-logging';
 import fastifyAccepts from '@fastify/accepts';
+import { StatusClient } from './status.js';
 
 export async function server(
   catalog: Catalog,
@@ -26,6 +27,13 @@ export async function server(
     level: 'info',
   });
   const server = fastify({ logger, trustProxy: config.TRUST_PROXY as boolean });
+
+  // Initialize status client for fetching source availability (refreshes on demand)
+  const statusClient = new StatusClient(
+    config.STATUS_SERVICE_URL as string,
+    server.log,
+  );
+
   await server.register(fastifyAccepts);
   await server.register(mercurius, {
     schema: schema(catalog.getLanguages()),
@@ -38,6 +46,7 @@ export async function server(
         // We need requests to fail within the user-supplied timeoutMs.
         comunica: comunica(),
         catalogLanguage: req.language(['nl', 'en']) || 'nl',
+        statusClient,
       };
     },
   });
