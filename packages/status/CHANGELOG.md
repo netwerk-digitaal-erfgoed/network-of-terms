@@ -1,3 +1,10 @@
+## 1.0.3 (2026-01-30)
+
+### 🧱 Updated Dependencies
+
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-catalog to 10.17.7
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-query to 6.2.15
+
 ## 1.0.2 (2026-01-30)
 
 ### 🩹 Fixes
