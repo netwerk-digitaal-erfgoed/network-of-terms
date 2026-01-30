@@ -2,14 +2,7 @@ import { DataFactory, Store } from 'n3';
 import type { Observation, MonitorConfig } from '@lde/sparql-monitor';
 import { rdfSerializer } from 'rdf-serialize';
 import { Readable } from 'stream';
-import {
-  sosa,
-  ldes,
-  tree,
-  status,
-  rdf,
-  xsd,
-} from './vocabulary.js';
+import { sosa, ldes, tree, status, rdf, xsd } from './vocabulary.js';
 
 const { namedNode, literal, blankNode } = DataFactory;
 
