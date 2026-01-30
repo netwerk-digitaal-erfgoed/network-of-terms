@@ -6,6 +6,16 @@ import { sosa, ldes, tree, status, rdf, xsd } from './vocabulary.js';
 
 const { namedNode, literal, blankNode } = DataFactory;
 
+/**
+ * Remove credentials (username and password) from a URL string.
+ */
+function stripCredentials(urlString: string): string {
+  const url = new URL(urlString);
+  url.username = '';
+  url.password = '';
+  return url.toString();
+}
+
 export interface SerializerConfig {
   baseUrl: string;
 }
@@ -134,7 +144,7 @@ export class LdesSerializer {
     observationUri: ReturnType<typeof namedNode>,
   ): void {
     const datasetUri = namedNode(observation.datasetIri);
-    const endpointUri = namedNode(observation.endpointUrl);
+    const endpointUri = namedNode(stripCredentials(observation.endpointUrl));
     const resultNode = blankNode();
 
     // Observation type and properties

@@ -135,5 +135,19 @@ describe('LdesSerializer', () => {
       // But no observation data
       expect(turtle).not.toContain('sosa/Observation');
     });
+
+    it('should strip credentials from endpoint URL', async () => {
+      const observations = [
+        createObservation({
+          endpointUrl: 'https://user:password@example.org/sparql',
+        }),
+      ];
+      const turtle = await streamToString(
+        serializer.serializeLatestView(observations, contentType),
+      );
+
+      expect(turtle).toContain('https://example.org/sparql');
+      expect(turtle).not.toContain('user:password');
+    });
   });
 });
