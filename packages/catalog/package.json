@@ -34,8 +34,8 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@comunica/query-sparql": "^5.1.2",
-    "@comunica/query-sparql-rdfjs": "^5.1.2",
+    "@comunica/query-sparql": "^5.1.3",
+    "@comunica/query-sparql-rdfjs": "^5.1.3",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/types": "^2.0.1",
     "globby": "^14.0.2",
@@ -46,7 +46,7 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "@comunica/types": "^5.1.0",
+    "@comunica/types": "^5.1.3",
     "@types/n3": "^1.26.1",
     "@types/rdf-ext": "^2.5.2",
     "jsonld-streaming-parser": "^5.0.0",
