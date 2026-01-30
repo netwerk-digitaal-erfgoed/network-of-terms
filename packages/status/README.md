@@ -58,10 +58,6 @@ Returns LDES stream metadata with a link to the view.
 
 Returns the latest availability observations for all monitored endpoints. Supports RDF content negotiation (Turtle, JSON-LD, etc.).
 
-### `GET /health`
-
-Returns `{ "status": "ok" }` for health checks.
-
 ## Database
 
 The service requires a PostgreSQL database. The schema is managed by the `@lde/sparql-monitor` library and is created automatically on first run.

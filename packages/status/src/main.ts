@@ -84,11 +84,6 @@ try {
     return reply.type(contentType).send(stream);
   });
 
-  // Health endpoint
-  fastify.get('/health', async (_request, reply) => {
-    return reply.send({ status: 'ok' });
-  });
-
   // Handle graceful shutdown
   const shutdown = async () => {
     logger.info('Shutting down...');
