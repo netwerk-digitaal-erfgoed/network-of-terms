@@ -1,0 +1,91 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://digitaalerfgoed.poolparty.biz/agrarischethesaurus",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Agricultural thesaurus"
+    },
+    {
+      "@language": "nl",
+      "@value": "Agrarische thesaurus"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "AT"
+    },
+    {
+      "@language": "nl",
+      "@value": "AT"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Activiteiten"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen"
+    },
+        {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Technieken"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://erfgoedgelderland.nl/"
+    }
+  ],
+  "url": ["https://digitaalerfgoed.poolparty.biz/agrarischethesaurus/"],
+  "mainEntityOfPage": [
+    "https://erfgoedgelderland.nl/nieuws/van-aardappelhaak-tot-zwingelmolen-nieuwe-thesaurus-agrarische-collecties/"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Subjects describing the movable agricultural heritage in the Netherlands and Flanders."
+    },
+    {
+      "@language": "nl",
+      "@value": "Onderwerpen die het roerend agrarisch erfgoed in Nederland en Vlaanderen beschrijven."
+    }
+  ],
+  "inLanguage": ["nl", "en"],
+  "distribution": [
+    {
+      "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/agrarischethesaurus",
+      "@type": "DataDownload",
+      "contentUrl": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/agrarischethesaurus",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
