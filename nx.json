@@ -66,8 +66,7 @@
         "renderOptions": {
           "includeCommitBody": true
         }
-      },
-      "automaticFromRef": true
+      }
     },
     "groups": {
       "packages": {
