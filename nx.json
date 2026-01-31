@@ -54,23 +54,7 @@
     }
   ],
   "release": {
-    "projects": [
-      "network-of-terms-catalog",
-      "network-of-terms-query",
-      "network-of-terms-graphql",
-      "network-of-terms-reconciliation",
-      "network-of-terms-status"
-    ],
     "projectsRelationship": "independent",
-    "releaseTag": {
-      "preferDockerVersion": false
-    },
-    "docker": {
-      "registryUrl": "ghcr.io/netwerk-digitaal-erfgoed",
-      "versionSchemes": {
-        "production": "{versionActionsVersion}"
-      }
-    },
     "version": {
       "preVersionCommand": "npx nx run-many -t build",
       "conventionalCommits": true,
@@ -84,6 +68,31 @@
         }
       },
       "automaticFromRef": true
+    },
+    "groups": {
+      "packages": {
+        "projects": ["network-of-terms-catalog", "network-of-terms-query"],
+        "releaseTag": {
+          "pattern": "{projectName}@{version}"
+        }
+      },
+      "apps": {
+        "projects": [
+          "network-of-terms-graphql",
+          "network-of-terms-reconciliation",
+          "network-of-terms-status"
+        ],
+        "releaseTag": {
+          "pattern": "{projectName}@{version}"
+        },
+        "docker": {
+          "skipVersionActions": true,
+          "registryUrl": "ghcr.io/netwerk-digitaal-erfgoed",
+          "versionSchemes": {
+            "production": "{currentDate|YYYYMMDDHHmm}-{shortCommitSha}"
+          }
+        }
+      }
     }
   },
   "targetDefaults": {

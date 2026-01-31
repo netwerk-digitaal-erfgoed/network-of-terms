@@ -51,10 +51,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-          NX_VERBOSE_LOGGING: true
         id: docker
         run: |
-          npx nx release --dockerVersionScheme=production --yes
+          npx nx release --yes
           {
             echo 'images<<EOF'
             docker image ls ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-* --format "{{.Repository}}:{{.Tag}}"
