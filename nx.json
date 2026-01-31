@@ -88,7 +88,7 @@
           "skipVersionActions": true,
           "registryUrl": "ghcr.io/netwerk-digitaal-erfgoed",
           "versionSchemes": {
-            "production": "{currentDate|YYYYMMDDHHmm}-{shortCommitSha}"
+            "production": "{currentDate|YYYYMMDDHHmmss}-{shortCommitSha}"
           }
         }
       }
