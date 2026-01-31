@@ -1,3 +1,22 @@
+# 202601312144-d51ace1 (2026-01-31)
+
+### 🚀 Features
+
+- **status:** add User-Agent header to SPARQL monitor requests ([#1716](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/pull/1716))
+
+### 🩹 Fixes
+
+- **status:** strip credentials from LDES monitored endpoint URLs ([#1715](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/pull/1715))
+
+### 🧱 Updated Dependencies
+
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-catalog to 10.17.8
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-query to 6.2.16
+
+### ❤️ Thank You
+
+- David de Boer @ddeboer
+
 ## 1.0.3 (2026-01-30)
 
 ### 🧱 Updated Dependencies

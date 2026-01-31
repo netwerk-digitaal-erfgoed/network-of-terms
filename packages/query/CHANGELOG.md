@@ -1,3 +1,7 @@
+## 6.2.16 (2026-01-31)
+
+This was a version bump only for @netwerk-digitaal-erfgoed/network-of-terms-query to align it with other projects, there were no code changes.
+
 ## 6.2.15 (2026-01-30)
 
 This was a version bump only for @netwerk-digitaal-erfgoed/network-of-terms-query to align it with other projects, there were no code changes.

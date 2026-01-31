@@ -1,3 +1,9 @@
+## 10.17.8 (2026-01-31)
+
+### 🧱 Updated Dependencies
+
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-query to 6.2.16
+
 ## 10.17.7 (2026-01-30)
 
 ### 🧱 Updated Dependencies
