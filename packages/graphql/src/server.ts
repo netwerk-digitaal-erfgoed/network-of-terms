@@ -24,7 +24,7 @@ export async function server(
 ): Promise<FastifyInstance<Server>> {
   const logger: FastifyLoggerOptions = getHttpLogger({
     name: 'http',
-    level: 'info',
+    level: config.LOG_LEVEL as string,
   });
   const server = fastify({ logger, trustProxy: config.TRUST_PROXY as boolean });
 
