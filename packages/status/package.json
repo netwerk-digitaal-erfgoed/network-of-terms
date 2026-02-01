@@ -21,7 +21,7 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/types": "^2.0.1",
-    "env-schema": "6.0.1",
+    "env-schema": "7.0.0",
     "fastify": "^5.0.0",
     "n3": "^1.25.3",
     "pino": "^9.7.0",
