@@ -51,7 +51,15 @@ To run your own instance of the Network of Terms GraphQL API with a custom [cata
 1. create your custom catalog that matches the data structure of the [default catalog](../../packages/catalog)
 2. provide the path to your custom catalog in the `CATALOG_PATH` environment variable when starting the server:
 
-   CATALOG_PATH=my-custom-catalog/ npx nx serve network-of-terms-graphql
+       CATALOG_PATH=my-custom-catalog/ npx nx serve network-of-terms-graphql
+
+### Environment variables
+
+| Variable       | Description                          | Default   |
+|----------------|--------------------------------------|-----------|
+| `CATALOG_PATH` | Path to the catalog directory        | `catalog` |
+| `LOG_LEVEL`    | Pino log level (debug, info, warn…)  | `info`    |
+| `TRUST_PROXY`  | Trust proxy headers                  | `false`   |
 
 ## GraphQL API
 

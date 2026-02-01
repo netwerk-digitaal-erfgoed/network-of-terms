@@ -1,5 +1,6 @@
 import * as Hoek from '@hapi/hoek';
 import Joi from 'joi';
+import { createLoggingFetch } from './helpers/logging-fetch.js';
 import { LoggerPino } from './helpers/logger-pino.js';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
@@ -97,10 +98,12 @@ export function buildSearchQuery(
 export class QueryTermsService {
   private readonly logger: Pino.Logger;
   private readonly engine: QueryEngine;
+  private readonly fetch: typeof fetch;
 
   constructor(options: { comunica?: QueryEngine; logger?: Pino.Logger } = {}) {
     this.engine = options.comunica || new QueryEngine();
     this.logger = options.logger || Pino.pino();
+    this.fetch = createLoggingFetch(this.logger);
   }
 
   /**
@@ -190,6 +193,7 @@ export class QueryTermsService {
     this.logger.info(`Querying "${url}" with "${query}"...`);
     const quadStream = await this.engine.queryQuads(query, {
       log: logger,
+      fetch: this.fetch,
       httpAuth:
         url.username === '' ? undefined : url.username + ':' + url.password,
       httpTimeout: timeoutMs,
