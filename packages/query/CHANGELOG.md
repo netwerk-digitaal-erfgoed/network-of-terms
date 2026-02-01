@@ -1,3 +1,13 @@
+## 6.2.18 (2026-02-01)
+
+### 🩹 Fixes
+
+- **query:** work around Traqula whitespace serialization bug ([#1729](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/pull/1729), [#102](https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues/102))
+
+### ❤️ Thank You
+
+- David de Boer @ddeboer
+
 ## 6.2.17 (2026-01-31)
 
 This was a version bump only for @netwerk-digitaal-erfgoed/network-of-terms-query to align it with other projects, there were no code changes.
