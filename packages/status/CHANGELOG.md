@@ -1,3 +1,10 @@
+# 20260201184134-504edd1 (2026-02-01)
+
+### 🧱 Updated Dependencies
+
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-catalog to 10.17.10
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-query to 6.2.18
+
 # 20260131220933-c28f576 (2026-01-31)
 
 ### 🧱 Updated Dependencies
