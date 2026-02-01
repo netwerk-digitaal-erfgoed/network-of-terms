@@ -1,3 +1,7 @@
+# 20260201192043-fe61350 (2026-02-01)
+
+This was a version bump only for @netwerk-digitaal-erfgoed/network-of-terms-status to align it with other projects, there were no code changes.
+
 # 20260201184134-504edd1 (2026-02-01)
 
 ### 🧱 Updated Dependencies
