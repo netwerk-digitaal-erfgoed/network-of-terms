@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 permissions:
   contents: write
   id-token: write # needed for provenance data generation
