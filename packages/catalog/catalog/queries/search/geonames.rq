@@ -17,9 +17,15 @@ WHERE {
         SELECT ?uri (MAX(?sc) as ?score) WHERE {
             (?uri ?sc) text:query (gn:name gn:alternateName ?query) .
             ?uri a gn:Feature ;
-                gn:featureClass ?featureClass .
+                gn:featureClass ?featureClass ;
+                gn:countryCode ?countryCode .
             # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
             VALUES ?featureClass { gn:P gn:L gn:A gn:H }
+            # Optionally limit to specific countries based on the dataset.
+            FILTER(
+                ?datasetUri = <https://www.geonames.org>
+                || ?countryCode IN ("NL", "BE", "DE")
+            )
         }
         GROUP BY ?uri
         ORDER BY DESC(?score)
