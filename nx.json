@@ -57,7 +57,6 @@
     "projectsRelationship": "independent",
     "version": {
       "preVersionCommand": "npx nx run-many -t build",
-      "conventionalCommits": true,
       "fallbackCurrentVersionResolver": "disk"
     },
     "changelog": {
@@ -73,6 +72,9 @@
         "projects": ["network-of-terms-catalog", "network-of-terms-query"],
         "releaseTag": {
           "pattern": "{projectName}@{version}"
+        },
+        "version": {
+          "conventionalCommits": true
         }
       },
       "apps": {
