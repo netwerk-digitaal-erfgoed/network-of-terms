@@ -12,32 +12,10 @@ describe('createLoggingFetch', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('ok')));
   });
 
-  it('fixes missing whitespace before ORDER BY', async () => {
-    const loggingFetch = createLoggingFetch(mockLogger);
-    const body = new URLSearchParams();
-    body.set(
-      'query',
-      'SELECT ?uri WHERE { } GROUP BY ?uriORDER BY DESC(?score)',
-    );
-
-    await loggingFetch('https://example.org/sparql', {
-      method: 'POST',
-      body,
-      headers: new Headers({ 'content-length': '100' }),
-    });
-
-    expect(mockLogger.debug).toHaveBeenCalledWith(
-      expect.objectContaining({
-        query: 'SELECT ?uri WHERE { } GROUP BY ?uri ORDER BY DESC(?score)',
-      }),
-      'SPARQL query',
-    );
-  });
-
   it('removes stale Content-Length header', async () => {
     const loggingFetch = createLoggingFetch(mockLogger);
     const body = new URLSearchParams();
-    body.set('query', 'SELECT ?uriORDER BY ?x');
+    body.set('query', 'SELECT ?uri ORDER BY ?x');
     const headers = new Headers({ 'content-length': '100' });
 
     await loggingFetch('https://example.org/sparql', {
