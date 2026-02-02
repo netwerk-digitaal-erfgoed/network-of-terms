@@ -7,7 +7,7 @@ CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel_ext ;
         skos:altLabel ?altLabel ;
-        skos:scopeNote ?scopeNote_en ;
+        skos:scopeNote ?scopeNote_en , ?scopeNote_nl ;
         skos:broader ?broader ;
         vrank:simpleRank ?score .
     ?broader skos:prefLabel ?broader_prefLabel .
@@ -44,9 +44,16 @@ WHERE {
         FILTER(?uri != ?broader)
     }
 
-    OPTIONAL {
-        ?uri gn:featureCode/gn:name ?scopeNote .
-        # scopeNote is always in English.
-        BIND(STRLANG(?scopeNote, "en") as ?scopeNote_en)
+    ?uri gn:featureClass ?featureClass .
+    VALUES (?featureClass ?scopeNote_en ?scopeNote_nl) {
+        (gn:A "Administrative boundary"@en "Bestuurlijke eenheid"@nl)
+        (gn:H "Hydrographic"@en "Water"@nl)
+        (gn:L "Area"@en "Gebied"@nl)
+        (gn:P "Populated place"@en "Plaats"@nl)
+        (gn:R "Road/railroad"@en "Infrastructuur"@nl)
+        (gn:S "Spot"@en "Object"@nl)
+        (gn:T "Hypsographic"@en "Reliëf"@nl)
+        (gn:U "Undersea"@en "Onder water"@nl)
+        (gn:V "Vegetation"@en "Vegetatie"@nl)
     }
 }
