@@ -1,3 +1,10 @@
+# 20260202093747-4fed614 (2026-02-02)
+
+### 🧱 Updated Dependencies
+
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-catalog to 10.17.11
+- Updated @netwerk-digitaal-erfgoed/network-of-terms-query to 6.2.19
+
 # 20260201192043-fe61350 (2026-02-01)
 
 This was a version bump only for @netwerk-digitaal-erfgoed/network-of-terms-reconciliation to align it with other projects, there were no code changes.
