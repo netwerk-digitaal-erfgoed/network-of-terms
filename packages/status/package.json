@@ -22,7 +22,7 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/types": "^2.0.1",
     "env-schema": "7.0.0",
-    "fastify": "^5.7.2",
+    "fastify": "^5.7.3",
     "n3": "^2.0.1",
     "pino": "^9.7.0",
     "rdf-serialize": "^5.1.0"
