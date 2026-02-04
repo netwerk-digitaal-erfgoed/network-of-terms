@@ -101,11 +101,7 @@
         "continuous": true,
         "executor": "nx:run-commands",
         "options": {
-          "commands": [
-            "nx watch --projects=network-of-terms-catalog -- nx build network-of-terms-graphql",
-            "nx serve-dev network-of-terms-graphql"
-          ],
-          "parallel": true
+          "command": "npx nodemon --watch packages/catalog/catalog --exec 'npx nx serve-dev network-of-terms-graphql'"
         }
       },
       "copy-workspace-modules": {},
