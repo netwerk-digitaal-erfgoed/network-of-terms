@@ -1,11 +1,14 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX vrank: <http://purl.org/voc/vrank#>
 
 CONSTRUCT {
     ?uri a skos:Concept ;
         skos:prefLabel ?prefLabel ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
-        skos:related ?related_uri .
+        skos:scopeNote ?notation_en ;
+        skos:related ?related_uri ;
+        vrank:simpleRank ?score .
 
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
@@ -13,24 +16,46 @@ CONSTRUCT {
 }
 WHERE {
     {
-        SELECT * WHERE {
-            ?uri a skos:Concept ;
-                skos:prefLabel ?prefLabel .
-            FILTER(CONTAINS(LCASE(?prefLabel), LCASE(?query)))
+        SELECT DISTINCT ?uri ?score WHERE {
+            {
+                # Exact notation match are awarded a score so they become the topmost result, e.g. "11H".
+                ?uri a skos:Concept ;
+                    skos:notation ?notation .
+                FILTER(LCASE(?notation) = ?query)
+                BIND(1.0 AS ?score)
+            }
+            UNION
+            {
+                # Partial matches get no score, so default to alphabetical sort.
+                ?uri a skos:Concept ;
+                    skos:prefLabel ?prefLabel ;
+                    skos:notation ?notation .
+                FILTER(LCASE(?notation) != ?query)
+                FILTER(CONTAINS(LCASE(?prefLabel), ?query) || CONTAINS(LCASE(?notation), ?query))
+            }
         }
+        ORDER BY DESC(?score)
         #LIMIT#
     }
+
+    ?uri skos:prefLabel ?prefLabel ;
+        skos:notation ?notation .
+    FILTER(LANG(?prefLabel) = "en")
+    BIND(STRLANG(STR(?notation), "en") AS ?notation_en)
 
     OPTIONAL {
         ?uri skos:broader ?broader_uri .
         ?broader_uri skos:prefLabel ?broader_prefLabel .
+        FILTER(LANG(?broader_prefLabel) = "en")
     }
     OPTIONAL {
         ?uri skos:narrower ?narrower_uri .
         ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+        FILTER(LANG(?narrower_prefLabel) = "en")
     }
     OPTIONAL {
         ?uri skos:related ?related_uri .
         ?related_uri skos:prefLabel ?related_prefLabel .
+        FILTER(LANG(?related_prefLabel) = "en")
     }
 }
