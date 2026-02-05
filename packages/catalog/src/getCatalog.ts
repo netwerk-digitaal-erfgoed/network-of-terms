@@ -185,7 +185,7 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
  */
 async function fromFiles(directory: string): Promise<RDF.Store> {
   // Read all files except those in the queries/ directory.
-  const files = await globby([directory, '!' + directory + '/queries']);
+  const files = await globby([directory + '/**', '!**/queries/**']);
   const store = RdfStore.createDefault();
   for (const file of files) {
     const stream = fromFile(file);
