@@ -1,3 +1,11 @@
+import { describe, expect, it } from 'vitest';
+
+declare module 'vitest' {
+  interface Assertion {
+    toConform(): void;
+  }
+}
+
 import { JsonLdParser } from 'jsonld-streaming-parser';
 import * as fs from 'fs';
 import rdf from 'rdf-ext';
