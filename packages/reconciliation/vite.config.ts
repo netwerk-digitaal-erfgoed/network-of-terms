@@ -6,10 +6,8 @@ export default defineConfig(() => ({
   plugins: [],
   test: {
     watch: false,
-    globals: true,
     environment: 'node',
     include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    reporters: ['default'],
     testTimeout: 10_000,
     coverage: {
       enabled: true,

@@ -1,3 +1,4 @@
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { FastifyInstance } from 'fastify';
 import { server } from '../src/server.js';
 import { ReconciliationQueryBatch } from '../src/query.js';

@@ -7,7 +7,7 @@ import {
   testCatalog,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query/test-utils';
 import { IRI } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { afterAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3000);

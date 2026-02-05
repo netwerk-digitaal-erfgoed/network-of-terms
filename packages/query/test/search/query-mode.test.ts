@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { QueryMode, queryVariants } from '../../src/index.js';
 
 describe('Search query', () => {

@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { calculateMatchingScore } from '../src/score.js';
 
 describe('Score', () => {
