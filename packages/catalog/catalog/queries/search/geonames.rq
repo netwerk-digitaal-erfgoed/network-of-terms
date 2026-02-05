@@ -14,28 +14,32 @@ CONSTRUCT {
 }
 WHERE {
     {
-        SELECT ?uri (MAX(?sc) as ?score) WHERE {
-            (?uri ?sc) text:query (gn:name gn:alternateName ?query) .
+        SELECT ?uri ?featureClass ?countryCode (MAX(?sc) as ?score) WHERE {
+            (?uri ?sc) text:query (gn:name gn:alternateName gn:countryCode ?query) .
             ?uri a gn:Feature ;
                 gn:featureClass ?featureClass ;
                 gn:countryCode ?countryCode .
             # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
             VALUES ?featureClass { gn:P gn:L gn:A gn:H }
-            # Optionally limit to specific countries based on the dataset.
-            FILTER(
-                ?datasetUri = <https://www.geonames.org>
-                || ?countryCode IN ("NL", "BE", "DE")
-            )
+            # Country filter from URI fragment (e.g. #NL-BE-DE), or allow all if no fragment
+            BIND(COALESCE(STRAFTER(STR(?datasetUri), "#"), "") AS ?countriesFragment)
+            FILTER(?countriesFragment = "" || CONTAINS(UCASE(?countriesFragment), ?countryCode))
         }
-        GROUP BY ?uri
+        GROUP BY ?uri ?featureClass ?countryCode
         ORDER BY DESC(?score)
         #LIMIT#
     }
 
-    ?uri gn:name ?prefLabel ;
-        gn:countryCode ?countryCode .
+    ?uri gn:name ?prefLabel .
 
     BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
+
+    VALUES (?featureClass ?scopeNote_en ?scopeNote_nl) {
+        (gn:A "Administrative boundary"@en "Bestuurlijke eenheid"@nl)
+        (gn:H "Hydrographic"@en "Water"@nl)
+        (gn:L "Area"@en "Gebied"@nl)
+        (gn:P "Populated place"@en "Plaats"@nl)
+    }
 
     OPTIONAL {
         ?uri gn:alternateName ?altLabel .
@@ -48,18 +52,5 @@ WHERE {
         VALUES ?parents { gn:parentADM1 gn:parentADM2 }
         # filter out the circular links in the converted data
         FILTER(?uri != ?broader)
-    }
-
-    ?uri gn:featureClass ?featureClass .
-    VALUES (?featureClass ?scopeNote_en ?scopeNote_nl) {
-        (gn:A "Administrative boundary"@en "Bestuurlijke eenheid"@nl)
-        (gn:H "Hydrographic"@en "Water"@nl)
-        (gn:L "Area"@en "Gebied"@nl)
-        (gn:P "Populated place"@en "Plaats"@nl)
-        (gn:R "Road/railroad"@en "Infrastructuur"@nl)
-        (gn:S "Spot"@en "Object"@nl)
-        (gn:T "Hypsographic"@en "Reliëf"@nl)
-        (gn:U "Undersea"@en "Onder water"@nl)
-        (gn:V "Vegetation"@en "Vegetatie"@nl)
     }
 }
