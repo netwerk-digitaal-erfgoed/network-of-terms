@@ -14,8 +14,8 @@ CONSTRUCT {
 }
 WHERE {
     {
-        SELECT ?uri ?featureClass ?countryCode (MAX(?sc) as ?score) WHERE {
-            (?uri ?sc) text:query (gn:name gn:alternateName gn:countryCode ?query) .
+        SELECT ?uri ?featureClass ?countryCode (MAX(?sc) + IF(CONTAINS(CONCAT(" ", LCASE(?query), " "), CONCAT(" ", LCASE(?countryCode), " ")), 2.0, 0) AS ?score) WHERE {
+            (?uri ?sc) text:query (gn:name gn:alternateName ?query) .
             ?uri a gn:Feature ;
                 gn:featureClass ?featureClass ;
                 gn:countryCode ?countryCode .
