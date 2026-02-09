@@ -14,8 +14,14 @@ CONSTRUCT {
 }
 WHERE {
     {
-        SELECT ?uri ?featureClass ?countryCode (MAX(?sc) + IF(CONTAINS(CONCAT(" ", LCASE(?query), " "), CONCAT(" ", LCASE(?countryCode), " ")), 2.0, 0) AS ?score) WHERE {
-            (?uri ?sc) text:query (gn:name gn:alternateName ?query) .
+        SELECT ?uri ?featureClass ?countryCode (MAX(?sc)
+            + IF(CONTAINS(CONCAT(" ", LCASE(?query), " "), CONCAT(" ", LCASE(?countryCode), " ")), 2.0, 0)
+            + IF(?countryCode = "NL", 1.5, IF(?countryCode = "BE", 1.0, IF(?countryCode = "DE", 0.5, 0)))
+            AS ?score) WHERE {
+            # Boost name matches (^3) above alternateName matches, using Lucene query-time boosting
+            # (text:boost in the Fuseki config is silently ignored since Lucene 7.0).
+            BIND(CONCAT("name:(", ?query, ")^3 alternateName:(", ?query, ")") AS ?luceneQuery)
+            (?uri ?sc) text:query (?luceneQuery) .
             ?uri a gn:Feature ;
                 gn:featureClass ?featureClass ;
                 gn:countryCode ?countryCode .
