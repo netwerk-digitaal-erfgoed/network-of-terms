@@ -3,11 +3,11 @@ import {
   StringDictionary,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { QueryEngine } from '@comunica/query-sparql';
-import memoize from 'memoize';
 import type { Literal } from '@rdfjs/types';
 
 const queryEngine = new QueryEngine();
 const timeout = 10_000;
+const maxAge = 86_400_000; // 24 hours in ms.
 
 export class Genre {
   constructor(
@@ -16,10 +16,12 @@ export class Genre {
   ) {}
 }
 
+const cache = new Map<string, { data: Genre; expires: number }>();
+
 const doDereferenceGenre = async (genre: IRI): Promise<Genre | null> => {
   try {
     const data = await queryEngine.queryBindings(
-      `SELECT ?prefLabel WHERE { 
+      `SELECT ?prefLabel WHERE {
       ?s a <http://www.w3.org/2004/02/skos/core#Concept> ;
         <http://www.w3.org/2004/02/skos/core#prefLabel> ?prefLabel .
     }`,
@@ -46,7 +48,16 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre | null> => {
   }
 };
 
-export const dereferenceGenre = memoize(doDereferenceGenre, {
-  cacheKey: String,
-  maxAge: 86400,
-});
+export const dereferenceGenre = async (
+  genre: IRI,
+): Promise<Genre | null> => {
+  const key = String(genre);
+  const cached = cache.get(key);
+  if (cached && cached.expires > Date.now()) return cached.data;
+
+  const result = await doDereferenceGenre(genre);
+  if (result !== null) {
+    cache.set(key, { data: result, expires: Date.now() + maxAge });
+  }
+  return cache.get(key)?.data ?? null;
+};

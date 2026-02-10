@@ -40,7 +40,6 @@
     "@rdfjs/types": "^2.0.1",
     "globby": "^16.1.0",
     "ldkit": "^2.5.1",
-    "memoize": "^10.2.0",
     "rdf-parse": "^5.0.0",
     "rdf-stores": "^2.1.1",
     "tslib": "^2.3.0"
