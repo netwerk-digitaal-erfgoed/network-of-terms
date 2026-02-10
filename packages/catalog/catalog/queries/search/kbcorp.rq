@@ -1,0 +1,34 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX schema: <http://schema.org/>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?schema_name ;
+        skos:altLabel ?schema_alternateName ;
+        skos:scopeNote ?schema_description ;
+        skos:exactMatch ?exactMatch_uri .
+    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+}
+WHERE {
+    {
+        SELECT DISTINCT ?uri WHERE {
+            ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/corps> ;
+                ?predicate ?label .
+            VALUES ?predicate { rdfs:label schema:name schema:alternateName }
+            ?label <bif:contains> ?virtuosoQuery .
+        }
+    }
+
+    OPTIONAL { ?uri schema:name ?schema_name }
+    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+    OPTIONAL { ?uri schema:description ?schema_description }
+    OPTIONAL {
+        ?uri ?matchPredicate ?exactMatch_uri .
+        VALUES ?matchPredicate { owl:sameAs schema:sameAs }
+        OPTIONAL {
+            ?exactMatch_uri rdfs:label ?exactMatch_prefLabel .
+        }
+    }
+}
