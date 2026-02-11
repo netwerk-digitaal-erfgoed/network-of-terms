@@ -70,6 +70,7 @@
     },
     "groups": {
       "packages": {
+        "projectsRelationship": "independent",
         "projects": ["network-of-terms-catalog", "network-of-terms-query"],
         "releaseTag": {
           "pattern": "{projectName}@{version}"
