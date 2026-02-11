@@ -86,6 +86,20 @@ WHERE {
         }
     }
 
+    # For Corp
+    OPTIONAL {
+        OPTIONAL { ?uri schema:name ?rdfs_label }
+        OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
+        OPTIONAL { ?uri schema:description ?schema_description }
+        OPTIONAL {
+            ?uri ?matchPredicate ?exactMatch_uri .
+            VALUES ?matchPredicate { owl:sameAs schema:sameAs }
+            OPTIONAL {
+                ?exactMatch_uri rdfs:label ?exactMatch_prefLabel .
+            }
+        }
+    }
+
     # For STCN
     OPTIONAL {
         OPTIONAL { ?uri schema:location/schema:address/schema:addressLocality ?scopeNote }
