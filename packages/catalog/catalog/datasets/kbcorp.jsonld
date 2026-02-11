@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org",
-  "@id": "http://data.bibliotheken.nl/id/dataset/kbcorp",
+  "@id": "http://data.bibliotheken.nl/id/dataset/corps",
   "@type": "Dataset",
   "name": [
     {
@@ -12,15 +12,9 @@
       "@value": "KB Corporatiethesaurus"
     }
   ],
-  "alternateName": [
-    {
-      "@language": "nl",
-      "@value": "KB Corp"
-    }
-  ],
   "genre": [
     {
-      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties"
     }
   ],
   "creator": [
@@ -37,7 +31,7 @@
     },
     {
       "@language": "nl",
-      "@value": "Organisaties uit KB Corporatiethesaurus"
+      "@value": "Organisaties uit de KB Corporatiethesaurus"
     }
   ],
   "inLanguage": "nl",

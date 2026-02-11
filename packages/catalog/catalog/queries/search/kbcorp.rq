@@ -19,6 +19,7 @@ WHERE {
             VALUES ?predicate { rdfs:label schema:name schema:alternateName }
             ?label <bif:contains> ?virtuosoQuery .
         }
+        #LIMIT#
     }
 
     OPTIONAL { ?uri schema:name ?schema_name }
