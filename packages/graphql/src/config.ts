@@ -18,7 +18,7 @@ const schema = {
     },
     STATUS_SERVICE_URL: {
       type: 'string',
-      default: 'https://status.termennetwerk.netwerkdigitaalerfgoed.nl',
+      default: 'http://localhost:3000',
       description: 'Base URL of the status service',
     },
     LOG_LEVEL: {
