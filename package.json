@@ -4,9 +4,6 @@
   "workspaces": [
     "./packages/*"
   ],
-  "scripts": {
-    "test:coverage": "nx run-many -t build && vitest run"
-  },
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^20.3.0",
@@ -42,6 +39,10 @@
   "nx": {
     "includedScripts": [],
     "targets": {
+      "test:coverage": {
+        "command": "vitest run",
+        "dependsOn": ["^build"]
+      },
       "local-registry": {
         "executor": "@nx/js:verdaccio",
         "options": {
