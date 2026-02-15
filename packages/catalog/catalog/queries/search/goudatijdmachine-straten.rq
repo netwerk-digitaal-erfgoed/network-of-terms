@@ -2,7 +2,6 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gtm: <https://www.goudatijdmachine.nl/def#>
 PREFIX sdo: <https://schema.org/>
 PREFIX hg: <http://rdf.histograph.io/>
-PREFIX ql: <http://qlever.cs.uni-freiburg.de/builtin-functions/>
 PREFIX omeka: <http://omeka.org/s/vocabs/o#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -18,8 +17,7 @@ CONSTRUCT {
 } WHERE {
   ?uri sdo:name|sdo:alternateName ?item .
   ?uri a gtm:Straat .
-  ?text ql:contains-entity ?item .
-  ?text ql:contains-word ?query .
+  FILTER(REGEX(STR(?item), ?query, "i"))
   ?uri owl:sameAs ?piduri .
   ?uri sdo:name ?prefLabel .
   OPTIONAL {
