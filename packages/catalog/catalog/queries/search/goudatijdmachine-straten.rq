@@ -6,7 +6,7 @@ PREFIX omeka: <http://omeka.org/s/vocabs/o#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 CONSTRUCT {
-  ?piduri a skos:Concept ;
+  ?uri a skos:Concept ;
     skos:prefLabel ?prefLabel ;
     skos:altLabel ?altLabel;
     skos:scopeNote ?scopeNote ;
@@ -18,7 +18,6 @@ CONSTRUCT {
   ?uri sdo:name|sdo:alternateName ?item .
   ?uri a gtm:Straat .
   FILTER(REGEX(STR(?item), ?query, "i"))
-  ?uri owl:sameAs ?piduri .
   ?uri sdo:name ?prefLabel .
   OPTIONAL {
     ?uri gtm:genoemdNaar ?genoemdNaar .
