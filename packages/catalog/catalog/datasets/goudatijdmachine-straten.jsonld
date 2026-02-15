@@ -34,9 +34,11 @@
       "alternateName": "GTM"
     }
   ],
-  "url": ["https://n2t.net/ark:/60537/"],
+  "url": [
+    "https://n2t.net/ark:/60537/"
+  ],
   "mainEntityOfPage": [
-    "https://www.goudatijdmachine.nl/omeka/s/data/page/straten"
+    "https://www.goudatijdmachine.nl/straatnamen/"
   ],
   "description": [
     {
