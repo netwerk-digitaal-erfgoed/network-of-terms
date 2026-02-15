@@ -25,14 +25,24 @@ CONSTRUCT {
   OPTIONAL {
     ?uri gtm:genoemdNaar ?genoemdNaar .
   }
-  BIND (
-    CONCAT(
-      IF ( EXISTS {
-          ?uri omeka:item_set <https://n2t.net/ark:/60537/bd75pg> 
-        }, "Verdwenen straat", "Straat" ),
-      IF ( BOUND(?genoemdNaar), CONCAT(" in Gouda, genoemd naar ", ?genoemdNaar )," in Gouda" )
-    )
-    AS ?scopeNote )
+  BIND(
+    IF(
+      EXISTS {
+        ?uri omeka:item_set <https://n2t.net/ark:/60537/bd75pg> 
+      },
+      "Verdwenen straat",
+      "Straat"
+    ) AS ?typeLabel
+  )
+  BIND(
+    COALESCE(CONCAT(", ", CONCAT(
+          LCASE(SUBSTR(STR(?genoemdNaar), 1, 1)),
+          SUBSTR(STR(?genoemdNaar), 2)
+        )), "") AS ?namedSuffix
+  )
+  BIND(
+    CONCAT(?typeLabel, " in Gouda", ?namedSuffix) AS ?scopeNote
+  )
   OPTIONAL {
     ?uri sdo:alternateName ?altLabel .
   }
