@@ -17,7 +17,7 @@ CONSTRUCT {
 } WHERE {
   ?uri sdo:name|sdo:alternateName ?item .
   ?uri a gtm:Straat .
-  FILTER(REGEX(STR(?item), ?query, "i"))
+  FILTER(CONTAINS(LCASE(?item), ?query))
   ?uri sdo:name ?prefLabel .
   OPTIONAL {
     ?uri gtm:genoemdNaar ?genoemdNaar .
