@@ -2,12 +2,11 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gtm: <https://www.goudatijdmachine.nl/def#>
 PREFIX sdo: <https://schema.org/>
 PREFIX hg: <http://rdf.histograph.io/>
-PREFIX ql: <http://qlever.cs.uni-freiburg.de/builtin-functions/>
 PREFIX omeka: <http://omeka.org/s/vocabs/o#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 CONSTRUCT {
-  ?piduri a skos:Concept ;
+  ?uri a skos:Concept ;
     skos:prefLabel ?prefLabel ;
     skos:altLabel ?altLabel;
     skos:scopeNote ?scopeNote ;
@@ -18,21 +17,29 @@ CONSTRUCT {
 } WHERE {
   ?uri sdo:name|sdo:alternateName ?item .
   ?uri a gtm:Straat .
-  ?text ql:contains-entity ?item .
-  ?text ql:contains-word ?query .
-  ?uri owl:sameAs ?piduri .
+  FILTER(CONTAINS(LCASE(?item), ?query))
   ?uri sdo:name ?prefLabel .
   OPTIONAL {
     ?uri gtm:genoemdNaar ?genoemdNaar .
   }
-  BIND (
-    CONCAT(
-      IF ( EXISTS {
-          ?uri omeka:item_set <https://n2t.net/ark:/60537/bd75pg> 
-        }, "Verdwenen straat", "Straat" ),
-      IF ( BOUND(?genoemdNaar), CONCAT(" in Gouda, genoemd naar ", ?genoemdNaar )," in Gouda" )
-    )
-    AS ?scopeNote )
+  BIND(
+    IF(
+      EXISTS {
+        ?uri omeka:item_set <https://n2t.net/ark:/60537/bd75pg> 
+      },
+      "Verdwenen straat",
+      "Straat"
+    ) AS ?typeLabel
+  )
+  BIND(
+    COALESCE(CONCAT(", ", CONCAT(
+          LCASE(SUBSTR(STR(?genoemdNaar), 1, 1)),
+          SUBSTR(STR(?genoemdNaar), 2)
+        )), "") AS ?namedSuffix
+  )
+  BIND(
+    CONCAT(?typeLabel, " in Gouda", ?namedSuffix) AS ?scopeNote
+  )
   OPTIONAL {
     ?uri sdo:alternateName ?altLabel .
   }
