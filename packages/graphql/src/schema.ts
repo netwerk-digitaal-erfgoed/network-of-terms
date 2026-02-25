@@ -83,8 +83,11 @@ export const schema = (languages: string[]) => `
   type Query {
     "Query one or more sources for terms."
     terms(
-      "List of URIs of sources to query."
-      sources: [ID]!,
+      "List of URIs of sources to query. At least one of sources or genres must be provided."
+      sources: [ID],
+
+      "List of genre URIs to filter sources by. Sources whose genres overlap with the requested genres are queried."
+      genres: [ID],
       
       "A literal search query, for example \`Rembrandt\`."
       query: String!,
@@ -103,7 +106,10 @@ export const schema = (languages: string[]) => `
     ): [TermsQueryResult]
     
     "List all sources that can be queried for terms."
-    sources: [Source]
+    sources(
+      "List of genre URIs to filter sources by."
+      genres: [ID]
+    ): [Source]
     
     "Look up terms by their URI."
     lookup(

@@ -19,7 +19,8 @@ export interface QueryOptions extends BaseQueryOptions {
 }
 
 export interface QueryAllOptions extends BaseQueryOptions {
-  sources: IRI[];
+  sources?: IRI[];
+  genres?: IRI[];
 }
 
 const schemaBase = Joi.object({
@@ -33,9 +34,12 @@ const schemaQuery = schemaBase.append({
   source: Joi.string().required(),
 });
 
-const schemaQueryAll = schemaBase.append({
-  sources: Joi.array().items(Joi.string().required()).min(1).required(),
-});
+const schemaQueryAll = schemaBase
+  .append({
+    sources: Joi.array().items(Joi.string().required()).min(1),
+    genres: Joi.array().items(Joi.string().required()).min(1),
+  })
+  .or('sources', 'genres');
 
 export class DistributionsService {
   private logger: Pino.Logger;
@@ -52,7 +56,10 @@ export class DistributionsService {
     this.comunica = options.comunica || comunica();
   }
 
-  async query(options: QueryOptions): Promise<TermsResponse> {
+  async query(
+    options: QueryOptions,
+    genres?: IRI[],
+  ): Promise<TermsResponse> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(`Preparing to query source "${args.source}"...`);
     const dataset = this.catalog.getDatasetByIri(args.source);
@@ -71,23 +78,47 @@ export class DistributionsService {
       distribution,
       args.limit,
       args.timeoutMs,
+      genres,
     );
   }
 
   async queryAll(options: QueryAllOptions): Promise<TermsResponse[]> {
     const args = Joi.attempt(options, schemaQueryAll);
+
+    let effectiveSources: IRI[];
+    if (args.sources && args.genres) {
+      const genreDatasetIris = new Set(
+        this.catalog
+          .getDatasetsByGenre(args.genres)
+          .map((d) => d.iri.toString()),
+      );
+      effectiveSources = args.sources.filter((source: IRI) => {
+        const dataset = this.catalog.getDatasetByIri(source);
+        return dataset && genreDatasetIris.has(dataset.iri.toString());
+      });
+    } else if (args.genres) {
+      effectiveSources = this.catalog
+        .getDatasetsByGenre(args.genres)
+        .map((d) => d.iri);
+    } else {
+      effectiveSources = args.sources;
+    }
+
     clientQueriesCounter.add(1, {
-      numberOfSources: args.sources.length,
+      numberOfSources: effectiveSources.length,
       type: 'search',
     });
-    const requests = args.sources.map((source: IRI) =>
-      this.query({
-        source,
-        query: args.query,
-        queryMode: args.queryMode,
-        limit: args.limit,
-        timeoutMs: args.timeoutMs,
-      }),
+    const requests = effectiveSources.map((source: IRI) =>
+      this.query(
+        {
+          source,
+          query: args.query,
+          queryMode: args.queryMode,
+          limit: args.limit,
+          timeoutMs: args.timeoutMs,
+        },
+        args.genres,
+      ),
     );
     return Promise.all(requests);
   }

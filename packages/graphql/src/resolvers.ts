@@ -28,24 +28,36 @@ import type { StatusClient } from './status.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
-  return context.catalog
-    .getDatasetsSortedByName(context.catalogLanguage)
-    .flatMap((dataset: Dataset) =>
-      dataset.distributions.map((distribution) =>
-        source(
-          distribution,
-          dataset,
-          context.catalogLanguage,
-          context.statusClient,
-        ),
-      ),
+  let datasets: Dataset[] = context.catalog.getDatasetsSortedByName(
+    context.catalogLanguage,
+  );
+  if (args.genres) {
+    const genreDatasetIris = new Set(
+      context.catalog
+        .getDatasetsByGenre(args.genres)
+        .map((d: Dataset) => d.iri.toString()),
     );
+    datasets = datasets.filter((dataset: Dataset) =>
+      genreDatasetIris.has(dataset.iri.toString()),
+    );
+  }
+  return datasets.flatMap((dataset: Dataset) =>
+    dataset.distributions.map((distribution) =>
+      source(
+        distribution,
+        dataset,
+        context.catalogLanguage,
+        context.statusClient,
+      ),
+    ),
+  );
 }
 
 async function queryTerms(
   _: unknown,
   args: {
-    sources: string[];
+    sources?: string[];
+    genres?: string[];
     query: string;
     queryMode: string;
     limit: number;
@@ -62,6 +74,7 @@ async function queryTerms(
   });
   const results = await service.queryAll({
     sources: args.sources,
+    genres: args.genres,
     query: args.query,
     queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     limit: args.limit,

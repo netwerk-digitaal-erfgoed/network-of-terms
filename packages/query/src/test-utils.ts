@@ -171,7 +171,7 @@ export const testCatalog = (port: number) =>
       { nl: 'GTAA: persoonsnamen' },
       { nl: 'Personen voor het beschrijven van audiovisueel materiaal' },
       [
-        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
       ],
       ['http://data.beeldengeluid.nl/gtaa/'],
       'https://example.com/gtaa',

@@ -44,7 +44,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://../queries/search/wikidata-entities-persons.rq"
+          "query": "file://../queries/search/wikidata-entities.rq"
         },
         {
           "@type": "FindAction",

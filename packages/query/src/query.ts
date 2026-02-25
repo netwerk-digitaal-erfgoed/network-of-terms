@@ -95,6 +95,31 @@ export function buildSearchQuery(
   return { query, bindings };
 }
 
+/**
+ * Substitute ?genres in a SPARQL template with genre IRIs.
+ * If ?genres is not in the query, return unchanged (single-genre source, no SPARQL filtering needed).
+ * Effective genres: requestedGenres if provided, otherwise all datasetGenres.
+ */
+export function parameterizeGenres(
+  query: string,
+  requestedGenres: IRI[] | undefined,
+  datasetGenres: IRI[],
+): string {
+  if (!query.includes('?genres')) {
+    return query;
+  }
+
+  const effectiveGenres =
+    requestedGenres && requestedGenres.length > 0
+      ? requestedGenres
+      : datasetGenres;
+
+  return query.replace(
+    '?genres',
+    effectiveGenres.map((iri) => `<${iri}>`).join(' '),
+  );
+}
+
 export class QueryTermsService {
   private readonly logger: Pino.Logger;
   private readonly engine: QueryEngine;
@@ -135,6 +160,7 @@ export class QueryTermsService {
     distribution: Distribution,
     limit: number,
     timeoutMs: number,
+    genres?: IRI[],
   ): Promise<TermsResponse> {
     const bindings = [...queryVariants(searchQuery, queryMode)].reduce(
       (record: Record<string, RDF.Term>, [k, v]) => {
@@ -145,8 +171,14 @@ export class QueryTermsService {
     );
     bindings['datasetUri'] = dataFactory.namedNode(dataset.iri.toString());
 
+    const queryWithGenres = parameterizeGenres(
+      distribution.searchQuery,
+      genres,
+      dataset.genres,
+    );
+
     const { queryWithLimit, bindingsWithLimit } = this.parameterizeLimit({
-      query: distribution.searchQuery,
+      query: queryWithGenres,
       bindings,
       limit,
     });

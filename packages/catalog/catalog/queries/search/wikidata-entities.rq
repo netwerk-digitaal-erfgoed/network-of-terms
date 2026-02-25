@@ -21,7 +21,7 @@ WHERE {
             SERVICE wikibase:mwapi {
                 bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
                     wikibase:api "Search" ;
-                    wikibase:limit "once" ; # Disabling continuation improves performance.
+                    wikibase:limit "once" ;
                     mwapi:language "nl" ;
                     mwapi:srsearch ?query .
                 ?item wikibase:apiOutputItem mwapi:title .
@@ -30,24 +30,46 @@ WHERE {
 
             BIND(-?ordinal AS ?score)
 
-            # Use UNION instead of VALUES because the latter doesn't properly restrict results.
+            VALUES ?requestedGenre { ?genres }
+
             {
-                # Streets.
-                ?item wdt:P31 wd:Q79007
+                # Personen: instance of human (Q5)
+                VALUES (?genreUri ?genreType) {
+                    (<https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen> wd:Q5)
+                }
+                FILTER(?genreUri = ?requestedGenre)
+                ?item wdt:P31 ?genreType .
             }
-            UNION {
-                # Squares.
-                ?item wdt:P31 wd:Q174782
+            UNION
+            {
+                # Locaties: instances or subclasses of human settlement (Q486972)
+                # in the Netherlands (Q55) or Belgium (Q31)
+                VALUES (?genreUri ?genreType) {
+                    (<https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties> wd:Q486972)
+                }
+                FILTER(?genreUri = ?requestedGenre)
+                ?item wdt:P31/wdt:P279* ?genreType .
+                {
+                    { ?item wdt:P17 wd:Q55 . }
+                    UNION
+                    { ?item wdt:P17 wd:Q31 . }
+                }
+                FILTER NOT EXISTS { ?item wdt:P31 wd:Q159313 }
+                FILTER NOT EXISTS { ?item wdt:P31 wd:Q123705 }
             }
-            UNION {
-                # Main squares, e.g. http://www.wikidata.org/entity/Q1083850.
-                ?item wdt:P31 wd:Q26987258
+            UNION
+            {
+                # Objecten: all other entities (no type restriction)
+                VALUES ?genreUri {
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten>
+                }
+                FILTER(?genreUri = ?requestedGenre)
             }
-            ?item wdt:P17 wd:Q55 .
         }
         ORDER BY ASC(?ordinal)
         #LIMIT#
     }
+
     OPTIONAL {
         ?item rdfs:label ?prefLabel .
         FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")

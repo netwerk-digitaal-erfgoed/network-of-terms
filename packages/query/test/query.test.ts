@@ -1,6 +1,7 @@
 import { testCatalog } from '../src/test-utils.js';
 import {
   buildSearchQuery,
+  parameterizeGenres,
   QueryMode,
   QueryTermsService,
 } from '../src/index.js';
@@ -70,6 +71,61 @@ const query = async (iri: string) => {
     initialBindings: Map<string, Term>;
   };
 };
+
+describe('parameterizeGenres', () => {
+  const datasetGenres = [
+    'https://example.com/genre/Personen',
+    'https://example.com/genre/Locaties',
+  ];
+  const queryWithGenres =
+    'SELECT * WHERE { VALUES ?requestedGenre { ?genres } }';
+  const queryWithoutGenres = 'SELECT * WHERE { ?s ?p ?o }';
+
+  it('replaces ?genres with a single requested genre', () => {
+    const result = parameterizeGenres(
+      queryWithGenres,
+      ['https://example.com/genre/Personen'],
+      datasetGenres,
+    );
+    expect(result).toBe(
+      'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> } }',
+    );
+  });
+
+  it('replaces ?genres with multiple requested genres', () => {
+    const result = parameterizeGenres(
+      queryWithGenres,
+      ['https://example.com/genre/Personen', 'https://example.com/genre/Locaties'],
+      datasetGenres,
+    );
+    expect(result).toBe(
+      'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> <https://example.com/genre/Locaties> } }',
+    );
+  });
+
+  it('defaults to all dataset genres when no genres requested', () => {
+    const result = parameterizeGenres(queryWithGenres, undefined, datasetGenres);
+    expect(result).toBe(
+      'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> <https://example.com/genre/Locaties> } }',
+    );
+  });
+
+  it('defaults to all dataset genres when empty genres array provided', () => {
+    const result = parameterizeGenres(queryWithGenres, [], datasetGenres);
+    expect(result).toBe(
+      'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> <https://example.com/genre/Locaties> } }',
+    );
+  });
+
+  it('returns query unchanged when ?genres placeholder is absent', () => {
+    const result = parameterizeGenres(
+      queryWithoutGenres,
+      ['https://example.com/genre/Personen'],
+      datasetGenres,
+    );
+    expect(result).toBe(queryWithoutGenres);
+  });
+});
 
 describe('buildSearchQuery', () => {
   it('returns query and bindings', () => {

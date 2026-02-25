@@ -1,20 +1,26 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://www.wikidata.org#entities-places",
+  "@id": "https://www.wikidata.org#entities",
   "@type": "Dataset",
   "name": [
     {
       "@language": "en",
-      "@value": "Wikidata: places in the Netherlands and Belgium"
+      "@value": "Wikidata"
     },
     {
       "@language": "nl",
-      "@value": "Wikidata: plaatsen in Nederland en België"
+      "@value": "Wikidata"
     }
   ],
   "genre": [
     {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
     }
   ],
   "creator": [
@@ -27,17 +33,17 @@
   "description": [
     {
       "@language": "en",
-      "@value": "Places in the Netherlands and Belgium"
+      "@value": "Persons, places and other entities in Wikidata"
     },
     {
       "@language": "nl",
-      "@value": "Plaatsen in Nederland en België"
+      "@value": "Personen, plaatsen en andere entiteiten in Wikidata"
     }
   ],
   "inLanguage": ["en", "nl"],
   "distribution": [
     {
-      "@id": "https://query.wikidata.org/sparql#entities-places",
+      "@id": "https://query.wikidata.org/sparql#entities",
       "@type": "DataDownload",
       "contentUrl": "https://query.wikidata.org/sparql",
       "encodingFormat": "application/sparql-query",

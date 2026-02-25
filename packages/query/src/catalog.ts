@@ -18,6 +18,12 @@ export class Catalog {
     );
   }
 
+  public getDatasetsByGenre(genres: IRI[]): Dataset[] {
+    return this.datasets.filter((dataset) =>
+      dataset.genres.some((genre) => genres.includes(genre)),
+    );
+  }
+
   public getDatasetsSortedByName(languageCode: string): Dataset[] {
     return [...this.datasets].sort((a, b) =>
       a.name[languageCode].localeCompare(b.name[languageCode]),
