@@ -170,7 +170,9 @@ export const testCatalog = (port: number) =>
       'http://data.beeldengeluid.nl/gtaa/Persoonsnamen',
       { nl: 'GTAA: persoonsnamen' },
       { nl: 'Personen voor het beschrijven van audiovisueel materiaal' },
-      ['https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'],
+      [
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
+      ],
       ['http://data.beeldengeluid.nl/gtaa/'],
       'https://example.com/gtaa',
       ['nl'],

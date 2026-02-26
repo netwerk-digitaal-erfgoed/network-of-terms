@@ -30,13 +30,8 @@ import type { StatusClient } from './status.js';
 async function listSources(object: any, args: any, context: any): Promise<any> {
   return context.catalog
     .getDatasetsSortedByName(context.catalogLanguage)
-    .filter(
-      (dataset: Dataset) =>
-        !args.genres ||
-        dataset.genres.some((genre: string) => args.genres.includes(genre)),
-    )
     .flatMap((dataset: Dataset) =>
-      dataset.distributions.map((distribution: Distribution) =>
+      dataset.distributions.map((distribution) =>
         source(
           distribution,
           dataset,
@@ -51,7 +46,6 @@ async function queryTerms(
   _: unknown,
   args: {
     sources: string[];
-    genres?: string[];
     query: string;
     queryMode: string;
     limit: number;
@@ -250,15 +244,13 @@ function source(
     })),
     genres: dataset.genres.map(async (genre) => ({
       uri: genre.toString(),
-      name:
-        (await dereferenceGenre(genre))?.name[catalogLanguage] ??
-        genre.toString(),
+      name: (await dereferenceGenre(genre))?.name[catalogLanguage] ?? 'Unknown',
     })),
     features: distribution.features.map((feature: Feature) => ({
       type: Object.entries(FeatureType).find(
         ([_, val]) => val === feature.type,
       )?.[0],
-      url: feature.url?.toString() ?? null,
+      url: feature.url.toString(),
     })),
     status: statusClient?.getStatus(dataset.iri) ?? null,
   };

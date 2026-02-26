@@ -61,40 +61,6 @@ describe('Server', () => {
     });
   });
 
-  it('filters sources by genre', async () => {
-    const body = await query(
-      `
-        query {
-          sources(genres: ["https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"]) {
-            uri
-            name
-          }
-        }
-      `,
-    );
-    expect(body.data.sources.length).toBeGreaterThan(0);
-    expect(body.data.sources.length).toBeLessThan(catalog.datasets.length);
-    expect(body.data.sources.map((s: { uri: string }) => s.uri)).toContain(
-      'https://data.rkd.nl/rkdartists',
-    );
-  });
-
-  it('queries terms with sources and genre filter', async () => {
-    const body = await query(
-      termsQuery({
-        sources: ['https://data.rkd.nl/rkdartists'],
-        genres: [
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-        ],
-        query: '.*',
-      }),
-    );
-    expect(body.data.terms).toHaveLength(1);
-    expect(body.data.terms[0].source.uri).toEqual(
-      'https://data.rkd.nl/rkdartists',
-    );
-  });
-
   it('responds to GraphQL terms query when source does not exist', async () => {
     const body = await query(
       termsQuery({ sources: ['https://example.com/does-not-exist'] }),
@@ -327,13 +293,11 @@ async function query(query: string): Promise<any> {
 
 function termsQuery({
   sources,
-  genres,
   query = 'nachtwacht',
   limit = 100,
   languages,
 }: {
   sources: IRI[];
-  genres?: IRI[];
   query?: string;
   limit?: number;
   languages?: string[];
@@ -342,7 +306,6 @@ function termsQuery({
     query {
       terms(
         sources: [${sources.map((source) => `"${source}"`).join(',')}],
-        ${genres !== undefined ? `genres: [${genres.map((g) => `"${g}"`).join(',')}],` : ''}
         query: "${query}"
         limit: ${limit}
         timeoutMs: 1000

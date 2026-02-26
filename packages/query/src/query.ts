@@ -95,12 +95,6 @@ export function buildSearchQuery(
   return { query, bindings };
 }
 
-/**
- * Substitute ?genres in a SPARQL template with genre IRIs.
- * If ?genres is not in the query, return unchanged (single-genre source, no SPARQL filtering needed).
- * Effective genres: requestedGenres intersected with datasetGenres if provided,
- * otherwise all datasetGenres.
- */
 export function parameterizeGenres(
   query: string,
   requestedGenres: IRI[] | undefined,
@@ -110,14 +104,13 @@ export function parameterizeGenres(
     return query;
   }
 
-  const datasetGenreSet = new Set(datasetGenres.map(String));
-  const filtered =
-    requestedGenres && requestedGenres.length > 0
-      ? requestedGenres.filter((iri) => datasetGenreSet.has(String(iri)))
-      : [];
-  const effectiveGenres = filtered.length > 0 ? filtered : datasetGenres;
+  const datasetGenreSet = new Set(datasetGenres);
+  const validGenres =
+    requestedGenres?.filter((genre) => datasetGenreSet.has(genre)) ?? [];
+  const effectiveGenres =
+    validGenres.length > 0 ? validGenres : datasetGenres;
 
-  return query.replaceAll(
+  return query.replace(
     '?genres',
     effectiveGenres.map((iri) => `<${iri}>`).join(' '),
   );

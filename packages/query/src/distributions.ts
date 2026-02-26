@@ -79,7 +79,6 @@ export class DistributionsService {
 
   async queryAll(options: QueryAllOptions): Promise<TermsResponse[]> {
     const args = Joi.attempt(options, schemaQueryAll);
-
     clientQueriesCounter.add(1, {
       numberOfSources: args.sources.length,
       type: 'search',
