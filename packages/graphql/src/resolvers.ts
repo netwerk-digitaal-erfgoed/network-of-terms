@@ -46,6 +46,7 @@ async function queryTerms(
   _: unknown,
   args: {
     sources: string[];
+    genres?: string[];
     query: string;
     queryMode: string;
     limit: number;
