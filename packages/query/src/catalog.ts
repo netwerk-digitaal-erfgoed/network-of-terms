@@ -18,12 +18,6 @@ export class Catalog {
     );
   }
 
-  public getDatasetsByGenre(genres: IRI[]): Dataset[] {
-    return this.datasets.filter((dataset) =>
-      dataset.genres.some((genre) => genres.includes(genre)),
-    );
-  }
-
   public getDatasetsSortedByName(languageCode: string): Dataset[] {
     return [...this.datasets].sort((a, b) =>
       a.name[languageCode].localeCompare(b.name[languageCode]),
@@ -57,19 +51,6 @@ export class Catalog {
         ),
       ];
     }, []);
-  }
-
-  /**
-   * Get all unique genre IRIs across all datasets.
-   */
-  public getGenres(): IRI[] {
-    return [
-      ...new Set(
-        this.datasets.reduce<IRI[]>((acc, dataset) => {
-          return [...acc, ...dataset.genres];
-        }, []),
-      ),
-    ];
   }
 
   /**

@@ -76,40 +76,6 @@ describe('Catalog', () => {
     expect(rkd?.iri).toEqual('https://data.rkd.nl/rkdartists');
   });
 
-  it('retrieves datasets by genre', () => {
-    const personDatasets = catalog.getDatasetsByGenre([
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-    ]);
-    expect(personDatasets.length).toBeGreaterThan(0);
-    personDatasets.forEach((dataset) => {
-      expect(dataset.genres).toContainEqual(
-        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-      );
-    });
-  });
-
-  it('retrieves datasets matching any of the requested genres (OR semantics)', () => {
-    const personDatasets = catalog.getDatasetsByGenre([
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-    ]);
-    const locationDatasets = catalog.getDatasetsByGenre([
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties',
-    ]);
-    const bothGenres = catalog.getDatasetsByGenre([
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties',
-    ]);
-    expect(bothGenres.length).toBeGreaterThanOrEqual(personDatasets.length);
-    expect(bothGenres.length).toBeGreaterThanOrEqual(locationDatasets.length);
-  });
-
-  it('returns empty array for unknown genre', () => {
-    const datasets = catalog.getDatasetsByGenre([
-      'https://example.com/unknown',
-    ]);
-    expect(datasets).toHaveLength(0);
-  });
-
   it('retrieves distributions providing feature', () => {
     const reconciliationApis = catalog.getDistributionsProvidingFeature(
       FeatureType.RECONCILIATION,

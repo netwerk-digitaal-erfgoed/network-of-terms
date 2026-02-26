@@ -72,19 +72,6 @@ const query = async (iri: string) => {
   };
 };
 
-describe('Catalog.getGenres', () => {
-  it('returns unique genre IRIs across all datasets', () => {
-    const genres = catalog.getGenres();
-    expect(genres).toContain(
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-    );
-    expect(genres).toContain(
-      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
-    );
-    expect(genres).toHaveLength(2);
-  });
-});
-
 describe('parameterizeGenres', () => {
   const datasetGenres = [
     'https://example.com/genre/Personen',
