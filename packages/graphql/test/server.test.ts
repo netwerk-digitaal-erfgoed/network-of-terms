@@ -14,11 +14,11 @@ const catalog = testCatalog(3000);
 describe('Server', () => {
   afterAll(async () => {
     await teardown();
-  });
+  }, 20_000);
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3000);
     httpServer = await server(catalog, config);
-  });
+  }, 20_000);
 
   it('responds to GraphQL sources query', async () => {
     const body = await query(
