@@ -74,6 +74,30 @@ WHERE {
             }
             UNION
             {
+                # Organizations: explicit type list because wdt:P279* on Q43229
+                # (organization) times out on Wikidata, and depth-limited subclass
+                # traversal (2-3 levels) includes too much noise (radio programs,
+                # schools, hotels) due to Wikidata’s broad subclass hierarchy.
+                VALUES ?genreUri {
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties>
+                }
+                ?item wdt:P31 ?type .
+                FILTER(?type IN (
+                    wd:Q43229,   # organization
+                    wd:Q4830453, # business
+                    wd:Q783794,  # company
+                    wd:Q163740,  # nonprofit organization
+                    wd:Q33506,   # museum
+                    wd:Q207694,  # art museum
+                    wd:Q7075,    # library
+                    wd:Q166118,  # archives
+                    wd:Q3152824, # cultural institution
+                    wd:Q83405,   # factory
+                    wd:Q178706   # institution
+                ))
+            }
+            UNION
+            {
                 # Objecten: all other entities (no type restriction)
                 VALUES ?genreUri {
                     <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten>
