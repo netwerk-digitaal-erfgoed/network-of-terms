@@ -110,7 +110,7 @@ export function parameterizeGenres(
   const effectiveGenres =
     validGenres.length > 0 ? validGenres : datasetGenres;
 
-  return query.replace(
+  return query.replaceAll(
     '?genres',
     effectiveGenres.map((iri) => `<${iri}>`).join(' '),
   );
