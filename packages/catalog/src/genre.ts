@@ -17,6 +17,7 @@ export class Genre {
 }
 
 const cache = new Map<string, { data: Genre; expires: number }>();
+const refreshing = new Set<string>();
 
 const doDereferenceGenre = async (genre: IRI): Promise<Genre> => {
   const data = await queryEngine.queryBindings(
@@ -43,19 +44,38 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre> => {
   );
 };
 
+const refreshGenre = (genre: IRI, key: string): void => {
+  if (refreshing.has(key)) return;
+  refreshing.add(key);
+  doDereferenceGenre(genre)
+    .then(result =>
+      cache.set(key, {data: result, expires: Date.now() + maxAge}),
+    )
+    .catch(error => console.error(error))
+    .finally(() => refreshing.delete(key));
+};
+
 export const dereferenceGenre = async (
   genre: IRI,
 ): Promise<Genre | null> => {
   const key = String(genre);
   const cached = cache.get(key);
-  if (cached && cached.expires > Date.now()) return cached.data;
 
+  if (cached) {
+    if (cached.expires <= Date.now()) {
+      // Stale: return cached data immediately, refresh in the background.
+      refreshGenre(genre, key);
+    }
+    return cached.data;
+  }
+
+  // No cached data: must fetch synchronously.
   try {
     const result = await doDereferenceGenre(genre);
-    cache.set(key, { data: result, expires: Date.now() + maxAge });
+    cache.set(key, {data: result, expires: Date.now() + maxAge});
     return result;
   } catch (error) {
     console.error(error);
-    return cache.get(key)?.data ?? null;
+    return null;
   }
 };
