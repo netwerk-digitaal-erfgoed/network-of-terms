@@ -27,23 +27,23 @@ import type { StatusClient } from './status.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
-  const datasets = context.catalog
+  return context.catalog
     .getDatasetsSortedByName(context.catalogLanguage)
     .filter(
       (dataset: Dataset) =>
         !args.genres ||
         dataset.genres.some((genre: string) => args.genres.includes(genre)),
-    );
-  return datasets.flatMap((dataset: Dataset) =>
-    dataset.distributions.map((distribution: Distribution) =>
-      source(
-        distribution,
-        dataset,
-        context.catalogLanguage,
-        context.statusClient,
+    )
+    .flatMap((dataset: Dataset) =>
+      dataset.distributions.map((distribution: Distribution) =>
+        source(
+          distribution,
+          dataset,
+          context.catalogLanguage,
+          context.statusClient,
+        ),
       ),
-    ),
-  );
+    );
 }
 
 async function queryTerms(
