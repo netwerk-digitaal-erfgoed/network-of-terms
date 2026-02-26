@@ -29,12 +29,15 @@ export const schema = (languages: string[]) => `
   """
   type Feature {
     type: FeatureType!
-    url: ID!
+    url: ID
   }
 
   enum FeatureType {
     "Reconciliation Service API"
     RECONCILIATION
+
+    "Source supports genre-based filtering of search results."
+    GENRE_FILTER
   }
 
   """
