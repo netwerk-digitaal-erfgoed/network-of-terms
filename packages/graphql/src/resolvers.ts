@@ -27,21 +27,15 @@ import type { StatusClient } from './status.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
-  let datasets: Dataset[] = context.catalog.getDatasetsSortedByName(
-    context.catalogLanguage,
-  );
-  if (args.genres) {
-    const genreDatasetIris = new Set(
-      context.catalog
-        .getDatasetsByGenre(args.genres)
-        .map((d: Dataset) => d.iri.toString()),
+  const datasets = context.catalog
+    .getDatasetsSortedByName(context.catalogLanguage)
+    .filter(
+      (dataset: Dataset) =>
+        !args.genres ||
+        dataset.genres.some((genre: string) => args.genres.includes(genre)),
     );
-    datasets = datasets.filter((dataset: Dataset) =>
-      genreDatasetIris.has(dataset.iri.toString()),
-    );
-  }
   return datasets.flatMap((dataset: Dataset) =>
-    dataset.distributions.map((distribution) =>
+    dataset.distributions.map((distribution: Distribution) =>
       source(
         distribution,
         dataset,
