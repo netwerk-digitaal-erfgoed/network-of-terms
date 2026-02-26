@@ -83,7 +83,9 @@ describe('Server', () => {
     const body = await query(
       termsQuery({
         sources: ['https://data.rkd.nl/rkdartists'],
-        genres: ['https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'],
+        genres: [
+          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
+        ],
         query: '.*',
       }),
     );

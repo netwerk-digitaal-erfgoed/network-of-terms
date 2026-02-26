@@ -182,7 +182,7 @@ export const schema = (languages: string[]) => `
   }
 
   type LookupQueryResult {
-    "The term's URI."
+    "The term’s URI."
     uri: ID!
 
     "The term source that provides the term or an error if no source could be found."

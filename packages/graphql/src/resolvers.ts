@@ -23,6 +23,7 @@ import {
   TimeoutError,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
+import { dereferenceGenre } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import type { StatusClient } from './status.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -228,11 +229,6 @@ function mapToTerm(term: Term, languages: string[]) {
   };
 }
 
-function genreName(genreIri: string): string {
-  const lastSegment = genreIri.split('/').pop() ?? '';
-  return lastSegment.replace(/-/g, ' ');
-}
-
 function source(
   distribution: Distribution,
   dataset: Dataset,
@@ -252,9 +248,11 @@ function source(
       alternateName:
         creator.alternateName[catalogLanguage] ?? creator.alternateName[''],
     })),
-    genres: dataset.genres.map((genre) => ({
+    genres: dataset.genres.map(async (genre) => ({
       uri: genre.toString(),
-      name: genreName(genre.toString()),
+      name:
+        (await dereferenceGenre(genre))?.name[catalogLanguage] ??
+        genre.toString(),
     })),
     features: distribution.features.map((feature: Feature) => ({
       type: Object.entries(FeatureType).find(
