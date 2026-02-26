@@ -141,12 +141,13 @@ export class SparqlDistribution {
 export class Feature {
   constructor(
     readonly type: FeatureType,
-    readonly url: URL,
+    readonly url?: URL,
   ) {}
 }
 
 export enum FeatureType {
   RECONCILIATION = 'https://reconciliation-api.github.io/specs/latest/',
+  GENRE_FILTER = 'genre-filter',
 }
 
 /**

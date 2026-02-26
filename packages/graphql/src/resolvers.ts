@@ -251,7 +251,7 @@ function source(
       type: Object.entries(FeatureType).find(
         ([_, val]) => val === feature.type,
       )?.[0],
-      url: feature.url.toString(),
+      url: feature.url?.toString() ?? null,
     })),
     status: statusClient?.getStatus(dataset.iri) ?? null,
   };
