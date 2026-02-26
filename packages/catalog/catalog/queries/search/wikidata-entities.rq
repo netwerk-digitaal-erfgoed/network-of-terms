@@ -46,7 +46,7 @@ WHERE {
                 VALUES (?genreUri ?genreType) {
                     (<https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties> wd:Q486972)
                 }
-                FILTER(?datasetUri != <https://www.wikidata.org#entities-streets>)
+                FILTER(?datasetUri = <https://www.wikidata.org#entities-places>)
                 ?item wdt:P31/wdt:P279* ?genreType .
                 {
                     { ?item wdt:P17 wd:Q55 . }
