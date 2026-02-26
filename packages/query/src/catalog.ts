@@ -60,6 +60,19 @@ export class Catalog {
   }
 
   /**
+   * Get all unique genre IRIs across all datasets.
+   */
+  public getGenres(): IRI[] {
+    return [
+      ...new Set(
+        this.datasets.reduce<IRI[]>((acc, dataset) => {
+          return [...acc, ...dataset.genres];
+        }, []),
+      ),
+    ];
+  }
+
+  /**
    * Get all languages provided by datasets in this catalog.
    */
   public getLanguages(): string[] {

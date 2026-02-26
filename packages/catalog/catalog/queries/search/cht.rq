@@ -26,6 +26,26 @@ WHERE {
 
             FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
 
+            {
+                VALUES ?genreUri { ?genres }
+                # Genre-to-top-concept mapping for hierarchy-restricted genres
+                VALUES (?genreUri ?topConcept) {
+                    (<https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen> <https://data.cultureelerfgoed.nl/term/id/cht/aa872ce6-a74c-4f81-96ec-6ee0e717f92a>)
+                    (<https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Stijlen> <https://data.cultureelerfgoed.nl/term/id/cht/63cca950-f545-467a-9d70-db3a2b21bba3>)
+                    (<https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes> <https://data.cultureelerfgoed.nl/term/id/cht/63cca950-f545-467a-9d70-db3a2b21bba3>)
+                }
+                ?uri skos:broader+ ?topConcept .
+            }
+            UNION
+            {
+                VALUES ?genreUri { ?genres }
+                # All other genres: no subtree restriction
+                FILTER(?genreUri NOT IN (
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen>,
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Stijlen>,
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes>
+                ))
+            }
         }
         #LIMIT#
     }

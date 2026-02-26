@@ -1,4 +1,18 @@
-export const schema = (languages: string[]) => `
+const GENRE_BASE_URI =
+  'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/';
+
+export function genreIriToEnumValue(uri: string): string {
+  return uri.replace(GENRE_BASE_URI, '').replace(/-/g, '_').toUpperCase();
+}
+
+export function genreEnumValueToIri(
+  enumValue: string,
+  genreIris: string[],
+): string | undefined {
+  return genreIris.find((uri) => genreIriToEnumValue(uri) === enumValue);
+}
+
+export const schema = (languages: string[], genreIris: string[]) => `
   """
   A term source is a collection of terms.
   """
@@ -36,13 +50,17 @@ export const schema = (languages: string[]) => `
     "Reconciliation Service API"
     RECONCILIATION
   }
-  
+
   """
   A genre (category) that a source provides terms about.
   """
   type Genre {
     uri: ID!
     name: String!
+  }
+
+  enum GenreFilter {
+    ${genreIris.map((uri) => `"${uri.replace(GENRE_BASE_URI, '')}"\n    ${genreIriToEnumValue(uri)}`).join('\n    ')}
   }
   
   """
@@ -86,8 +104,8 @@ export const schema = (languages: string[]) => `
       "List of URIs of sources to query. At least one of sources or genres must be provided."
       sources: [ID],
 
-      "List of genre URIs to filter sources by. Sources whose genres overlap with the requested genres are queried."
-      genres: [ID],
+      "List of genres to filter sources by. Sources whose genres overlap with the requested genres are queried."
+      genres: [GenreFilter],
       
       "A literal search query, for example \`Rembrandt\`."
       query: String!,
@@ -107,8 +125,8 @@ export const schema = (languages: string[]) => `
     
     "List all sources that can be queried for terms."
     sources(
-      "List of genre URIs to filter sources by."
-      genres: [ID]
+      "List of genres to filter sources by."
+      genres: [GenreFilter]
     ): [Source]
     
     "Look up terms by their URI."

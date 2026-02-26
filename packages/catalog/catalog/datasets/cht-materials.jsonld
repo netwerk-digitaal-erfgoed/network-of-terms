@@ -56,7 +56,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://../queries/search/cht-materials.rq"
+          "query": "file://../queries/search/cht.rq"
         },
         {
           "@type": "FindAction",

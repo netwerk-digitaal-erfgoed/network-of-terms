@@ -24,17 +24,30 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
 import { dereferenceGenre } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
+import { genreEnumValueToIri } from './schema.js';
 import type { StatusClient } from './status.js';
+
+function resolveGenreIris(
+  genreEnumValues: string[] | undefined,
+  catalog: Catalog,
+): string[] | undefined {
+  if (!genreEnumValues) return undefined;
+  const allGenres = catalog.getGenres();
+  return genreEnumValues
+    .map((g) => genreEnumValueToIri(g, allGenres))
+    .filter((iri): iri is string => iri !== undefined);
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
   let datasets: Dataset[] = context.catalog.getDatasetsSortedByName(
     context.catalogLanguage,
   );
-  if (args.genres) {
+  const genreIris = resolveGenreIris(args.genres, context.catalog);
+  if (genreIris) {
     const genreDatasetIris = new Set(
       context.catalog
-        .getDatasetsByGenre(args.genres)
+        .getDatasetsByGenre(genreIris)
         .map((d: Dataset) => d.iri.toString()),
     );
     datasets = datasets.filter((dataset: Dataset) =>
@@ -72,9 +85,10 @@ async function queryTerms(
     catalog: context.catalog,
     comunica: context.comunica,
   });
+  const genreIris = resolveGenreIris(args.genres, context.catalog);
   const results = await service.queryAll({
     sources: args.sources,
-    genres: args.genres,
+    genres: genreIris,
     query: args.query,
     queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     limit: args.limit,

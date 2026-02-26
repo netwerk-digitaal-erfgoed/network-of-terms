@@ -72,6 +72,19 @@ const query = async (iri: string) => {
   };
 };
 
+describe('Catalog.getGenres', () => {
+  it('returns unique genre IRIs across all datasets', () => {
+    const genres = catalog.getGenres();
+    expect(genres).toContain(
+      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
+    );
+    expect(genres).toContain(
+      'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
+    );
+    expect(genres).toHaveLength(2);
+  });
+});
+
 describe('parameterizeGenres', () => {
   const datasetGenres = [
     'https://example.com/genre/Personen',
@@ -95,7 +108,10 @@ describe('parameterizeGenres', () => {
   it('replaces ?genres with multiple requested genres', () => {
     const result = parameterizeGenres(
       queryWithGenres,
-      ['https://example.com/genre/Personen', 'https://example.com/genre/Locaties'],
+      [
+        'https://example.com/genre/Personen',
+        'https://example.com/genre/Locaties',
+      ],
       datasetGenres,
     );
     expect(result).toBe(
@@ -104,7 +120,11 @@ describe('parameterizeGenres', () => {
   });
 
   it('defaults to all dataset genres when no genres requested', () => {
-    const result = parameterizeGenres(queryWithGenres, undefined, datasetGenres);
+    const result = parameterizeGenres(
+      queryWithGenres,
+      undefined,
+      datasetGenres,
+    );
     expect(result).toBe(
       'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> <https://example.com/genre/Locaties> } }',
     );
@@ -112,6 +132,17 @@ describe('parameterizeGenres', () => {
 
   it('defaults to all dataset genres when empty genres array provided', () => {
     const result = parameterizeGenres(queryWithGenres, [], datasetGenres);
+    expect(result).toBe(
+      'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> <https://example.com/genre/Locaties> } }',
+    );
+  });
+
+  it('filters out genres not belonging to the dataset', () => {
+    const result = parameterizeGenres(
+      queryWithGenres,
+      ['https://example.com/genre/Unknown'],
+      datasetGenres,
+    );
     expect(result).toBe(
       'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> <https://example.com/genre/Locaties> } }',
     );

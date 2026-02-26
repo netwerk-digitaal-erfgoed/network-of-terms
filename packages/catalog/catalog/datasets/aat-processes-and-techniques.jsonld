@@ -56,7 +56,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://../queries/search/aat-processes-and-techniques.rq"
+          "query": "file://../queries/search/aat.rq"
         },
         {
           "@type": "FindAction",

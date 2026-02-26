@@ -104,7 +104,9 @@ describe('Catalog', () => {
   });
 
   it('returns empty array for unknown genre', () => {
-    const datasets = catalog.getDatasetsByGenre(['https://example.com/unknown']);
+    const datasets = catalog.getDatasetsByGenre([
+      'https://example.com/unknown',
+    ]);
     expect(datasets).toHaveLength(0);
   });
 

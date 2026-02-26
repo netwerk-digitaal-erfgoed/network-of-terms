@@ -59,7 +59,7 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://../queries/search/cht-styles-and-periods.rq"
+          "query": "file://../queries/search/cht.rq"
         },
         {
           "@type": "FindAction",

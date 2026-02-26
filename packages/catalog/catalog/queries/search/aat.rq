@@ -41,6 +41,41 @@ WHERE {
             ?type rdfs:subClassOf gvp:Subject .
             FILTER (?type != gvp:Subject) .
             FILTER NOT EXISTS { ?uri a gvp:GuideTerm }
+
+            {
+                VALUES ?genreUri { ?genres }
+                # Materialen
+                FILTER(?genreUri = <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen>)
+                ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300010357> .
+            }
+            UNION
+            {
+                VALUES ?genreUri { ?genres }
+                # Stijlen en Periodes
+                FILTER(?genreUri IN (
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Stijlen>,
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes>
+                ))
+                ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300015646> .
+            }
+            UNION
+            {
+                VALUES ?genreUri { ?genres }
+                # Processen en Technieken
+                FILTER(?genreUri = <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Technieken>)
+                ?uri gvp:broaderPreferred+ <http://vocab.getty.edu/aat/300053001> .
+            }
+            UNION
+            {
+                # All other genres: no hierarchy restriction
+                VALUES ?genreUri { ?genres }
+                FILTER(?genreUri NOT IN (
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen>,
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Stijlen>,
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Periodes>,
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Technieken>
+                ))
+            }
         }
         #LIMIT#
     }

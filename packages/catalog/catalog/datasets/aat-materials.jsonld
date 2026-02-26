@@ -57,7 +57,7 @@
         {
           "@type": "SearchAction",
           "name": "search",
-          "query": "file://../queries/search/aat-materials.rq"
+          "query": "file://../queries/search/aat.rq"
         },
         {
           "@type": "FindAction",

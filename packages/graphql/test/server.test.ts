@@ -65,7 +65,7 @@ describe('Server', () => {
     const body = await query(
       `
         query {
-          sources(genres: ["https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"]) {
+          sources(genres: [PERSONEN]) {
             uri
             name
           }
@@ -74,23 +74,21 @@ describe('Server', () => {
     );
     expect(body.data.sources.length).toBeGreaterThan(0);
     expect(body.data.sources.length).toBeLessThan(catalog.datasets.length);
-    expect(
-      body.data.sources.map((s: {uri: string}) => s.uri),
-    ).toContain('https://data.rkd.nl/rkdartists');
+    expect(body.data.sources.map((s: { uri: string }) => s.uri)).toContain(
+      'https://data.rkd.nl/rkdartists',
+    );
   });
 
   it('queries terms by genre', async () => {
     const body = await query(
       termsQuery({
-        genres: [
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-        ],
+        genres: ['PERSONEN'],
         query: '.*',
       }),
     );
     expect(body.data.terms.length).toBeGreaterThan(0);
     const sourceUris = body.data.terms.map(
-      (t: {source: {uri: string}}) => t.source.uri,
+      (t: { source: { uri: string } }) => t.source.uri,
     );
     expect(sourceUris).toContain('https://data.rkd.nl/rkdartists');
   });
@@ -99,9 +97,7 @@ describe('Server', () => {
     const body = await query(
       termsQuery({
         sources: ['https://data.rkd.nl/rkdartists'],
-        genres: [
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-        ],
+        genres: ['PERSONEN'],
         query: '.*',
       }),
     );
@@ -115,9 +111,7 @@ describe('Server', () => {
     const body = await query(
       termsQuery({
         sources: ['https://data.rkd.nl/rkdartists'],
-        genres: [
-          'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties',
-        ],
+        genres: ['ABSTRACTE_BEGRIPPEN'],
         query: '.*',
       }),
     );
@@ -125,9 +119,7 @@ describe('Server', () => {
   });
 
   it('returns validation error when neither sources nor genres provided', async () => {
-    const body = await query(
-      termsQuery({ query: '.*' }),
-    );
+    const body = await query(termsQuery({ query: '.*' }));
     expect(body.errors).toBeDefined();
     expect(body.errors[0].message).toMatch(/sources.*genres/i);
   });
@@ -379,7 +371,7 @@ function termsQuery({
     query {
       terms(
         ${sources !== undefined ? `sources: [${sources.map((source) => `"${source}"`).join(',')}],` : ''}
-        ${genres !== undefined ? `genres: [${genres.map((genre) => `"${genre}"`).join(',')}],` : ''}
+        ${genres !== undefined ? `genres: [${genres.join(',')}],` : ''}
         query: "${query}"
         limit: ${limit}
         timeoutMs: 1000

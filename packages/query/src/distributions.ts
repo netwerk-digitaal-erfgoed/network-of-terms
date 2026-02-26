@@ -56,10 +56,7 @@ export class DistributionsService {
     this.comunica = options.comunica || comunica();
   }
 
-  async query(
-    options: QueryOptions,
-    genres?: IRI[],
-  ): Promise<TermsResponse> {
+  async query(options: QueryOptions, genres?: IRI[]): Promise<TermsResponse> {
     const args = Joi.attempt(options, schemaQuery);
     this.logger.info(`Preparing to query source "${args.source}"...`);
     const dataset = this.catalog.getDatasetByIri(args.source);
