@@ -36,7 +36,7 @@ export async function server(
 
   await server.register(fastifyAccepts);
   await server.register(mercurius, {
-    schema: schema(catalog.getLanguages(), catalog.getGenres()),
+    schema: schema(catalog.getLanguages()),
     resolvers,
     graphiql: true,
     context: async (req: FastifyRequest) => {

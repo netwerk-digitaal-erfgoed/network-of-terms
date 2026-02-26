@@ -24,12 +24,12 @@ export class QuerySourcesCommand extends Command {
   static flags = {
     uris: Flags.string({
       description:
-        'URIs of sources to query, comma-separated, e.g. "https://www.wikidata.org/sparql,https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql". At least one of --uris or --genres is required.',
-      required: false,
+        'URIs of sources to query, comma-separated, e.g. "https://www.wikidata.org/sparql,https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql".',
+      required: true,
     }),
     genres: Flags.string({
       description:
-        'Genre URIs to filter sources by, comma-separated, e.g. "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"',
+        'Genre URIs to filter results within sources, comma-separated, e.g. "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"',
       required: false,
     }),
     query: Flags.string({
@@ -100,11 +100,8 @@ export class QuerySourcesCommand extends Command {
 
   async run(): Promise<void> {
     const { flags } = await this.parse(QuerySourcesCommand);
-    if (!flags.uris && !flags.genres) {
-      this.error('At least one of --uris or --genres is required.');
-    }
     const sources = flags.uris
-      ?.split(',')
+      .split(',')
       .map((distributionId: string) => distributionId.trim());
     const genres = flags.genres
       ?.split(',')

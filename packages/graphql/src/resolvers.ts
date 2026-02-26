@@ -23,31 +23,17 @@ import {
   TimeoutError,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
-import { dereferenceGenre } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
-import { genreEnumValueToIri } from './schema.js';
 import type { StatusClient } from './status.js';
-
-function resolveGenreIris(
-  genreEnumValues: string[] | undefined,
-  catalog: Catalog,
-): string[] | undefined {
-  if (!genreEnumValues) return undefined;
-  const allGenres = catalog.getGenres();
-  return genreEnumValues
-    .map((g) => genreEnumValueToIri(g, allGenres))
-    .filter((iri): iri is string => iri !== undefined);
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
   let datasets: Dataset[] = context.catalog.getDatasetsSortedByName(
     context.catalogLanguage,
   );
-  const genreIris = resolveGenreIris(args.genres, context.catalog);
-  if (genreIris) {
+  if (args.genres) {
     const genreDatasetIris = new Set(
       context.catalog
-        .getDatasetsByGenre(genreIris)
+        .getDatasetsByGenre(args.genres)
         .map((d: Dataset) => d.iri.toString()),
     );
     datasets = datasets.filter((dataset: Dataset) =>
@@ -69,7 +55,7 @@ async function listSources(object: any, args: any, context: any): Promise<any> {
 async function queryTerms(
   _: unknown,
   args: {
-    sources?: string[];
+    sources: string[];
     genres?: string[];
     query: string;
     queryMode: string;
@@ -85,10 +71,9 @@ async function queryTerms(
     catalog: context.catalog,
     comunica: context.comunica,
   });
-  const genreIris = resolveGenreIris(args.genres, context.catalog);
   const results = await service.queryAll({
     sources: args.sources,
-    genres: genreIris,
+    genres: args.genres,
     query: args.query,
     queryMode: QueryMode[args.queryMode as keyof typeof QueryMode],
     limit: args.limit,
@@ -249,6 +234,11 @@ function mapToTerm(term: Term, languages: string[]) {
   };
 }
 
+function genreName(genreIri: string): string {
+  const lastSegment = genreIri.split('/').pop() ?? '';
+  return lastSegment.replace(/-/g, ' ');
+}
+
 function source(
   distribution: Distribution,
   dataset: Dataset,
@@ -268,9 +258,9 @@ function source(
       alternateName:
         creator.alternateName[catalogLanguage] ?? creator.alternateName[''],
     })),
-    genres: dataset.genres.map(async (genre) => ({
+    genres: dataset.genres.map((genre) => ({
       uri: genre.toString(),
-      name: (await dereferenceGenre(genre))?.name[catalogLanguage] ?? 'Unknown',
+      name: genreName(genre.toString()),
     })),
     features: distribution.features.map((feature: Feature) => ({
       type: Object.entries(FeatureType).find(

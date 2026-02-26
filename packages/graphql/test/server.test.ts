@@ -65,7 +65,7 @@ describe('Server', () => {
     const body = await query(
       `
         query {
-          sources(genres: [PERSONEN]) {
+          sources(genres: ["https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"]) {
             uri
             name
           }
@@ -79,25 +79,11 @@ describe('Server', () => {
     );
   });
 
-  it('queries terms by genre', async () => {
-    const body = await query(
-      termsQuery({
-        genres: ['PERSONEN'],
-        query: '.*',
-      }),
-    );
-    expect(body.data.terms.length).toBeGreaterThan(0);
-    const sourceUris = body.data.terms.map(
-      (t: { source: { uri: string } }) => t.source.uri,
-    );
-    expect(sourceUris).toContain('https://data.rkd.nl/rkdartists');
-  });
-
-  it('queries terms by both sources and genres (intersection)', async () => {
+  it('queries terms with sources and genre filter', async () => {
     const body = await query(
       termsQuery({
         sources: ['https://data.rkd.nl/rkdartists'],
-        genres: ['PERSONEN'],
+        genres: ['https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'],
         query: '.*',
       }),
     );
@@ -105,23 +91,6 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-  });
-
-  it('returns empty results when sources and genres do not intersect', async () => {
-    const body = await query(
-      termsQuery({
-        sources: ['https://data.rkd.nl/rkdartists'],
-        genres: ['ABSTRACTE_BEGRIPPEN'],
-        query: '.*',
-      }),
-    );
-    expect(body.data.terms).toHaveLength(0);
-  });
-
-  it('returns validation error when neither sources nor genres provided', async () => {
-    const body = await query(termsQuery({ query: '.*' }));
-    expect(body.errors).toBeDefined();
-    expect(body.errors[0].message).toMatch(/sources.*genres/i);
   });
 
   it('responds to GraphQL terms query when source does not exist', async () => {
@@ -361,7 +330,7 @@ function termsQuery({
   limit = 100,
   languages,
 }: {
-  sources?: IRI[];
+  sources: IRI[];
   genres?: IRI[];
   query?: string;
   limit?: number;
@@ -370,8 +339,8 @@ function termsQuery({
   return `
     query {
       terms(
-        ${sources !== undefined ? `sources: [${sources.map((source) => `"${source}"`).join(',')}],` : ''}
-        ${genres !== undefined ? `genres: [${genres.join(',')}],` : ''}
+        sources: [${sources.map((source) => `"${source}"`).join(',')}],
+        ${genres !== undefined ? `genres: [${genres.map((g) => `"${g}"`).join(',')}],` : ''}
         query: "${query}"
         limit: ${limit}
         timeoutMs: 1000

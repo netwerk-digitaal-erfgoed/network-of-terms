@@ -1,18 +1,4 @@
-const GENRE_BASE_URI =
-  'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/';
-
-export function genreIriToEnumValue(uri: string): string {
-  return uri.replace(GENRE_BASE_URI, '').replace(/-/g, '_').toUpperCase();
-}
-
-export function genreEnumValueToIri(
-  enumValue: string,
-  genreIris: string[],
-): string | undefined {
-  return genreIris.find((uri) => genreIriToEnumValue(uri) === enumValue);
-}
-
-export const schema = (languages: string[], genreIris: string[]) => `
+export const schema = (languages: string[]) => `
   """
   A term source is a collection of terms.
   """
@@ -37,7 +23,7 @@ export const schema = (languages: string[], genreIris: string[]) => `
     name: String!
     alternateName: String!
   }
-  
+
   """
   A feature available for a source.
   """
@@ -45,7 +31,7 @@ export const schema = (languages: string[], genreIris: string[]) => `
     type: FeatureType!
     url: ID!
   }
-  
+
   enum FeatureType {
     "Reconciliation Service API"
     RECONCILIATION
@@ -59,10 +45,6 @@ export const schema = (languages: string[], genreIris: string[]) => `
     name: String!
   }
 
-  enum GenreFilter {
-    ${genreIris.map((uri) => `"${uri.replace(GENRE_BASE_URI, '')}"\n    ${genreIriToEnumValue(uri)}`).join('\n    ')}
-  }
-  
   """
   The latest known status of the terminology source.
   """
@@ -93,62 +75,64 @@ export const schema = (languages: string[], genreIris: string[]) => `
     uri: ID!
     prefLabel: [String]!
   }
-  
+
   enum Language {
     ${languages.join(' ')}
   }
 
   type Query {
-    "Query one or more sources for terms."
+    """
+    Query one or more sources for terms.
+    """
     terms(
-      "List of URIs of sources to query. At least one of sources or genres must be provided."
-      sources: [ID],
+      "List of URIs of sources to query."
+      sources: [ID]!,
 
-      "List of genres to filter sources by. Sources whose genres overlap with the requested genres are queried."
-      genres: [GenreFilter],
-      
+      "Optional list of genres to filter results within sources that support genre-based filtering."
+      genres: [ID],
+
       "A literal search query, for example \`Rembrandt\`."
       query: String!,
 
-      "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."      
+      "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."
       queryMode: QueryMode = OPTIMIZED,
-      
+
       "List of languages in which to return terms. If one or more languages are specified, terms are returned as \`TranslatedTerm\`s."
       languages: [Language],
-      
+
       "Maximum number of terms to return."
       limit: Int = 100,
 
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000
     ): [TermsQueryResult]
-    
+
     "List all sources that can be queried for terms."
     sources(
-      "List of genres to filter sources by."
-      genres: [GenreFilter]
+      "List of genre URIs to filter sources by."
+      genres: [ID]
     ): [Source]
-    
+
     "Look up terms by their URI."
     lookup(
       "List of term URIs."
       uris: [ID]!,
-      
+
       "List of languages in which to return the term. If one or more languages are specified, any term found is returned as a \`TranslatedTerm\`."
       languages: [Language],
-      
+
       "Timeout period in milliseconds that we wait for sources to respond."
       timeoutMs: Int = 10000
     ): [LookupQueryResult]
   }
-  
+
   """
   The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources.
   """
   enum QueryMode {
     "Optimize search query input for term sources. The default."
     OPTIMIZED
-    
+
     "Send the unaltered query input to the term sources. For advanced users that want to have full control over the search query."
     RAW
   }
@@ -158,7 +142,7 @@ export const schema = (languages: string[], genreIris: string[]) => `
     source: Source!
     terms: [Term]! @deprecated(reason: "Use 'result' instead")
     result: TermsResult!
-    
+
     "Response time in milliseconds."
     responseTimeMs: Int!
   }
@@ -168,11 +152,11 @@ export const schema = (languages: string[], genreIris: string[]) => `
   type Terms {
     terms: [Term]
   }
-  
+
   type TranslatedTerms {
     terms: [TranslatedTerm]
   }
-  
+
   type TranslatedTerm {
     uri: ID!
     prefLabel: [LanguageString]!
@@ -186,19 +170,19 @@ export const schema = (languages: string[], genreIris: string[]) => `
     related: [TranslatedRelatedTerm]
     exactMatch: [TranslatedRelatedTerm]
   }
-  
+
   type TranslatedRelatedTerm {
     uri: ID!
     prefLabel: [LanguageString]!
   }
-  
+
   type LanguageString {
     language: Language!
     value: String!
   }
 
   type LookupQueryResult {
-    "The term’s URI."
+    "The term's URI."
     uri: ID!
 
     "The term source that provides the term or an error if no source could be found."
@@ -206,7 +190,7 @@ export const schema = (languages: string[], genreIris: string[]) => `
 
     "The term if the lookup succeeded; an error otherwise."
     result: LookupResult!
-    
+
     "Response time in milliseconds."
     responseTimeMs: Int!
   }

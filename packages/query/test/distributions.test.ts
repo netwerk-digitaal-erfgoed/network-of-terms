@@ -24,60 +24,14 @@ describe('DistributionsService', () => {
     });
   });
 
-  it('queries sources matching a genre', async () => {
-    const results = await service.queryAll({
-      genres: [
-        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-      ],
-      query: 'test',
-      queryMode: QueryMode.OPTIMIZED,
-      limit: 10,
-      timeoutMs: 10000,
-    });
-    // RKDartists and GTAA both have Personen genre
-    expect(results).toHaveLength(2);
-  });
-
-  it('intersects sources and genres', async () => {
-    const results = await service.queryAll({
-      sources: [
-        'https://data.rkd.nl/rkdartists',
-        'https://data.cultureelerfgoed.nl/term/id/cht',
-      ],
-      genres: [
-        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-      ],
-      query: 'test',
-      queryMode: QueryMode.OPTIMIZED,
-      limit: 10,
-      timeoutMs: 10000,
-    });
-    // Only RKDartists has the Personen genre; CHT does not
-    expect(results).toHaveLength(1);
-  });
-
-  it('returns empty when sources and genres do not intersect', async () => {
-    const results = await service.queryAll({
-      sources: ['https://data.cultureelerfgoed.nl/term/id/cht'],
-      genres: [
-        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
-      ],
-      query: 'test',
-      queryMode: QueryMode.OPTIMIZED,
-      limit: 10,
-      timeoutMs: 10000,
-    });
-    expect(results).toHaveLength(0);
-  });
-
-  it('requires at least one of sources or genres', async () => {
+  it('requires sources', async () => {
     await expect(
       service.queryAll({
         query: 'test',
         queryMode: QueryMode.OPTIMIZED,
         limit: 10,
         timeoutMs: 10000,
-      }),
+      } as never),
     ).rejects.toThrow();
   });
 
@@ -90,5 +44,22 @@ describe('DistributionsService', () => {
       timeoutMs: 10000,
     });
     expect(results).toHaveLength(1);
+  });
+
+  it('passes genres through for within-source filtering', async () => {
+    const results = await service.queryAll({
+      sources: ['https://data.rkd.nl/rkdartists'],
+      genres: [
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
+      ],
+      query: 'test',
+      queryMode: QueryMode.OPTIMIZED,
+      limit: 10,
+      timeoutMs: 10000,
+    });
+    // Source is queried regardless of genre match — genres are for within-source filtering only
+    expect(results).toHaveLength(1);
+    // Verify the SPARQL query was called (genres passed through to query())
+    expect(comunicaMock.queryQuads).toHaveBeenCalledTimes(1);
   });
 });

@@ -19,7 +19,7 @@ export interface QueryOptions extends BaseQueryOptions {
 }
 
 export interface QueryAllOptions extends BaseQueryOptions {
-  sources?: IRI[];
+  sources: IRI[];
   genres?: IRI[];
 }
 
@@ -34,12 +34,10 @@ const schemaQuery = schemaBase.append({
   source: Joi.string().required(),
 });
 
-const schemaQueryAll = schemaBase
-  .append({
-    sources: Joi.array().items(Joi.string().required()).min(1),
-    genres: Joi.array().items(Joi.string().required()).min(1),
-  })
-  .or('sources', 'genres');
+const schemaQueryAll = schemaBase.append({
+  sources: Joi.array().items(Joi.string().required()).min(1).required(),
+  genres: Joi.array().items(Joi.string().required()).min(1),
+});
 
 export class DistributionsService {
   private logger: Pino.Logger;
@@ -82,30 +80,11 @@ export class DistributionsService {
   async queryAll(options: QueryAllOptions): Promise<TermsResponse[]> {
     const args = Joi.attempt(options, schemaQueryAll);
 
-    let effectiveSources: IRI[];
-    if (args.sources && args.genres) {
-      const genreDatasetIris = new Set(
-        this.catalog
-          .getDatasetsByGenre(args.genres)
-          .map((d) => d.iri.toString()),
-      );
-      effectiveSources = args.sources.filter((source: IRI) => {
-        const dataset = this.catalog.getDatasetByIri(source);
-        return dataset && genreDatasetIris.has(dataset.iri.toString());
-      });
-    } else if (args.genres) {
-      effectiveSources = this.catalog
-        .getDatasetsByGenre(args.genres)
-        .map((d) => d.iri);
-    } else {
-      effectiveSources = args.sources;
-    }
-
     clientQueriesCounter.add(1, {
-      numberOfSources: effectiveSources.length,
+      numberOfSources: args.sources.length,
       type: 'search',
     });
-    const requests = effectiveSources.map((source: IRI) =>
+    const requests = args.sources.map((source: IRI) =>
       this.query(
         {
           source,
