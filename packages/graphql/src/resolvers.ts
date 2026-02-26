@@ -30,8 +30,13 @@ import type { StatusClient } from './status.js';
 async function listSources(object: any, args: any, context: any): Promise<any> {
   return context.catalog
     .getDatasetsSortedByName(context.catalogLanguage)
+    .filter(
+      (dataset: Dataset) =>
+        !args.genres ||
+        dataset.genres.some((genre: string) => args.genres.includes(genre)),
+    )
     .flatMap((dataset: Dataset) =>
-      dataset.distributions.map((distribution) =>
+      dataset.distributions.map((distribution: Distribution) =>
         source(
           distribution,
           dataset,
