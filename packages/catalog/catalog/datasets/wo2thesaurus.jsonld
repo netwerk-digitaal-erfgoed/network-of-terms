@@ -32,7 +32,7 @@
     }
   ],
   "url": ["https://data.niod.nl/WO2_Thesaurus/"],
-  "mainEntityOfPage": ["https://www.niod.nl/nl/collecties/wo2-thesaurus"],
+  "mainEntityOfPage": ["https://data.niod.nl/WO2_Thesaurus.html"],
   "description": [
     {
       "@language": "en",
