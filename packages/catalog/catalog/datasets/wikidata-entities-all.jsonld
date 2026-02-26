@@ -21,6 +21,9 @@
     },
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties"
     }
   ],
   "creator": [
