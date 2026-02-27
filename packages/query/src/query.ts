@@ -49,20 +49,22 @@ export class TimeoutError extends Error {
 export class ServerError extends Error {}
 
 export interface BuildSearchQueryOptions {
-  /** The SPARQL query template with placeholders. */
-  template: string;
+  /** The dataset to query. */
+  dataset: Dataset;
+  /** The distribution whose search query template to use. */
+  distribution: Distribution;
   /** The search term to bind. */
   searchTerm: string;
   /** Query mode for search term processing. */
   queryMode: QueryMode;
-  /** Dataset IRI to bind to ?datasetUri. */
-  datasetIri: string;
   /** Limit for results. */
   limit: number;
+  /** Genres requested by the caller; filtered against dataset genres. */
+  requestedGenres?: IRI[];
 }
 
 export interface BuildSearchQueryResult {
-  /** The query with #LIMIT# replaced. */
+  /** The query with #LIMIT# replaced and ?genres parameterized (if applicable). */
   query: string;
   /** Bindings for SPARQL variables (?query, ?virtuosoQuery, ?datasetUri, ?limit). */
   bindings: Record<string, RDF.Term>;
@@ -78,19 +80,35 @@ export function buildSearchQuery(
 ): BuildSearchQueryResult {
   const variants = queryVariants(options.searchTerm, options.queryMode);
 
-  // Replace #LIMIT# placeholder
-  const query = options.template.replace('#LIMIT#', `LIMIT ${options.limit}`);
+  // Replace #LIMIT# placeholder and parameterize genres
+  let query = options.distribution.searchQuery.replace(
+    '#LIMIT#',
+    `LIMIT ${options.limit}`,
+  );
+  query = parameterizeGenres(
+    query,
+    options.requestedGenres,
+    options.dataset.genres,
+  );
 
-  // Build bindings record
+  // Only bind variables that actually appear in the query
   const bindings: Record<string, RDF.Term> = {};
   for (const [varName, value] of variants) {
-    bindings[varName] = dataFactory.literal(value);
+    if (query.includes(`?${varName}`)) {
+      bindings[varName] = dataFactory.literal(value);
+    }
   }
-  bindings['datasetUri'] = dataFactory.namedNode(options.datasetIri);
-  bindings['limit'] = dataFactory.literal(
-    options.limit.toString(),
-    dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer'),
-  );
+  if (query.includes('?datasetUri')) {
+    bindings['datasetUri'] = dataFactory.namedNode(
+      options.dataset.iri.toString(),
+    );
+  }
+  if (query.includes('?limit')) {
+    bindings['limit'] = dataFactory.literal(
+      options.limit.toString(),
+      dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer'),
+    );
+  }
 
   return { query, bindings };
 }
@@ -107,8 +125,7 @@ export function parameterizeGenres(
   const datasetGenreSet = new Set(datasetGenres);
   const validGenres =
     requestedGenres?.filter((genre) => datasetGenreSet.has(genre)) ?? [];
-  const effectiveGenres =
-    validGenres.length > 0 ? validGenres : datasetGenres;
+  const effectiveGenres = validGenres.length > 0 ? validGenres : datasetGenres;
 
   return query.replaceAll(
     '?genres',
@@ -127,28 +144,6 @@ export class QueryTermsService {
     this.fetch = createLoggingFetch(this.logger);
   }
 
-  /**
-   * Parameterize the SPARQL query’s limit in two ways:
-   * - as a pre-bound variable ?limit (for GraphDB’s luc:limit, Wikidata and text:query);
-   * - by replacing the #LIMIT# placeholder (for LIMIT 123).
-   */
-  parameterizeLimit(args: {
-    query: string;
-    bindings: Record<string, RDF.Term>;
-    limit: number;
-  }): { queryWithLimit: string; bindingsWithLimit: Record<string, RDF.Term> } {
-    return {
-      queryWithLimit: args.query.replace('#LIMIT#', `LIMIT ${args.limit}`),
-      bindingsWithLimit: {
-        ...args.bindings,
-        limit: dataFactory.literal(
-          args.limit.toString(),
-          dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#integer'),
-        ),
-      },
-    };
-  }
-
   async search(
     searchQuery: string,
     queryMode: QueryMode,
@@ -158,34 +153,16 @@ export class QueryTermsService {
     timeoutMs: number,
     genres?: IRI[],
   ): Promise<TermsResponse> {
-    const bindings = [...queryVariants(searchQuery, queryMode)].reduce(
-      (record: Record<string, RDF.Term>, [k, v]) => {
-        record[k] = dataFactory.literal(v);
-        return record;
-      },
-      {},
-    );
-    bindings['datasetUri'] = dataFactory.namedNode(dataset.iri.toString());
-
-    const queryWithGenres = parameterizeGenres(
-      distribution.searchQuery,
-      genres,
-      dataset.genres,
-    );
-
-    const { queryWithLimit, bindingsWithLimit } = this.parameterizeLimit({
-      query: queryWithGenres,
-      bindings,
+    const { query, bindings } = buildSearchQuery({
+      dataset,
+      distribution,
+      searchTerm: searchQuery,
+      queryMode,
       limit,
+      requestedGenres: genres,
     });
 
-    return this.run(
-      // For plain SPARQL LIMIT (LIMIT 123) that cannot be pre-bound
-      queryWithLimit,
-      distribution,
-      timeoutMs,
-      bindingsWithLimit,
-    );
+    return this.run(query, distribution, timeoutMs, bindings);
   }
 
   async lookup(iris: IRI[], distribution: Distribution, timeoutMs: number) {

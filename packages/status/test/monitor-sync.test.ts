@@ -12,12 +12,13 @@ function createDataset(
   name: string,
   endpoint: string,
   query = 'SELECT * WHERE { ?s ?p ?o } #LIMIT#',
+  genres: string[] = [],
 ): Dataset {
   return new Dataset(
     iri,
     { nl: name, en: name },
     { nl: 'Description', en: 'Description' },
-    [],
+    genres,
     [],
     'http://example.org/page',
     ['nl', 'en'],
@@ -134,6 +135,30 @@ describe('monitor-sync', () => {
       expect(monitors[0].endpointUrl.toString()).toBe(
         'http://user:pass@example.org/sparql',
       );
+    });
+
+    it('should replace ?genres placeholder when dataset has genres', () => {
+      const query =
+        'SELECT * WHERE { VALUES ?requestedGenre { ?genres } ?s ?p ?o } #LIMIT#';
+      const catalog = new Catalog([
+        createDataset(
+          'http://example.org/dataset',
+          'Dataset',
+          'http://example.org/sparql',
+          query,
+          [
+            'http://example.org/genre/Personen',
+            'http://example.org/genre/Locaties',
+          ],
+        ),
+      ]);
+
+      const monitors = extractMonitorConfigs(catalog);
+
+      expect(monitors[0].query).toContain(
+        'VALUES ?requestedGenre { <http://example.org/genre/Personen> <http://example.org/genre/Locaties> }',
+      );
+      expect(monitors[0].query).not.toContain('?genres');
     });
 
     it('should include query in monitor config', () => {

@@ -1,5 +1,7 @@
 import {
   type Catalog,
+  type Dataset,
+  type Distribution,
   buildSearchQuery,
   QueryMode,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -25,12 +27,15 @@ function serializeTerm(term: RDF.Term): string {
 /**
  * Build a query with bindings substituted into the query string.
  */
-function buildMonitorQuery(template: string, datasetIri: string): string {
+function buildMonitorQuery(
+  dataset: Dataset,
+  distribution: Distribution,
+): string {
   const { query, bindings } = buildSearchQuery({
-    template,
+    dataset,
+    distribution,
     searchTerm: 'test',
     queryMode: QueryMode.OPTIMIZED,
-    datasetIri,
     limit: 1,
   });
 
@@ -59,7 +64,7 @@ export function extractMonitorConfigs(catalog: Catalog): MonitorConfig[] {
     monitors.push({
       identifier: dataset.iri,
       endpointUrl: new URL(distribution.endpoint.toString()),
-      query: buildMonitorQuery(distribution.searchQuery, dataset.iri),
+      query: buildMonitorQuery(dataset, distribution),
     });
   }
 

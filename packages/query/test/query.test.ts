@@ -1,14 +1,41 @@
 import { testCatalog } from '../src/test-utils.js';
 import {
   buildSearchQuery,
+  Dataset,
+  Organization,
   parameterizeGenres,
   QueryMode,
   QueryTermsService,
+  SparqlDistribution,
 } from '../src/index.js';
 import { QueryEngine } from '@comunica/query-sparql';
 import { ArrayIterator } from 'asynciterator';
 import type { Term } from '@rdfjs/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+function createTestDataset(
+  searchQuery: string,
+  genres: string[] = [],
+): { dataset: Dataset; distribution: SparqlDistribution } {
+  const distribution = new SparqlDistribution(
+    'https://example.org/distribution',
+    'https://example.org/sparql',
+    searchQuery,
+    'SELECT * WHERE { ?s ?p ?o }',
+  );
+  const dataset = new Dataset(
+    'https://example.org/dataset',
+    { en: 'Test' },
+    { en: 'Test' },
+    genres,
+    [],
+    'https://example.org/page',
+    ['en'],
+    [new Organization('https://example.org/org', { en: 'Org' }, {})],
+    [distribution],
+  );
+  return { dataset, distribution };
+}
 
 const catalog = testCatalog(1000);
 const comunicaMock = {
@@ -146,16 +173,19 @@ describe('parameterizeGenres', () => {
 });
 
 describe('buildSearchQuery', () => {
-  it('returns query and bindings', () => {
+  it('returns query and bindings for variables present in the template', () => {
+    const { dataset, distribution } = createTestDataset(
+      'SELECT * WHERE { ?s ?p ?o . FILTER(str(?s) = ?query) . ?s schema:dataset ?datasetUri } ?limit #LIMIT#',
+    );
     const result = buildSearchQuery({
-      template: 'SELECT * WHERE { ?s ?p ?o } #LIMIT#',
+      dataset,
+      distribution,
       searchTerm: 'test',
       queryMode: QueryMode.OPTIMIZED,
-      datasetIri: 'https://example.org/dataset',
       limit: 10,
     });
 
-    expect(result.query).toBe('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
+    expect(result.query).toContain('LIMIT 10');
     expect(result.bindings['datasetUri'].value).toBe(
       'https://example.org/dataset',
     );
@@ -163,12 +193,91 @@ describe('buildSearchQuery', () => {
     expect(result.bindings['query'].value).toBe('test');
   });
 
-  it('creates Virtuoso-specific query variant', () => {
+  it('omits bindings for variables not in the template', () => {
+    const { dataset, distribution } = createTestDataset(
+      'SELECT * WHERE { ?s ?p ?o } #LIMIT#',
+    );
     const result = buildSearchQuery({
-      template: 'SELECT * WHERE { ?s ?p ?o }',
+      dataset,
+      distribution,
+      searchTerm: 'test',
+      queryMode: QueryMode.OPTIMIZED,
+      limit: 10,
+    });
+
+    expect(result.query).toBe('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
+    expect(result.bindings['datasetUri']).toBeUndefined();
+    expect(result.bindings['limit']).toBeUndefined();
+    expect(result.bindings['query']).toBeUndefined();
+  });
+
+  it('parameterizes genres when dataset has genres', () => {
+    const { dataset, distribution } = createTestDataset(
+      'SELECT * WHERE { VALUES ?requestedGenre { ?genres } ?s ?p ?o } #LIMIT#',
+      [
+        'https://example.com/genre/Personen',
+        'https://example.com/genre/Locaties',
+      ],
+    );
+    const result = buildSearchQuery({
+      dataset,
+      distribution,
+      searchTerm: 'test',
+      queryMode: QueryMode.OPTIMIZED,
+      limit: 10,
+    });
+
+    expect(result.query).toBe(
+      'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> <https://example.com/genre/Locaties> } ?s ?p ?o } LIMIT 10',
+    );
+  });
+
+  it('filters requestedGenres against dataset genres', () => {
+    const { dataset, distribution } = createTestDataset(
+      'SELECT * WHERE { VALUES ?requestedGenre { ?genres } ?s ?p ?o } #LIMIT#',
+      [
+        'https://example.com/genre/Personen',
+        'https://example.com/genre/Locaties',
+      ],
+    );
+    const result = buildSearchQuery({
+      dataset,
+      distribution,
+      searchTerm: 'test',
+      queryMode: QueryMode.OPTIMIZED,
+      limit: 10,
+      requestedGenres: ['https://example.com/genre/Personen'],
+    });
+
+    expect(result.query).toBe(
+      'SELECT * WHERE { VALUES ?requestedGenre { <https://example.com/genre/Personen> } ?s ?p ?o } LIMIT 10',
+    );
+  });
+
+  it('leaves query unchanged when no genres are involved', () => {
+    const { dataset, distribution } = createTestDataset(
+      'SELECT * WHERE { ?s ?p ?o } #LIMIT#',
+    );
+    const result = buildSearchQuery({
+      dataset,
+      distribution,
+      searchTerm: 'test',
+      queryMode: QueryMode.OPTIMIZED,
+      limit: 10,
+    });
+
+    expect(result.query).toBe('SELECT * WHERE { ?s ?p ?o } LIMIT 10');
+  });
+
+  it('creates Virtuoso-specific query variant', () => {
+    const { dataset, distribution } = createTestDataset(
+      'SELECT * WHERE { ?s ?virtuosoQuery ?o }',
+    );
+    const result = buildSearchQuery({
+      dataset,
+      distribution,
       searchTerm: 'van gogh',
       queryMode: QueryMode.OPTIMIZED,
-      datasetIri: 'https://example.org/dataset',
       limit: 100,
     });
 
