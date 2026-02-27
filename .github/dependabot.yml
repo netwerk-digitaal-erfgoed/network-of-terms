@@ -11,14 +11,12 @@ updates:
       interval: 'monthly'
     ignore:
       - dependency-name: 'jsonld-context-parser' # Must match the version that Comunica depends on: https://github.com/comunica/comunica/blob/master/packages/actor-rdf-parse-jsonld/package.json#L48
+      - dependency-name: 'nx' # Handled by the Nx migrate workflow, which also runs code migrations.
+      - dependency-name: '@nx/*' # Handled by the Nx migrate workflow, which also runs code migrations.
     groups:
       comunica:
         patterns:
           - '@comunica/*'
-      nx:
-        patterns:
-          - '@nx/*'
-          - 'nx'
       opentelemetry:
         patterns:
           - '@opentelemetry/*'
