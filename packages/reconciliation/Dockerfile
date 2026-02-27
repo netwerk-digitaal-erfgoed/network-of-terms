@@ -1,5 +1,5 @@
 FROM node:lts-alpine
-LABEL org.opencontainers.image.source="https://github.com/netwerk-digitaal-erfgoed/dataset-register"
+LABEL org.opencontainers.image.source="https://github.com/netwerk-digitaal-erfgoed/network-of-terms"
 
 WORKDIR /app
 
