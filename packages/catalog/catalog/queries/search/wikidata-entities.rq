@@ -91,6 +91,7 @@ WHERE {
                     wd:Q207694,  # art museum
                     wd:Q7075,    # library
                     wd:Q166118,  # archives
+                    wd:Q27032392, # regional archives
                     wd:Q3152824, # cultural institution
                     wd:Q83405,   # factory
                     wd:Q178706   # institution
