@@ -44,7 +44,7 @@
     "jest-dev-server": "11.0.0",
     "joi": "^18.0.2",
     "nock": "^14.0.10",
-    "pino": "^9.7.0",
+    "pino": "^10.3.1",
     "pretty-ms": "^9.2.0",
     "rdf-data-factory": "^2.0.2",
     "spawnd": "^11.0.0",
