@@ -78,8 +78,8 @@ WHERE {
                 # against a curated type list. This catches subtypes like "design
                 # agency" (subclass of "business") that Wikidata doesn’t redundantly
                 # tag with the parent class. Full traversal (wdt:P279*) from Q43229
-                # times out; without the curated list, noise (schools, mosques,
-                # newspapers, etc.) creeps in.
+                # times out; without the curated list, unrelated organization
+                # types (schools, newspapers, governments, etc.) creep in.
                 #
                 # Examples that should be found:
                 # - Studio Truly Truly (Q124355137): design agency → business
