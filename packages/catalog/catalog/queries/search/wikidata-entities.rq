@@ -74,24 +74,32 @@ WHERE {
             }
             UNION
             {
-                # Organizations: explicit type list because wdt:P279* on Q43229
-                # (organization) times out on Wikidata, and depth-limited subclass
-                # traversal (2-3 levels) includes too much noise (radio programs,
-                # schools, hotels) due to Wikidata’s broad subclass hierarchy.
+                # Organizations: one-level subclass traversal (wdt:P31/wdt:P279?)
+                # against a curated type list. This catches subtypes like "design
+                # agency" (subclass of "business") that Wikidata doesn’t redundantly
+                # tag with the parent class. Full traversal (wdt:P279*) from Q43229
+                # times out; without the curated list, unrelated organization
+                # types (schools, newspapers, governments, etc.) creep in.
+                #
+                # Examples that should be found:
+                # - Studio Truly Truly (Q124355137): design agency → business
+                # - Mountain Design (Q124742720): design company → business
+                # - Studio Harris Blondman (Q136324662): design agency → business
+                # - Nieuwe Instituut (Q20888634): design museum → art museum
                 VALUES ?genreUri {
                     <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties>
                 }
-                ?item wdt:P31 ?type .
+                ?item wdt:P31/wdt:P279? ?type .
                 FILTER(?type IN (
                     wd:Q43229,   # organization
                     wd:Q4830453, # business
                     wd:Q783794,  # company
                     wd:Q163740,  # nonprofit organization
                     wd:Q33506,   # museum
-                    wd:Q207694,  # art museum
+                    wd:Q3196771, # art museum (institution)
                     wd:Q7075,    # library
                     wd:Q166118,  # archives
-                    wd:Q27032392, # regional archives
+                    wd:Q27032392,# regional archives
                     wd:Q3152824, # cultural institution
                     wd:Q83405,   # factory
                     wd:Q178706   # institution
