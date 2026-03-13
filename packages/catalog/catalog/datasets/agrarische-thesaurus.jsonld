@@ -5,21 +5,29 @@
   "name": [
     {
       "@language": "en",
-      "@value": "Agricultural thesaurus"
+      "@value": "Thesaurus of Movable Agricultural Heritage"
     },
     {
       "@language": "nl",
-      "@value": "Agrarische thesaurus"
+      "@value": "Thesaurus roerend agrarisch erfgoed"
+    },
+    {
+    "@language": "fy",
+    "@value": "Tesaurus roerend agrarysk erfgoed"
     }
   ],
   "alternateName": [
     {
       "@language": "en",
-      "@value": "AT"
+      "@value": "TMAH"
     },
     {
       "@language": "nl",
-      "@value": "AT"
+      "@value": "TRAE"
+    },
+    {
+      "@language": "fyl",
+      "@value": "TRAE"
     }
   ],
   "genre": [
@@ -51,14 +59,18 @@
   "description": [
     {
       "@language": "en",
-      "@value": "Subjects describing the movable agricultural heritage in the Netherlands and Flanders."
+      "@value": "Concepts and terms for describing movable agricultural heritage in the Netherlands and Flanders."
     },
     {
       "@language": "nl",
-      "@value": "Onderwerpen die het roerend agrarisch erfgoed in Nederland en Vlaanderen beschrijven."
+      "@value": "Concepten en termen voor het beschrijven van roerend agrarisch erfgoed in Nederland en Vlaanderen."
+    },
+    {
+      "@language": "fy",
+      "@value": "Konsepten en termen foar it beskriuwen fan roerend agrarysk erfgoed yn Nederlân en Flandern."
     }
   ],
-  "inLanguage": ["nl", "en"],
+  "inLanguage": ["nl", "fy"],
   "distribution": [
     {
       "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/agrarischethesaurus",
