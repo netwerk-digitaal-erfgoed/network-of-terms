@@ -44,3 +44,4 @@ two types of queries:
   [dataset SHACL](shacl/dataset.jsonld).
 - To try your queries locally, you can
   [run the GraphQL API](../network-of-terms-graphql/README.md#for-network-of-terms-developers) with your catalog.
+
