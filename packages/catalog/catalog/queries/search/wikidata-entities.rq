@@ -89,6 +89,7 @@ WHERE {
                 # - Mountain Design (Q124742720): design company → business
                 # - Studio Harris Blondman (Q136324662): design agency → business
                 # - Nieuwe Instituut (Q20888634): design museum → art museum
+                # - Cinemien (Q102426035): film distributor → media company
                 VALUES ?genreUri {
                     <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties>
                 }
@@ -105,7 +106,8 @@ WHERE {
                     wd:Q27032392,# regional archives
                     wd:Q3152824, # cultural institution
                     wd:Q83405,   # factory
-                    wd:Q178706   # institution
+                    wd:Q178706,  # institution
+                    wd:Q1331793  # media company
                 ))
             }
             UNION
