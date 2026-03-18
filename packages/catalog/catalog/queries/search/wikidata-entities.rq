@@ -22,7 +22,7 @@ WHERE {
                 bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
                     wikibase:api "Search" ;
                     wikibase:limit "once" ;
-                    mwapi:language "nl" ;
+                    mwapi:language "nl,en" ;
                     mwapi:srsearch ?query .
                 ?item wikibase:apiOutputItem mwapi:title .
                 ?ordinal wikibase:apiOrdinal true.
@@ -112,6 +112,9 @@ WHERE {
                     <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten>
                 }
             }
+
+            ?item rdfs:label ?prefLabel .
+            FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
         }
         ORDER BY ASC(?ordinal)
         #LIMIT#
