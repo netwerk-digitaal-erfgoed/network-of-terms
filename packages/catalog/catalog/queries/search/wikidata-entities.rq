@@ -30,6 +30,9 @@ WHERE {
 
             BIND(-?ordinal AS ?score)
 
+            ?item rdfs:label ?prefLabel .
+            FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
+
             VALUES ?genreUri { ?genres }
 
             {
@@ -112,9 +115,6 @@ WHERE {
                     <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten>
                 }
             }
-
-            ?item rdfs:label ?prefLabel .
-            FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
         }
         ORDER BY ASC(?ordinal)
         #LIMIT#
