@@ -22,7 +22,7 @@ WHERE {
                 bd:serviceParam wikibase:endpoint "www.wikidata.org" ;
                     wikibase:api "Search" ;
                     wikibase:limit "once" ;
-                    mwapi:language "nl,en" ;
+                    mwapi:language "nl" ;
                     mwapi:srsearch ?query .
                 ?item wikibase:apiOutputItem mwapi:title .
                 ?ordinal wikibase:apiOrdinal true.
