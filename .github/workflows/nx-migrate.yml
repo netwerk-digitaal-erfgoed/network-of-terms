@@ -8,3 +8,4 @@ on:
 jobs:
   migrate:
     uses: netwerk-digitaal-erfgoed/workflows/.github/workflows/nx-migrate.yml@main
+    secrets: inherit
