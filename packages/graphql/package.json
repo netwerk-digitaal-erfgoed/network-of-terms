@@ -19,13 +19,13 @@
     "build/"
   ],
   "dependencies": {
-    "@fastify/accepts": "^5.0.4",
+    "@fastify/accepts": "5.0.4",
     "@fastify/cors": "11.2.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "env-schema": "7.0.0",
     "fastify": "5.8.3",
-    "graphql": "^16.13.0",
+    "graphql": "16.13.0",
     "mercurius": "16.8.0",
     "mercurius-logging": "2.0.0"
   },
