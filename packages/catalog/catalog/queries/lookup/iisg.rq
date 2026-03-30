@@ -5,7 +5,7 @@ CONSTRUCT {
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
         skos:hiddenLabel ?hiddenLabel ;
-        skos:definition ?definition ;
+        skos:scopeNote ?definition ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri ;
@@ -14,35 +14,43 @@ CONSTRUCT {
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
-    ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
 }
 WHERE {
-    {
-        SELECT DISTINCT ?uri WHERE {
-            ?uri a skos:Concept ;
-                 skos:inScheme ?dataset ;
-                 ?predicate ?label .
+    VALUES ?uri { ?uris }
 
-            VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
+    ?uri a skos:Concept ;
+         skos:inScheme ?dataset .
 
-            FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
-        }
-        #LIMIT#
+    OPTIONAL {
+        ?uri skos:prefLabel ?prefLabel .
+        FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
     }
 
-    OPTIONAL { ?uri skos:prefLabel ?prefLabel . }
-    OPTIONAL { ?uri skos:altLabel ?altLabel . }
-    OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel . }
-    OPTIONAL { ?uri skos:definition ?definition . }
+    OPTIONAL {
+        ?uri skos:altLabel ?altLabel .
+        FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
+    }
+
+    OPTIONAL {
+        ?uri skos:hiddenLabel ?hiddenLabel .
+        FILTER(LANG(?hiddenLabel) = "nl" || LANG(?hiddenLabel) = "en")
+    }
+
+    OPTIONAL {
+        ?uri skos:definition ?definition .
+        FILTER(LANG(?definition) = "nl" || LANG(?definition) = "en")
+    }
 
     OPTIONAL {
         ?uri skos:broader ?broader_uri .
         ?broader_uri skos:prefLabel ?broader_prefLabel .
+        FILTER(LANG(?broader_prefLabel) = "nl" || LANG(?broader_prefLabel) = "en")
     }
 
     OPTIONAL {
         ?uri skos:narrower ?narrower_uri .
         ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+        FILTER(LANG(?narrower_prefLabel) = "nl" || LANG(?narrower_prefLabel) = "en")
     }
 
     OPTIONAL {
@@ -52,8 +60,6 @@ WHERE {
 
     OPTIONAL {
         ?uri skos:exactMatch ?exactMatch_uri .
-        OPTIONAL {
-            ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
-        }
     }
 }
+LIMIT 1000

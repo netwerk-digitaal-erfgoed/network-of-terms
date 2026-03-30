@@ -48,11 +48,11 @@
       "potentialAction": [
         {
           "@type": "SearchAction",
-          "query": "file://../queries/search/iisg-search.rq"
+          "query": "file://../queries/search/iisg.rq"
         },
         {
           "@type": "FindAction",
-          "query": "file://../queries/lookup/iisg-lookup.rq"
+          "query": "file://../queries/lookup/iisg.rq"
         },
         {
           "@type": "Action",
