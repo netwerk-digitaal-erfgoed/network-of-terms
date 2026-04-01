@@ -21,7 +21,7 @@
     "commands": "./build"
   },
   "dependencies": {
-    "@oclif/core": "4.8.1",
+    "@oclif/core": "4.10.3",
     "cli-ux": "6.0.9"
   }
 }
