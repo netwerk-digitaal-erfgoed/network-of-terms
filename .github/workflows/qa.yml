@@ -25,6 +25,6 @@ jobs:
           cache: 'npm'
 
       - run: npm ci
-      - uses: nrwl/nx-set-shas@v4
+      - uses: nrwl/nx-set-shas@v5
 
       - run: npx nx affected -t lint test typecheck build
