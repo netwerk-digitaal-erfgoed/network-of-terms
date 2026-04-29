@@ -73,12 +73,12 @@ WHERE {
                     CONCAT(
                         IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
                         IF(STRLEN(?birthPlace_nl) > 0, CONCAT("(", ?birthPlace_nl, ") "), ""),
-                        IF(BOUND(?deathDate) || STRLEN(?deathPlace_nl) > 0," - "," – ; ")),
+                        IF(BOUND(?deathDate) || STRLEN(?deathPlace_nl) > 0," - "," - ; ")),
                         ""
                     ),
                 IF(BOUND(?deathDate) || STRLEN(?deathPlace_nl) > 0,
                     CONCAT(
-                        IF(BOUND(?birthDate) || STRLEN(?birthPlace_nl) > 0, "", "– "),
+                        IF(BOUND(?birthDate) || STRLEN(?birthPlace_nl) > 0, "", "- "),
                         IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
                         IF(STRLEN(?deathPlace_nl) > 0, CONCAT("(", ?deathPlace_nl, ")"), ""),
                         "; "),
@@ -97,12 +97,12 @@ WHERE {
                     CONCAT(
                         IF(BOUND(?birthDate), CONCAT(?birthDate, " "), ""),
                         IF(STRLEN(?birthPlace_en) > 0, CONCAT("(", ?birthPlace_en, ") "), ""),
-                        IF(BOUND(?deathDate) || STRLEN(?deathPlace_en) >0, " - ", " – ; ")),
+                        IF(BOUND(?deathDate) || STRLEN(?deathPlace_en) >0, " - ", " - ; ")),
                         ""
                     ),
                 IF(BOUND(?deathDate) || STRLEN(?deathPlace_en) > 0,
                     CONCAT(
-                        IF(BOUND(?birthDate) || STRLEN(?birthPlace_en) > 0, "", "– "),
+                        IF(BOUND(?birthDate) || STRLEN(?birthPlace_en) > 0, "", "- "),
                         IF(BOUND(?deathDate), CONCAT(?deathDate, " "), ""),
                         IF(STRLEN(?deathPlace_en) > 0, CONCAT("(", ?deathPlace_en, ")"), ""),
                         "; "),
