@@ -6,7 +6,7 @@
   ],
   "devDependencies": {
     "@commitlint/cli": "20.4.2",
-    "@commitlint/config-conventional": "20.3.1",
+    "@commitlint/config-conventional": "20.5.3",
     "@nx/docker": "22.7.1",
     "@nx/esbuild": "22.7.1",
     "@nx/eslint": "22.7.1",
