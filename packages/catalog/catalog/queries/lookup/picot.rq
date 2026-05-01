@@ -9,25 +9,33 @@ CONSTRUCT {
         skos:broader ?broader_public ;
         skos:narrower ?narrower_public ;
         skos:related ?related_public ;
-        skos:exactMatch ?uri .
+        skos:exactMatch ?internalUri .
 
     ?broader_public skos:prefLabel ?broader_prefLabel .
     ?narrower_public skos:prefLabel ?narrower_prefLabel .
     ?related_public skos:prefLabel ?related_prefLabel .
 }
 WHERE {
-    {
-        SELECT DISTINCT ?uri ?datasetUri WHERE {
-            ?uri a skos:Concept ;
-                 skos:inScheme ?datasetUri ;
-                 ?predicate ?label .
+    VALUES ?uri { ?uris }
 
-            VALUES ?predicate { skos:prefLabel skos:altLabel }
-            FILTER(LANG(?label) = "nl")
-            FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
-        }
-        #LIMIT#
-    }
+    # ---- input normaliseren ----
+    BIND(
+      IF(
+        CONTAINS(STR(?uri), "terms.personsincontext.org/brontypes"),
+        IRI(REPLACE(STR(?uri), "brontypes", "ThesaurusHistorischePersoonsgegevens")),
+      IF(
+        CONTAINS(STR(?uri), "gebeurtenistypes"),
+        IRI(REPLACE(STR(?uri), "gebeurtenistypes", "ThesaurusHistorischePersoonsgegevens")),
+      IF(
+        CONTAINS(STR(?uri), "rollen"),
+        IRI(REPLACE(STR(?uri), "rollen", "ThesaurusHistorischePersoonsgegevens")),
+        ?uri
+      )))
+      AS ?internalUri
+    )
+
+    ?internalUri a skos:Concept ;
+                 skos:inScheme ?datasetUri .
 
     # ---- pad bepalen ----
     BIND(
@@ -38,42 +46,37 @@ WHERE {
       ))) AS ?path
     )
 
-    # ---- id ----
+    # ---- id extraheren ----
     BIND(
-      STRAFTER(STR(?uri), "ThesaurusHistorischePersoonsgegevens/")
+      STRAFTER(STR(?internalUri), "ThesaurusHistorischePersoonsgegevens/")
       AS ?id
     )
 
-    # ---- public URI ----
+    # ---- publieke URI ----
     BIND(
       IRI(CONCAT("https://terms.personsincontext.org/", ?path, "/", ?id))
       AS ?publicUri
     )
 
     OPTIONAL {
-        ?uri skos:prefLabel ?prefLabel .
-        FILTER(LANG(?prefLabel) = "nl")
+        ?internalUri skos:prefLabel ?prefLabel .
     }
     OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl")
+        ?internalUri skos:altLabel ?altLabel .
     }
     OPTIONAL {
-        ?uri skos:hiddenLabel ?hiddenLabel .
-        FILTER(LANG(?hiddenLabel) = "nl")
+        ?internalUri skos:hiddenLabel ?hiddenLabel .
     }
     OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote .
-        FILTER(LANG(?scopeNote) = "nl")
+        ?internalUri skos:scopeNote ?scopeNote .
     }
     OPTIONAL {
-        ?uri skos:definition ?scopeNote .
-        FILTER(LANG(?scopeNote) = "nl")
+        ?internalUri skos:definition ?scopeNote .
     }
 
     # ---- broader ----
     OPTIONAL {
-        ?uri skos:broader ?broader_uri .
+        ?internalUri skos:broader ?broader_uri .
         ?broader_uri skos:inScheme ?broaderScheme .
 
         BIND(
@@ -95,12 +98,11 @@ WHERE {
         )
 
         ?broader_uri skos:prefLabel ?broader_prefLabel .
-        FILTER(LANG(?broader_prefLabel) = "nl")
     }
 
     # ---- narrower ----
     OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
+        ?internalUri skos:narrower ?narrower_uri .
         ?narrower_uri skos:inScheme ?narrowerScheme .
 
         BIND(
@@ -122,12 +124,11 @@ WHERE {
         )
 
         ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-        FILTER(LANG(?narrower_prefLabel) = "nl")
     }
 
     # ---- related ----
     OPTIONAL {
-        ?uri skos:related ?related_uri .
+        ?internalUri skos:related ?related_uri .
         ?related_uri skos:inScheme ?relatedScheme .
 
         BIND(
@@ -149,14 +150,12 @@ WHERE {
         )
 
         ?related_uri skos:prefLabel ?related_prefLabel .
-        FILTER(LANG(?related_prefLabel) = "nl")
     }
 
     OPTIONAL {
-        ?uri skos:exactMatch ?exactMatch_uri .
-        OPTIONAL {
-            ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
-            FILTER(LANG(?exactMatch_prefLabel) = "nl")
-        }
+        ?internalUri skos:exactMatch ?exactMatch_uri .
+        FILTER(!STRSTARTS(STR(?exactMatch_uri), "https://data.cultureelerfgoed.nl/term/id/rn"))
+        FILTER(!STRSTARTS(STR(?exactMatch_uri), "https://data.cultureelerfgoed.nl/semnet"))
     }
 }
+LIMIT 1000
