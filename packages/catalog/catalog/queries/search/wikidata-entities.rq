@@ -112,21 +112,14 @@ WHERE {
             }
             UNION
             {
-                # Organismen: biological taxa under Animalia (Q729) or Plantae
-                # (Q756). An item is kept when it is an instance of taxon
-                # (Q16521) and its parent-taxon chain (P171*) reaches one of
-                # those kingdoms. This filters out non-biological matches
-                # (streets, objects, derived concepts) for organism searches
-                # like “citroenvlinder”.
+                # Organismen: any biological taxon (instance of Q16521).
+                # Covers all kingdoms — animals, plants, fungi, bacteria, etc.
+                # — and filters out non-biological matches (streets, objects,
+                # derived concepts) for organism searches like “citroenvlinder”.
                 VALUES ?genreUri {
                     <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Organismen>
                 }
                 ?item wdt:P31 wd:Q16521 .
-                {
-                    { ?item wdt:P171* wd:Q729 . }
-                    UNION
-                    { ?item wdt:P171* wd:Q756 . }
-                }
             }
             UNION
             {
