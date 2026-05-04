@@ -112,6 +112,17 @@ WHERE {
             }
             UNION
             {
+                # Organismen: any biological taxon (instance of Q16521).
+                # Covers all kingdoms — animals, plants, fungi, bacteria, etc.
+                # — and filters out non-biological matches (streets, objects,
+                # derived concepts) for organism searches like “citroenvlinder”.
+                VALUES ?genreUri {
+                    <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Organismen>
+                }
+                ?item wdt:P31 wd:Q16521 .
+            }
+            UNION
+            {
                 # Objecten: all other entities (no type restriction)
                 VALUES ?genreUri {
                     <https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten>
