@@ -1,30 +1,18 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://www.wikidata.org#entities-all",
+  "@id": "https://www.wikidata.org#entities-organisms",
   "@type": "Dataset",
   "name": [
     {
       "@language": "en",
-      "@value": "Wikidata: all entities"
+      "@value": "Wikidata: organisms"
     },
     {
       "@language": "nl",
-      "@value": "Wikidata: alle entiteiten"
+      "@value": "Wikidata: organismen"
     }
   ],
   "genre": [
-    {
-      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
-    },
-    {
-      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
-    },
-    {
-      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
-    },
-    {
-      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties"
-    },
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Biologische-taxa"
     }
@@ -39,17 +27,17 @@
   "description": [
     {
       "@language": "en",
-      "@value": "All entities in Wikidata, such as professions, movies or artworks"
+      "@value": "Biological taxa in Wikidata, such as animals (Animalia) and plants (Plantae)"
     },
     {
       "@language": "nl",
-      "@value": "Alle entiteiten in Wikidata, zoals beroepen, films of kunstwerken"
+      "@value": "Biologische taxa in Wikidata, zoals dieren (Animalia) en planten (Plantae)"
     }
   ],
   "inLanguage": ["en", "nl"],
   "distribution": [
     {
-      "@id": "https://query.wikidata.org/sparql#entities-all",
+      "@id": "https://query.wikidata.org/sparql#entities-organisms",
       "@type": "DataDownload",
       "contentUrl": "https://query.wikidata.org/sparql",
       "encodingFormat": "application/sparql-query",
