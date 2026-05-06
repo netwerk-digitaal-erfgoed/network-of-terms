@@ -98,7 +98,7 @@ export const schema = (languages: string[]) => `
       "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."      
       queryMode: QueryMode = OPTIMIZED,
       
-      "List of languages in which to return terms. If one or more languages are specified, terms are returned as \`TranslatedTerm\`s."
+      "List of languages in which to return terms, in preferred order. If one or more languages are specified, terms are returned as \`TranslatedTerm\`s. The available languages depend on what each source provides (see \`Source.inLanguage\`). Terms are never excluded from the result: if a term has no labels in the requested languages, untagged literals are returned as Dutch (\`nl\`); otherwise the label field is empty."
       languages: [Language],
       
       "Maximum number of terms to return."
@@ -119,7 +119,7 @@ export const schema = (languages: string[]) => `
       "List of term URIs."
       uris: [ID]!,
       
-      "List of languages in which to return the term. If one or more languages are specified, any term found is returned as a \`TranslatedTerm\`."
+      "List of languages in which to return the term, in preferred order. If one or more languages are specified, any term found is returned as a \`TranslatedTerm\`. The available languages depend on what each source provides (see \`Source.inLanguage\`). Terms are never excluded from the result: if a term has no labels in the requested languages, untagged literals are returned as Dutch (\`nl\`); otherwise the label field is empty."
       languages: [Language],
       
       "Timeout period in milliseconds that we wait for sources to respond."
