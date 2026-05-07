@@ -1,0 +1,84 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.cultureelerfgoed.nl/rights",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Rights Status and Usage Rights"
+    },
+    {
+      "@language": "nl",
+      "@value": "Rechtenstatus en gebruiksrechten"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "Rights"
+    },
+    {
+      "@language": "nl",
+      "@value": "Rechten"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.cultureelerfgoed.nl"
+    }
+  ],
+  "url": [
+    "https://data.cultureelerfgoed.nl/rights/"
+  ],
+  "mainEntityOfPage": [
+    "https://data.cultureelerfgoed.nl/rights.html"
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "This thesaurus provides a standardized set of terms for rights status and usage rights of cultural heritage objects. It includes rights statements from RightsStatements.org and licenses and waivers from Creative Commons, including Creative Commons licenses and the CC0 waiver. The terms are represented as SKOS concepts with stable URIs, multilingual labels, and concise notes. The thesaurus uses the canonical URIs of RightsStatements.org and Creative Commons directly as concept URIs in order to maximize interoperability and reuse. The thesaurus supports consistent registration, interoperability, and reuse across the cultural heritage domain."
+    },
+    {
+      "@language": "nl",
+      "@value": "Deze thesaurus bevat een gestandaardiseerde set termen voor rechtenstatus en gebruiksrechten van erfgoedobjecten. De thesaurus omvat rechtenstatements van RightsStatements.org en licenties en verklaringen van Creative Commons, waaronder Creative Commons-licenties en de CC0-verklaring. De termen zijn gemodelleerd als SKOS-concepten met stabiele URI’s, meertalige labels en korte toelichtingen. De thesaurus gebruikt de canonical URI’s van RightsStatements.org en Creative Commons direct als concept-URI’s om interoperabiliteit en hergebruik te maximaliseren. De thesaurus ondersteunt consistente registratie, interoperabiliteit en hergebruik binnen de erfgoedsector."
+    }
+  ],
+  "inLanguage": [
+    "nl",
+    "en"
+  ],
+  "distribution": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/rights",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/rights",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
