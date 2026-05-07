@@ -24,6 +24,9 @@
     },
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Organismen"
     }
   ],
   "creator": [

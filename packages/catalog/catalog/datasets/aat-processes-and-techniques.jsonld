@@ -51,7 +51,7 @@
     {
       "@id": "http://vocab.getty.edu/aat/sparql/processes-and-techniques",
       "@type": "DataDownload",
-      "contentUrl": "http://vocab.getty.edu/sparql",
+      "contentUrl": "https://vocab.getty.edu/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
