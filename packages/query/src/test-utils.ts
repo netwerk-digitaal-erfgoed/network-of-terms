@@ -19,10 +19,12 @@ nock('https://example.com')
   .persist();
 
 export const teardown = async () => {
-  await teardownServer(servers);
+  if (servers) {
+    await teardownServer(servers);
+  }
 };
 
-let servers: SpawndChildProcess[];
+let servers: SpawndChildProcess[] | undefined;
 export const testCatalog = (port: number) =>
   new Catalog([
     new Dataset(

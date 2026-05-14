@@ -76,8 +76,8 @@ export class LookupService {
         const responseDataset = this.catalog.getDatasetByDistributionIri(
           response.result.distribution.iri,
         )!;
-        // Always register the response under the queried dataset so iris that
-        // weren't re-routed (or weren't returned at all) still resolve to it.
+        // Always register the response under the queried dataset so IRIs that
+        // weren’t re-routed (or weren’t returned at all) still resolve to it.
         acc.set(responseDataset, response);
         if (response.result instanceof Terms) {
           // When several datasets share a terms prefix (e.g. GTAA sub-schemes),
