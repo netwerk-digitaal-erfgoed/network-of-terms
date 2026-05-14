@@ -270,10 +270,6 @@ describe('Server', () => {
   });
 
   it('resolves URIs across datasets that share a terms prefix', async () => {
-    // Regression: when several datasets share a terms prefix (e.g. GTAA
-    // sub-schemes), each returned term is routed to its true dataset via
-    // skos:inScheme. The lookup must succeed for URIs from different
-    // sub-schemes in the same request and report each term's own source.
     const body = await query(
       lookupQuery({
         uris: [

@@ -260,6 +260,7 @@ export const testCatalog = (port: number) =>
     ),
   ]);
 
+// Offset is wide enough to clear other test suites' base ports (e.g. 3000/3001).
 export const multiSchemePort = (port: number) => port + 10;
 
 export async function startDistributionSparqlEndpoint(
