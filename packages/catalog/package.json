@@ -34,8 +34,8 @@
     "!**/*.tsbuildinfo"
   ],
   "dependencies": {
-    "@comunica/query-sparql": "5.2.1",
-    "@comunica/query-sparql-rdfjs": "5.2.1",
+    "@comunica/query-sparql": "5.2.2",
+    "@comunica/query-sparql-rdfjs": "5.2.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/types": "2.0.1",
     "globby": "16.2.0",
