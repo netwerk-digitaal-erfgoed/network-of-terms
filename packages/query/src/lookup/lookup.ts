@@ -73,34 +73,25 @@ export class LookupService {
 
     const datasetToTerms = termsPerSource.reduce(
       (acc, response: TermsResponse) => {
-        let dataset = this.catalog.getDatasetByDistributionIri(
+        const responseDataset = this.catalog.getDatasetByDistributionIri(
           response.result.distribution.iri,
         )!;
+        // Always register the response under the queried dataset so iris that
+        // weren't re-routed (or weren't returned at all) still resolve to it.
+        acc.set(responseDataset, response);
         if (response.result instanceof Terms) {
-          const termsResult =
-            (acc.get(dataset)?.result as Terms) ??
-            new Terms(response.result.distribution, []);
+          // When several datasets share a terms prefix (e.g. GTAA sub-schemes),
+          // route each returned term to its true dataset via skos:inScheme,
+          // and make the response available under that dataset too.
           for (const term of response.result.terms) {
-            if (term.datasetIri !== undefined) {
-              const termsDataset = this.catalog.getDatasetByIri(
-                term.datasetIri.value,
-              );
-              if (termsDataset !== undefined) {
-                dataset = termsDataset;
-                irisToDataset.set(term.id.value, dataset);
-              }
-            }
-            termsResult.terms.push(term);
+            if (term.datasetIri === undefined) continue;
+            const termDataset = this.catalog.getDatasetByIri(
+              term.datasetIri.value,
+            );
+            if (termDataset === undefined) continue;
+            irisToDataset.set(term.id.value, termDataset);
+            acc.set(termDataset, response);
           }
-          acc.set(
-            dataset,
-            new TermsResponse(termsResult, response.responseTimeMs),
-          );
-        } else {
-          const dataset = this.catalog.getDatasetByDistributionIri(
-            response.result.distribution.iri,
-          )!;
-          acc.set(dataset, response);
         }
         return acc;
       },

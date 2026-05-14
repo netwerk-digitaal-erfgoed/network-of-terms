@@ -269,6 +269,36 @@ describe('Server', () => {
     expect(timeoutError.result.__typename).toEqual('TimeoutError');
   });
 
+  it('resolves URIs across datasets that share a terms prefix', async () => {
+    // Regression: when several datasets share a terms prefix (e.g. GTAA
+    // sub-schemes), each returned term is routed to its true dataset via
+    // skos:inScheme. The lookup must succeed for URIs from different
+    // sub-schemes in the same request and report each term's own source.
+    const body = await query(
+      lookupQuery({
+        uris: [
+          'https://example.com/multi-scheme/term-a',
+          'https://example.com/multi-scheme/term-b',
+        ],
+      }),
+    );
+
+    expect(body.errors).toBeUndefined();
+    expect(body.data.lookup).toHaveLength(2);
+
+    const termA = body.data.lookup[0];
+    expect(termA.uri).toEqual('https://example.com/multi-scheme/term-a');
+    expect(termA.result.__typename).toEqual('Term');
+    expect(termA.result.prefLabel).toEqual(['Term in sub-scheme A']);
+    expect(termA.source.uri).toEqual('https://example.com/multi-scheme/A');
+
+    const termB = body.data.lookup[1];
+    expect(termB.uri).toEqual('https://example.com/multi-scheme/term-b');
+    expect(termB.result.__typename).toEqual('Term');
+    expect(termB.result.prefLabel).toEqual(['Term in sub-scheme B']);
+    expect(termB.source.uri).toEqual('https://example.com/multi-scheme/B');
+  });
+
   it('responds to successful multilingual GraphQL lookup query', async () => {
     const body = await query(
       lookupQuery({

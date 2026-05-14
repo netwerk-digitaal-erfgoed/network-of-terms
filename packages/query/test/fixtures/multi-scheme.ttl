@@ -1,0 +1,11 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://example.com/multi-scheme/term-a>
+    a skos:Concept ;
+    skos:prefLabel "Term in sub-scheme A"@nl ;
+    skos:inScheme <https://example.com/multi-scheme/A> .
+
+<https://example.com/multi-scheme/term-b>
+    a skos:Concept ;
+    skos:prefLabel "Term in sub-scheme B"@nl ;
+    skos:inScheme <https://example.com/multi-scheme/B> .
