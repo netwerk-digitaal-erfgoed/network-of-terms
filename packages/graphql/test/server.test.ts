@@ -14,11 +14,11 @@ const catalog = testCatalog(3000);
 describe('Server', () => {
   afterAll(async () => {
     await teardown();
-  }, 20_000);
+  }, 40_000);
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3000);
     httpServer = await server(catalog, config);
-  }, 20_000);
+  }, 40_000);
 
   it('responds to GraphQL sources query', async () => {
     const body = await query(
@@ -267,6 +267,32 @@ describe('Server', () => {
     const timeoutError = body.data.lookup[4];
     expect(timeoutError.uri).toEqual('http://vocab.getty.edu/aat/timeout');
     expect(timeoutError.result.__typename).toEqual('TimeoutError');
+  });
+
+  it('resolves URIs across datasets that share a terms prefix', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: [
+          'https://example.com/multi-scheme/term-a',
+          'https://example.com/multi-scheme/term-b',
+        ],
+      }),
+    );
+
+    expect(body.errors).toBeUndefined();
+    expect(body.data.lookup).toHaveLength(2);
+
+    const termA = body.data.lookup[0];
+    expect(termA.uri).toEqual('https://example.com/multi-scheme/term-a');
+    expect(termA.result.__typename).toEqual('Term');
+    expect(termA.result.prefLabel).toEqual(['Term in sub-scheme A']);
+    expect(termA.source.uri).toEqual('https://example.com/multi-scheme/A');
+
+    const termB = body.data.lookup[1];
+    expect(termB.uri).toEqual('https://example.com/multi-scheme/term-b');
+    expect(termB.result.__typename).toEqual('Term');
+    expect(termB.result.prefLabel).toEqual(['Term in sub-scheme B']);
+    expect(termB.source.uri).toEqual('https://example.com/multi-scheme/B');
   });
 
   it('responds to successful multilingual GraphQL lookup query', async () => {

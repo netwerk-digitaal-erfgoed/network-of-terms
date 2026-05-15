@@ -4,8 +4,6 @@ import {
   QueryTermsService,
   ServerError,
   Terms,
-  TermsResponse,
-  TermsResult,
   TimeoutError,
 } from '../query.js';
 import { Term } from '../terms.js';
@@ -49,67 +47,68 @@ export class LookupService {
     iris: string[],
     timeoutMs: number,
   ): Promise<LookupQueryResult[]> {
-    const irisToDataset = iris.reduce((acc, iri) => {
+    // Group IRIs by the dataset their terms-prefix points to. Several datasets
+    // may share a prefix (e.g. GTAA sub-schemes); we query a single
+    // representative per prefix and rely on each returned term's skos:inScheme
+    // to re-route it to its true sub-dataset below.
+    const irisByQueriedDataset = new Map<Dataset, IRI[]>();
+    for (const iri of iris) {
       const dataset = this.catalog.getDatasetByTermIri(iri);
-      if (dataset) {
-        acc.set(iri.toString(), dataset);
+      if (dataset === undefined) continue;
+      const bucket = irisByQueriedDataset.get(dataset) ?? [];
+      bucket.push(iri);
+      irisByQueriedDataset.set(dataset, bucket);
+    }
+
+    const responses = await Promise.all(
+      [...irisByQueriedDataset.keys()].map(
+        async (queriedDataset) =>
+          [
+            queriedDataset,
+            await this.queryService.lookup(
+              iris,
+              queriedDataset.distributions[0],
+              timeoutMs,
+            ),
+          ] as const,
+      ),
+    );
+
+    const resultsByIri = new Map<string, LookupQueryResult>();
+
+    for (const [queriedDataset, response] of responses) {
+      if (!(response.result instanceof Terms)) continue;
+      for (const term of response.result.terms) {
+        const termDataset =
+          this.catalog.getDatasetByIri(term.datasetIri?.value ?? '') ??
+          queriedDataset;
+        resultsByIri.set(term.id.value, {
+          uri: term.id.value,
+          distribution: termDataset.distributions[0],
+          result: term,
+          responseTimeMs: response.responseTimeMs,
+        });
       }
-      return acc;
-    }, new Map<string, Dataset>());
+    }
 
-    const datasetToIris = [...irisToDataset].reduce(
-      (datasetMap, [iri, dataset]) => {
-        datasetMap.set(dataset, [...(datasetMap.get(dataset) ?? []), iri]);
-        return datasetMap;
-      },
-      new Map<Dataset, IRI[]>(),
-    );
-
-    const lookups = [...datasetToIris].map(([dataset]) =>
-      this.queryService.lookup(iris, dataset.distributions[0], timeoutMs),
-    );
-
-    const termsPerSource: TermsResponse[] = await Promise.all(lookups);
-
-    const datasetToTerms = termsPerSource.reduce(
-      (acc, response: TermsResponse) => {
-        let dataset = this.catalog.getDatasetByDistributionIri(
-          response.result.distribution.iri,
-        )!;
-        if (response.result instanceof Terms) {
-          const termsResult =
-            (acc.get(dataset)?.result as Terms) ??
-            new Terms(response.result.distribution, []);
-          for (const term of response.result.terms) {
-            if (term.datasetIri !== undefined) {
-              const termsDataset = this.catalog.getDatasetByIri(
-                term.datasetIri.value,
-              );
-              if (termsDataset !== undefined) {
-                dataset = termsDataset;
-                irisToDataset.set(term.id.value, dataset);
-              }
-            }
-            termsResult.terms.push(term);
-          }
-          acc.set(
-            dataset,
-            new TermsResponse(termsResult, response.responseTimeMs),
-          );
-        } else {
-          const dataset = this.catalog.getDatasetByDistributionIri(
-            response.result.distribution.iri,
-          )!;
-          acc.set(dataset, response);
-        }
-        return acc;
-      },
-      new Map<Dataset, TermsResponse>(),
-    );
+    for (const [queriedDataset, response] of responses) {
+      for (const iri of irisByQueriedDataset.get(queriedDataset) as IRI[]) {
+        if (resultsByIri.has(iri)) continue;
+        resultsByIri.set(iri, {
+          uri: iri,
+          distribution: queriedDataset.distributions[0],
+          result:
+            response.result instanceof Error
+              ? response.result
+              : new NotFoundError(iri),
+          responseTimeMs: response.responseTimeMs,
+        });
+      }
+    }
 
     return iris.map((iri) => {
-      const dataset = irisToDataset.get(iri.toString());
-      if (dataset === undefined) {
+      const lookupResult = resultsByIri.get(iri);
+      if (lookupResult === undefined) {
         clientQueriesCounter.add(1, {
           type: 'lookup',
           error: 'SourceNotFound',
@@ -122,26 +121,8 @@ export class LookupService {
         };
       }
 
-      const response = datasetToTerms.get(dataset)!;
       clientQueriesCounter.add(1, { type: 'lookup' });
-
-      return {
-        uri: iri,
-        distribution: dataset.distributions[0],
-        result: result(response.result, iri),
-        responseTimeMs: response.responseTimeMs,
-      };
+      return lookupResult;
     });
   }
-}
-
-function result(result: TermsResult, iri: string): LookupResult {
-  if (result instanceof Error) {
-    return result;
-  }
-
-  return (
-    result.terms.find((term) => term.id.value === iri.toString()) ??
-    new NotFoundError(iri)
-  );
 }

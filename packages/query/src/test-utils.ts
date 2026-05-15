@@ -19,10 +19,12 @@ nock('https://example.com')
   .persist();
 
 export const teardown = async () => {
-  await teardownServer(servers);
+  if (servers) {
+    await teardownServer(servers);
+  }
 };
 
-let servers: SpawndChildProcess[];
+let servers: SpawndChildProcess[] | undefined;
 export const testCatalog = (port: number) =>
   new Catalog([
     new Dataset(
@@ -167,6 +169,70 @@ export const testCatalog = (port: number) =>
       ],
     ),
     new Dataset(
+      'https://example.com/multi-scheme/A',
+      { nl: 'Test sub-scheme A' },
+      { nl: 'Sub-scheme A sharing a terms prefix with sub-scheme B' },
+      [
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
+      ],
+      ['https://example.com/multi-scheme/'],
+      'https://example.com/multi-scheme/a',
+      ['nl'],
+      [
+        new Organization(
+          'https://example.com/multi-scheme',
+          { nl: 'Multi-scheme test publisher' },
+          { nl: 'MSP' },
+        ),
+      ],
+      [
+        new SparqlDistribution(
+          'https://example.com/distributions/multi-scheme-a',
+          `http://localhost:${multiSchemePort(port)}/sparql`,
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+          `
+          PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+          CONSTRUCT { ?s ?p ?o }
+          WHERE {
+            VALUES ?s { ?uris }
+            ?s ?p ?o .
+          }`,
+        ),
+      ],
+    ),
+    new Dataset(
+      'https://example.com/multi-scheme/B',
+      { nl: 'Test sub-scheme B' },
+      { nl: 'Sub-scheme B sharing a terms prefix with sub-scheme A' },
+      [
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
+      ],
+      ['https://example.com/multi-scheme/'],
+      'https://example.com/multi-scheme/b',
+      ['nl'],
+      [
+        new Organization(
+          'https://example.com/multi-scheme',
+          { nl: 'Multi-scheme test publisher' },
+          { nl: 'MSP' },
+        ),
+      ],
+      [
+        new SparqlDistribution(
+          'https://example.com/distributions/multi-scheme-b',
+          `http://localhost:${multiSchemePort(port)}/sparql`,
+          'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+          `
+          PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+          CONSTRUCT { ?s ?p ?o }
+          WHERE {
+            VALUES ?s { ?uris }
+            ?s ?p ?o .
+          }`,
+        ),
+      ],
+    ),
+    new Dataset(
       'http://data.beeldengeluid.nl/gtaa/Persoonsnamen',
       { nl: 'GTAA: persoonsnamen' },
       { nl: 'Personen voor het beschrijven van audiovisueel materiaal' },
@@ -194,14 +260,23 @@ export const testCatalog = (port: number) =>
     ),
   ]);
 
+// Offset is wide enough to clear other test suites' base ports (e.g. 3000/3001).
+export const multiSchemePort = (port: number) => port + 10;
+
 export async function startDistributionSparqlEndpoint(
   port: number,
 ): Promise<void> {
-  servers = await setup({
-    command: `npx --no comunica-sparql-file-http ${dirname(
-      fileURLToPath(import.meta.url),
-    )}/../test/fixtures/terms.ttl -p ${port}`,
-    port,
-    launchTimeout: 20000,
-  });
+  const fixturesDir = `${dirname(fileURLToPath(import.meta.url))}/../test/fixtures`;
+  servers = await setup([
+    {
+      command: `npx --no comunica-sparql-file-http ${fixturesDir}/terms.ttl -p ${port}`,
+      port,
+      launchTimeout: 20000,
+    },
+    {
+      command: `npx --no comunica-sparql-file-http ${fixturesDir}/multi-scheme.ttl -p ${multiSchemePort(port)}`,
+      port: multiSchemePort(port),
+      launchTimeout: 20000,
+    },
+  ]);
 }
