@@ -32,6 +32,7 @@ export const testCatalog = (port: number) =>
       { nl: 'RKDartists', en: 'RKDartists' },
       {
         nl: 'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+        en: 'Biographical data of Dutch and foreign artists from the Middle Ages to the present',
       },
       ['https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'],
       ['https://example.com/resources/'],
@@ -271,12 +272,12 @@ export async function startDistributionSparqlEndpoint(
     {
       command: `npx --no comunica-sparql-file-http ${fixturesDir}/terms.ttl -p ${port}`,
       port,
-      launchTimeout: 20000,
+      launchTimeout: 40000,
     },
     {
       command: `npx --no comunica-sparql-file-http ${fixturesDir}/multi-scheme.ttl -p ${multiSchemePort(port)}`,
       port: multiSchemePort(port),
-      launchTimeout: 20000,
+      launchTimeout: 40000,
     },
   ]);
 }
