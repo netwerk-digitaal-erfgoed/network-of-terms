@@ -312,6 +312,35 @@ describe('Server', () => {
     ]);
   });
 
+  it('resolves embedded Source in lookup using the first language from `languages`', async () => {
+    const englishFirst = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/art'],
+        languages: ['en', 'nl'],
+      }),
+    );
+    expect(englishFirst.data.lookup[0].source.description).toEqual(
+      'Biographical data of Dutch and foreign artists from the Middle Ages to the present',
+    );
+
+    const dutchFirst = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/art'],
+        languages: ['nl', 'en'],
+      }),
+    );
+    expect(dutchFirst.data.lookup[0].source.description).toEqual(
+      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+    );
+
+    const noLanguages = await query(
+      lookupQuery({ uris: ['https://example.com/resources/art'] }),
+    );
+    expect(noLanguages.data.lookup[0].source.description).toEqual(
+      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+    );
+  });
+
   it('responds to GraphQL playground requests', async () => {
     const response = await httpServer.inject({
       method: 'GET',
@@ -459,6 +488,7 @@ function lookupQuery({
           ... on Source {
             uri
             name
+            description
             creators {
               uri
               name
@@ -469,7 +499,7 @@ function lookupQuery({
             __typename
             message
           }
-        }        
+        }
         result {
           __typename
           ${

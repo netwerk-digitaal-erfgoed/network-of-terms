@@ -93,6 +93,10 @@ async function lookupTerms(object: any, args: any, context: any) {
     }),
   );
   const results = await service.lookup(args.uris, args.timeoutMs);
+  const catalogLanguage = [
+    ...(args.languages ?? []),
+    context.catalogLanguage,
+  ][0];
 
   return results.map((result: LookupQueryResult) => {
     return {
@@ -105,7 +109,7 @@ async function lookupTerms(object: any, args: any, context: any) {
               context.catalog.getDatasetByDistributionIri(
                 result.distribution.iri,
               )!,
-              context.catalogLanguage,
+              catalogLanguage,
               context.statusClient,
             ),
       result:

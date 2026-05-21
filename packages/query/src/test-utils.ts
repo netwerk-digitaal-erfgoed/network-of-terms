@@ -32,6 +32,7 @@ export const testCatalog = (port: number) =>
       { nl: 'RKDartists', en: 'RKDartists' },
       {
         nl: 'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+        en: 'Biographical data of Dutch and foreign artists from the Middle Ages to the present',
       },
       ['https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen'],
       ['https://example.com/resources/'],
