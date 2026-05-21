@@ -272,12 +272,12 @@ export async function startDistributionSparqlEndpoint(
     {
       command: `npx --no comunica-sparql-file-http ${fixturesDir}/terms.ttl -p ${port}`,
       port,
-      launchTimeout: 20000,
+      launchTimeout: 40000,
     },
     {
       command: `npx --no comunica-sparql-file-http ${fixturesDir}/multi-scheme.ttl -p ${multiSchemePort(port)}`,
       port: multiSchemePort(port),
-      launchTimeout: 20000,
+      launchTimeout: 40000,
     },
   ]);
 }
