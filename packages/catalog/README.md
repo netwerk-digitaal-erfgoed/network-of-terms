@@ -53,6 +53,14 @@ two types of queries:
 
 ### Adding a dataset
 
+A terminology source can be added to the catalog when:
+
+- the source is available as a public SPARQL endpoint;
+- it publishes at least a URI and a label for each term;
+- it complies with the [Requirements for terminologiebronnen](https://docs.nde.nl/requirements-terminologiebronnen/) (in Dutch).
+
+To add it:
+
 - If the dataset’s publisher isn’t in `catalog/publishers.jsonld` yet, add a `schema:Organization` entry for it.
 - Create a `your-dataset.jsonld` file in the `catalog/datasets` directory and add a description. Use an existing dataset such as [`aat-materials.jsonld`](catalog/datasets/aat-materials.jsonld) as a template.
 - Create a `your-dataset.rq` file in the `queries/search` directory and add your SPARQL search query. A SPARQL
