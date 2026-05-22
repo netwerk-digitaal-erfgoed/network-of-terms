@@ -72,3 +72,22 @@ To add it:
 - To try your queries locally, you can
   [run the GraphQL API](../graphql/README.md#for-network-of-terms-developers) with your catalog.
 
+### Writing the SPARQL queries
+
+Search and lookup queries are SPARQL `CONSTRUCT` queries that the Network of Terms executes against the source’s endpoint. At runtime the placeholders are substituted with the request’s input:
+
+- `?query` – the search string, lowercased and trimmed (the default `OPTIMIZED` query mode).
+- `?virtuosoQuery` – the same string with each token quoted and joined by `AND`, ready for Virtuoso’s `bif:contains`.
+- `?uris` in lookup queries – replaced by `VALUES ?uri { … }` with the URIs being looked up.
+
+#### Full-text search
+
+Plain `FILTER(CONTAINS(…))` scans every candidate literal on each request. **Prefer the endpoint’s native full-text index** so the federated query stays fast. Common patterns:
+
+- **Apache Jena Fuseki** – [`text:query`](https://jena.apache.org/documentation/query/text-query.html), e.g. `(?uri ?score) text:query (<field> ?query 100)`.
+- **GraphDB (Lucene plugin)** – `?uri luc:term ?query` for labels and IDs, `?uri luc:text ?query` to also include scope notes. See [full-text search](https://graphdb.ontotext.com/documentation/10.8/full-text-search.html).
+- **GraphDB (Lucene connector)** – named indexes via `luc:query` / `luc:entities`; list configured connectors with `?cntUri luc:listConnectors ?cntStr`.
+- **GraphDB (Elasticsearch connector)** – same pattern under the `elastic:` namespace.
+- **OpenLink Virtuoso** – [`bif:contains`](https://docs.openlinksw.com/virtuoso/bifcontainsoptions/), e.g. `?label bif:contains ?virtuosoQuery`.
+- **Wikidata** – the `wikibase:mwapi` service with `mwapi:search` (titles) or `mwapi:srsearch` (full text). See the [Wikidata MWAPI manual](https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/MWAPI).
+
