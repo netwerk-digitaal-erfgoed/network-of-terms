@@ -39,6 +39,12 @@ flowchart TD
   ts2 -. search results -.-> not
 ```
 
+## Documentation
+
+This README and the package READMEs cover **running, hosting and extending** the Network of Terms software: install steps, environment variables, the catalog data model, query authoring and the test suite.
+
+For **using** the Network of Terms – the GraphQL and Reconciliation APIs, the demonstrator, available terminology sources – see the public documentation at [docs.nde.nl/services/network-of-terms](https://docs.nde.nl/services/network-of-terms).
+
 ## Getting started
 
 ### For users
