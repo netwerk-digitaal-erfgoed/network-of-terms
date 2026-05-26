@@ -34,6 +34,12 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre> => {
   );
   const bindings = await data.toArray();
 
+  if (bindings.length === 0) {
+    // Treat as failure so callers don’t cache an empty name dictionary
+    // (e.g. when the upstream returns a non-RDF error page).
+    throw new Error(`No bindings returned for genre <${genre}>`);
+  }
+
   return new Genre(
     genre,
     bindings.reduce((acc: StringDictionary, binding) => {

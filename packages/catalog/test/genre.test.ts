@@ -90,6 +90,27 @@ describe('dereferenceGenre', () => {
     expect(result).toBeNull();
   });
 
+  it('does not cache empty results when upstream returns no bindings', async () => {
+    queryBindingsMock.mockResolvedValue({
+      toArray: async () => mockBindings([]),
+    } as never);
+    const dereferenceGenre = await importGenre();
+
+    const result = await dereferenceGenre(genreIri);
+    expect(result).toBeNull();
+
+    // Recovery: upstream starts returning bindings on the next call.
+    queryBindingsMock.mockResolvedValue({
+      toArray: async () =>
+        mockBindings([{ language: 'nl', value: 'Testgenre' }]),
+    } as never);
+
+    const recovered = await dereferenceGenre(genreIri);
+    expect(recovered).not.toBeNull();
+    expect(recovered!.name.nl).toEqual('Testgenre');
+    expect(queryBindingsMock).toHaveBeenCalledTimes(2);
+  });
+
   it('keeps stale data when background refresh fails', async () => {
     const dereferenceGenre = await importGenre();
 
