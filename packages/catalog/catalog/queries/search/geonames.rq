@@ -15,21 +15,24 @@ CONSTRUCT {
 WHERE {
     {
         SELECT ?uri ?featureClass ?countryCode (MAX(?sc)
-            + IF(CONTAINS(CONCAT(" ", LCASE(?query), " "), CONCAT(" ", LCASE(?countryCode), " ")), 2.0, 0)
-            + IF(?countryCode = "NL", 1.5, IF(?countryCode = "BE", 1.0, IF(?countryCode = "DE", 0.5, 0)))
+            + IF(CONTAINS(CONCAT(" ", LCASE(?query), " "), CONCAT(" ", LCASE(COALESCE(?countryCode, "")), " ")), 2.0, 0)
+            + IF(COALESCE(?countryCode, "") = "NL", 1.5, IF(COALESCE(?countryCode, "") = "BE", 1.0, IF(COALESCE(?countryCode, "") = "DE", 0.5, 0)))
             AS ?score) WHERE {
             # Boost name matches (^3) above alternateName matches, using Lucene query-time boosting
             # (text:boost in the Fuseki config is silently ignored since Lucene 7.0).
             BIND(CONCAT("name:(", ?query, ")^3 alternateName:(", ?query, ")") AS ?luceneQuery)
             (?uri ?sc) text:query (?luceneQuery) .
             ?uri a gn:Feature ;
-                gn:featureClass ?featureClass ;
-                gn:countryCode ?countryCode .
+                gn:featureClass ?featureClass .
+            # Supranational features (continents and the planet) have no country code.
+            OPTIONAL { ?uri gn:countryCode ?countryCode . }
             # Limit results to places (P), localities (L), administrative levels (A) and water surfaces (H).
             VALUES ?featureClass { gn:P gn:L gn:A gn:H }
             # Country filter from URI fragment (e.g. #NL-BE-DE), or allow all if no fragment
             BIND(COALESCE(STRAFTER(STR(?datasetUri), "#"), "") AS ?countriesFragment)
-            FILTER(?countriesFragment = "" || CONTAINS(UCASE(?countriesFragment), ?countryCode))
+            # Country-less features stay in unscoped searches but are excluded from country-scoped ones:
+            # do not coalesce here, since CONTAINS(x, "") is always true.
+            FILTER(?countriesFragment = "" || (BOUND(?countryCode) && CONTAINS(UCASE(?countriesFragment), ?countryCode)))
         }
         GROUP BY ?uri ?featureClass ?countryCode
         ORDER BY DESC(?score)
@@ -38,7 +41,7 @@ WHERE {
 
     ?uri gn:name ?prefLabel .
 
-    BIND(CONCAT(?prefLabel," (",UCASE(?countryCode),")") as ?prefLabel_ext)
+    BIND(IF(BOUND(?countryCode), CONCAT(?prefLabel," (",UCASE(?countryCode),")"), ?prefLabel) as ?prefLabel_ext)
 
     VALUES (?featureClass ?scopeNote_en ?scopeNote_nl) {
         (gn:A "Administrative boundary"@en "Bestuurlijke eenheid"@nl)
