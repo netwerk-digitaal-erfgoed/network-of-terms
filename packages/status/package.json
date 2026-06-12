@@ -28,7 +28,7 @@
     "rdf-serialize": "5.1.0"
   },
   "devDependencies": {
-    "nock": "14.0.10"
+    "nock": "14.0.15"
   },
   "engines": {
     "node": ">=16.15.0"
