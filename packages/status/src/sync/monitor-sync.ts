@@ -5,7 +5,8 @@ import {
   buildSearchQuery,
   QueryMode,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import type { MonitorConfig } from '@lde/sparql-monitor';
+import { Distribution as ProbeDistribution } from '@lde/dataset';
+import type { MonitorConfig } from '@lde/distribution-monitor';
 import type * as RDF from '@rdfjs/types';
 
 /**
@@ -51,6 +52,12 @@ function buildMonitorQuery(
 /**
  * Extract monitor configurations from catalog.
  * Creates one monitor per dataset, using the dataset IRI as the identifier.
+ *
+ * Each monitor targets a SPARQL {@link ProbeDistribution}; the per-source
+ * CONSTRUCT search query is passed as `sparqlQuery` so the probe checks the
+ * same query as before. Credentials embedded in the endpoint URL are preserved
+ * on the distribution’s `accessUrl` and turned into an `Authorization` header
+ * by the probe.
  */
 export function extractMonitorConfigs(catalog: Catalog): MonitorConfig[] {
   const monitors: MonitorConfig[] = [];
@@ -63,8 +70,10 @@ export function extractMonitorConfigs(catalog: Catalog): MonitorConfig[] {
 
     monitors.push({
       identifier: dataset.iri,
-      endpointUrl: new URL(distribution.endpoint.toString()),
-      query: buildMonitorQuery(dataset, distribution),
+      distribution: ProbeDistribution.sparql(
+        new URL(distribution.endpoint.toString()),
+      ),
+      sparqlQuery: buildMonitorQuery(dataset, distribution),
     });
   }
 

@@ -1,5 +1,5 @@
 import { DataFactory, Store } from 'n3';
-import type { Observation, MonitorConfig } from '@lde/sparql-monitor';
+import type { Observation, MonitorConfig } from '@lde/distribution-monitor';
 import { rdfSerializer } from 'rdf-serialize';
 import { Readable } from 'stream';
 import { sosa, ldes, tree, status, rdf, xsd } from './vocabulary.js';
@@ -44,7 +44,7 @@ export function enrichObservations(
     if (monitor) {
       enriched.push({
         ...observation,
-        endpointUrl: monitor.endpointUrl.toString(),
+        endpointUrl: monitor.distribution.accessUrl.toString(),
         datasetIri: observation.monitor, // monitor identifier is the dataset IRI
       });
     }

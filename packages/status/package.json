@@ -17,7 +17,8 @@
   "type": "module",
   "dependencies": {
     "@fastify/cors": "11.2.0",
-    "@lde/sparql-monitor": "0.5.13",
+    "@lde/dataset": "0.7.7",
+    "@lde/distribution-monitor": "0.1.9",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "@rdfjs/types": "2.0.1",
