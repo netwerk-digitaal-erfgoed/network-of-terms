@@ -49,12 +49,15 @@ try {
   // Initialize LDES serializer
   const serializer = new LdesSerializer({ baseUrl: config.LDES_BASE_URL });
 
-  // Initialize monitor service with 10s timeout per distribution
+  // Initialize monitor service with 10s timeout per distribution. Retry
+  // connection-level failures within a check so transient resets (the cause of
+  // the Gouda Tijdmachine flapping) don’t flip a healthy source to unavailable.
   const monitorService = new MonitorService({
     store,
     monitors,
     intervalSeconds: config.POLLING_INTERVAL_SECONDS,
     timeoutMs: 10000,
+    retries: 2,
     headers: new Headers({ 'User-Agent': userAgent }),
   });
 
