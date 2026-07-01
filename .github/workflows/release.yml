@@ -15,7 +15,7 @@ jobs:
     # Skip bot-authored commits to prevent redundant workflow runs.
     if: github.event.head_commit.author.name != 'github-actions[bot]'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           # Need full git history for nx release to work properly.
           fetch-depth: 0
