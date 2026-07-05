@@ -47,7 +47,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
-      - run: npx nx affected -t docker:build --configuration=production
+      - run: npx nx run-many -t docker:build --configuration=production --projects=network-of-terms-graphql,network-of-terms-reconciliation,network-of-terms-status
 
       - name: Release
         env:
