@@ -51,5 +51,8 @@
     "jsonld-streaming-parser": "5.0.1",
     "rdf-ext": "2.6.0",
     "rdf-validate-shacl": "0.6.5"
+  },
+  "nx": {
+    "tags": ["release:npm"]
   }
 }

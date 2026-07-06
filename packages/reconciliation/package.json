@@ -34,6 +34,7 @@
     "accepts": "1.3.8"
   },
   "nx": {
+    "tags": ["release:docker"],
     "release": {
       "docker": {
         "repositoryName": "network-of-terms-reconciliation"

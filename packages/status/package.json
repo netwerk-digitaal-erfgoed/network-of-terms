@@ -35,6 +35,7 @@
     "node": ">=16.15.0"
   },
   "nx": {
+    "tags": ["release:docker"],
     "release": {
       "docker": {
         "repositoryName": "network-of-terms-status"

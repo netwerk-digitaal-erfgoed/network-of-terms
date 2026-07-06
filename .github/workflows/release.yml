@@ -59,8 +59,7 @@ jobs:
           # Release only affected projects: ‘nx release’ tags Docker images for
           # every project it processes, but the build step above only builds
           # images for affected projects.
-          RELEASE_PROJECTS=$(jq -r '[.release.groups[].projects[]] | join(",")' nx.json)
-          AFFECTED=$(npx nx show projects --affected --projects "$RELEASE_PROJECTS" --json | jq -r 'join(",")')
+          AFFECTED=$(npx nx show projects --affected --projects "tag:release:*" --json | jq -r 'join(",")')
           if [ -n "$AFFECTED" ]; then
             npx nx release --yes --projects="$AFFECTED"
           else

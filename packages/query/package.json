@@ -53,5 +53,8 @@
   "devDependencies": {
     "@comunica/query-sparql-file": "5.2.2",
     "asynciterator": "3.10.0"
+  },
+  "nx": {
+    "tags": ["release:npm"]
   }
 }
