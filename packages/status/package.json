@@ -29,13 +29,15 @@
     "rdf-serialize": "5.1.0"
   },
   "devDependencies": {
-    "nock": "14.0.15"
+    "nock": "14.0.16"
   },
   "engines": {
     "node": ">=16.15.0"
   },
   "nx": {
-    "tags": ["release:docker"],
+    "tags": [
+      "release:docker"
+    ],
     "release": {
       "docker": {
         "repositoryName": "network-of-terms-status"
