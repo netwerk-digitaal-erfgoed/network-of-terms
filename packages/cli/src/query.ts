@@ -70,12 +70,13 @@ export class QuerySourcesCommand extends Command {
                 response.result.distribution.iri,
               )?.name.nl ?? '',
             termUri: term.id!.value,
-            prefLabels: term.prefLabels
-              .map((prefLabel) => prefLabel.value)
-              .join(' / '),
-            altLabels: term.altLabels
-              .map((altLabel) => altLabel.value)
-              .join(' / '),
+            // Deduplicate values that differ only in language tag (e.g. identical nl and mul labels).
+            prefLabels: [
+              ...new Set(term.prefLabels.map((prefLabel) => prefLabel.value)),
+            ].join(' / '),
+            altLabels: [
+              ...new Set(term.altLabels.map((altLabel) => altLabel.value)),
+            ].join(' / '),
           };
         });
       },

@@ -146,6 +146,7 @@ describe('Server', () => {
       'Rembrandt',
       'Nachtwacht',
       'Kunstige dingen',
+      'Marion Michelle Koblitz',
       '',
       '',
     ]); // Results with score must come first.
@@ -183,7 +184,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(5); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(6); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -203,7 +204,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(6); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -310,6 +311,29 @@ describe('Server', () => {
         value: 'All things art',
       },
     ]);
+  });
+
+  it('falls back to mul labels, in the first requested language, for terms without labels in the requested languages', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/photographer'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('TranslatedTerm');
+    expect(term.result.prefLabel).toEqual([
+      { language: 'nl', value: 'Marion Michelle Koblitz' },
+    ]);
+  });
+
+  it('falls back to mul labels in non-multilingual lookup', async () => {
+    const body = await query(
+      lookupQuery({ uris: ['https://example.com/resources/photographer'] }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('Term');
+    expect(term.result.prefLabel).toEqual(['Marion Michelle Koblitz']);
   });
 
   it('resolves embedded Source in lookup using the first language from `languages`', async () => {

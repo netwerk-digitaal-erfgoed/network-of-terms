@@ -61,16 +61,14 @@ const literal = (values: Literal[], language: string) =>
   literalValues(values, [language]).join(' • ');
 
 function relatedTerms(label: string, terms: RelatedTerm[], language: string) {
-  const termsWithPrefLabel = terms.filter((term) => term.prefLabels.length > 0);
-  if (termsWithPrefLabel.length === 0) {
+  // Select the label per term, so each term gets its own language fallback.
+  const prefLabels = terms
+    .map((term) => literalValues(term.prefLabels, [language])[0])
+    .filter((prefLabel) => prefLabel !== undefined);
+  if (prefLabels.length === 0) {
     return '';
   }
 
   return `<dt>${label}</dt>
-      <dd>${escapeHtml(
-        literal(
-          termsWithPrefLabel.map((term) => term.prefLabels[0]),
-          language,
-        ),
-      )}</dd>`;
+      <dd>${escapeHtml(prefLabels.join(' • '))}</dd>`;
 }
