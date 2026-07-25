@@ -31,7 +31,9 @@ additions specific to the Network of Terms:
 
 - `schema:url` is used for the HTTP URI prefix of terms in the dataset, e.g. `http://vocab.getty.edu/aat/` for Getty
   resources. This prefix is needed when clients look up terms by their URI in the Network of Terms: the Network then has
-  to know which source to consult to retrieve the term;
+  to know which source to consult to retrieve the term. If the dataset is a subset of a broader dataset in the same URI
+  space (e.g. ‘Wikidata: persons’ is a subset of ‘Wikidata: all entities’), omit `schema:url`: only the
+  broadest dataset declares the prefix, so that lookups resolve to it rather than to an arbitrary subset;
 - `schema:inLanguage` is a required property;
 - `schema:genre` is a required property, with values restricted to the list of [Termennetwerk onderwerpen](https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen.html);
 - `schema:mainEntityOfPage` is a required property;
