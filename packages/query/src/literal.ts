@@ -14,6 +14,15 @@ export function filterLiteralsByLanguage(
     return preferredLanguageLiterals;
   }
 
+  // ‘mul’ literals (Wikidata’s default for all languages) are valid in every language,
+  // so return them in the client’s most preferred language.
+  const mulLiterals = literals.filter((literal) => literal.language === 'mul');
+  if (mulLiterals.length > 0 && languages.length > 0) {
+    return mulLiterals.map((literal) =>
+      dataFactory.literal(literal.value, languages[0]),
+    );
+  }
+
   // If literal has no language tag, we assume it is in the Network of Terms’ default language, Dutch.
   return literals
     .filter((literal) => literal.language === '')

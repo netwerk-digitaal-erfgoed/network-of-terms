@@ -15,12 +15,13 @@ WHERE {
     # Street: <http://www.wikidata.org/entity/Q19573969>
     VALUES ?uri { ?uris }
 
+    # ‘mul’ is Wikidata’s ‘default for all languages’ label.
     ?uri rdfs:label ?prefLabel .
-    FILTER(LANG(?prefLabel) = "nl" || LANG(?prefLabel) = "en")
+    FILTER(LANG(?prefLabel) IN ("nl", "en", "mul"))
 
     OPTIONAL {
         ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl" || LANG(?altLabel) = "en")
+        FILTER(LANG(?altLabel) IN ("nl", "en", "mul"))
     }
     OPTIONAL {
         ?uri schema:description ?description .

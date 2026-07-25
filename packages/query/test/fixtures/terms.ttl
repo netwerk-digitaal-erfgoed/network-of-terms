@@ -44,3 +44,8 @@
 
 <https://example.com/resources/match>
     skos:prefLabel "Exact match"@en .
+
+<https://example.com/resources/photographer>
+    a skos:Concept ;
+    # Wikidata-style ‘default for all languages’ label; see issue #1884.
+    skos:prefLabel "Marion Michelle Koblitz"@mul .

@@ -1,5 +1,6 @@
 import {
   IRI,
+  literalValues,
   LookupService,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
@@ -42,11 +43,11 @@ export async function extendQuery(
       id: lookupResult.uri.toString(),
       properties: dataExtensionProperties.map((property) => ({
         id: property.id,
-        values: (lookupResult.result as Term)[property.id]
-          .filter((literal) => literal.language === language)
-          .map((literal) => ({
-            str: literal.value,
-          })),
+        values: literalValues((lookupResult.result as Term)[property.id], [
+          language,
+        ]).map((value) => ({
+          str: value,
+        })),
       })),
     })),
   };
