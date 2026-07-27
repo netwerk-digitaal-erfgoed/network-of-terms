@@ -79,6 +79,15 @@ Search and lookup queries are SPARQL `CONSTRUCT` queries that the Network of Ter
 - `?query` – the search string, lowercased and trimmed (the default `OPTIMIZED` query mode).
 - `?virtuosoQuery` – the same string with each token quoted and joined by `AND`, ready for Virtuoso’s `bif:contains`.
 - `?uris` in lookup queries – replaced by `VALUES ?uri { … }` with the URIs being looked up.
+- `?datasetUri` in search queries – bound to the IRI of the dataset being searched.
+
+#### Attributing terms to the right dataset
+
+Several datasets may share a terms URI prefix (`schema:url`), for example when one thesaurus is published as multiple
+sub-datasets. A URI lookup can then only be routed by prefix to one of them, so **lookup queries should construct
+`?uri skos:inScheme ?datasetUri`** with `?datasetUri` bound to the IRI of the dataset that the term belongs to – either
+from the source’s own `skos:inScheme` statements, or from a `VALUES` clause that maps the term’s type to a dataset IRI.
+The Network of Terms uses that triple to attribute the term to its own dataset instead of the one the prefix pointed at.
 
 #### Full-text search
 

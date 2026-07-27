@@ -9,6 +9,7 @@ CONSTRUCT {
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri ;
+        skos:inScheme ?datasetUri ;
         skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
@@ -34,6 +35,10 @@ WHERE {
         UNION { ?uri skos:hiddenLabel ?hiddenLabel . }
         UNION { ?uri skos:scopeNote ?scopeNote . }
         UNION { ?uri skos:definition ?scopeNote . }
+        # Several datasets can share a terms URI prefix (e.g. the three PiCo-T
+        # sub-thesauri), in which case the Network of Terms uses the concept
+        # scheme to attribute the term to the dataset it really belongs to.
+        UNION { ?uri skos:inScheme ?datasetUri . }
         UNION {
             ?uri skos:broader ?broader_uri .
             ?broader_uri skos:prefLabel ?broader_prefLabel .
