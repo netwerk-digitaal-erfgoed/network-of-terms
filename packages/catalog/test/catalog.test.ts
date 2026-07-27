@@ -76,6 +76,73 @@ describe('Catalog', () => {
     expect(rkd?.iri).toEqual('https://data.rkd.nl/rkdartists');
   });
 
+  it('resolves term IRIs shared by multiple datasets to the broadest one', () => {
+    expect(
+      catalog.getDatasetByTermIri('http://www.wikidata.org/entity/Q230141')
+        ?.iri,
+    ).toEqual('https://www.wikidata.org#entities-all');
+    expect(
+      catalog.getDatasetByTermIri('http://vocab.getty.edu/aat/300010358')?.iri,
+    ).toEqual('http://vocab.getty.edu/aat');
+    expect(
+      catalog.getDatasetByTermIri(
+        'https://data.cultureelerfgoed.nl/term/id/cht/b47bd52f-97e5-402b-a2b6-3a0bb56e4e51',
+      )?.iri,
+    ).toEqual('https://data.cultureelerfgoed.nl/term/id/cht');
+    expect(
+      catalog.getDatasetByTermIri('https://sws.geonames.org/2745912/')?.iri,
+    ).toEqual('https://www.geonames.org');
+  });
+
+  it('declares each terms prefix on a single dataset, except known shared prefixes', () => {
+    // Datasets sharing these prefixes are told apart by each term’s
+    // skos:inScheme in their lookup query results instead; see
+    // https://github.com/netwerk-digitaal-erfgoed/network-of-terms/issues/1863
+    // for modelling them as first-class groups.
+    const sharedPrefixes = [
+      'http://data.beeldengeluid.nl/gtaa', // GTAA
+      'http://data.bibliotheken.nl/id/thes/', // KB: Brinkman, NTA, STCN, corporations
+      'https://data.muziekweb.nl/Link/', // Muziekweb
+      'https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/', // PiCo-T
+    ];
+    const datasetsByPrefix = new Map<string, string[]>();
+    for (const dataset of catalog.datasets) {
+      for (const prefix of dataset.termsPrefixes) {
+        datasetsByPrefix.set(prefix, [
+          ...(datasetsByPrefix.get(prefix) ?? []),
+          dataset.iri,
+        ]);
+      }
+    }
+    for (const [prefix, datasetIris] of datasetsByPrefix) {
+      if (sharedPrefixes.some((shared) => prefix.startsWith(shared))) {
+        continue;
+      }
+      expect(
+        datasetIris,
+        `prefix ${prefix} must be declared by a single dataset so that lookups resolve deterministically; broader/subset datasets must declare it only on the broadest one`,
+      ).toHaveLength(1);
+    }
+  });
+
+  it('covers datasets without a terms prefix through a broader dataset', () => {
+    for (const dataset of catalog.datasets) {
+      if (dataset.termsPrefixes.length > 0) {
+        continue;
+      }
+      const broader = catalog.datasets.find(
+        (candidate) =>
+          candidate.termsPrefixes.length > 0 &&
+          candidate.distributions[0].endpoint ===
+            dataset.distributions[0].endpoint,
+      );
+      expect(
+        broader,
+        `${dataset.iri} declares no terms prefix (schema:url), so a broader dataset on the same endpoint must declare one for lookups to work`,
+      ).toBeDefined();
+    }
+  });
+
   it('retrieves distributions providing feature', () => {
     const reconciliationApis = catalog.getDistributionsProvidingFeature(
       FeatureType.RECONCILIATION,
