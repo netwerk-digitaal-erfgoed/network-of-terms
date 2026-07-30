@@ -12,9 +12,11 @@ import { fileURLToPath } from 'url';
 let catalog: Catalog;
 
 describe('Catalog', () => {
+  // Parsing and querying the catalog is CPU-bound: ~2s locally, but it
+  // repeatedly exceeded 20s on CI runners that also run other tasks.
   beforeAll(async () => {
     catalog = await getCatalog();
-  }, 20_000);
+  }, 60_000);
 
   it('lists datasets in alphabetical order', () => {
     expect(catalog.datasets.length).toBeGreaterThan(3);
@@ -92,6 +94,19 @@ describe('Catalog', () => {
     expect(
       catalog.getDatasetByTermIri('https://sws.geonames.org/2745912/')?.iri,
     ).toEqual('https://www.geonames.org');
+  });
+
+  it('resolves term IRIs of datasets that hold terms in multiple URI spaces', () => {
+    for (const termIri of [
+      'https://data.cultureelerfgoed.nl/rights/cc-licenties',
+      'https://creativecommons.org/licenses/by-nc/4.0/',
+      'http://rightsstatements.org/vocab/InC/1.0/',
+      'https://rightsstatements.org/vocab/InC-RUU/1.0/',
+    ]) {
+      expect(catalog.getDatasetByTermIri(termIri)?.iri, termIri).toEqual(
+        'https://data.cultureelerfgoed.nl/rights',
+      );
+    }
   });
 
   it('declares each terms prefix on a single dataset, except known shared prefixes', () => {

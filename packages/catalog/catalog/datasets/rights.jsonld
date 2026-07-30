@@ -33,7 +33,10 @@
     }
   ],
   "url": [
-    "https://data.cultureelerfgoed.nl/rights/"
+    "https://data.cultureelerfgoed.nl/rights/",
+    "https://creativecommons.org/",
+    "http://rightsstatements.org/",
+    "https://rightsstatements.org/"
   ],
   "mainEntityOfPage": [
     "https://data.cultureelerfgoed.nl/rights.html"
