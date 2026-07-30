@@ -33,7 +33,9 @@ additions specific to the Network of Terms:
   resources. This prefix is needed when clients look up terms by their URI in the Network of Terms: the Network then has
   to know which source to consult to retrieve the term. If the dataset is a subset of a broader dataset in the same URI
   space (e.g. ‘Wikidata: persons’ is a subset of ‘Wikidata: all entities’), omit `schema:url`: only the
-  broadest dataset declares the prefix, so that lookups resolve to it rather than to an arbitrary subset;
+  broadest dataset declares the prefix, so that lookups resolve to it rather than to an arbitrary subset. A dataset
+  that holds terms in more than one URI space declares `schema:url` once per prefix, for example the Rights thesaurus,
+  which reuses the canonical Creative Commons and RightsStatements.org URIs alongside its own;
 - `schema:inLanguage` is a required property;
 - `schema:genre` is a required property, with values restricted to the list of [Termennetwerk onderwerpen](https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen.html);
 - `schema:mainEntityOfPage` is a required property;

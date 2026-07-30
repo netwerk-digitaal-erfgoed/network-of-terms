@@ -94,6 +94,19 @@ describe('Catalog', () => {
     ).toEqual('https://www.geonames.org');
   });
 
+  it('resolves term IRIs of datasets that hold terms in multiple URI spaces', () => {
+    for (const termIri of [
+      'https://data.cultureelerfgoed.nl/rights/cc-licenties',
+      'https://creativecommons.org/licenses/by-nc/4.0/',
+      'http://rightsstatements.org/vocab/InC/1.0/',
+      'https://rightsstatements.org/vocab/InC-RUU/1.0/',
+    ]) {
+      expect(catalog.getDatasetByTermIri(termIri)?.iri, termIri).toEqual(
+        'https://data.cultureelerfgoed.nl/rights',
+      );
+    }
+  });
+
   it('declares each terms prefix on a single dataset, except known shared prefixes', () => {
     // Datasets sharing these prefixes are told apart by each term’s
     // skos:inScheme in their lookup query results instead; see
