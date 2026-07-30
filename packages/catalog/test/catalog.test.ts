@@ -12,9 +12,11 @@ import { fileURLToPath } from 'url';
 let catalog: Catalog;
 
 describe('Catalog', () => {
+  // Parsing and querying the catalog is CPU-bound: ~2s locally, but it
+  // repeatedly exceeded 20s on CI runners that also run other tasks.
   beforeAll(async () => {
     catalog = await getCatalog();
-  }, 20_000);
+  }, 60_000);
 
   it('lists datasets in alphabetical order', () => {
     expect(catalog.datasets.length).toBeGreaterThan(3);
