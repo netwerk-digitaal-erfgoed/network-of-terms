@@ -19,7 +19,7 @@ WHERE {
     {
         SELECT DISTINCT ?uri WHERE {
             ?uri a skos:Concept ;
-                skos:inScheme <https://data.cultureelerfgoed.nl/term/id/abr/b402446a-0a00-4fee-a9cd-1a7f307d651e> ;
+                skos:inScheme <https://data.cultureelerfgoed.nl/term/id/abr/2/b402446a-0a00-4fee-a9cd-1a7f307d651e> ;
                 ?predicate ?label .
 
             VALUES ?predicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
