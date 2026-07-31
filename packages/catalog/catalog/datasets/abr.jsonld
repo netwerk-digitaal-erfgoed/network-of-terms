@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://data.cultureelerfgoed.nl/term/id/abr/",
+  "@id": "https://data.cultureelerfgoed.nl/term/id/abr",
   "@type": "Dataset",
   "name": [
     {
