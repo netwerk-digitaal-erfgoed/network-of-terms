@@ -20,7 +20,7 @@
   ],
   "dependencies": {
     "@fastify/accepts": "5.0.4",
-    "@fastify/cors": "11.2.0",
+    "@fastify/cors": "11.3.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "env-schema": "7.0.0",
