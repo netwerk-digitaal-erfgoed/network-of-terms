@@ -13,6 +13,7 @@ CONSTRUCT {
         skos:scopeNote ?schema_description ;
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
+        skos:inScheme ?datasetUri ;
         skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
@@ -23,8 +24,13 @@ WHERE {
     # Music genre: <https://data.muziekweb.nl/Link/T00000000050>
     VALUES ?uri { ?uris }
 
+    # Both Muziekweb datasets share the terms URI prefix, so bind the dataset that the
+    # term’s type belongs to; the Network of Terms uses it to attribute the term correctly.
     ?uri a ?type .
-    VALUES ?type { muziekweb:Genre schema:MusicGroup } .
+    VALUES (?type ?datasetUri) {
+        (muziekweb:Genre <https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb#mw-genresstijlen>)
+        (schema:MusicGroup <https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb#mw-personengroepen>)
+    }
 
     OPTIONAL { ?uri rdfs:label ?rdfs_label }
     OPTIONAL { ?uri skos:prefLabel ?prefLabel }

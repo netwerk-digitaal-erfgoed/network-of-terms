@@ -110,7 +110,16 @@ const catalogSchema = {
     },
   },
   mainEntityOfPage: schema.mainEntityOfPage,
-  url: schema.url,
+  // Multiple: a dataset may hold terms in more than one URI space, e.g. the
+  // Rights thesaurus, which reuses the canonical Creative Commons and
+  // RightsStatements.org URIs. Optional: datasets that share a terms-URI prefix
+  // with a broader dataset (e.g. Wikidata subsets) omit it, so lookups resolve
+  // to the broader one.
+  url: {
+    '@id': schema.url,
+    '@array': true,
+    '@optional': true,
+  },
 } as const;
 
 const engine = new QueryEngine();
@@ -133,7 +142,7 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
           dataset.name,
           dataset.description,
           dataset.genres,
-          [dataset.url],
+          dataset.url,
           dataset.mainEntityOfPage,
           dataset.inLanguage,
           [

@@ -72,7 +72,7 @@
     "groups": {
       "packages": {
         "projectsRelationship": "independent",
-        "projects": ["network-of-terms-catalog", "network-of-terms-query"],
+        "projects": ["tag:release:npm"],
         "releaseTag": {
           "pattern": "{projectName}@{version}"
         },
@@ -81,11 +81,7 @@
         }
       },
       "apps": {
-        "projects": [
-          "network-of-terms-graphql",
-          "network-of-terms-reconciliation",
-          "network-of-terms-status"
-        ],
+        "projects": ["tag:release:docker"],
         "releaseTag": {
           "pattern": "{projectName}@{version}"
         },

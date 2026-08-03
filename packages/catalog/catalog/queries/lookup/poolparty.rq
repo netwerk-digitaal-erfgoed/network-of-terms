@@ -9,6 +9,7 @@ CONSTRUCT {
         skos:broader ?broader_uri ;
         skos:narrower ?narrower_uri ;
         skos:related ?related_uri ;
+        skos:inScheme ?datasetUri ;
         skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
@@ -17,45 +18,46 @@ CONSTRUCT {
 }
 WHERE {
     # For example:
-    # Aardewerk: <https://data.cultureelerfgoed.nl/term/id/abr/71e411bf-8645-4420-98a4-b8746574b002>
+    # Aardewerk: <https://data.cultureelerfgoed.nl/term/id/abr/2/71e411bf-8645-4420-98a4-b8746574b002>
     # Aardewerk: <https://data.cultureelerfgoed.nl/term/id/cht/dfbf8107-09f9-49c9-8118-8e79b7613723>
     VALUES ?uri { ?uris }
 
     ?uri a skos:Concept .
 
-    OPTIONAL {
-        ?uri skos:prefLabel ?prefLabel .
-    }
-    OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-    }
-    OPTIONAL {
-        ?uri skos:hiddenLabel ?hiddenLabel .
-    }
-    OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote .
-    }
-    OPTIONAL {
-        ?uri skos:definition ?scopeNote .
-    }
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri skos:prefLabel ?broader_prefLabel .
-    }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-    }
-    OPTIONAL {
-        ?uri skos:related ?related_uri .
-        ?related_uri skos:prefLabel ?related_prefLabel .
-    }
-    OPTIONAL {
-        ?uri skos:exactMatch ?exactMatch_uri .
-        FILTER(!STRSTARTS(STR(?exactMatch_uri), "https://data.cultureelerfgoed.nl/term/id/rn"))
-        FILTER(!STRSTARTS(STR(?exactMatch_uri), "https://data.cultureelerfgoed.nl/semnet"))
-        OPTIONAL {
-            ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+    # Each property is independently multi-valued, so use UNION (one branch per
+    # property) instead of OPTIONAL to prevent a cross-product. Besides being
+    # far slower, the cross-product multiplies rows past the LIMIT below, which
+    # silently truncated related/narrower/broader labels of richly-linked
+    # concepts (e.g. ‘Transgender personen’, with 174 relations).
+    {
+        { ?uri skos:prefLabel ?prefLabel . }
+        UNION { ?uri skos:altLabel ?altLabel . }
+        UNION { ?uri skos:hiddenLabel ?hiddenLabel . }
+        UNION { ?uri skos:scopeNote ?scopeNote . }
+        UNION { ?uri skos:definition ?scopeNote . }
+        # Several datasets can share a terms URI prefix (e.g. the three PiCo-T
+        # sub-thesauri), in which case the Network of Terms uses the concept
+        # scheme to attribute the term to the dataset it really belongs to.
+        UNION { ?uri skos:inScheme ?datasetUri . }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+        }
+        UNION {
+            ?uri skos:related ?related_uri .
+            ?related_uri skos:prefLabel ?related_prefLabel .
+        }
+        UNION {
+            ?uri skos:exactMatch ?exactMatch_uri .
+            FILTER(!STRSTARTS(STR(?exactMatch_uri), "https://data.cultureelerfgoed.nl/term/id/rn"))
+            FILTER(!STRSTARTS(STR(?exactMatch_uri), "https://data.cultureelerfgoed.nl/semnet"))
+            OPTIONAL {
+                ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+            }
         }
     }
 }

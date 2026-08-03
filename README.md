@@ -1,5 +1,7 @@
 # Network of Terms
 
+[![Documentation](https://img.shields.io/badge/docs-docs.nde.nl-blue)](https://docs.nde.nl/services/network-of-terms)
+
 The Network of Terms is a **search engine for finding terms** in terminology sources (such as thesauri, classification
 systems and reference lists).
 
@@ -38,6 +40,12 @@ flowchart TD
   not -- search query ---> ts2
   ts2 -. search results -.-> not
 ```
+
+## Documentation
+
+This README and the package READMEs cover **running, hosting and extending** the Network of Terms software: install steps, environment variables, the catalog data model, query authoring and the test suite.
+
+For **using** the Network of Terms, including the GraphQL and Reconciliation APIs, the demonstrator and available terminology sources, see the public documentation at 📖 [docs.nde.nl/services/network-of-terms](https://docs.nde.nl/services/network-of-terms).
 
 ## Getting started
 

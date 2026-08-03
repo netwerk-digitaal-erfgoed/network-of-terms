@@ -60,4 +60,4 @@ Returns the latest availability observations for all monitored endpoints. Suppor
 
 ## Database
 
-The service requires a PostgreSQL database. The schema is managed by the `@lde/sparql-monitor` library and is created automatically on first run.
+The service requires a PostgreSQL database. The schema is managed by the `@lde/distribution-monitor` library and is created automatically on first run.

@@ -35,7 +35,6 @@
       "@id": "http://www.getty.edu/research/"
     }
   ],
-  "url": ["http://vocab.getty.edu/aat/"],
   "mainEntityOfPage": [
     "https://www.getty.edu/research/tools/vocabularies/aat/about.html"
   ],
@@ -54,7 +53,7 @@
     {
       "@id": "http://vocab.getty.edu/aat/sparql/styles-and-periods",
       "@type": "DataDownload",
-      "contentUrl": "http://vocab.getty.edu/sparql",
+      "contentUrl": "https://vocab.getty.edu/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
