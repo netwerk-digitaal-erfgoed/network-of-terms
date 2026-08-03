@@ -1,0 +1,77 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://www.korpora.info/data/rdf",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Fire Brigade Heritage Thesaurus"
+    },
+    {
+      "@language": "nl",
+      "@value": "Brandweer Erfgoed"
+    }
+  ],
+  "alternateName": [
+    {
+      "@language": "en",
+      "@value": "Fire Brigade Thesaurus"
+    },
+    {
+      "@language": "nl",
+      "@value": "Brandweerthesaurus"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.korpora.nl"
+    }
+  ],
+  "url": ["https://digitaalerfgoed.poolparty.biz/data/rdf/"],
+  "mainEntityOfPage": ["https://digitaalerfgoed.poolparty.biz/data/rfd.html"],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing fire brigade heritage. The Fire Brigade Thesaurus was developed for the unambiguous description and disclosure of fire brigade heritage. The thesaurus contains more than 500 carefully selected fire brigade terms, many of which are linked to specific periods or developments in fire brigade history. The thesaurus is intended for anyone who manages a fire brigade collection, such as museums, historical societies, corporate collections, fire stations and private collectors. By using the same terminology, collections become easier to find, comparable with one another, and easier to disclose jointly."
+    },
+    {
+      "@language": "nl",
+      "@value": "Termen voor het beschrijven van Brandweer Erfgoed. De Brandweerthesaurus is ontwikkeld voor het eenduidig beschrijven en ontsluiten van brandweererfgoed. De thesaurus bevat meer dan 500 zorgvuldig geselecteerde brandweertermen, waarvan veel zijn gekoppeld aan specifieke perioden of ontwikkelingen uit de brandweergeschiedenis. De thesaurus is bedoeld voor iedereen die een brandweercollectie beheert, zoals musea, historische verenigingen, bedrijfscollecties, op brandweerkazernes en particuliere verzamelaars. Door gebruik te maken van dezelfde terminologie worden collecties beter vindbaar, onderling vergelijkbaar en eenvoudiger gezamenlijk toegankelijk te maken."
+    }
+  ],
+  "inLanguage": ["nl"],
+  "distribution": [
+    {
+      "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/data/rdf",
+      "@type": "DataDownload",
+      "contentUrl": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/data/rdf",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

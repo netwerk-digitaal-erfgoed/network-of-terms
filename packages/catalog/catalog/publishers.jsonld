@@ -372,6 +372,19 @@
         }
       ],
       "alternateName": "LGOG"
+    },
+    {
+      "@id": "https://www.korpora.nl",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en", "@value": "Korpora, Heritage of Public Safety"
+        },
+        { 
+          "@language": "nl", "@value": "Korpora, Erfgoed Publieke Veiligheid"
+        }
+      ],
+      "alternateName": "Korpora"
     }
   ]
 }
