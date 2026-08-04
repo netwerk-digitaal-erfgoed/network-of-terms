@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/523",
+  "@id": "https://terms.personsincontext.org/brontypes",
   "@type": "Dataset",
   "name": [
     {
@@ -33,10 +33,10 @@
     }
   ],
   "url": [
-    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/"
+    "https://terms.personsincontext.org/brontypes/"
   ],
   "mainEntityOfPage": [
-    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens"
+    "https://terms.personsincontext.org/brontypes"
   ],
   "description": [
     {
@@ -62,7 +62,7 @@
         },
         {
           "@type": "FindAction",
-          "query": "file://../queries/lookup/poolparty.rq"
+          "query": "file://../queries/lookup/picot.rq"
         },
         {
           "@type": "Action",
