@@ -57,7 +57,6 @@
           "sh:path": {
             "@id": "schema:url"
           },
-          "sh:minCount": 1,
           "sh:nodeKind": {
             "@id": "sh:IRI"
           }

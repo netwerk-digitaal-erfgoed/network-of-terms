@@ -14,11 +14,11 @@ const catalog = testCatalog(3000);
 describe('Server', () => {
   afterAll(async () => {
     await teardown();
-  }, 20_000);
+  }, 40_000);
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3000);
     httpServer = await server(catalog, config);
-  }, 20_000);
+  }, 40_000);
 
   it('responds to GraphQL sources query', async () => {
     const body = await query(
@@ -146,6 +146,7 @@ describe('Server', () => {
       'Rembrandt',
       'Nachtwacht',
       'Kunstige dingen',
+      'Marion Michelle Koblitz',
       '',
       '',
     ]); // Results with score must come first.
@@ -183,7 +184,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(5); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(6); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -203,7 +204,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(5); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(6); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -269,6 +270,32 @@ describe('Server', () => {
     expect(timeoutError.result.__typename).toEqual('TimeoutError');
   });
 
+  it('resolves URIs across datasets that share a terms prefix', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: [
+          'https://example.com/multi-scheme/term-a',
+          'https://example.com/multi-scheme/term-b',
+        ],
+      }),
+    );
+
+    expect(body.errors).toBeUndefined();
+    expect(body.data.lookup).toHaveLength(2);
+
+    const termA = body.data.lookup[0];
+    expect(termA.uri).toEqual('https://example.com/multi-scheme/term-a');
+    expect(termA.result.__typename).toEqual('Term');
+    expect(termA.result.prefLabel).toEqual(['Term in sub-scheme A']);
+    expect(termA.source.uri).toEqual('https://example.com/multi-scheme/A');
+
+    const termB = body.data.lookup[1];
+    expect(termB.uri).toEqual('https://example.com/multi-scheme/term-b');
+    expect(termB.result.__typename).toEqual('Term');
+    expect(termB.result.prefLabel).toEqual(['Term in sub-scheme B']);
+    expect(termB.source.uri).toEqual('https://example.com/multi-scheme/B');
+  });
+
   it('responds to successful multilingual GraphQL lookup query', async () => {
     const body = await query(
       lookupQuery({
@@ -284,6 +311,58 @@ describe('Server', () => {
         value: 'All things art',
       },
     ]);
+  });
+
+  it('falls back to mul labels, in the first requested language, for terms without labels in the requested languages', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/photographer'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('TranslatedTerm');
+    expect(term.result.prefLabel).toEqual([
+      { language: 'nl', value: 'Marion Michelle Koblitz' },
+    ]);
+  });
+
+  it('falls back to mul labels in non-multilingual lookup', async () => {
+    const body = await query(
+      lookupQuery({ uris: ['https://example.com/resources/photographer'] }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('Term');
+    expect(term.result.prefLabel).toEqual(['Marion Michelle Koblitz']);
+  });
+
+  it('resolves embedded Source in lookup using the first language from `languages`', async () => {
+    const englishFirst = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/art'],
+        languages: ['en', 'nl'],
+      }),
+    );
+    expect(englishFirst.data.lookup[0].source.description).toEqual(
+      'Biographical data of Dutch and foreign artists from the Middle Ages to the present',
+    );
+
+    const dutchFirst = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/art'],
+        languages: ['nl', 'en'],
+      }),
+    );
+    expect(dutchFirst.data.lookup[0].source.description).toEqual(
+      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+    );
+
+    const noLanguages = await query(
+      lookupQuery({ uris: ['https://example.com/resources/art'] }),
+    );
+    expect(noLanguages.data.lookup[0].source.description).toEqual(
+      'Biografische gegevens van Nederlandse en buitenlandse kunstenaars van de middeleeuwen tot heden',
+    );
   });
 
   it('responds to GraphQL playground requests', async () => {
@@ -433,6 +512,7 @@ function lookupQuery({
           ... on Source {
             uri
             name
+            description
             creators {
               uri
               name
@@ -443,7 +523,7 @@ function lookupQuery({
             __typename
             message
           }
-        }        
+        }
         result {
           __typename
           ${

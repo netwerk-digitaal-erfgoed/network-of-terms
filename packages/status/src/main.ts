@@ -2,8 +2,7 @@ import { getCatalog } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import {
   MonitorService,
   PostgresObservationStore,
-  SparqlMonitor,
-} from '@lde/sparql-monitor';
+} from '@lde/distribution-monitor';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { rdfSerializer } from 'rdf-serialize';
@@ -50,16 +49,16 @@ try {
   // Initialize LDES serializer
   const serializer = new LdesSerializer({ baseUrl: config.LDES_BASE_URL });
 
-  // Initialize monitor service with 10s timeout per endpoint
-  const sparqlMonitor = new SparqlMonitor({
-    timeoutMs: 10000,
-    headers: new Headers({ 'User-Agent': userAgent }),
-  });
+  // Initialize monitor service with 10s timeout per distribution. Retry
+  // connection-level failures within a check so transient resets (the cause of
+  // the Gouda Tijdmachine flapping) don’t flip a healthy source to unavailable.
   const monitorService = new MonitorService({
     store,
     monitors,
     intervalSeconds: config.POLLING_INTERVAL_SECONDS,
-    sparqlMonitor,
+    timeoutMs: 10000,
+    retries: 2,
+    headers: new Headers({ 'User-Agent': userAgent }),
   });
 
   // Initialize Fastify server

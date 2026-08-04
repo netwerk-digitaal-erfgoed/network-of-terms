@@ -20,19 +20,20 @@
   ],
   "dependencies": {
     "@fastify/accepts": "5.0.4",
-    "@fastify/cors": "11.2.0",
+    "@fastify/cors": "11.3.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "env-schema": "7.0.0",
-    "fastify": "5.8.3",
+    "fastify": "5.10.0",
     "graphql": "16.13.0",
-    "mercurius": "16.8.0",
+    "mercurius": "16.10.0",
     "mercurius-logging": "2.0.0"
   },
   "engines": {
     "node": ">=16.15.0"
   },
   "nx": {
+    "tags": ["release:docker"],
     "release": {
       "docker": {
         "repositoryName": "network-of-terms-graphql"

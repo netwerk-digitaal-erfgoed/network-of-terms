@@ -15,14 +15,14 @@ jobs:
     # Skip bot-authored commits to prevent redundant workflow runs.
     if: github.event.head_commit.author.name != 'github-actions[bot]'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           # Need full git history for nx release to work properly.
           fetch-depth: 0
           filter: tree:0
           token: ${{ secrets.PAT }}
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: lts/*
           cache: 'npm'
@@ -56,7 +56,15 @@ jobs:
           NPM_CONFIG_PROVENANCE: true
         id: docker
         run: |
-          npx nx release --yes
+          # Release only affected projects: ‘nx release’ tags Docker images for
+          # every project it processes, but the build step above only builds
+          # images for affected projects.
+          AFFECTED=$(npx nx show projects --affected --projects "tag:release:*" --json | jq -r 'join(",")')
+          if [ -n "$AFFECTED" ]; then
+            npx nx release --yes --projects="$AFFECTED"
+          else
+            echo "No release projects affected; skipping release."
+          fi
           {
             echo 'images<<EOF'
             docker image ls ghcr.io/netwerk-digitaal-erfgoed/network-of-terms-* --format "{{.Repository}}:{{.Tag}}"

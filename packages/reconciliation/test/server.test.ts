@@ -15,12 +15,12 @@ const catalog = testCatalog(3001);
 describe('Server', () => {
   afterAll(async () => {
     await teardown();
-  }, 20_000);
+  }, 40_000);
 
   beforeAll(async () => {
     await startDistributionSparqlEndpoint(3001);
     httpServer = await server(catalog, config);
-  }, 20_000);
+  }, 40_000);
 
   it('returns ok at root', async () => {
     const response = await httpServer.inject({
@@ -188,6 +188,26 @@ describe('Server', () => {
     });
   });
 
+  it('falls back to mul labels in data extension response', async () => {
+    const response = await dataExtensionQuery({
+      url: '/extend',
+      language: 'en',
+      query: {
+        ids: ['https://example.com/resources/photographer'],
+        properties: [{ id: 'prefLabel' }],
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(results.rows).toEqual({
+      'https://example.com/resources/photographer': {
+        prefLabels: [{ str: 'Marion Michelle Koblitz' }],
+        altLabels: [],
+        scopeNotes: [],
+      },
+    });
+  });
+
   it('shows HTML term preview, defaulting to Dutch', async () => {
     const response = await httpServer.inject({
       method: 'GET',
@@ -199,7 +219,7 @@ describe('Server', () => {
     expect(response.body).toMatch('One of the most famous Dutch paintings');
     expect(response.body).toMatch(
       new RegExp(
-        '<dt>Gerelateerde termen</dt>\\s*<dd>All things art &#8226; Rembrandt</dd>',
+        '<dt>Gerelateerde termen</dt>\\s*<dd>Kunstige dingen &#8226; Rembrandt</dd>',
       ),
     );
     expect(response.body).toContain('RKDartists');

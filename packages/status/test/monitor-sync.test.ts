@@ -132,7 +132,7 @@ describe('monitor-sync', () => {
       const monitors = extractMonitorConfigs(catalog);
 
       expect(monitors.length).toBe(1);
-      expect(monitors[0].endpointUrl.toString()).toBe(
+      expect(monitors[0].distribution.accessUrl.toString()).toBe(
         'http://user:pass@example.org/sparql',
       );
     });
@@ -155,10 +155,10 @@ describe('monitor-sync', () => {
 
       const monitors = extractMonitorConfigs(catalog);
 
-      expect(monitors[0].query).toContain(
+      expect(monitors[0].sparqlQuery).toContain(
         'VALUES ?requestedGenre { <http://example.org/genre/Personen> <http://example.org/genre/Locaties> }',
       );
-      expect(monitors[0].query).not.toContain('?genres');
+      expect(monitors[0].sparqlQuery).not.toContain('?genres');
     });
 
     it('should include query in monitor config', () => {
@@ -175,7 +175,7 @@ describe('monitor-sync', () => {
       const monitors = extractMonitorConfigs(catalog);
 
       expect(monitors.length).toBe(1);
-      expect(monitors[0].query).toBe(query);
+      expect(monitors[0].sparqlQuery).toBe(query);
     });
   });
 });
