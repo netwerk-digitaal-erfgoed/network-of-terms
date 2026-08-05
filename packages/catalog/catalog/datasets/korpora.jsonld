@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://www.korpora.info/data/rdf",
+  "@id": "https://thesaurus.korpora.info/data/rdf",
   "@type": "Dataset",
   "name": [
     {
