@@ -14,7 +14,7 @@ npx nx affected -t <target>               # Prefer this for efficiency: changed 
 # Targets: build, test, lint, typecheck, serve
 ```
 
-Project names use the full npm package name: `network-of-terms-catalog`, `network-of-terms-query`, `network-of-terms-graphql`, `network-of-terms-reconciliation`, `network-of-terms-cli`.
+Project names are short and match the conventional-commit scopes: `catalog`, `query`, `graphql`, `reconciliation`, `status`, `cli` (set via `nx.name` in each package’s `package.json`; the npm package name keeps the `@netwerk-digitaal-erfgoed/network-of-terms-` prefix). Scoping a commit to a project name is what lets `nx release` apply that commit’s type – `feat`, `fix`, `!` – to the project’s version bump; a scope that matches no project falls through to a patch.
 
 ## Architecture
 

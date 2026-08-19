@@ -34,7 +34,7 @@ Then run the service:
     git clone https://github.com/netwerk-digitaal-erfgoed/network-of-terms.git
     cd network-of-terms
     npm install
-    npx nx serve network-of-terms-status
+    npx nx serve status
 
 ## Configuration
 

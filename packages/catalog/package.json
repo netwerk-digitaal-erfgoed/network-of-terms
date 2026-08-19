@@ -53,6 +53,7 @@
     "rdf-validate-shacl": "0.6.5"
   },
   "nx": {
+    "name": "catalog",
     "tags": [
       "release:npm"
     ]
