@@ -1,20 +1,27 @@
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX gn: <https://www.geonames.org/ontology#>
+PREFIX schema: <https://schema.org/>
+PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
 CONSTRUCT {
-    ?uri a skos:Concept ;
+    ?uri a skos:Concept , schema:Place ;
         skos:prefLabel ?prefLabel_ext ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_en ;
-        skos:broader ?broader .
+        skos:broader ?broader ;
+        schema:latitude ?latitude ;
+        schema:longitude ?longitude .
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
-    # https://sws.geonames.org/2752375 (Koudekerke)
+    # Term URIs carry a trailing slash, e.g. https://sws.geonames.org/2752375/ (Koudekerke).
     VALUES ?uri { ?uris }
 
+    # Every feature has exactly one point, including countries and continents.
     ?uri a gn:Feature ;
-        gn:name ?prefLabel .
+        gn:name ?prefLabel ;
+        wgs84:lat ?latitude ;
+        wgs84:long ?longitude .
 
     # Supranational features (continents and the planet) have no country code.
     OPTIONAL { ?uri gn:countryCode ?countryCode . }
