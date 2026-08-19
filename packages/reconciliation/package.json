@@ -34,6 +34,7 @@
     "accepts": "1.3.8"
   },
   "nx": {
+    "name": "reconciliation",
     "tags": ["release:docker"],
     "release": {
       "docker": {
@@ -94,15 +95,15 @@
           "build"
         ],
         "options": {
-          "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-reconciliation:build",
+          "buildTarget": "reconciliation:build",
           "runBuildTargetDependencies": false
         },
         "configurations": {
           "development": {
-            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-reconciliation:build:development"
+            "buildTarget": "reconciliation:build:development"
           },
           "production": {
-            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-reconciliation:build:production"
+            "buildTarget": "reconciliation:build:production"
           }
         }
       },
@@ -110,7 +111,7 @@
         "continuous": true,
         "executor": "nx:run-commands",
         "options": {
-          "command": "npx nodemon --watch packages/catalog/src --ignore 'packages/reconciliation/dist/**' --ignore '**/node_modules/**' --ext 'ts,js,json' --exec 'npx nx serve-dev network-of-terms-reconciliation 2>&1 | grep -v \"catalog/\" | cat'"
+          "command": "npx nodemon --watch packages/catalog/src --ignore 'packages/reconciliation/dist/**' --ignore '**/node_modules/**' --ext 'ts,js,json' --exec 'npx nx serve-dev reconciliation 2>&1 | grep -v \"catalog/\" | cat'"
         }
       },
       "copy-workspace-modules": {},

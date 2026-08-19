@@ -74,7 +74,7 @@
         "projectsRelationship": "independent",
         "projects": ["tag:release:npm"],
         "releaseTag": {
-          "pattern": "{projectName}@{version}"
+          "pattern": "@netwerk-digitaal-erfgoed/network-of-terms-{projectName}@{version}"
         },
         "version": {
           "conventionalCommits": true
@@ -83,7 +83,7 @@
       "apps": {
         "projects": ["tag:release:docker"],
         "releaseTag": {
-          "pattern": "{projectName}@{version}"
+          "pattern": "@netwerk-digitaal-erfgoed/network-of-terms-{projectName}@{version}"
         },
         "docker": {
           "skipVersionActions": true,

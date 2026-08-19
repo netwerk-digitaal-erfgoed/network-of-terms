@@ -33,6 +33,7 @@
     "node": ">=16.15.0"
   },
   "nx": {
+    "name": "graphql",
     "tags": ["release:docker"],
     "release": {
       "docker": {
@@ -86,15 +87,15 @@
           "build"
         ],
         "options": {
-          "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build",
+          "buildTarget": "graphql:build",
           "runBuildTargetDependencies": false
         },
         "configurations": {
           "development": {
-            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build:development"
+            "buildTarget": "graphql:build:development"
           },
           "production": {
-            "buildTarget": "@netwerk-digitaal-erfgoed/network-of-terms-graphql:build:production"
+            "buildTarget": "graphql:build:production"
           }
         }
       },
@@ -102,7 +103,7 @@
         "continuous": true,
         "executor": "nx:run-commands",
         "options": {
-          "command": "npx nodemon --watch packages/catalog/catalog --exec 'npx nx serve-dev network-of-terms-graphql'"
+          "command": "npx nodemon --watch packages/catalog/catalog --exec 'npx nx serve-dev graphql'"
         }
       },
       "copy-workspace-modules": {},

@@ -55,6 +55,7 @@
     "asynciterator": "3.10.0"
   },
   "nx": {
+    "name": "query",
     "tags": [
       "release:npm"
     ]

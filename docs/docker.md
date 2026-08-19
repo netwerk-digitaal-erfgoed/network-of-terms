@@ -17,11 +17,11 @@ And execute the commands that you find in each package’s readme (for example
 
     # In the container:
     /app # npm install
-    /app # npx nx serve network-of-terms-graphql
+    /app # npx nx serve graphql
 
     # or:
 
-    /app # npx nx serve network-of-terms-reconciliation
+    /app # npx nx serve reconciliation
 
 You can also use this method if you want to run the application on an
 [Apple silicon](https://support.apple.com/en-gb/HT211814) computer without emulation, as our ready-made Docker images
