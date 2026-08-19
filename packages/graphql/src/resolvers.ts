@@ -176,9 +176,11 @@ class TranslatedTerms {
   constructor(readonly terms: object[]) {}
 }
 
+type TranslatedTermType = 'Concept' | 'Person' | 'Place';
+
 function mapToTranslatedTerm(term: Term, languages: string[]) {
   return {
-    type: 'TranslatedTerm',
+    type: translatedTermType(term),
     uri: term.id!.value,
     prefLabel: filterLiteralsByLanguage(term.prefLabels, languages),
     altLabel: filterLiteralsByLanguage(term.altLabels, languages),
@@ -202,8 +204,45 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
       uri: exactMatch.id.value,
       prefLabel: filterLiteralsByLanguage(exactMatch.prefLabels, languages),
     })),
+    latitude: floatValue(term.latitude),
+    longitude: floatValue(term.longitude),
   };
 }
+
+/**
+ * The `TranslatedTerm` implementation that the term’s asserted types map to.
+ *
+ * Terms that are not typed by their source, or typed as something we have no GraphQL type for, are
+ * `Concept`s: SKOS remains the frame, so `skos:Concept` is the default rather than an error.
+ */
+function translatedTermType(term: Term): TranslatedTermType {
+  for (const type of term.types) {
+    const translatedTermType = classToTranslatedTermType.get(type.value);
+    if (translatedTermType !== undefined) {
+      return translatedTermType;
+    }
+  }
+
+  return 'Concept';
+}
+
+// Both Schema.org namespaces, because source queries use either one.
+const classToTranslatedTermType = new Map<string, TranslatedTermType>([
+  ['https://schema.org/Person', 'Person'],
+  ['http://schema.org/Person', 'Person'],
+  ['https://schema.org/Place', 'Place'],
+  ['http://schema.org/Place', 'Place'],
+]);
+
+/**
+ * Sources are not validated, so a coordinate may be absent, empty or not a number at all. Anything
+ * we cannot read as a finite number becomes null: an unknown coordinate is not a field error, and
+ * `Number('')` would silently place the term at 0°, 0°.
+ */
+const floatValue = (literal: RDF.Literal | undefined) => {
+  const value = Number(literal?.value);
+  return Number.isFinite(value) && literal?.value.trim() !== '' ? value : null;
+};
 
 function mapToTerm(term: Term, languages: string[]) {
   return {
@@ -298,8 +337,11 @@ export const resolvers = {
       return 'Source';
     },
   },
+  TranslatedTerm: {
+    resolveType: (term: { type: TranslatedTermType }) => term.type,
+  },
   LookupResult: {
-    resolveType(result: LookupResult | { type: 'TranslatedTerm' }) {
+    resolveType(result: LookupResult | { type: TranslatedTermType }) {
       if (result instanceof NotFoundError) {
         return 'NotFoundError';
       }
@@ -312,8 +354,8 @@ export const resolvers = {
         return 'ServerError';
       }
 
-      if (result.type === 'TranslatedTerm') {
-        return 'TranslatedTerm';
+      if ('type' in result) {
+        return result.type;
       }
 
       return 'Term';
