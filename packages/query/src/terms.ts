@@ -3,7 +3,7 @@ import type RDF from '@rdfjs/types';
 export class Term {
   constructor(
     readonly id: RDF.Term,
-    readonly type: RDF.Term | undefined,
+    readonly types: RDF.Term[],
     readonly prefLabels: RDF.Literal[],
     readonly altLabels: RDF.Literal[],
     readonly hiddenLabels: RDF.Literal[],
@@ -15,6 +15,8 @@ export class Term {
     readonly exactMatches: RelatedTerm[],
     readonly datasetIri: RDF.Term | undefined,
     readonly score: RDF.Literal | undefined,
+    readonly latitude: RDF.Literal | undefined,
+    readonly longitude: RDF.Literal | undefined,
   ) {}
 }
 
@@ -27,7 +29,7 @@ export class RelatedTerm {
 
 class SparqlResultTerm {
   constructor(readonly id: RDF.Term) {}
-  type: RDF.Term | undefined = undefined;
+  types: RDF.Term[] = [];
   prefLabels: RDF.Literal[] = [];
   altLabels: RDF.Literal[] = [];
   hiddenLabels: RDF.Literal[] = [];
@@ -39,13 +41,15 @@ class SparqlResultTerm {
   exactMatches: RDF.Term[] = [];
   inScheme: RDF.Term | undefined = undefined;
   score: RDF.Literal | undefined = undefined;
+  latitude: RDF.Literal | undefined = undefined;
+  longitude: RDF.Literal | undefined = undefined;
 }
 
 export class TermsTransformer {
   private termsIris: Set<string> = new Set();
   private termsMap: Map<string, SparqlResultTerm> = new Map();
   private readonly predicateToPropertyMap = new Map<string, string>([
-    ['http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'type'],
+    ['http://www.w3.org/1999/02/22-rdf-syntax-ns#type', 'types'],
     ['http://www.w3.org/2000/01/rdf-schema#seeAlso', 'seeAlso'],
     ['http://www.w3.org/2004/02/skos/core#prefLabel', 'prefLabels'],
     ['http://www.w3.org/2008/05/skos#prefLabel', 'prefLabels'],
@@ -65,6 +69,11 @@ export class TermsTransformer {
     ['http://www.w3.org/2008/05/skos#exactMatch', 'exactMatches'],
     ['http://www.w3.org/2004/02/skos/core#inScheme', 'inScheme'],
     ['http://purl.org/voc/vrank#simpleRank', 'score'],
+    // Both Schema.org namespaces, because source queries use either one.
+    ['https://schema.org/latitude', 'latitude'],
+    ['http://schema.org/latitude', 'latitude'],
+    ['https://schema.org/longitude', 'longitude'],
+    ['http://schema.org/longitude', 'longitude'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -76,7 +85,7 @@ export class TermsTransformer {
 
     // skos:Concepts are the top-level search results, which we track in termsIris.
     if (
-      propertyName === 'type' &&
+      propertyName === 'types' &&
       (quad.object.value === 'http://www.w3.org/2004/02/skos/core#Concept' ||
         quad.object.value === 'http://www.w3.org/2008/05/skos#Concept')
     ) {
@@ -102,7 +111,7 @@ export class TermsTransformer {
 
       return new Term(
         term.id,
-        term.type,
+        term.types,
         term.prefLabels,
         term.altLabels,
         term.hiddenLabels,
@@ -116,6 +125,8 @@ export class TermsTransformer {
         this.mapRelatedTerms(term.exactMatches).sort(alphabeticallyByPrefLabel),
         term.inScheme,
         term.score,
+        term.latitude,
+        term.longitude,
       );
     });
   }
