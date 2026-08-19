@@ -1,6 +1,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <https://schema.org/> .
 @prefix vrank: <http://purl.org/voc/vrank#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 <https://example.com/resources/artwork>
     a skos:Concept ;
@@ -46,6 +48,19 @@
     skos:prefLabel "Exact match"@en .
 
 <https://example.com/resources/photographer>
-    a skos:Concept ;
+    a skos:Concept, schema:Person ;
     # Wikidata-style ‘default for all languages’ label; see issue #1884.
     skos:prefLabel "Marion Michelle Koblitz"@mul .
+
+<https://example.com/resources/place>
+    a skos:Concept, schema:Place ;
+    skos:prefLabel "Maastricht"@nl ;
+    schema:latitude "50.84833"^^xsd:float ;
+    schema:longitude "5.68889"^^xsd:float .
+
+# A place whose source publishes unusable coordinates; see the `floatValue` guard in resolvers.ts.
+<https://example.com/resources/place-without-coordinates>
+    a skos:Concept, schema:Place ;
+    skos:prefLabel "Nergenshuizen"@nl ;
+    schema:latitude "" ;
+    schema:longitude "onbekend" .
