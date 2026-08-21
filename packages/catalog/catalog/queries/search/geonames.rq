@@ -11,6 +11,7 @@ CONSTRUCT {
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_en , ?scopeNote_nl ;
         skos:broader ?broader ;
+        skos:exactMatch ?wikidataItem ;
         schema:latitude ?latitude ;
         schema:longitude ?longitude ;
         vrank:simpleRank ?score .
@@ -47,6 +48,14 @@ WHERE {
     ?uri gn:name ?name ;
         wgs84:lat ?latitude ;
         wgs84:long ?longitude .
+
+    # GeoNames aligns 1.1M features to Wikidata. The source publishes schema:sameAs rather than
+    # owl:sameAs, because 340 QIDs cover more than one feature – Wikidata models the three Tihange
+    # reactors as one power station – so the claim is deliberately non-entailing. Interchangeable
+    # for retrieval is exactly what skos:exactMatch asserts, which is also the only match predicate
+    # the API maps (see predicateToPropertyMap in @netwerk-digitaal-erfgoed/network-of-terms-query).
+    # Reconciliation runs through search rather than lookup, so this is the query that needs it.
+    OPTIONAL { ?uri schema:sameAs ?wikidataItem } # Has no labels.
 
     # One prefLabel per language this source declares (see inLanguage in the dataset description),
     # so the API can hand each client the label in the language it asked for. gn:name carries no
