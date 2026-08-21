@@ -7,7 +7,7 @@ PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
 CONSTRUCT {
     ?uri a skos:Concept , schema:Place ;
-        skos:prefLabel ?prefLabel_ext ;
+        skos:prefLabel ?prefLabelNl , ?prefLabelEn , ?prefLabelFallback ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_en , ?scopeNote_nl ;
         skos:broader ?broader ;
@@ -44,11 +44,68 @@ WHERE {
     }
 
     # Every feature has exactly one point, including countries and continents.
-    ?uri gn:name ?prefLabel ;
+    ?uri gn:name ?name ;
         wgs84:lat ?latitude ;
         wgs84:long ?longitude .
 
-    BIND(IF(BOUND(?countryCode), CONCAT(?prefLabel," (",UCASE(?countryCode),")"), ?prefLabel) as ?prefLabel_ext)
+    # One prefLabel per language this source declares (see inLanguage in the dataset description),
+    # so the API can hand each client the label in the language it asked for. gn:name carries no
+    # language by definition and is often the local or English form – ‘Federal Republic of Germany’
+    # rather than ‘Duitsland’ – so it is only the fallback.
+    #
+    # gn:officialName is GeoNames’ preferred name for a language and is rdfs:subPropertyOf
+    # skos:prefLabel. A name without that flag arrives as a language-tagged gn:alternateName, which
+    # is the only Dutch name for 98% of the features that have one, so both are needed.
+    #
+    # Take either only when GeoNames offers exactly one for the language: a few hundred features
+    # have several Dutch names with nothing to choose between them (‘Koudekerk a/d Rijn’ beside
+    # ‘Koudekerk aan de Rijn’), and those keep gn:name rather than an arbitrary variant.
+    OPTIONAL {
+        ?uri gn:officialName ?officialNameNl .
+        FILTER(LANG(?officialNameNl) = "nl")
+        FILTER NOT EXISTS {
+            ?uri gn:officialName ?otherOfficialNameNl .
+            FILTER(LANG(?otherOfficialNameNl) = "nl" && ?otherOfficialNameNl != ?officialNameNl)
+        }
+    }
+    OPTIONAL {
+        ?uri gn:alternateName ?alternateNameNl .
+        FILTER(LANG(?alternateNameNl) = "nl")
+        FILTER NOT EXISTS {
+            ?uri gn:alternateName ?otherAlternateNameNl .
+            FILTER(LANG(?otherAlternateNameNl) = "nl" && ?otherAlternateNameNl != ?alternateNameNl)
+        }
+    }
+    OPTIONAL {
+        ?uri gn:officialName ?officialNameEn .
+        FILTER(LANG(?officialNameEn) = "en")
+        FILTER NOT EXISTS {
+            ?uri gn:officialName ?otherOfficialNameEn .
+            FILTER(LANG(?otherOfficialNameEn) = "en" && ?otherOfficialNameEn != ?officialNameEn)
+        }
+    }
+    OPTIONAL {
+        ?uri gn:alternateName ?alternateNameEn .
+        FILTER(LANG(?alternateNameEn) = "en")
+        FILTER NOT EXISTS {
+            ?uri gn:alternateName ?otherAlternateNameEn .
+            FILTER(LANG(?otherAlternateNameEn) = "en" && ?otherAlternateNameEn != ?alternateNameEn)
+        }
+    }
+    BIND(COALESCE(?officialNameNl, ?alternateNameNl) AS ?prefLabelNlName)
+    BIND(COALESCE(?officialNameEn, ?alternateNameEn) AS ?prefLabelEnName)
+
+    # CONCAT keeps a language tag only when every argument carries the same one, so build the suffix
+    # separately and re-apply the tag with STRLANG. Without that the tag is lost and the API assumes
+    # the label is Dutch, which is the fallback that made an English name look Dutch to begin with.
+    # Where the name for a language is missing, STR() of the unbound variable raises an error and
+    # BIND leaves that prefLabel unbound, so no triple is produced for it.
+    BIND(IF(BOUND(?countryCode), CONCAT(" (", UCASE(?countryCode), ")"), "") AS ?countrySuffix)
+    BIND(STRLANG(CONCAT(STR(?prefLabelNlName), ?countrySuffix), "nl") AS ?prefLabelNl)
+    BIND(STRLANG(CONCAT(STR(?prefLabelEnName), ?countrySuffix), "en") AS ?prefLabelEn)
+    # Untagged, so a client asking for a language GeoNames has no name in still gets a label: the
+    # API returns untagged literals and treats them as Dutch.
+    BIND(CONCAT(STR(?name), ?countrySuffix) AS ?prefLabelFallback)
 
     VALUES (?featureClass ?scopeNote_en ?scopeNote_nl) {
         (gn:A "Administrative boundary"@en "Bestuurlijke eenheid"@nl)
@@ -57,16 +114,45 @@ WHERE {
         (gn:P "Populated place"@en "Plaats"@nl)
     }
 
+    # gn:shortName, gn:colloquialName and gn:historicalName are rdfs:subPropertyOf gn:alternateName,
+    # but the store has no reasoner, so each has to be named. One UNION branch per property, since
+    # they are independently multi-valued. skos:prefLabel and skos:altLabel are disjoint, so leave
+    # out whichever names won a prefLabel above.
     OPTIONAL {
-        ?uri gn:alternateName ?altLabel .
-        FILTER(?altLabel != "")
+        { ?uri gn:alternateName ?altLabel }
+        UNION { ?uri gn:officialName ?altLabel }
+        UNION { ?uri gn:shortName ?altLabel }
+        UNION { ?uri gn:colloquialName ?altLabel }
+        UNION { ?uri gn:historicalName ?altLabel }
+        FILTER(!BOUND(?prefLabelNlName) || ?altLabel != ?prefLabelNlName)
+        FILTER(!BOUND(?prefLabelEnName) || ?altLabel != ?prefLabelEnName)
+        FILTER(?altLabel != ?name)
     }
 
     OPTIONAL {
         ?uri ?parents ?broader .
-        ?broader gn:name ?broader_prefLabel
+        ?broader gn:name ?broaderName .
         VALUES ?parents { gn:parentADM1 gn:parentADM2 }
         # filter out the circular links in the converted data
         FILTER(?uri != ?broader)
+        # Parents are labelled from gn:name too, so apply the same rule – otherwise a fixed
+        # 'Duitsland' would still sit under an untagged 'Provincie Zuid-Holland'.
+        OPTIONAL {
+            ?broader gn:officialName ?broaderOfficialNameNl .
+            FILTER(LANG(?broaderOfficialNameNl) = "nl")
+            FILTER NOT EXISTS {
+                ?broader gn:officialName ?otherBroaderOfficialNameNl .
+                FILTER(LANG(?otherBroaderOfficialNameNl) = "nl" && ?otherBroaderOfficialNameNl != ?broaderOfficialNameNl)
+            }
+        }
+        OPTIONAL {
+            ?broader gn:alternateName ?broaderAlternateNameNl .
+            FILTER(LANG(?broaderAlternateNameNl) = "nl")
+            FILTER NOT EXISTS {
+                ?broader gn:alternateName ?otherBroaderAlternateNameNl .
+                FILTER(LANG(?otherBroaderAlternateNameNl) = "nl" && ?otherBroaderAlternateNameNl != ?broaderAlternateNameNl)
+            }
+        }
+        BIND(COALESCE(?broaderOfficialNameNl, ?broaderAlternateNameNl, ?broaderName) AS ?broader_prefLabel)
     }
 }
