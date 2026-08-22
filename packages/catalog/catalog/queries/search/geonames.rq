@@ -129,30 +129,20 @@ WHERE {
         FILTER(?altLabel != ?name)
     }
 
+    # Parents keep their untagged gn:name, unlike the features above. Labelling them per language
+    # means a second lookup on ?broader inside this OPTIONAL, and that is what ARQ cannot plan:
+    # a nested OPTIONAL – or any FILTER NOT EXISTS – on ?broader stops it running this block as a
+    # linear left-join with ?uri pushed in. It materialises the right-hand side instead, scanning
+    # all 22.5M parentADM1/parentADM2 triples rather than probing the ~100 URIs the subquery
+    # returned, and the query stops finishing: measured at 30s+ against 0.2s for this form, for
+    # every search term tried. Restore per-language parent labels only once ?broader can be
+    # labelled by a single lookup – see the note in the geonames-rdf issue on precomputing one
+    # skos:prefLabel per language at publish time.
     OPTIONAL {
         ?uri ?parents ?broader .
-        ?broader gn:name ?broaderName .
+        ?broader gn:name ?broader_prefLabel .
         VALUES ?parents { gn:parentADM1 gn:parentADM2 }
         # filter out the circular links in the converted data
         FILTER(?uri != ?broader)
-        # Parents are labelled from gn:name too, so apply the same rule – otherwise a fixed
-        # 'Duitsland' would still sit under an untagged 'Provincie Zuid-Holland'.
-        OPTIONAL {
-            ?broader gn:officialName ?broaderOfficialNameNl .
-            FILTER(LANG(?broaderOfficialNameNl) = "nl")
-            FILTER NOT EXISTS {
-                ?broader gn:officialName ?otherBroaderOfficialNameNl .
-                FILTER(LANG(?otherBroaderOfficialNameNl) = "nl" && ?otherBroaderOfficialNameNl != ?broaderOfficialNameNl)
-            }
-        }
-        OPTIONAL {
-            ?broader gn:alternateName ?broaderAlternateNameNl .
-            FILTER(LANG(?broaderAlternateNameNl) = "nl")
-            FILTER NOT EXISTS {
-                ?broader gn:alternateName ?otherBroaderAlternateNameNl .
-                FILTER(LANG(?otherBroaderAlternateNameNl) = "nl" && ?otherBroaderAlternateNameNl != ?broaderAlternateNameNl)
-            }
-        }
-        BIND(COALESCE(?broaderOfficialNameNl, ?broaderAlternateNameNl, ?broaderName) AS ?broader_prefLabel)
     }
 }
