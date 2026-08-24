@@ -66,39 +66,40 @@ WHERE {
     # skos:prefLabel. A name without that flag arrives as a language-tagged gn:alternateName, which
     # is the only Dutch name for 98% of the features that have one, so both are needed.
     #
-    # Take either only when GeoNames offers exactly one for the language: a few hundred features
-    # have several Dutch names with nothing to choose between them (‘Koudekerk a/d Rijn’ beside
-    # ‘Koudekerk aan de Rijn’), and those keep gn:name rather than an arbitrary variant.
+    # GeoNames flags several names in one language for ~25 Dutch and ~8,266 English features
+    # – ‘Noord-Korea’ beside ‘Korea, Democratische Volksrepubliek’ – and its readme places no
+    # uniqueness constraint on isPreferredName, so all of them are returned. Picking one would need
+    # an aggregate or a negation over the names themselves; both pick arbitrarily and both are too
+    # slow, measured against the live endpoint at 24.2 s for MIN() and 9.09 s for SAMPLE(). Several
+    # preferred labels per language breach SKOS S14 in this query’s output, which is a validation
+    # nicety next to handing a Dutch client an English name, as dropping the language used to do.
+    #
+    # A language falls back to gn:alternateName only when GeoNames flagged no name for it. Without
+    # that guard ‘Holland’ and ‘Koninkrijk der Nederlanden’ would join ‘Nederland’ as preferred
+    # labels for the Netherlands. It sits in a plain OPTIONAL and tests ?uri, which is the shape
+    # ARQ pushes into; the same negation inside a UNION branch times out (see the parent block).
     OPTIONAL {
         ?uri gn:officialName ?officialNameNl .
         FILTER(LANG(?officialNameNl) = "nl")
-        FILTER NOT EXISTS {
-            ?uri gn:officialName ?otherOfficialNameNl .
-            FILTER(LANG(?otherOfficialNameNl) = "nl" && ?otherOfficialNameNl != ?officialNameNl)
-        }
     }
     OPTIONAL {
         ?uri gn:alternateName ?alternateNameNl .
         FILTER(LANG(?alternateNameNl) = "nl")
         FILTER NOT EXISTS {
-            ?uri gn:alternateName ?otherAlternateNameNl .
-            FILTER(LANG(?otherAlternateNameNl) = "nl" && ?otherAlternateNameNl != ?alternateNameNl)
+            ?uri gn:officialName ?anyOfficialNameNl .
+            FILTER(LANG(?anyOfficialNameNl) = "nl")
         }
     }
     OPTIONAL {
         ?uri gn:officialName ?officialNameEn .
         FILTER(LANG(?officialNameEn) = "en")
-        FILTER NOT EXISTS {
-            ?uri gn:officialName ?otherOfficialNameEn .
-            FILTER(LANG(?otherOfficialNameEn) = "en" && ?otherOfficialNameEn != ?officialNameEn)
-        }
     }
     OPTIONAL {
         ?uri gn:alternateName ?alternateNameEn .
         FILTER(LANG(?alternateNameEn) = "en")
         FILTER NOT EXISTS {
-            ?uri gn:alternateName ?otherAlternateNameEn .
-            FILTER(LANG(?otherAlternateNameEn) = "en" && ?otherAlternateNameEn != ?alternateNameEn)
+            ?uri gn:officialName ?anyOfficialNameEn .
+            FILTER(LANG(?anyOfficialNameEn) = "en")
         }
     }
     BIND(COALESCE(?officialNameNl, ?alternateNameNl) AS ?prefLabelNlName)
@@ -126,53 +127,52 @@ WHERE {
     # gn:shortName, gn:colloquialName and gn:historicalName are rdfs:subPropertyOf gn:alternateName,
     # but the store has no reasoner, so each has to be named. One UNION branch per property, since
     # they are independently multi-valued. skos:prefLabel and skos:altLabel are disjoint, so leave
-    # out whichever names won a prefLabel above.
+    # out the names that won a prefLabel above: every gn:officialName, and every name in one of the
+    # two languages this source declares for which GeoNames flagged none, since those all became
+    # prefLabels. Which of those two applies depends on the property a name came from, so the
+    # gn:alternateName branch flags itself and the language test applies to that branch alone,
+    # leaving a Dutch gn:shortName or gn:historicalName – ‘’s-Gravenhage’ – an altLabel whether
+    # or not GeoNames flagged a Dutch name. Official names in any other language stay altLabels
+    # too, since only these two languages get a prefLabel.
+    #
+    # The tests cannot compare with ?prefLabelNlName / ?prefLabelEnName, which now carry one row
+    # per name and would let the second name through on the row of the first. Nor can the branches
+    # test ?officialNameNl themselves: a FILTER inside a UNION branch that reads a variable bound
+    # outside it costs ARQ the push-down the parent block describes, measured at 30 s+ against
+    # 0.13 s for this form. A BIND is free, and a group-level filter reading it is too.
     OPTIONAL {
-        { ?uri gn:alternateName ?altLabel }
-        UNION { ?uri gn:officialName ?altLabel }
+        { ?uri gn:alternateName ?altLabel . BIND(true AS ?isAlternateName) }
+        UNION { ?uri gn:officialName ?altLabel . FILTER(LANG(?altLabel) NOT IN ("nl", "en")) }
         UNION { ?uri gn:shortName ?altLabel }
         UNION { ?uri gn:colloquialName ?altLabel }
         UNION { ?uri gn:historicalName ?altLabel }
-        FILTER(!BOUND(?prefLabelNlName) || ?altLabel != ?prefLabelNlName)
-        FILTER(!BOUND(?prefLabelEnName) || ?altLabel != ?prefLabelEnName)
         FILTER(?altLabel != ?name)
+        FILTER(!BOUND(?isAlternateName)
+            || LANG(?altLabel) NOT IN ("nl", "en")
+            || (LANG(?altLabel) = "nl" && BOUND(?officialNameNl))
+            || (LANG(?altLabel) = "en" && BOUND(?officialNameEn)))
     }
 
-    # Parents keep their untagged gn:name, unlike the features above. Labelling them per language
-    # means a second lookup on ?broader inside this OPTIONAL, and that is what ARQ cannot plan:
-    # a nested OPTIONAL – or any FILTER NOT EXISTS – on ?broader stops it running this block as a
-    # linear left-join with ?uri pushed in. It materialises the right-hand side instead, scanning
-    # all 22.5M parentADM1/parentADM2 triples rather than probing the ~100 URIs the subquery
-    # returned, and the query stops finishing: measured at 30s+ against 0.2s for this form, for
-    # every search term tried. Restore per-language parent labels only once ?broader can be
-    # labelled by a single lookup – see the note in the geonames-rdf issue on precomputing one
-    # skos:prefLabel per language at publish time.
-
-    # Parents are labelled in both languages the dataset declares, like the features above, but the
-    # branches are a UNION and
-    # carry no uniqueness guard, because neither a nested OPTIONAL nor a FILTER NOT EXISTS on
-    # ?broader can be planned here: either one stops ARQ running this block as a linear left-join
-    # with ?uri pushed in, so it materialises the right-hand side and scans all 22.5M
+    # Parents are labelled in both languages the dataset declares, like the features above, but
+    # their branches carry no guard at all, because neither a nested OPTIONAL nor a FILTER NOT
+    # EXISTS on ?broader can be planned here: either one stops ARQ running this block as a linear
+    # left-join with ?uri pushed in, so it materialises the right-hand side and scans all 22.5M
     # parentADM1/parentADM2 triples. Measured against the live endpoint, every such variant took
-    # 30s+ where this one takes 0.1-0.4s – a single NOT EXISTS is enough to trip it.
+    # 30 s+ where this one takes 0.1–0.4 s – a single NOT EXISTS is enough to trip it.
     #
-    # Without the guard a parent that has both a Dutch officialName and an untagged gn:name gets
-    # both as skos:prefLabel (‘Zuid-Holland’@nl beside ‘Provincie Zuid-Holland’). The API prefers a
-    # language-tagged literal over an untagged one, so Dutch clients see the tagged label; emitting
-    # one label per parent would need the negation this cannot afford, or a prefLabel precomputed
-    # per language in geonames-rdf.
+    # So a parent gets every name GeoNames holds for it in Dutch and English, plus its untagged
+    # gn:name – ‘Zuid-Holland’@nl beside ‘Provincie Zuid-Holland’. The API prefers a
+    # language-tagged literal over an untagged one, so Dutch clients see the tagged label. What
+    # parents cannot have is the gn:officialName-over-gn:alternateName preference the features
+    # keep above; giving them one needs a skos:prefLabel precomputed per language in geonames-rdf.
     OPTIONAL {
         ?uri ?parents ?broader .
         VALUES ?parents { gn:parentADM1 gn:parentADM2 }
         # filter out the circular links in the converted data
         FILTER(?uri != ?broader)
-        { ?broader gn:officialName ?broader_prefLabel . FILTER(LANG(?broader_prefLabel) = "nl") }
+        { ?broader gn:officialName ?broader_prefLabel . FILTER(LANG(?broader_prefLabel) IN ("nl", "en")) }
         UNION
-        { ?broader gn:alternateName ?broader_prefLabel . FILTER(LANG(?broader_prefLabel) = "nl") }
-        UNION
-        { ?broader gn:officialName ?broader_prefLabel . FILTER(LANG(?broader_prefLabel) = "en") }
-        UNION
-        { ?broader gn:alternateName ?broader_prefLabel . FILTER(LANG(?broader_prefLabel) = "en") }
+        { ?broader gn:alternateName ?broader_prefLabel . FILTER(LANG(?broader_prefLabel) IN ("nl", "en")) }
         UNION
         { ?broader gn:name ?broader_prefLabel . }
     }
