@@ -71,16 +71,35 @@ jobs:
         name: Fail on an unmarked breaking change
         run: |
           set -uo pipefail
+          if [ ! -f "$CONTRACT" ]; then
+            echo "::error::$CONTRACT is missing. The graphql test suite writes it, and this check needs it to read the new surface."
+            exit 1
+          fi
           git show "$BASE:$CONTRACT" > "$RUNNER_TEMP/base.graphql"
-          if npx --yes @graphql-inspector/cli@7 diff "$RUNNER_TEMP/base.graphql" "$CONTRACT"; then
+          npx --yes @graphql-inspector/cli@7 diff "$RUNNER_TEMP/base.graphql" "$CONTRACT" \
+            2>&1 | tee "$RUNNER_TEMP/diff.log"
+          status=${PIPESTATUS[0]}
+          if [ "$status" -eq 0 ]; then
             exit 0
           fi
-          # A breaking change is allowed, as long as the changelog will say so: a
-          # `!` after the type and scope, or a `BREAKING CHANGE:` footer.
-          if git log --format='%B' "$BASE..HEAD" \
-               | grep -qE '^BREAKING[ -]CHANGE:|^[a-z]+(\([^)]*\))?!:'; then
-            echo '::warning::This breaks the published GraphQL surface, and a commit says so.'
-            exit 0
+          # graphql-inspector exits non-zero for an unreadable schema and a failed
+          # install too. Neither is a breaking change, and reporting one as such
+          # would send the author looking for a break that is not there.
+          if ! grep -qi 'breaking change' "$RUNNER_TEMP/diff.log"; then
+            echo '::error::Could not diff the published GraphQL surface; see the log above. This says nothing about whether the change breaks anything.'
+            exit 1
           fi
-          echo '::error::This breaks the published GraphQL surface. Mark the commit that does it with `!` or a `BREAKING CHANGE:` footer, so the release notes state the break, or change the schema additively instead.'
+          # A breaking change is allowed, as long as the release notes will say so.
+          # Only a `graphql`-scoped commit can carry that into the changelog, so
+          # only such a commit excuses a break: `!` after the scope, or a footer.
+          for sha in $(git log --format='%H' "$BASE..HEAD"); do
+            subject=$(git log -1 --format='%s' "$sha")
+            printf '%s' "$subject" | grep -qE '^[a-z]+\(graphql\)' || continue
+            if printf '%s' "$subject" | grep -qE '^[a-z]+\(graphql\)!:' \
+               || git log -1 --format='%b' "$sha" | grep -qE '^BREAKING[ -]CHANGE:'; then
+              echo "::warning::This breaks the published GraphQL surface, and $sha says so."
+              exit 0
+            fi
+          done
+          echo '::error::This breaks the published GraphQL surface. Mark the graphql-scoped commit that does it with `!` or a `BREAKING CHANGE:` footer, so the release notes state the break, or change the schema additively instead.'
           exit 1
