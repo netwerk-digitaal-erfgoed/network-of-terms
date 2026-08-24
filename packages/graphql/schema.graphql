@@ -83,7 +83,7 @@
   }
   
   enum Language {
-    en nl fy
+    en fy nl
   }
 
   type Query {
