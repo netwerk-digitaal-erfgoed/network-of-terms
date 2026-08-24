@@ -64,3 +64,10 @@
     skos:prefLabel "Nergenshuizen"@nl ;
     schema:latitude "" ;
     schema:longitude "onbekend" .
+
+# A place that is locatable on one axis only, so it still gets a `place` node.
+<https://example.com/resources/place-without-longitude>
+    a skos:Concept, schema:Place ;
+    skos:prefLabel "Halvewegen"@nl ;
+    schema:latitude "53.20139"^^xsd:float ;
+    schema:longitude "" .

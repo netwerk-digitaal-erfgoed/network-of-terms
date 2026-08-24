@@ -146,6 +146,7 @@ describe('Server', () => {
       'Rembrandt',
       'Nachtwacht',
       'Kunstige dingen',
+      'Halvewegen',
       'Maastricht',
       'Marion Michelle Koblitz',
       'Nergenshuizen',
@@ -186,22 +187,23 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(8); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(9); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
     ]);
     expect(body.data.terms[0].result.translatedTerms[1].__typename).toEqual(
-      'Concept',
+      'TranslatedTerm',
     );
+    expect(body.data.terms[0].result.translatedTerms[1].place).toBeNull();
 
     const place = body.data.terms[0].result.translatedTerms.find(
       (term: { uri: string }) =>
         term.uri === 'https://example.com/resources/place',
     );
-    expect(place.__typename).toEqual('Place');
-    expect(place.latitude).toEqual(50.84833);
-    expect(place.longitude).toEqual(5.68889);
+    expect(place.__typename).toEqual('TranslatedTerm');
+    expect(place.place.latitude).toEqual(50.84833);
+    expect(place.place.longitude).toEqual(5.68889);
   });
 
   it('responds to successful GraphQL terms query with backwards compatible distribution URI', async () => {
@@ -217,7 +219,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(8); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(9); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -317,7 +319,7 @@ describe('Server', () => {
       }),
     );
     const term = body.data.lookup[0];
-    expect(term.result.__typename).toEqual('Concept');
+    expect(term.result.__typename).toEqual('TranslatedTerm');
     expect(term.result.prefLabel).toEqual([
       {
         language: 'en',
@@ -334,13 +336,14 @@ describe('Server', () => {
       }),
     );
     const term = body.data.lookup[0];
-    expect(term.result.__typename).toEqual('Person');
+    expect(term.result.__typename).toEqual('TranslatedTerm');
     expect(term.result.prefLabel).toEqual([
       { language: 'nl', value: 'Marion Michelle Koblitz' },
     ]);
+    expect(term.result.place).toBeNull(); // A person denotes no place.
   });
 
-  it('returns terms typed as schema:Place as Places, with their coordinates', async () => {
+  it('returns the place that a term typed as schema:Place denotes', async () => {
     const body = await query(
       lookupQuery({
         uris: ['https://example.com/resources/place'],
@@ -348,15 +351,25 @@ describe('Server', () => {
       }),
     );
     const term = body.data.lookup[0];
-    expect(term.result.__typename).toEqual('Place');
+    expect(term.result.__typename).toEqual('TranslatedTerm');
     expect(term.result.prefLabel).toEqual([
       { language: 'nl', value: 'Maastricht' },
     ]);
-    expect(term.result.latitude).toEqual(50.84833);
-    expect(term.result.longitude).toEqual(5.68889);
+    expect(term.result.place.latitude).toEqual(50.84833);
+    expect(term.result.place.longitude).toEqual(5.68889);
   });
 
-  it('returns null coordinates for places whose source publishes unusable ones', async () => {
+  it('returns the denoted place in monolingual lookup too', async () => {
+    const body = await query(
+      lookupQuery({uris: ['https://example.com/resources/place']}),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('Term');
+    expect(term.result.place.latitude).toEqual(50.84833);
+    expect(term.result.place.longitude).toEqual(5.68889);
+  });
+
+  it('returns no place for one whose source publishes unusable coordinates', async () => {
     const body = await query(
       lookupQuery({
         uris: ['https://example.com/resources/place-without-coordinates'],
@@ -364,11 +377,23 @@ describe('Server', () => {
       }),
     );
     const term = body.data.lookup[0];
-    expect(term.result.__typename).toEqual('Place');
     // An empty literal must not read as 0°, and a non-numeric one must not raise a field error.
     expect(body.errors).toBeUndefined();
-    expect(term.result.latitude).toBeNull();
-    expect(term.result.longitude).toBeNull();
+    // An empty node would read as a place that has been located.
+    expect(term.result.place).toBeNull();
+  });
+
+  it('returns the coordinates it can read when the source publishes only one', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/place-without-longitude'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(body.errors).toBeUndefined();
+    expect(term.result.place.latitude).toEqual(53.20139);
+    expect(term.result.place.longitude).toBeNull();
   });
 
   it('falls back to mul labels in non-multilingual lookup', async () => {
@@ -526,7 +551,7 @@ function termsQuery({
                 uri
                 prefLabel { language value }
               }
-              ... on Place {
+              place {
                 latitude
                 longitude
               }
@@ -589,6 +614,10 @@ function lookupQuery({
               uri
               prefLabel
             }
+            place {
+              latitude
+              longitude
+            }
           }
           `
               : `
@@ -603,10 +632,10 @@ function lookupQuery({
               uri
               prefLabel { language value }
             }
-          }
-          ... on Place {
-            latitude
-            longitude
+            place {
+              latitude
+              longitude
+            }
           }
           `
           }

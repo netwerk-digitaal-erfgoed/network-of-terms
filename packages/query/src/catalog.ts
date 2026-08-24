@@ -55,6 +55,9 @@ export class Catalog {
 
   /**
    * Get all languages provided by datasets in this catalog.
+   *
+   * Sorted, because the order of `datasets` follows the order in which the catalog files happen to
+   * be read, and these languages end up in the published GraphQL schema as the `Language` enum.
    */
   public getLanguages(): string[] {
     return [
@@ -63,7 +66,7 @@ export class Catalog {
           return [...acc, ...dataset.inLanguage];
         }, []),
       ),
-    ];
+    ].sort();
   }
 
   /**

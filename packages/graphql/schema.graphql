@@ -1,4 +1,4 @@
-export const schema = (languages: string[]) => `
+
   """
   A term source is a collection of terms.
   """
@@ -65,7 +65,7 @@ export const schema = (languages: string[]) => `
     altLabel: [String]!
     hiddenLabel: [String]!
     definition: [String]!
-    "For the full definition of the term, use \`definition\` instead of \`scopeNote\`. The contents of \`scopeNote\` may change later."
+    "For the full definition of the term, use `definition` instead of `scopeNote`. The contents of `scopeNote` may change later."
     scopeNote: [String]!
     seeAlso: [String]!
     broader: [RelatedTerm]
@@ -83,7 +83,7 @@ export const schema = (languages: string[]) => `
   }
   
   enum Language {
-    ${languages.join(' ')}
+    en fy nl
   }
 
   type Query {
@@ -95,13 +95,13 @@ export const schema = (languages: string[]) => `
       "Optional list of genres to filter results within sources that support genre-based filtering."
       genres: [ID],
 
-      "A literal search query, for example \`Rembrandt\`."
+      "A literal search query, for example `Rembrandt`."
       query: String!,
 
-      "The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources."      
+      "The mode in which the literal search query (`query`) is interpreted before it is sent to the term sources."      
       queryMode: QueryMode = OPTIMIZED,
       
-      "List of languages in which to return terms, in preferred order. If one or more languages are specified, terms are returned as \`TranslatedTerm\`s. The available languages depend on what each source provides (see \`Source.inLanguage\`). Terms are never excluded from the result: if a term has no labels in the requested languages, labels tagged ‘mul’ (default for all languages) are returned in the first requested language, untagged literals are returned as Dutch (\`nl\`), and otherwise the label field is empty."
+      "List of languages in which to return terms, in preferred order. If one or more languages are specified, terms are returned as `TranslatedTerm`s. The available languages depend on what each source provides (see `Source.inLanguage`). Terms are never excluded from the result: if a term has no labels in the requested languages, labels tagged ‘mul’ (default for all languages) are returned in the first requested language, untagged literals are returned as Dutch (`nl`), and otherwise the label field is empty."
       languages: [Language],
       
       "Maximum number of terms to return."
@@ -122,7 +122,7 @@ export const schema = (languages: string[]) => `
       "List of term URIs."
       uris: [ID]!,
       
-      "List of languages in which to return the term, in preferred order. If one or more languages are specified, any term found is returned as a \`TranslatedTerm\`. The available languages depend on what each source provides (see \`Source.inLanguage\`). Terms are never excluded from the result: if a term has no labels in the requested languages, labels tagged ‘mul’ (default for all languages) are returned in the first requested language, untagged literals are returned as Dutch (\`nl\`), and otherwise the label field is empty."
+      "List of languages in which to return the term, in preferred order. If one or more languages are specified, any term found is returned as a `TranslatedTerm`. The available languages depend on what each source provides (see `Source.inLanguage`). Terms are never excluded from the result: if a term has no labels in the requested languages, labels tagged ‘mul’ (default for all languages) are returned in the first requested language, untagged literals are returned as Dutch (`nl`), and otherwise the label field is empty."
       languages: [Language],
       
       "Timeout period in milliseconds that we wait for sources to respond."
@@ -131,7 +131,7 @@ export const schema = (languages: string[]) => `
   }
   
   """
-  The mode in which the literal search query (\`query\`) is interpreted before it is sent to the term sources.
+  The mode in which the literal search query (`query`) is interpreted before it is sent to the term sources.
   """
   enum QueryMode {
     "Optimize search query input for term sources. The default."
@@ -182,7 +182,7 @@ export const schema = (languages: string[]) => `
   }
 
   """
-  The place that a term denotes. It carries only what SKOS cannot state: the term’s position in the place hierarchy stays on \`broader\` and \`narrower\`.
+  The place that a term denotes. It carries only what SKOS cannot state: the term’s position in the place hierarchy stays on `broader` and `narrower`.
   """
   type Place {
     "Latitude of the place, in the WGS 84 coordinate reference system."
@@ -251,4 +251,3 @@ export const schema = (languages: string[]) => `
   interface Error {
     message: String!
   }
-`;
