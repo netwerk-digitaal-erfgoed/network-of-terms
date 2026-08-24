@@ -123,5 +123,6 @@
       "publishable": true,
       "unitTestRunner": "vitest"
     }
-  }
+  },
+  "analytics": false
 }
