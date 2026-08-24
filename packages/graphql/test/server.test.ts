@@ -146,6 +146,7 @@ describe('Server', () => {
       'Rembrandt',
       'Nachtwacht',
       'Kunstige dingen',
+      'Halvewegen',
       'Maastricht',
       'Marion Michelle Koblitz',
       'Nergenshuizen',
@@ -186,7 +187,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(8); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(9); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -218,7 +219,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(8); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(9); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -368,7 +369,7 @@ describe('Server', () => {
     expect(term.result.place.longitude).toEqual(5.68889);
   });
 
-  it('returns null coordinates for places whose source publishes unusable ones', async () => {
+  it('returns no place for one whose source publishes unusable coordinates', async () => {
     const body = await query(
       lookupQuery({
         uris: ['https://example.com/resources/place-without-coordinates'],
@@ -378,7 +379,20 @@ describe('Server', () => {
     const term = body.data.lookup[0];
     // An empty literal must not read as 0°, and a non-numeric one must not raise a field error.
     expect(body.errors).toBeUndefined();
-    expect(term.result.place.latitude).toBeNull();
+    // An empty node would read as a place that has been located.
+    expect(term.result.place).toBeNull();
+  });
+
+  it('returns the coordinates it can read when the source publishes only one', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/place-without-longitude'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(body.errors).toBeUndefined();
+    expect(term.result.place.latitude).toEqual(53.20139);
     expect(term.result.place.longitude).toBeNull();
   });
 

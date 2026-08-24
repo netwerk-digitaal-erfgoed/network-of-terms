@@ -210,17 +210,21 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
  * The place that the term denotes, or null if its source describes none.
  *
  * The node carries only what SKOS cannot state, so the term’s position in the place hierarchy stays
- * on `broader` and `narrower` and is not repeated here.
+ * on `broader` and `narrower` and is not repeated here. That leaves the coordinates: a term typed
+ * as a place whose source publishes neither of them has nothing to put in the node, so it gets no
+ * node rather than an empty one that reads as a located place.
  */
 function denotedPlace(term: Term) {
   if (!term.types.some((type) => placeClasses.has(type.value))) {
     return null;
   }
 
-  return {
-    latitude: floatValue(term.latitude),
-    longitude: floatValue(term.longitude),
-  };
+  const latitude = floatValue(term.latitude);
+  const longitude = floatValue(term.longitude);
+
+  return latitude === null && longitude === null
+    ? null
+    : { latitude, longitude };
 }
 
 // Both Schema.org namespaces, because source queries use either one.
