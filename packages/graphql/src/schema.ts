@@ -72,6 +72,9 @@ export const schema = (languages: string[]) => `
     narrower: [RelatedTerm]
     related: [RelatedTerm]
     exactMatch: [RelatedTerm]
+
+    "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
+    place: Place
   }
 
   type RelatedTerm {
@@ -161,30 +164,27 @@ export const schema = (languages: string[]) => `
   """
   A description of a concept or entity, expressed in the SKOS vocabulary, with labels in the requested languages.
   """
-  interface TranslatedTerm {
-${translatedTermFields}
+  type TranslatedTerm {
+    uri: ID!
+    prefLabel: [LanguageString]!
+    altLabel: [LanguageString]!
+    hiddenLabel: [LanguageString]!
+    definition: [LanguageString]!
+    scopeNote: [LanguageString]!
+    seeAlso: [String]!
+    broader: [TranslatedRelatedTerm]
+    narrower: [TranslatedRelatedTerm]
+    related: [TranslatedRelatedTerm]
+    exactMatch: [TranslatedRelatedTerm]
+
+    "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
+    place: Place
   }
 
   """
-  A term whose source identifies it as nothing more specific. Every term is a \`skos:Concept\`; this is the type for terms that are only that.
+  The place that a term denotes. It carries only what SKOS cannot state: the term’s position in the place hierarchy stays on \`broader\` and \`narrower\`.
   """
-  type Concept implements TranslatedTerm {
-${translatedTermFields}
-  }
-
-  """
-  A term that describes a person.
-  """
-  type Person implements TranslatedTerm {
-${translatedTermFields}
-  }
-
-  """
-  A term that describes a place.
-  """
-  type Place implements TranslatedTerm {
-${translatedTermFields}
-
+  type Place {
     "Latitude of the place, in the WGS 84 coordinate reference system."
     latitude: Float
 
@@ -218,7 +218,7 @@ ${translatedTermFields}
 
   union SourceResult = Source | SourceNotFoundError
 
-  union LookupResult = Term | Concept | Person | Place | NotFoundError | TimeoutError | ServerError
+  union LookupResult = Term | TranslatedTerm | NotFoundError | TimeoutError | ServerError
 
   """
   The term source failed to respond within the timeout period.
@@ -252,19 +252,3 @@ ${translatedTermFields}
     message: String!
   }
 `;
-
-/**
- * The fields shared by all `TranslatedTerm` implementations. GraphQL has no inheritance, so each
- * implementing type must redeclare every interface field.
- */
-const translatedTermFields = `    uri: ID!
-    prefLabel: [LanguageString]!
-    altLabel: [LanguageString]!
-    hiddenLabel: [LanguageString]!
-    definition: [LanguageString]!
-    scopeNote: [LanguageString]!
-    seeAlso: [String]!
-    broader: [TranslatedRelatedTerm]
-    narrower: [TranslatedRelatedTerm]
-    related: [TranslatedRelatedTerm]
-    exactMatch: [TranslatedRelatedTerm]`;
