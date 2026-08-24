@@ -43,6 +43,7 @@ cli ────────────┘
 ### Key Patterns
 
 - Terminology sources are defined as JSON-LD files in `packages/catalog/catalog/` with companion SPARQL query files
+- A source's `queries/search/` and `queries/lookup/` queries share most of their body: change them in tandem, and grep the other query files for the pattern you are fixing
 - SHACL schemas in `packages/catalog/shacl/` validate catalog entries
 - Environment validation uses `env-schema` (Fastify ecosystem)
 - Logging via Pino, metrics via OpenTelemetry
