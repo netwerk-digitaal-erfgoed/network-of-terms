@@ -28,3 +28,59 @@ jobs:
       - uses: nrwl/nx-set-shas@v5
 
       - run: npx nx affected -t lint test typecheck build
+
+  # The published GraphQL surface lives in a template string in schema.ts, where a
+  # breaking change is easy to miss in review: 565fe57 turned `TranslatedTerm` into
+  # an interface and shipped as a `feat`, silently breaking every client that
+  # compared `__typename`. The graphql test suite snapshots the surface into
+  # packages/graphql/schema.graphql, so the move shows up in Files changed; this job
+  # compares that snapshot against the base branch and fails on a breaking change
+  # unless a commit in the pull request marks the break, per Conventional Commits.
+  graphql-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      CONTRACT: packages/graphql/schema.graphql
+      BASE: origin/${{ github.base_ref }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: relevant
+        name: Does this pull request move the published surface?
+        run: |
+          set -euo pipefail
+          if ! git cat-file -e "$BASE:$CONTRACT" 2>/dev/null; then
+            echo 'moved=false' >> "$GITHUB_OUTPUT"
+            echo 'The base branch has no contract yet; nothing to compare against.'
+          elif git diff --quiet "$BASE...HEAD" -- "$CONTRACT"; then
+            echo 'moved=false' >> "$GITHUB_OUTPUT"
+            echo 'No change to the published GraphQL surface.'
+          else
+            echo 'moved=true' >> "$GITHUB_OUTPUT"
+            git --no-pager diff "$BASE...HEAD" -- "$CONTRACT"
+          fi
+
+      - if: steps.relevant.outputs.moved == 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+
+      - if: steps.relevant.outputs.moved == 'true'
+        name: Fail on an unmarked breaking change
+        run: |
+          set -uo pipefail
+          git show "$BASE:$CONTRACT" > "$RUNNER_TEMP/base.graphql"
+          if npx --yes @graphql-inspector/cli@7 diff "$RUNNER_TEMP/base.graphql" "$CONTRACT"; then
+            exit 0
+          fi
+          # A breaking change is allowed, as long as the changelog will say so: a
+          # `!` after the type and scope, or a `BREAKING CHANGE:` footer.
+          if git log --format='%B' "$BASE..HEAD" \
+               | grep -qE '^BREAKING[ -]CHANGE:|^[a-z]+(\([^)]*\))?!:'; then
+            echo '::warning::This breaks the published GraphQL surface, and a commit says so.'
+            exit 0
+          fi
+          echo '::error::This breaks the published GraphQL surface. Mark the commit that does it with `!` or a `BREAKING CHANGE:` footer, so the release notes state the break, or change the schema additively instead.'
+          exit 1

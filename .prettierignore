@@ -7,3 +7,7 @@ LICENSE.md
 CLAUDE.md
 
 .nx/self-healing
+
+# A snapshot of the published GraphQL surface, written by graphql’s test suite.
+# Reformatting it would make the snapshot mismatch on every run.
+packages/graphql/schema.graphql
