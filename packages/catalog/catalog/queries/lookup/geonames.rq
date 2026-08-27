@@ -15,7 +15,7 @@ CONSTRUCT {
     ?geo a schema:GeoCoordinates ;
         schema:latitude ?latitude ;
         schema:longitude ?longitude ;
-        schema:addressCountry ?countryCode .
+        schema:addressCountry ?countryCodeUpper .
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
@@ -97,6 +97,10 @@ WHERE {
     # Untagged, so a client asking for a language GeoNames has no name in still gets a label: the
     # API returns untagged literals and treats them as Dutch.
     BIND(CONCAT(STR(?name), ?countrySuffix) AS ?prefLabelFallback)
+
+    # Upper-cased for the same reason the suffix above is: the API promises an ISO 3166-1 alpha-2
+    # code, and the two must not disagree about the case of the same value.
+    BIND(UCASE(?countryCode) AS ?countryCodeUpper)
 
     # The coordinates and the country hang off a schema:geo node rather than off the term, because
     # schema:addressCountry does not have schema:Place in its domain – schema:GeoCoordinates is the
