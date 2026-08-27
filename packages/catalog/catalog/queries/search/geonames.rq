@@ -7,14 +7,18 @@ PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
 CONSTRUCT {
     ?uri a skos:Concept , schema:Place ;
+        schema:name ?prefLabelNlName , ?prefLabelEnName , ?name ;
+        schema:geo ?geo ;
         skos:prefLabel ?prefLabelNl , ?prefLabelEn , ?prefLabelFallback ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_en , ?scopeNote_nl ;
         skos:broader ?broader ;
         skos:exactMatch ?wikidataItem ;
+        vrank:simpleRank ?score .
+    ?geo a schema:GeoCoordinates ;
         schema:latitude ?latitude ;
         schema:longitude ?longitude ;
-        vrank:simpleRank ?score .
+        schema:addressCountry ?countryCode .
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
@@ -116,6 +120,14 @@ WHERE {
     # Untagged, so a client asking for a language GeoNames has no name in still gets a label: the
     # API returns untagged literals and treats them as Dutch.
     BIND(CONCAT(STR(?name), ?countrySuffix) AS ?prefLabelFallback)
+
+    # The coordinates and the country hang off a schema:geo node rather than off the term, because
+    # schema:addressCountry does not have schema:Place in its domain – schema:GeoCoordinates is the
+    # only class that takes all three. A blank node in the CONSTRUCT template is minted once per
+    # solution row, and a feature like Nederland carries some 600 of them, so mint one stable IRI
+    # per term instead. The Network of Terms reads the coordinates through it (see TermsTransformer
+    # in @netwerk-digitaal-erfgoed/network-of-terms-query) and never returns the IRI itself.
+    BIND(IRI(CONCAT(STR(?uri), "#geo")) AS ?geo)
 
     VALUES (?featureClass ?scopeNote_en ?scopeNote_nl) {
         (gn:A "Administrative boundary"@en "Bestuurlijke eenheid"@nl)

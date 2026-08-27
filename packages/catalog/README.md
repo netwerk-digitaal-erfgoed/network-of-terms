@@ -93,6 +93,35 @@ sub-datasets. A URI lookup can then only be routed by prefix to one of them, so 
 from the source’s own `skos:inScheme` statements, or from a `VALUES` clause that maps the term’s type to a dataset IRI.
 The Network of Terms uses that triple to attribute the term to its own dataset instead of the one the prefix pointed at.
 
+#### Terms that denote a place
+
+A query whose terms denote places should type them `schema:Place` and construct what SKOS cannot
+state. The term’s position in the place hierarchy is not part of that: it stays on `skos:broader`
+and `skos:narrower`, so a place is never also stated with `schema:containedInPlace`.
+
+```sparql
+?uri a skos:Concept , schema:Place ;
+    schema:name ?name ;
+    schema:geo ?geo .
+?geo a schema:GeoCoordinates ;
+    schema:latitude ?latitude ;
+    schema:longitude ?longitude ;
+    schema:addressCountry ?countryCode .
+```
+
+- `schema:name` is the place’s own name, language-tagged, and nothing else. Where a source
+  disambiguates homonyms by appending to the label – GeoNames’ `Bergen (NL)` – that suffix belongs
+  on `skos:prefLabel` and not here, and the country it disambiguates by belongs in
+  `schema:addressCountry`.
+- The coordinates and the country hang off a `schema:geo` node, because `schema:addressCountry`
+  does not have `schema:Place` in its domain. `schema:GeoCoordinates` is the only class that takes
+  all three, and it is also where `schema:elevation` would go.
+- **Mint the `schema:geo` node as an IRI derived from the term’s, not as a blank node.** A blank
+  node in a `CONSTRUCT` template is minted once per solution row, and a term with many labels and
+  parents carries hundreds of them. `BIND(IRI(CONCAT(STR(?uri), "#geo")) AS ?geo)` gives one node
+  per term. The Network of Terms reads the coordinates through it and never returns the IRI.
+- Stating the coordinates flat on the term is still read as-is, for sources that predate the node.
+
 #### Full-text search
 
 Plain `FILTER(CONTAINS(…))` scans every candidate literal on each request. **Prefer the endpoint’s native full-text index** so the federated query stays fast. Common patterns:
