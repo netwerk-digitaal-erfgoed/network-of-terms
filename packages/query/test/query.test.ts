@@ -10,7 +10,6 @@ import {
 } from '../src/index.js';
 import { QueryEngine } from '@comunica/query-sparql';
 import { ArrayIterator } from 'asynciterator';
-import type { Term } from '@rdfjs/types';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 function createTestDataset(
@@ -52,14 +51,30 @@ describe('Query', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
   });
-  it('passes dataset IRI query parameter to Comunica', async () => {
-    // Use GTAA which doesn't have VALUES, so uses initialBindings (not string substitution)
-    const config = await query(
-      'https://data.beeldengeluid.nl/id/datadownload/0026',
+  it('substitutes the dataset IRI into the query sent to Comunica', async () => {
+    await query('https://data.beeldengeluid.nl/id/datadownload/0026');
+    const sentQuery = comunicaMock.queryQuads.mock.calls[0][0];
+    expect(sentQuery).toContain(
+      '<http://data.beeldengeluid.nl/gtaa/Persoonsnamen>',
     );
-    expect(config.initialBindings.get('datasetUri')?.value).toEqual(
-      'http://data.beeldengeluid.nl/gtaa/Persoonsnamen',
+    expect(sentQuery).not.toContain('?datasetUri');
+  });
+
+  it('escapes a search term that would otherwise break the query', async () => {
+    const { dataset, distribution } = createTestDataset(
+      'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?query }',
     );
+    await service.search(
+      'van "gogh" \\ x',
+      QueryMode.RAW,
+      dataset,
+      distribution,
+      10_000,
+      10_000,
+    );
+    const sentQuery = comunicaMock.queryQuads.mock.calls[0][0];
+    expect(sentQuery).toContain('"van \\"gogh\\" \\\\ x"');
+    expect(sentQuery).not.toContain('?query');
   });
 
   it('supports HTTP authentication', async () => {
@@ -95,7 +110,6 @@ const query = async (iri: string) => {
         value: string;
       },
     ];
-    initialBindings: Map<string, Term>;
   };
 };
 

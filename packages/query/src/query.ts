@@ -1,4 +1,5 @@
 import * as Hoek from '@hapi/hoek';
+import { termToString } from 'rdf-string-ttl';
 import Joi from 'joi';
 import { createLoggingFetch } from './helpers/logging-fetch.js';
 import { LoggerPino } from './helpers/logger-pino.js';
@@ -9,7 +10,6 @@ import { Term, TermsTransformer } from './terms.js';
 import { QueryMode, queryVariants } from './search/query-mode.js';
 import { Dataset, Distribution, IRI } from './catalog.js';
 import { QueryEngine } from '@comunica/query-sparql';
-import { BindingsFactory } from '@comunica/utils-bindings-factory';
 import { DataFactory } from 'rdf-data-factory';
 import { sourceQueriesHistogram } from './instrumentation.js';
 import { config } from './config.js';
@@ -71,9 +71,37 @@ export interface BuildSearchQueryResult {
 }
 
 /**
+ * Substitute bindings into the query text rather than passing them as Comunica initialBindings.
+ *
+ * Comunica materialises initialBindings by joining a VALUES clause into every FILTER operation,
+ * using all the bindings whether or not the sub-operation references them – so a query with two
+ * bindings arrives at the endpoint carrying six copies of each, including inside UNION branches
+ * that mention neither. Jena then stops pushing the bound variable into the branch and scans the
+ * predicate instead: measured against GeoNames, one such clause took a search from 0.21s to a 30s
+ * timeout. See https://github.com/comunica/comunica/issues/1759.
+ *
+ * Only searches carry bindings – lookup() interpolates its own IRIs – so this changes nothing for
+ * lookups. A previous version of this workaround existed for a crash (comunica#1655) and was
+ * removed once that was fixed; this one is about the query the endpoint receives.
+ */
+function substituteBindings(
+  query: string,
+  bindings: Record<string, RDF.Term>,
+): string {
+  let result = query;
+  for (const [name, term] of Object.entries(bindings)) {
+    result = result.replaceAll(
+      new RegExp(`\\?${name}\\b`, 'g'),
+      termToString(term),
+    );
+  }
+  return result;
+}
+
+/**
  * Build a SPARQL query and bindings from a template.
  * Returns the query with #LIMIT# replaced and a set of bindings for variables.
- * The bindings can be used with Comunica's initialBindings or serialized into the query.
+ * The bindings are substituted into the query text before it is sent; see substituteBindings().
  */
 export function buildSearchQuery(
   options: BuildSearchQueryOptions,
@@ -195,8 +223,9 @@ export class QueryTermsService {
     const logger = new LoggerPino({ logger: this.logger });
     // Extract HTTP credentials if the distribution URL contains any.
     const url = new URL(distribution.endpoint.toString());
-    this.logger.info(`Querying "${url}" with "${query}"...`);
-    const quadStream = await this.engine.queryQuads(query, {
+    const finalQuery = substituteBindings(query, bindings);
+    this.logger.info(`Querying "${url}" with "${finalQuery}"...`);
+    const quadStream = await this.engine.queryQuads(finalQuery, {
       log: logger,
       fetch: this.fetch,
       httpAuth:
@@ -209,7 +238,6 @@ export class QueryTermsService {
           value: url.origin + url.pathname,
         },
       ],
-      initialBindings: bindingsFactory.fromRecord(bindings),
     });
 
     return new Promise((resolve) => {
@@ -295,7 +323,6 @@ const alphabeticallyByLabels = (a: Term, b: Term) => {
 };
 
 const dataFactory = new DataFactory();
-const bindingsFactory = new BindingsFactory(dataFactory);
 
 const obfuscateHttpCredentials = (message: string) =>
   message.replace(/(https?):\/\/.+:.+@/, '$1://***@');
