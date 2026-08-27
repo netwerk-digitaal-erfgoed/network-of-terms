@@ -147,11 +147,12 @@ describe('Server', () => {
       'Nachtwacht',
       'Kunstige dingen',
       'Halvewegen',
-      'Maastricht',
+      'Maastricht (NL)',
       'Marion Michelle Koblitz',
       'Nergenshuizen',
       '',
       '',
+      'Rijnland',
     ]); // Results with score must come first.
 
     const relatedPrefLabels = artwork.related.map(
@@ -187,7 +188,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(9); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(10); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -204,6 +205,7 @@ describe('Server', () => {
     expect(place.__typename).toEqual('TranslatedTerm');
     expect(place.place.latitude).toEqual(50.84833);
     expect(place.place.longitude).toEqual(5.68889);
+    expect(place.place.addressCountry).toEqual('NL');
   });
 
   it('responds to successful GraphQL terms query with backwards compatible distribution URI', async () => {
@@ -219,7 +221,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(9); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(10); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -352,11 +354,29 @@ describe('Server', () => {
     );
     const term = body.data.lookup[0];
     expect(term.result.__typename).toEqual('TranslatedTerm');
+    // The name that the source holds, without the country suffix that the prefLabel carries.
     expect(term.result.prefLabel).toEqual([
+      { language: 'nl', value: 'Maastricht (NL)' },
+    ]);
+    expect(term.result.place.name).toEqual([
       { language: 'nl', value: 'Maastricht' },
     ]);
     expect(term.result.place.latitude).toEqual(50.84833);
     expect(term.result.place.longitude).toEqual(5.68889);
+    expect(term.result.place.addressCountry).toEqual('NL');
+  });
+
+  it('returns the place name in the requested language', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/place'],
+        languages: ['en'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.place.name).toEqual([
+      { language: 'en', value: 'Maestricht' },
+    ]);
   });
 
   it('returns the denoted place in monolingual lookup too', async () => {
@@ -367,6 +387,27 @@ describe('Server', () => {
     expect(term.result.__typename).toEqual('Term');
     expect(term.result.place.latitude).toEqual(50.84833);
     expect(term.result.place.longitude).toEqual(5.68889);
+    expect(term.result.place.addressCountry).toEqual('NL');
+    // The place name is language-tagged even here, where the term’s own labels are plain strings.
+    expect(term.result.place.name).toEqual([
+      { language: 'nl', value: 'Maastricht' },
+    ]);
+  });
+
+  it('returns a place that its source describes but does not locate', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/place-without-location'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.place.latitude).toBeNull();
+    expect(term.result.place.longitude).toBeNull();
+    expect(term.result.place.addressCountry).toEqual('NL');
+    expect(term.result.place.name).toEqual([
+      { language: 'nl', value: 'Rijnland' },
+    ]);
   });
 
   it('returns no place for one whose source publishes unusable coordinates', async () => {
@@ -394,6 +435,7 @@ describe('Server', () => {
     expect(body.errors).toBeUndefined();
     expect(term.result.place.latitude).toEqual(53.20139);
     expect(term.result.place.longitude).toBeNull();
+    expect(term.result.place.addressCountry).toBeNull();
   });
 
   it('falls back to mul labels in non-multilingual lookup', async () => {
@@ -552,8 +594,10 @@ function termsQuery({
                 prefLabel { language value }
               }
               place {
+                name { language value }
                 latitude
                 longitude
+                addressCountry
               }
             }
           }
@@ -615,8 +659,10 @@ function lookupQuery({
               prefLabel
             }
             place {
+              name { language value }
               latitude
               longitude
+              addressCountry
             }
           }
           `
@@ -633,8 +679,10 @@ function lookupQuery({
               prefLabel { language value }
             }
             place {
+              name { language value }
               latitude
               longitude
+              addressCountry
             }
           }
           `
