@@ -52,20 +52,47 @@
     # Wikidata-style ‘default for all languages’ label; see issue #1884.
     skos:prefLabel "Marion Michelle Koblitz"@mul .
 
+# A place in the shape that sources construct: the coordinates and the country hang off a
+# schema:geo node, since schema:addressCountry does not have schema:Place in its domain. Its
+# prefLabel carries the country suffix that GeoNames appends, which is exactly what schema:name
+# does not.
 <https://example.com/resources/place>
     a skos:Concept, schema:Place ;
-    skos:prefLabel "Maastricht"@nl ;
+    skos:prefLabel "Maastricht (NL)"@nl ;
+    schema:name "Maastricht"@nl, "Maestricht"@en ;
+    schema:geo <https://example.com/resources/place#geo> .
+
+<https://example.com/resources/place#geo>
+    a schema:GeoCoordinates ;
     schema:latitude "50.84833"^^xsd:float ;
-    schema:longitude "5.68889"^^xsd:float .
+    schema:longitude "5.68889"^^xsd:float ;
+    schema:addressCountry "NL" .
 
 # A place whose source publishes unusable coordinates; see the `floatValue` guard in resolvers.ts.
 <https://example.com/resources/place-without-coordinates>
     a skos:Concept, schema:Place ;
     skos:prefLabel "Nergenshuizen"@nl ;
-    schema:latitude "" ;
-    schema:longitude "onbekend" .
+    schema:geo <https://example.com/resources/place-without-coordinates#geo> .
 
-# A place that is locatable on one axis only, so it still gets a `place` node.
+<https://example.com/resources/place-without-coordinates#geo>
+    a schema:GeoCoordinates ;
+    schema:latitude "" ;
+    schema:longitude "onbekend" ;
+    schema:addressCountry "  " .
+
+# A place that is described but not located, so it gets a `place` node all the same.
+<https://example.com/resources/place-without-location>
+    a skos:Concept, schema:Place ;
+    skos:prefLabel "Rijnland"@nl ;
+    schema:name "Rijnland"@nl ;
+    schema:geo <https://example.com/resources/place-without-location#geo> .
+
+<https://example.com/resources/place-without-location#geo>
+    a schema:GeoCoordinates ;
+    schema:addressCountry "NL" .
+
+# A place that is locatable on one axis only, so it still gets a `place` node. It also keeps the
+# flat shape that sources used before the schema:geo node, which is still read as-is.
 <https://example.com/resources/place-without-longitude>
     a skos:Concept, schema:Place ;
     skos:prefLabel "Halvewegen"@nl ;

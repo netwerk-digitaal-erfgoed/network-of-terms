@@ -17,6 +17,9 @@ export class Term {
     readonly score: RDF.Literal | undefined,
     readonly latitude: RDF.Literal | undefined,
     readonly longitude: RDF.Literal | undefined,
+    // Defaulted, so that adding to a place stays additive for callers that construct a Term.
+    readonly names: RDF.Literal[] = [],
+    readonly addressCountry: RDF.Literal | undefined = undefined,
   ) {}
 }
 
@@ -43,6 +46,9 @@ class SparqlResultTerm {
   score: RDF.Literal | undefined = undefined;
   latitude: RDF.Literal | undefined = undefined;
   longitude: RDF.Literal | undefined = undefined;
+  names: RDF.Literal[] = [];
+  geo: RDF.Term | undefined = undefined;
+  addressCountry: RDF.Literal | undefined = undefined;
 }
 
 export class TermsTransformer {
@@ -70,10 +76,16 @@ export class TermsTransformer {
     ['http://www.w3.org/2004/02/skos/core#inScheme', 'inScheme'],
     ['http://purl.org/voc/vrank#simpleRank', 'score'],
     // Both Schema.org namespaces, because source queries use either one.
+    ['https://schema.org/name', 'names'],
+    ['http://schema.org/name', 'names'],
+    ['https://schema.org/geo', 'geo'],
+    ['http://schema.org/geo', 'geo'],
     ['https://schema.org/latitude', 'latitude'],
     ['http://schema.org/latitude', 'latitude'],
     ['https://schema.org/longitude', 'longitude'],
     ['http://schema.org/longitude', 'longitude'],
+    ['https://schema.org/addressCountry', 'addressCountry'],
+    ['http://schema.org/addressCountry', 'addressCountry'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -108,6 +120,7 @@ export class TermsTransformer {
   asArray(): Term[] {
     return [...this.termsIris].map((iri) => {
       const term = this.termsMap.get(iri)!;
+      const location = this.location(term);
 
       return new Term(
         term.id,
@@ -125,11 +138,27 @@ export class TermsTransformer {
         this.mapRelatedTerms(term.exactMatches).sort(alphabeticallyByPrefLabel),
         term.inScheme,
         term.score,
-        term.latitude,
-        term.longitude,
+        location.latitude,
+        location.longitude,
+        term.names,
+        location.addressCountry,
       );
     });
   }
+
+  /**
+   * The node that carries the term’s coordinates and country.
+   *
+   * Sources hang those off a `schema:geo` node, because `schema:addressCountry` does not have
+   * `schema:Place` in its domain and would be an unsanctioned triple on the term itself. That
+   * costs this transformer its only traversal; everything else stays a flat predicate→property
+   * map. A source that states the coordinates on the term itself is still read as-is, so the
+   * traversal is an addition to the flat shape rather than a replacement for it.
+   */
+  private location = (term: SparqlResultTerm) =>
+    (term.geo === undefined
+      ? undefined
+      : this.termsMap.get(term.geo.value)) ?? term;
 
   /**
    * Map related IRIs to their related terms, making sure to only accept complete related terms.

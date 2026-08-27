@@ -51,8 +51,10 @@ export const testCatalog = (port: number) =>
           `http://localhost:${port}/sparql`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+          PREFIX schema: <https://schema.org/>
           CONSTRUCT { 
-            ?s ?p ?o 
+            ?s ?p ?o .
+            ?geo ?geo_p ?geo_o .
           }
           WHERE {
             {
@@ -70,9 +72,13 @@ export const testCatalog = (port: number) =>
               ?s skos:exactMatch ?match .
               ?match skos:prefLabel ?match_label .
             }  
+            
+            # The schema:geo node carries no label of its own, so it is not selected above.
+            OPTIONAL { ?s schema:geo ?geo . ?geo ?geo_p ?geo_o . }
           }`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+          PREFIX schema: <https://schema.org/>
           CONSTRUCT {
             ?s ?p ?o ;
               skos:broader ?broader_uri ;
@@ -82,10 +88,13 @@ export const testCatalog = (port: number) =>
             ?broader_uri skos:prefLabel ?broader_prefLabel .
             ?narrower_uri skos:prefLabel ?narrower_prefLabel .
             ?related_uri skos:prefLabel ?related_prefLabel .
+            ?geo ?geo_p ?geo_o .
           } 
           WHERE { 
             ?s ?p ?o.
             VALUES ?s { ?uris }
+            # The schema:geo node is not among the URIs looked up, so it is reached through ?s.
+            OPTIONAL { ?s schema:geo ?geo . ?geo ?geo_p ?geo_o . }
             OPTIONAL { 
               ?s skos:broader ?broader_uri.
               ?broader_uri skos:prefLabel ?broader_prefLabel. 
