@@ -73,6 +73,29 @@ describe('TermsTransformer', () => {
     expect(term.addressCountry).toBeUndefined();
   });
 
+  it('reads the country from the geo node and the coordinates from the term', () => {
+    // How a source migrates: the country is the one property that cannot stay on the term, so a
+    // schema:geo node may arrive carrying it alone while the coordinates are still stated flat.
+    const [term] = transform(
+      place(
+        dataFactory.quad(
+          maastricht,
+          schema('latitude'),
+          dataFactory.literal('50.84833'),
+        ),
+        dataFactory.quad(maastricht, schema('geo'), geo),
+        dataFactory.quad(
+          geo,
+          schema('addressCountry'),
+          dataFactory.literal('NL'),
+        ),
+      ),
+    );
+
+    expect(term.latitude?.value).toEqual('50.84833');
+    expect(term.addressCountry?.value).toEqual('NL');
+  });
+
   it('does not return the schema:geo node as a term of its own', () => {
     // It is not a skos:Concept, so it is a node the transformer reads through, never a result.
     const terms = transform(

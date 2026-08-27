@@ -147,18 +147,27 @@ export class TermsTransformer {
   }
 
   /**
-   * The node that carries the term’s coordinates and country.
+   * Where the term is, read from the `schema:geo` node it points at and from the term itself.
    *
-   * Sources hang those off a `schema:geo` node, because `schema:addressCountry` does not have
-   * `schema:Place` in its domain and would be an unsanctioned triple on the term itself. That
-   * costs this transformer its only traversal; everything else stays a flat predicate→property
-   * map. A source that states the coordinates on the term itself is still read as-is, so the
-   * traversal is an addition to the flat shape rather than a replacement for it.
+   * Sources hang the coordinates and the country off a `schema:geo` node, because
+   * `schema:addressCountry` does not have `schema:Place` in its domain and would be an
+   * unsanctioned triple on the term itself. That costs this transformer its only traversal;
+   * everything else stays a flat predicate→property map.
+   *
+   * Each property falls back to the term separately, so a source that states its coordinates flat
+   * and adds a `schema:geo` node only to carry the country – the natural way to migrate, since the
+   * country is the one property that cannot stay flat – keeps both.
    */
-  private location = (term: SparqlResultTerm) =>
-    (term.geo === undefined
-      ? undefined
-      : this.termsMap.get(term.geo.value)) ?? term;
+  private location = (term: SparqlResultTerm) => {
+    const geo =
+      term.geo === undefined ? undefined : this.termsMap.get(term.geo.value);
+
+    return {
+      latitude: geo?.latitude ?? term.latitude,
+      longitude: geo?.longitude ?? term.longitude,
+      addressCountry: geo?.addressCountry ?? term.addressCountry,
+    };
+  };
 
   /**
    * Map related IRIs to their related terms, making sure to only accept complete related terms.

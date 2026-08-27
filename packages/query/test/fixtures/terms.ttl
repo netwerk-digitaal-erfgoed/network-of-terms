@@ -91,6 +91,13 @@
     a schema:GeoCoordinates ;
     schema:addressCountry "NL" .
 
+# A place its source only names. Whether it gets a `place` node must not depend on the language
+# the client asked for, so the node survives a request for a language it has no name in.
+<https://example.com/resources/place-only-named>
+    a skos:Concept, schema:Place ;
+    skos:prefLabel "Nergensland"@nl ;
+    schema:name "Nergensland"@nl .
+
 # A place that is locatable on one axis only, so it still gets a `place` node. It also keeps the
 # flat shape that sources used before the schema:geo node, which is still read as-is.
 <https://example.com/resources/place-without-longitude>
