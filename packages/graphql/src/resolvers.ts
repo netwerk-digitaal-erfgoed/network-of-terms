@@ -225,10 +225,12 @@ function denotedPlace(term: Term, name: RDF.Literal[]) {
   // An empty country is as unusable as an empty coordinate, and ISO 3166-1 has no empty code.
   const addressCountry = term.addressCountry?.value.trim() || null;
 
+  // Tested against every name the source holds, not against the ones the client asked for, so
+  // whether the node exists is a fact about the term rather than about the requested language.
   return latitude === null &&
     longitude === null &&
     addressCountry === null &&
-    name.length === 0
+    term.names.length === 0
     ? null
     : { latitude, longitude, addressCountry, name };
 }

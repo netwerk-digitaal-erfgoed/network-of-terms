@@ -150,6 +150,7 @@ describe('Server', () => {
       'Maastricht (NL)',
       'Marion Michelle Koblitz',
       'Nergenshuizen',
+      'Nergensland',
       '',
       '',
       'Rijnland',
@@ -188,7 +189,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(10); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(11); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -221,7 +222,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(10); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(11); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -408,6 +409,19 @@ describe('Server', () => {
     expect(term.result.place.name).toEqual([
       { language: 'nl', value: 'Rijnland' },
     ]);
+  });
+
+  it('returns a named place even in a language its source does not name it in', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/place-only-named'],
+        languages: ['en'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    // Whether the node exists is a fact about the term, not about the language that was asked for.
+    expect(term.result.place).not.toBeNull();
+    expect(term.result.place.name).toEqual([]);
   });
 
   it('returns no place for one whose source publishes unusable coordinates', async () => {
