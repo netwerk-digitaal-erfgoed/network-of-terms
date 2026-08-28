@@ -49,6 +49,26 @@ export class NotFoundError {
 // eslint-disable-next-line no-control-regex -- the excluded range is #x00-#x20 by definition
 const FORBIDDEN_IN_IRIREF = /[<>"{}|^`\\\u0000-\u0020]/u;
 
+/**
+ * The number of IRIs to look up in a single query.
+ *
+ * A lookup query returns every label, note and related term of every IRI it is given, so its result
+ * grows fast with the size of the batch. Sources cannot take an unbounded one: Getty answers a
+ * 60-IRI batch with an HTTP 500, and a source that does answer runs into the query’s result limit,
+ * which drops the IRIs that did not fit – reported to the caller as NotFoundError, the one outcome
+ * a client is entitled to remember.
+ */
+const LOOKUP_BATCH_SIZE = 25;
+
+function batched<T>(items: T[], size: number): T[][] {
+  const batches: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    batches.push(items.slice(index, index + size));
+  }
+
+  return batches;
+}
+
 export class LookupService {
   constructor(
     private catalog: Catalog,
@@ -64,9 +84,7 @@ export class LookupService {
     // representative per prefix and rely on each returned term's skos:inScheme
     // to re-route it to its true sub-dataset below.
     // Dropped rather than rejected, so one malformed IRI does not fail a batch: the caller gets the
-    // same not-found result as for an IRI that matches no dataset. This filters the array that is
-    // interpolated into the query below, not just the grouping: queryService.lookup() receives the
-    // whole list, since a term is re-routed to its sub-dataset by its skos:inScheme.
+    // same not-found result as for an IRI that matches no dataset.
     const queryableIris = iris.filter((iri) => !FORBIDDEN_IN_IRIREF.test(iri));
 
     const irisByQueriedDataset = new Map<Dataset, IRI[]>();
@@ -78,23 +96,28 @@ export class LookupService {
       irisByQueriedDataset.set(dataset, bucket);
     }
 
+    // Query each dataset for its own IRIs only, in batches of LOOKUP_BATCH_SIZE.
     const responses = await Promise.all(
-      [...irisByQueriedDataset.keys()].map(
-        async (queriedDataset) =>
-          [
-            queriedDataset,
-            await this.queryService.lookup(
-              queryableIris,
-              queriedDataset.distributions[0],
-              timeoutMs,
-            ),
-          ] as const,
+      [...irisByQueriedDataset.entries()].flatMap(
+        ([queriedDataset, datasetIris]) =>
+          batched(datasetIris, LOOKUP_BATCH_SIZE).map(
+            async (batch) =>
+              [
+                queriedDataset,
+                batch,
+                await this.queryService.lookup(
+                  batch,
+                  queriedDataset.distributions[0],
+                  timeoutMs,
+                ),
+              ] as const,
+          ),
       ),
     );
 
     const resultsByIri = new Map<string, LookupQueryResult>();
 
-    for (const [queriedDataset, response] of responses) {
+    for (const [queriedDataset, , response] of responses) {
       if (!(response.result instanceof Terms)) continue;
       for (const term of response.result.terms) {
         const termDataset =
@@ -109,8 +132,8 @@ export class LookupService {
       }
     }
 
-    for (const [queriedDataset, response] of responses) {
-      for (const iri of irisByQueriedDataset.get(queriedDataset) as IRI[]) {
+    for (const [queriedDataset, batch, response] of responses) {
+      for (const iri of batch) {
         if (resultsByIri.has(iri)) continue;
         resultsByIri.set(iri, {
           uri: iri,

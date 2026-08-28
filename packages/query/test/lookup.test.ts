@@ -38,6 +38,27 @@ describe('LookupService', () => {
     expect(queryService.lookup).not.toHaveBeenCalled();
   });
 
+  // A lookup query answers with everything it knows about every IRI it is given, so a large batch
+  // overruns the query’s result limit (or the endpoint), and the IRIs that did not fit come back as
+  // NotFoundError – which a client is entitled to cache as ‘this term does not exist’.
+  it('splits a large batch into several queries', async () => {
+    const { service, queryService } = lookupServiceWithSpy();
+    const iris = Array.from(
+      { length: 60 },
+      (_, index) => `https://example.com/resources/term${index}`,
+    );
+
+    const results = await service.lookup(iris, 1000);
+
+    expect(queryService.lookup).toHaveBeenCalledTimes(3);
+    const batches = queryService.lookup.mock.calls.map(
+      (call) => (call as unknown as [string[]])[0],
+    );
+    expect(batches.map((batch) => batch.length)).toEqual([25, 25, 10]);
+    expect(batches.flat()).toEqual(iris);
+    expect(results.map((result) => result.uri)).toEqual(iris);
+  });
+
   it('still queries for the valid IRIs in a batch containing a malformed one', async () => {
     const { service, queryService } = lookupServiceWithSpy();
     await service.lookup(
