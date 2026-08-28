@@ -245,7 +245,7 @@ function denotedPlace(
         addressCountry,
         additionalType: term.additionalTypes.map((additionalType) => ({
           uri: additionalType.id.value,
-          label: inRequestedLanguages(additionalType.prefLabels),
+          name: inRequestedLanguages(additionalType.prefLabels),
         })),
       };
 }

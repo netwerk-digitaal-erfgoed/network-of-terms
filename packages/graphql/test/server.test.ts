@@ -368,7 +368,7 @@ describe('Server', () => {
     expect(term.result.place.additionalType).toEqual([
       {
         uri: 'https://www.geonames.org/ontology#P.PPLA',
-        label: [{ language: 'nl', value: 'hoofdplaats van een provincie' }],
+        name: [{ language: 'nl', value: 'hoofdplaats van een provincie' }],
       },
     ]);
   });
@@ -383,7 +383,7 @@ describe('Server', () => {
     const term = body.data.lookup[0];
     // The URI is the point: a client that knows the vocabulary joins to it itself.
     expect(term.result.place.additionalType).toEqual([
-      { uri: 'https://www.geonames.org/ontology#H.LK', label: [] },
+      { uri: 'https://www.geonames.org/ontology#H.LK', name: [] },
     ]);
   });
 
@@ -397,6 +397,14 @@ describe('Server', () => {
     const term = body.data.lookup[0];
     expect(term.result.place.name).toEqual([
       { language: 'en', value: 'Maestricht' },
+    ]);
+    // Named with schema:name where the Dutch one came from skos:prefLabel: a vocabulary names its
+    // own classes as it sees fit, so both are read.
+    expect(term.result.place.additionalType[0].name).toEqual([
+      {
+        language: 'en',
+        value: 'seat of a first-order administrative division',
+      },
     ]);
   });
 
@@ -632,7 +640,7 @@ function termsQuery({
                 latitude
                 longitude
                 addressCountry
-                additionalType { uri label { language value } }
+                additionalType { uri name { language value } }
               }
             }
           }
@@ -698,7 +706,7 @@ function lookupQuery({
               latitude
               longitude
               addressCountry
-              additionalType { uri label { language value } }
+              additionalType { uri name { language value } }
             }
           }
           `
@@ -719,7 +727,7 @@ function lookupQuery({
               latitude
               longitude
               addressCountry
-              additionalType { uri label { language value } }
+              additionalType { uri name { language value } }
             }
           }
           `

@@ -202,11 +202,11 @@
   }
 
   """
-  A type from a vocabulary outside the Network of Terms, identified by its URI. `label` is empty unless the source publishes one alongside the URI, which most do not.
+  A type from a vocabulary outside the Network of Terms, identified by its URI. `name` is empty unless the vocabulary is published with one, which most are not.
   """
   type AdditionalType {
     uri: ID!
-    label: [LanguageString]!
+    name: [LanguageString]!
   }
   
   type TranslatedRelatedTerm {
