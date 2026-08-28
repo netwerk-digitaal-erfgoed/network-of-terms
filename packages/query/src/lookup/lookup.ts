@@ -53,10 +53,17 @@ const FORBIDDEN_IN_IRIREF = /[<>"{}|^`\\\u0000-\u0020]/u;
  * The number of IRIs to look up in a single query.
  *
  * A lookup query returns every label, note and related term of every IRI it is given, so its result
- * grows fast with the size of the batch. Sources cannot take an unbounded one: Getty answers a
- * 60-IRI batch with an HTTP 500, and a source that does answer runs into the query’s result limit,
- * which drops the IRIs that did not fit – reported to the caller as NotFoundError, the one outcome
- * a client is entitled to remember.
+ * grows fast with the size of the batch – faster than the batch itself, because the source plans
+ * one query over all of them. Neither the query text nor any single IRI is the problem: 60 IRIs
+ * make a 6 KB query, and each of the IRIs below answers on its own in about a second.
+ *
+ * What a source cannot take is the resulting amount of work. Getty answers a batch of 30 rich AAT
+ * terms in a few seconds, but from around 36 it sends an HTTP 200, streams for 17 seconds and then
+ * cuts the connection in the middle of a triple. A source that does answer runs into the query’s
+ * result limit instead, which drops the IRIs that did not fit – reported to the caller as
+ * NotFoundError, the one outcome a client is entitled to remember.
+ *
+ * 25 keeps a comfortable margin below where Getty, the least forgiving source measured, gives up.
  */
 const LOOKUP_BATCH_SIZE = 25;
 
@@ -96,13 +103,17 @@ export class LookupService {
       irisByQueriedDataset.set(dataset, bucket);
     }
 
-    // Query each dataset for its own IRIs only, in batches of LOOKUP_BATCH_SIZE.
-    const responses = await Promise.all(
-      [...irisByQueriedDataset.entries()].flatMap(
-        ([queriedDataset, datasetIris]) =>
-          batched(datasetIris, LOOKUP_BATCH_SIZE).map(
-            async (batch) =>
-              [
+    // Query each dataset for its own IRIs only, in batches of LOOKUP_BATCH_SIZE. The batches of one
+    // dataset run one after another, so a large request stays a single query at a time per source
+    // instead of the burst that would get us rate-limited; different sources are queried in
+    // parallel, as before.
+    const responses = (
+      await Promise.all(
+        [...irisByQueriedDataset.entries()].map(
+          async ([queriedDataset, datasetIris]) => {
+            const datasetResponses = [];
+            for (const batch of batched(datasetIris, LOOKUP_BATCH_SIZE)) {
+              datasetResponses.push([
                 queriedDataset,
                 batch,
                 await this.queryService.lookup(
@@ -110,10 +121,14 @@ export class LookupService {
                   queriedDataset.distributions[0],
                   timeoutMs,
                 ),
-              ] as const,
-          ),
-      ),
-    );
+              ] as const);
+            }
+
+            return datasetResponses;
+          },
+        ),
+      )
+    ).flat();
 
     const resultsByIri = new Map<string, LookupQueryResult>();
 
