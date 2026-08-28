@@ -84,14 +84,16 @@ export interface BuildSearchQueryResult {
  * lookups. A previous version of this workaround existed for a crash (comunica#1655) and was
  * removed once that was fixed; this one is about the query the endpoint receives.
  */
-function substituteBindings(
+export function substituteBindings(
   query: string,
   bindings: Record<string, RDF.Term>,
 ): string {
   let result = query;
   for (const [name, term] of Object.entries(bindings)) {
-    result = result.replaceAll(
-      new RegExp(`\\?${name}\\b`, 'g'),
+    // A replacer function, because a replacement *string* gives `$` a meaning: a search term
+    // containing `$'` would splice the query text following the match into the term, ending the
+    // string literal and letting the caller write the rest of the query.
+    result = result.replaceAll(new RegExp(`\\?${name}\\b`, 'g'), () =>
       termToString(term),
     );
   }

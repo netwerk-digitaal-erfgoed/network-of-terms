@@ -1,6 +1,7 @@
 import { testCatalog } from '../src/test-utils.js';
 import {
   buildSearchQuery,
+  substituteBindings,
   Dataset,
   Organization,
   parameterizeGenres,
@@ -9,6 +10,7 @@ import {
   SparqlDistribution,
 } from '../src/index.js';
 import { QueryEngine } from '@comunica/query-sparql';
+import { DataFactory } from 'rdf-data-factory';
 import { ArrayIterator } from 'asynciterator';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -298,4 +300,33 @@ describe('buildSearchQuery', () => {
     // Virtuoso format: 'word1' AND 'word2' for multi-word queries
     expect(result.bindings['virtuosoQuery'].value).toBe("'van' AND 'gogh'");
   });
+});
+
+const dataFactory = new DataFactory();
+
+describe('substituteBindings', () => {
+  it('substitutes a term into every occurrence of its variable', () => {
+    const query = substituteBindings('FILTER(?query = ?query)', {
+      query: dataFactory.literal('fiets'),
+    });
+
+    expect(query).toBe('FILTER("fiets" = "fiets")');
+  });
+
+  // `String.replaceAll` reads `$` patterns in a replacement string: `$'` stands for the text
+  // following the match, so a search term containing it used to end the string literal and let the
+  // caller write the rest of the query.
+  it.each([["a$'b"], ['a$`b'], ['a$&b'], ['a$1b']])(
+    'substitutes a term containing a replacement pattern verbatim: %s',
+    (searchTerm) => {
+      const query = substituteBindings(
+        'FILTER(CONTAINS(LCASE(?label), LCASE(?query))) } LIMIT 10',
+        { query: dataFactory.literal(searchTerm) },
+      );
+
+      expect(query).toBe(
+        `FILTER(CONTAINS(LCASE(?label), LCASE("${searchTerm}"))) } LIMIT 10`,
+      );
+    },
+  );
 });
