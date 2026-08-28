@@ -43,19 +43,32 @@ WHERE {
     FILTER(LANG(?prefLabel) = "en")
     BIND(STRLANG(STR(?notation), "en") AS ?notation_en)
 
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri skos:prefLabel ?broader_prefLabel .
-        FILTER(LANG(?broader_prefLabel) = "en")
-    }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-        FILTER(LANG(?narrower_prefLabel) = "en")
-    }
-    OPTIONAL {
-        ?uri skos:related ?related_uri .
-        ?related_uri skos:prefLabel ?related_prefLabel .
-        FILTER(LANG(?related_prefLabel) = "en")
+    # Each property below is independently multi-valued, so use UNION (one branch per property)
+    # instead of OPTIONAL to prevent a cross-product: a term then costs the sum of its values in
+    # rows rather than their product. Besides being far slower, the cross-product of a result set
+    # of richly-linked terms runs into whatever row limit the endpoint applies, which silently
+    # truncates the labels of their related terms.
+    #
+    # The group must not be an OPTIONAL: Virtuoso and GraphDB then stop applying the patterns
+    # outside it to the branches, and answer with the wrong rows or none at all. The first
+    # branch repeats a pattern the term already matches, so the group matches every term even
+    # when it carries none of the properties below.
+    {
+        { ?uri a skos:Concept }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+            FILTER(LANG(?broader_prefLabel) = "en")
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+            FILTER(LANG(?narrower_prefLabel) = "en")
+        }
+        UNION {
+            ?uri skos:related ?related_uri .
+            ?related_uri skos:prefLabel ?related_prefLabel .
+            FILTER(LANG(?related_prefLabel) = "en")
+        }
     }
 }

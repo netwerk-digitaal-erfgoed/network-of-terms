@@ -23,15 +23,28 @@ WHERE {
         #LIMIT#
     }
 
-    OPTIONAL { ?uri rdfs:label ?rdfs_label }
-    OPTIONAL { ?uri schema:name ?schema_name }
-    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
-    OPTIONAL { ?uri schema:description ?schema_description }
-    OPTIONAL {
-        ?uri ?matchPredicate ?exactMatch_uri .
-        VALUES ?matchPredicate { owl:sameAs schema:sameAs }
-        OPTIONAL {
-            ?exactMatch_uri rdfs:label ?exactMatch_prefLabel .
+    # Each property below is independently multi-valued, so use UNION (one branch per property)
+    # instead of OPTIONAL to prevent a cross-product: a term then costs the sum of its values in
+    # rows rather than their product. Besides being far slower, the cross-product of a result set
+    # of richly-linked terms runs into whatever row limit the endpoint applies, which silently
+    # truncates the labels of their related terms.
+    #
+    # The group must not be an OPTIONAL: Virtuoso and GraphDB then stop applying the patterns
+    # outside it to the branches, and answer with the wrong rows or none at all. The first
+    # branch repeats a pattern the term already matches, so the group matches every term even
+    # when it carries none of the properties below.
+    {
+        { ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/persons> }
+        UNION { ?uri rdfs:label ?rdfs_label }
+        UNION { ?uri schema:name ?schema_name }
+        UNION { ?uri schema:alternateName ?schema_alternateName }
+        UNION { ?uri schema:description ?schema_description }
+        UNION {
+            ?uri ?matchPredicate ?exactMatch_uri .
+            VALUES ?matchPredicate { owl:sameAs schema:sameAs }
+            OPTIONAL {
+                ?exactMatch_uri rdfs:label ?exactMatch_prefLabel .
+            }
         }
     }
 }

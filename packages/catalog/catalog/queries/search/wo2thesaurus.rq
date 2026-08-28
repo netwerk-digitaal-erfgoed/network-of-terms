@@ -31,33 +31,44 @@ WHERE {
 
         #LIMIT#
     }
-    OPTIONAL {
-        ?uri skos:prefLabel ?prefLabel .
-        FILTER(LANG(?prefLabel) = "nl" )
-    }
-    OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote .
-        FILTER(LANG(?scopeNote) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:hiddenLabel ?hiddenLabel .
-        FILTER(LANG(?hiddenLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri skos:prefLabel ?broader_prefLabel .
-        FILTER(LANG(?broader_prefLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-        FILTER(LANG(?narrower_prefLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:exactMatch ?exactMatch_uri . # Has no labels.
+    # Each property below is independently multi-valued, so use UNION (one branch per property)
+    # instead of OPTIONAL to prevent a cross-product: a term then costs the sum of its values in
+    # rows rather than their product. Besides being far slower, the cross-product of a result set
+    # of richly-linked terms runs into whatever row limit the endpoint applies, which silently
+    # truncates the labels of their related terms.
+    #
+    # The group must not be an OPTIONAL: Virtuoso and GraphDB then stop applying the patterns
+    # outside it to the branches, and answer with the wrong rows or none at all. The first
+    # branch repeats a pattern the term already matches, so the group matches every term even
+    # when it carries none of the properties below.
+    {
+        { ?uri a skos:Concept }
+        UNION {
+            ?uri skos:prefLabel ?prefLabel .
+            FILTER(LANG(?prefLabel) = "nl" )
+        }
+        UNION {
+            ?uri skos:scopeNote ?scopeNote .
+            FILTER(LANG(?scopeNote) = "nl")
+        }
+        UNION {
+            ?uri skos:altLabel ?altLabel .
+            FILTER(LANG(?altLabel) = "nl")
+        }
+        UNION {
+            ?uri skos:hiddenLabel ?hiddenLabel .
+            FILTER(LANG(?hiddenLabel) = "nl")
+        }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+            FILTER(LANG(?broader_prefLabel) = "nl")
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+            FILTER(LANG(?narrower_prefLabel) = "nl")
+        }
+        UNION { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
     }
 }
