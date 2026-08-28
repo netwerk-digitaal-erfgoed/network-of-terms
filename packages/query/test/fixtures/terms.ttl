@@ -60,7 +60,13 @@
     a skos:Concept, schema:Place ;
     skos:prefLabel "Maastricht (NL)"@nl ;
     schema:name "Maastricht"@nl, "Maestricht"@en ;
+    schema:additionalType <https://www.geonames.org/ontology#P.PPLA> ;
     schema:geo <https://example.com/resources/place#geo> .
+
+# A type from a vocabulary outside the Network of Terms. GeoNames publishes the code IRI bare, but
+# a source that does label its vocabulary has the label picked up like any other related IRI.
+<https://www.geonames.org/ontology#P.PPLA>
+    skos:prefLabel "hoofdplaats van een provincie"@nl, "seat of a first-order administrative division"@en .
 
 <https://example.com/resources/place#geo>
     a schema:GeoCoordinates ;
@@ -85,6 +91,8 @@
     a skos:Concept, schema:Place ;
     skos:prefLabel "Rijnland"@nl ;
     schema:name "Rijnland"@nl ;
+    # A type whose vocabulary publishes no label, which is what GeoNames does today.
+    schema:additionalType <https://www.geonames.org/ontology#H.LK> ;
     schema:geo <https://example.com/resources/place-without-location#geo> .
 
 <https://example.com/resources/place-without-location#geo>

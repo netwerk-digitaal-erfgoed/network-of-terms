@@ -20,6 +20,7 @@ export class Term {
     // Defaulted, so that adding to a place stays additive for callers that construct a Term.
     readonly names: RDF.Literal[] = [],
     readonly addressCountry: RDF.Literal | undefined = undefined,
+    readonly additionalTypes: RelatedTerm[] = [],
   ) {}
 }
 
@@ -49,6 +50,7 @@ class SparqlResultTerm {
   names: RDF.Literal[] = [];
   geo: RDF.Term | undefined = undefined;
   addressCountry: RDF.Literal | undefined = undefined;
+  additionalTypes: RDF.Term[] = [];
 }
 
 export class TermsTransformer {
@@ -86,6 +88,8 @@ export class TermsTransformer {
     ['http://schema.org/longitude', 'longitude'],
     ['https://schema.org/addressCountry', 'addressCountry'],
     ['http://schema.org/addressCountry', 'addressCountry'],
+    ['https://schema.org/additionalType', 'additionalTypes'],
+    ['http://schema.org/additionalType', 'additionalTypes'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -142,6 +146,9 @@ export class TermsTransformer {
         location.longitude,
         term.names,
         location.addressCountry,
+        // Mapped like the other IRI-valued relations, so a type picks up its labels as soon as a
+        // source constructs them – today most vocabularies publish the IRI and nothing else.
+        this.mapRelatedTerms(term.additionalTypes).sort(alphabeticallyByPrefLabel),
       );
     });
   }
