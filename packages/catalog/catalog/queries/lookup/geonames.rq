@@ -6,6 +6,7 @@ PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 CONSTRUCT {
     ?uri a skos:Concept , schema:Place ;
         schema:name ?prefLabelNlName , ?prefLabelEnName , ?name ;
+        schema:additionalType ?featureCode ;
         schema:geo ?geo ;
         skos:prefLabel ?prefLabelNl , ?prefLabelEn , ?prefLabelFallback ;
         skos:altLabel ?altLabel ;
@@ -97,6 +98,13 @@ WHERE {
     # Untagged, so a client asking for a language GeoNames has no name in still gets a label: the
     # API returns untagged literals and treats them as Dutch.
     BIND(CONCAT(STR(?name), ?countrySuffix) AS ?prefLabelFallback)
+
+    # What kind of feature this is, as GeoNames' own feature code – gn:P.PPLA and the like. The
+    # code IRI is published bare: the GeoNames ontology that defines it, and that carries its
+    # skos:prefLabel, is not loaded into this endpoint (netwerk-digitaal-erfgoed/geonames-rdf#48).
+    # Constructing it anyway is what lets a client that knows GeoNames join to the ontology itself,
+    # and the label appears here with no further change once the endpoint publishes one.
+    OPTIONAL { ?uri gn:featureCode ?featureCode }
 
     # Upper-cased for the same reason the suffix above is: the API promises an ISO 3166-1 alpha-2
     # code, and the two must not disagree about the case of the same value.

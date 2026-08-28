@@ -102,6 +102,7 @@ and `skos:narrower`, so a place is never also stated with `schema:containedInPla
 ```sparql
 ?uri a skos:Concept , schema:Place ;
     schema:name ?name ;
+    schema:additionalType ?featureCode ;
     schema:geo ?geo .
 ?geo a schema:GeoCoordinates ;
     schema:latitude ?latitude ;
@@ -120,7 +121,14 @@ and `skos:narrower`, so a place is never also stated with `schema:containedInPla
   node in a `CONSTRUCT` template is minted once per solution row, and a term with many labels and
   parents carries hundreds of them. `BIND(IRI(CONCAT(STR(?uri), "#geo")) AS ?geo)` gives one node
   per term. The Network of Terms reads the coordinates through it and never returns the IRI.
+- `schema:additionalType` is what kind of place this is, in the source’s own vocabulary – a
+  GeoNames feature code, a Wikidata class. Construct the **URI**, not a label: the Network of Terms
+  harmonises no vocabulary here, and a client either recognises it or joins to it itself. If the
+  source also publishes a `skos:prefLabel` for that URI, construct it as well and the API returns
+  it alongside; the label is read the same way a `skos:broader` term’s label is.
 - Stating the coordinates flat on the term is still read as-is, for sources that predate the node.
+  Each property falls back separately, so a source may add a `schema:geo` node for the country
+  alone and leave its coordinates where they are.
 
 #### Full-text search
 
