@@ -48,9 +48,11 @@
     "@comunica/types": "5.3.0",
     "@types/n3": "1.26.1",
     "@types/rdf-ext": "2.5.2",
+    "@types/sparqljs": "^3.1.12",
     "jsonld-streaming-parser": "5.0.1",
     "rdf-ext": "2.6.0",
-    "rdf-validate-shacl": "0.6.5"
+    "rdf-validate-shacl": "0.6.5",
+    "sparqljs": "^3.7.4"
   },
   "nx": {
     "name": "catalog",
