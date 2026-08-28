@@ -17,6 +17,10 @@ export class Term {
     readonly score: RDF.Literal | undefined,
     readonly latitude: RDF.Literal | undefined,
     readonly longitude: RDF.Literal | undefined,
+    // Defaulted, so that adding to a place stays additive for callers that construct a Term.
+    readonly names: RDF.Literal[] = [],
+    readonly addressCountry: RDF.Literal | undefined = undefined,
+    readonly additionalTypes: RelatedTerm[] = [],
   ) {}
 }
 
@@ -43,6 +47,10 @@ class SparqlResultTerm {
   score: RDF.Literal | undefined = undefined;
   latitude: RDF.Literal | undefined = undefined;
   longitude: RDF.Literal | undefined = undefined;
+  names: RDF.Literal[] = [];
+  geo: RDF.Term | undefined = undefined;
+  addressCountry: RDF.Literal | undefined = undefined;
+  additionalTypes: RDF.Term[] = [];
 }
 
 export class TermsTransformer {
@@ -70,10 +78,18 @@ export class TermsTransformer {
     ['http://www.w3.org/2004/02/skos/core#inScheme', 'inScheme'],
     ['http://purl.org/voc/vrank#simpleRank', 'score'],
     // Both Schema.org namespaces, because source queries use either one.
+    ['https://schema.org/name', 'names'],
+    ['http://schema.org/name', 'names'],
+    ['https://schema.org/geo', 'geo'],
+    ['http://schema.org/geo', 'geo'],
     ['https://schema.org/latitude', 'latitude'],
     ['http://schema.org/latitude', 'latitude'],
     ['https://schema.org/longitude', 'longitude'],
     ['http://schema.org/longitude', 'longitude'],
+    ['https://schema.org/addressCountry', 'addressCountry'],
+    ['http://schema.org/addressCountry', 'addressCountry'],
+    ['https://schema.org/additionalType', 'additionalTypes'],
+    ['http://schema.org/additionalType', 'additionalTypes'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -108,6 +124,7 @@ export class TermsTransformer {
   asArray(): Term[] {
     return [...this.termsIris].map((iri) => {
       const term = this.termsMap.get(iri)!;
+      const location = this.location(term);
 
       return new Term(
         term.id,
@@ -125,11 +142,58 @@ export class TermsTransformer {
         this.mapRelatedTerms(term.exactMatches).sort(alphabeticallyByPrefLabel),
         term.inScheme,
         term.score,
-        term.latitude,
-        term.longitude,
+        location.latitude,
+        location.longitude,
+        term.names,
+        location.addressCountry,
+        term.additionalTypes.map(this.namedType).sort(alphabeticallyByPrefLabel),
       );
     });
   }
+
+  /**
+   * Where the term is, read from the `schema:geo` node it points at and from the term itself.
+   *
+   * Sources hang the coordinates and the country off a `schema:geo` node, because
+   * `schema:addressCountry` does not have `schema:Place` in its domain and would be an
+   * unsanctioned triple on the term itself. That costs this transformer its only traversal;
+   * everything else stays a flat predicate→property map.
+   *
+   * Each property falls back to the term separately, so a source that states its coordinates flat
+   * and adds a `schema:geo` node only to carry the country – the natural way to migrate, since the
+   * country is the one property that cannot stay flat – keeps both.
+   */
+  private location = (term: SparqlResultTerm) => {
+    const geo =
+      term.geo === undefined ? undefined : this.termsMap.get(term.geo.value);
+
+    return {
+      latitude: geo?.latitude ?? term.latitude,
+      longitude: geo?.longitude ?? term.longitude,
+      addressCountry: geo?.addressCountry ?? term.addressCountry,
+    };
+  };
+
+  /**
+   * An IRI from a vocabulary outside this source, with whatever names the source gave it.
+   *
+   * A vocabulary names its own classes as it sees fit – the GeoNames ontology uses
+   * `skos:prefLabel`, others `schema:name` – and a source cannot be asked to translate between
+   * them, so both are read. Most vocabularies are published without any name at all, and then the
+   * IRI is all a client gets.
+   */
+  private namedType = (iri: RDF.Term) => {
+    const type = this.termsMap.get(iri.value);
+    const names = [...(type?.prefLabels ?? []), ...(type?.names ?? [])];
+
+    return new RelatedTerm(
+      iri,
+      names.filter(
+        (name, index) =>
+          names.findIndex((other) => other.equals(name)) === index,
+      ),
+    );
+  };
 
   /**
    * Map related IRIs to their related terms, making sure to only accept complete related terms.

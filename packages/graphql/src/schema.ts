@@ -185,11 +185,28 @@ export const schema = (languages: string[]) => `
   The place that a term denotes. It carries only what SKOS cannot state: the term’s position in the place hierarchy stays on \`broader\` and \`narrower\`.
   """
   type Place {
+    "The place’s own name, in the requested languages. Unlike \`prefLabel\`, it is the name the source holds and nothing else, without any suffix a source appends to tell homonyms apart. It is language-tagged in the monolingual API too, because this node arrived after \`Term\`’s plain-string labels were frozen."
+    name: [LanguageString]!
+
     "Latitude of the place, in the WGS 84 coordinate reference system."
     latitude: Float
 
     "Longitude of the place, in the WGS 84 coordinate reference system."
     longitude: Float
+
+    "The country that the place is in, as an ISO 3166-1 alpha-2 code, for example \`NL\`. Where a source tells homonymous places apart by appending the country to \`prefLabel\`, this is that country as data."
+    addressCountry: String
+
+    "What kind of place this is, according to the source’s own vocabulary – a GeoNames feature code such as \`https://www.geonames.org/ontology#P.PPLA\`, for example. The vocabularies differ per source and the Network of Terms does not harmonise them, so a client either recognises the vocabulary or joins to it itself."
+    additionalType: [AdditionalType]!
+  }
+
+  """
+  A type from a vocabulary outside the Network of Terms, identified by its URI. \`name\` is empty unless the vocabulary is published with one, which most are not.
+  """
+  type AdditionalType {
+    uri: ID!
+    name: [LanguageString]!
   }
   
   type TranslatedRelatedTerm {

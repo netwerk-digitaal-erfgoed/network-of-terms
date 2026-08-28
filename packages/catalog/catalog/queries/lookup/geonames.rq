@@ -5,13 +5,18 @@ PREFIX wgs84: <http://www.w3.org/2003/01/geo/wgs84_pos#>
 
 CONSTRUCT {
     ?uri a skos:Concept , schema:Place ;
+        schema:name ?prefLabelNlName , ?prefLabelEnName , ?name ;
+        schema:additionalType ?featureCode ;
+        schema:geo ?geo ;
         skos:prefLabel ?prefLabelNl , ?prefLabelEn , ?prefLabelFallback ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_en ;
         skos:broader ?broader ;
-        skos:exactMatch ?wikidataItem ;
+        skos:exactMatch ?wikidataItem .
+    ?geo a schema:GeoCoordinates ;
         schema:latitude ?latitude ;
-        schema:longitude ?longitude .
+        schema:longitude ?longitude ;
+        schema:addressCountry ?countryCodeUpper .
     ?broader skos:prefLabel ?broader_prefLabel .
 }
 WHERE {
@@ -93,6 +98,25 @@ WHERE {
     # Untagged, so a client asking for a language GeoNames has no name in still gets a label: the
     # API returns untagged literals and treats them as Dutch.
     BIND(CONCAT(STR(?name), ?countrySuffix) AS ?prefLabelFallback)
+
+    # What kind of feature this is, as GeoNames' own feature code – gn:P.PPLA and the like. The
+    # code IRI is published bare: the GeoNames ontology that defines it, and that carries its
+    # skos:prefLabel, is not loaded into this endpoint (netwerk-digitaal-erfgoed/geonames-rdf#48).
+    # Constructing it anyway is what lets a client that knows GeoNames join to the ontology itself,
+    # and the label appears here with no further change once the endpoint publishes one.
+    OPTIONAL { ?uri gn:featureCode ?featureCode }
+
+    # Upper-cased for the same reason the suffix above is: the API promises an ISO 3166-1 alpha-2
+    # code, and the two must not disagree about the case of the same value.
+    BIND(UCASE(?countryCode) AS ?countryCodeUpper)
+
+    # The coordinates and the country hang off a schema:geo node rather than off the term, because
+    # schema:addressCountry does not have schema:Place in its domain – schema:GeoCoordinates is the
+    # only class that takes all three. A blank node in the CONSTRUCT template is minted once per
+    # solution row, and a feature like Nederland carries some 600 of them, so mint one stable IRI
+    # per term instead. The Network of Terms reads the coordinates through it (see TermsTransformer
+    # in @netwerk-digitaal-erfgoed/network-of-terms-query) and never returns the IRI itself.
+    BIND(IRI(CONCAT(STR(?uri), "#geo")) AS ?geo)
 
     # gn:shortName, gn:colloquialName and gn:historicalName are rdfs:subPropertyOf gn:alternateName,
     # but the store has no reasoner, so each has to be named. One UNION branch per property, since

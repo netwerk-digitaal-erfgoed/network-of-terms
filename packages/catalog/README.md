@@ -93,6 +93,44 @@ sub-datasets. A URI lookup can then only be routed by prefix to one of them, so 
 from the source’s own `skos:inScheme` statements, or from a `VALUES` clause that maps the term’s type to a dataset IRI.
 The Network of Terms uses that triple to attribute the term to its own dataset instead of the one the prefix pointed at.
 
+#### Terms that denote a place
+
+A query whose terms denote places should type them `schema:Place` and construct what SKOS cannot
+state. The term’s position in the place hierarchy is not part of that: it stays on `skos:broader`
+and `skos:narrower`, so a place is never also stated with `schema:containedInPlace`.
+
+```sparql
+?uri a skos:Concept , schema:Place ;
+    schema:name ?name ;
+    schema:additionalType ?featureCode ;
+    schema:geo ?geo .
+?geo a schema:GeoCoordinates ;
+    schema:latitude ?latitude ;
+    schema:longitude ?longitude ;
+    schema:addressCountry ?countryCode .
+```
+
+- `schema:name` is the place’s own name, language-tagged, and nothing else. Where a source
+  disambiguates homonyms by appending to the label – GeoNames’ `Bergen (NL)` – that suffix belongs
+  on `skos:prefLabel` and not here, and the country it disambiguates by belongs in
+  `schema:addressCountry`.
+- The coordinates and the country hang off a `schema:geo` node, because `schema:addressCountry`
+  does not have `schema:Place` in its domain. `schema:GeoCoordinates` is the only class that takes
+  all three, and it is also where `schema:elevation` would go.
+- **Mint the `schema:geo` node as an IRI derived from the term’s, not as a blank node.** A blank
+  node in a `CONSTRUCT` template is minted once per solution row, and a term with many labels and
+  parents carries hundreds of them. `BIND(IRI(CONCAT(STR(?uri), "#geo")) AS ?geo)` gives one node
+  per term. The Network of Terms reads the coordinates through it and never returns the IRI.
+- `schema:additionalType` is what kind of place this is, in the source’s own vocabulary – a
+  GeoNames feature code, a Wikidata class. Construct the **URI**, not a name: the Network of Terms
+  harmonises no vocabulary here, and a client either recognises it or joins to it itself. If the
+  source names that URI as well, construct the name too and the API returns it alongside. Either
+  `schema:name` or `skos:prefLabel` will do, since a vocabulary names its own classes as it sees
+  fit; the GeoNames ontology uses `skos:prefLabel`.
+- Stating the coordinates flat on the term is still read as-is, for sources that predate the node.
+  Each property falls back separately, so a source may add a `schema:geo` node for the country
+  alone and leave its coordinates where they are.
+
 #### Full-text search
 
 Plain `FILTER(CONTAINS(…))` scans every candidate literal on each request. **Prefer the endpoint’s native full-text index** so the federated query stays fast. Common patterns:
