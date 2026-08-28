@@ -64,9 +64,11 @@
     schema:geo <https://example.com/resources/place#geo> .
 
 # A type from a vocabulary outside the Network of Terms. GeoNames publishes the code IRI bare, but
-# a source that does label its vocabulary has the label picked up like any other related IRI.
+# a vocabulary that does name its classes has those names picked up – under skos:prefLabel, as the
+# GeoNames ontology does, or under schema:name, as others do.
 <https://www.geonames.org/ontology#P.PPLA>
-    skos:prefLabel "hoofdplaats van een provincie"@nl, "seat of a first-order administrative division"@en .
+    skos:prefLabel "hoofdplaats van een provincie"@nl ;
+    schema:name "seat of a first-order administrative division"@en .
 
 <https://example.com/resources/place#geo>
     a schema:GeoCoordinates ;

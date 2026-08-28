@@ -109,6 +109,55 @@ describe('TermsTransformer', () => {
     expect(terms[0].id.value).toEqual(maastricht.value);
   });
 
+  it('names an additional type from either predicate a vocabulary uses, without repeating one', () => {
+    const populatedPlace = dataFactory.namedNode(
+      'https://www.geonames.org/ontology#P.PPL',
+    );
+    const [term] = transform(
+      place(
+        dataFactory.quad(
+          maastricht,
+          schema('additionalType'),
+          populatedPlace,
+        ),
+        dataFactory.quad(
+          populatedPlace,
+          skos('prefLabel'),
+          dataFactory.literal('Plaats', 'nl'),
+        ),
+        dataFactory.quad(
+          populatedPlace,
+          schema('name'),
+          dataFactory.literal('Populated place', 'en'),
+        ),
+        // The same name under both predicates, which must not be returned twice.
+        dataFactory.quad(
+          populatedPlace,
+          schema('name'),
+          dataFactory.literal('Plaats', 'nl'),
+        ),
+      ),
+    );
+
+    expect(term.additionalTypes).toHaveLength(1);
+    expect(term.additionalTypes[0].id.value).toEqual(populatedPlace.value);
+    expect(term.additionalTypes[0].prefLabels.map((name) => name.value)).toEqual(
+      ['Plaats', 'Populated place'],
+    );
+  });
+
+  it('returns an additional type whose vocabulary names nothing', () => {
+    const lake = dataFactory.namedNode(
+      'https://www.geonames.org/ontology#H.LK',
+    );
+    const [term] = transform(
+      place(dataFactory.quad(maastricht, schema('additionalType'), lake)),
+    );
+
+    expect(term.additionalTypes[0].id.value).toEqual(lake.value);
+    expect(term.additionalTypes[0].prefLabels).toEqual([]);
+  });
+
   it('collects every schema:name the source states', () => {
     const [term] = transform(
       place(

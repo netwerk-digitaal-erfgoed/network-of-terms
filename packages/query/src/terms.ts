@@ -146,9 +146,7 @@ export class TermsTransformer {
         location.longitude,
         term.names,
         location.addressCountry,
-        // Mapped like the other IRI-valued relations, so a type picks up its labels as soon as a
-        // source constructs them – today most vocabularies publish the IRI and nothing else.
-        this.mapRelatedTerms(term.additionalTypes).sort(alphabeticallyByPrefLabel),
+        term.additionalTypes.map(this.namedType).sort(alphabeticallyByPrefLabel),
       );
     });
   }
@@ -174,6 +172,27 @@ export class TermsTransformer {
       longitude: geo?.longitude ?? term.longitude,
       addressCountry: geo?.addressCountry ?? term.addressCountry,
     };
+  };
+
+  /**
+   * An IRI from a vocabulary outside this source, with whatever names the source gave it.
+   *
+   * A vocabulary names its own classes as it sees fit – the GeoNames ontology uses
+   * `skos:prefLabel`, others `schema:name` – and a source cannot be asked to translate between
+   * them, so both are read. Most vocabularies are published without any name at all, and then the
+   * IRI is all a client gets.
+   */
+  private namedType = (iri: RDF.Term) => {
+    const type = this.termsMap.get(iri.value);
+    const names = [...(type?.prefLabels ?? []), ...(type?.names ?? [])];
+
+    return new RelatedTerm(
+      iri,
+      names.filter(
+        (name, index) =>
+          names.findIndex((other) => other.equals(name)) === index,
+      ),
+    );
   };
 
   /**
