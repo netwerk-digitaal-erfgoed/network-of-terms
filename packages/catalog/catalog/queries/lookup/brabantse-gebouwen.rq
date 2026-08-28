@@ -16,10 +16,21 @@ WHERE {
     VALUES ?uri { ?uris }
 
     ?uri a schema:LandmarksOrHistoricalBuildings .
-    OPTIONAL { ?uri schema:name ?schema_name }
-    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
-    OPTIONAL { ?uri schema:description ?schema_description }
-    OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
-    OPTIONAL { ?uri skos:scopeNote ?scopeNote}
+    # Each property below is independently multi-valued, so use UNION (one branch per property)
+    # instead of OPTIONAL to prevent a cross-product. Besides being far slower, the cross-product
+    # multiplies rows past the LIMIT below, which drops whole terms from a multi-term lookup.
+    #
+    # The group must not be an OPTIONAL: Virtuoso and GraphDB then stop applying the patterns
+    # outside it to the branches, and answer with the wrong rows or none at all. The first
+    # branch repeats a pattern the term already matches, so the group matches every term even
+    # when it carries none of the properties below.
+    {
+        { ?uri a schema:LandmarksOrHistoricalBuildings }
+        UNION { ?uri schema:name ?schema_name }
+        UNION { ?uri schema:alternateName ?schema_alternateName }
+        UNION { ?uri schema:description ?schema_description }
+        UNION { ?uri skos:hiddenLabel ?hiddenLabel }
+        UNION { ?uri skos:scopeNote ?scopeNote }
+    }
 }
-LIMIT 1000
+LIMIT 10000

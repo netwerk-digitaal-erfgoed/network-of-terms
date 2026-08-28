@@ -50,4 +50,4 @@ WHERE {
         ) AS ?adres_lang
     )
 }
-LIMIT 200
+LIMIT 10000

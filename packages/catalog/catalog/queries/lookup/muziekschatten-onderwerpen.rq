@@ -53,4 +53,4 @@ WHERE {
 
     OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

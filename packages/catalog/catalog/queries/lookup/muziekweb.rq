@@ -33,20 +33,34 @@ WHERE {
         (schema:MusicGroup <https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb#mw-personengroepen>)
     }
 
-    OPTIONAL { ?uri rdfs:label ?rdfs_label }
-    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
-    OPTIONAL { ?uri skos:altLabel ?altLabel }
-    OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
-    OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
-    OPTIONAL { ?uri schema:description ?schema_description }
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri rdfs:label ?broader_prefLabel
+    # Each property below is independently multi-valued, so use UNION (one branch per property)
+    # instead of OPTIONAL to prevent a cross-product. Besides being far slower, the cross-product
+    # multiplies rows past the LIMIT below, which drops whole terms from a multi-term lookup.
+    #
+    # The group must not be an OPTIONAL: Virtuoso and GraphDB then stop applying the patterns
+    # outside it to the branches, and answer with the wrong rows or none at all. The first
+    # branch repeats a pattern the term already matches, so the group matches every term even
+    # when it carries none of the properties below.
+    {
+        # Spelled out per type rather than as ?uri a ?type: Virtuoso’s compiler fails on a branch
+        # whose variable comes from a multi-variable VALUES.
+        { ?uri a muziekweb:Genre }
+        UNION { ?uri a schema:MusicGroup }
+        UNION { ?uri rdfs:label ?rdfs_label }
+        UNION { ?uri skos:prefLabel ?prefLabel }
+        UNION { ?uri skos:altLabel ?altLabel }
+        UNION { ?uri skos:hiddenLabel ?hiddenLabel }
+        UNION { ?uri rdfs:comment ?rdfs_comment }
+        UNION { ?uri schema:description ?schema_description }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri rdfs:label ?broader_prefLabel
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri rdfs:label ?narrower_prefLabel
+        }
+        UNION { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
     }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri rdfs:label ?narrower_prefLabel
-    }
-    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

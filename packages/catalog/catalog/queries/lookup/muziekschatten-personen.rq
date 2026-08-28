@@ -45,4 +45,4 @@ WHERE {
     BIND(CONCAT(?name, IF(?dates != "", CONCAT(" (", ?dates, ")"), "")) AS ?prefLabel)
     OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

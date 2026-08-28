@@ -14,19 +14,23 @@ WHERE {
 
     ?uri skos:prefLabel ?prefLabel .
 
-    OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote
+    # Each property below is independently multi-valued, so use UNION (one branch per property)
+    # instead of OPTIONAL to prevent a cross-product. Besides being far slower, the cross-product
+    # multiplies rows past the LIMIT below, which drops whole terms from a multi-term lookup.
+    #
+    # The group must not be an OPTIONAL: Virtuoso and GraphDB then stop applying the patterns
+    # outside it to the branches, and answer with the wrong rows or none at all. The first
+    # branch repeats a pattern the term already matches, so the group matches every term even
+    # when it carries none of the properties below.
+    {
+        { ?uri skos:prefLabel ?prefLabel }
+        UNION { ?uri skos:scopeNote ?scopeNote }
+        UNION { ?uri skos:altLabel ?altLabel . }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+        }
+        UNION { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
     }
-
-    OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-    }
-
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri skos:prefLabel ?broader_prefLabel .
-    }
-
-    OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

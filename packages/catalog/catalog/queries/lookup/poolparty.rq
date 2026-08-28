@@ -61,4 +61,4 @@ WHERE {
         }
     }
 }
-LIMIT 1000
+LIMIT 10000
