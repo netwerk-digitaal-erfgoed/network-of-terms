@@ -37,6 +37,18 @@ export class NotFoundError {
   }
 }
 
+/**
+ * Characters SPARQL forbids inside an IRIREF: `<>"{}|^\` plus everything up to #x20.
+ *
+ * There is no escape for them – the grammar simply excludes them – so an IRI carrying one cannot be
+ * serialised into a query at all. Since lookup interpolates caller-supplied IRIs into the query
+ * text, a `>` would close the IRIREF early and let the rest of the string be read as SPARQL.
+ *
+ * See https://www.w3.org/TR/sparql11-query/#rIRIREF
+ */
+// eslint-disable-next-line no-control-regex -- the excluded range is #x00-#x20 by definition
+const FORBIDDEN_IN_IRIREF = /[<>"{}|^`\\\u0000-\u0020]/u;
+
 export class LookupService {
   constructor(
     private catalog: Catalog,
@@ -51,8 +63,14 @@ export class LookupService {
     // may share a prefix (e.g. GTAA sub-schemes); we query a single
     // representative per prefix and rely on each returned term's skos:inScheme
     // to re-route it to its true sub-dataset below.
+    // Dropped rather than rejected, so one malformed IRI does not fail a batch: the caller gets the
+    // same not-found result as for an IRI that matches no dataset. This filters the array that is
+    // interpolated into the query below, not just the grouping: queryService.lookup() receives the
+    // whole list, since a term is re-routed to its sub-dataset by its skos:inScheme.
+    const queryableIris = iris.filter((iri) => !FORBIDDEN_IN_IRIREF.test(iri));
+
     const irisByQueriedDataset = new Map<Dataset, IRI[]>();
-    for (const iri of iris) {
+    for (const iri of queryableIris) {
       const dataset = this.catalog.getDatasetByTermIri(iri);
       if (dataset === undefined) continue;
       const bucket = irisByQueriedDataset.get(dataset) ?? [];
@@ -66,7 +84,7 @@ export class LookupService {
           [
             queriedDataset,
             await this.queryService.lookup(
-              iris,
+              queryableIris,
               queriedDataset.distributions[0],
               timeoutMs,
             ),
