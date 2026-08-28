@@ -365,6 +365,26 @@ describe('Server', () => {
     expect(term.result.place.latitude).toEqual(50.84833);
     expect(term.result.place.longitude).toEqual(5.68889);
     expect(term.result.place.addressCountry).toEqual('NL');
+    expect(term.result.place.additionalType).toEqual([
+      {
+        uri: 'https://www.geonames.org/ontology#P.PPLA',
+        label: [{ language: 'nl', value: 'hoofdplaats van een provincie' }],
+      },
+    ]);
+  });
+
+  it('returns a type whose vocabulary publishes no label', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/place-without-location'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    // The URI is the point: a client that knows the vocabulary joins to it itself.
+    expect(term.result.place.additionalType).toEqual([
+      { uri: 'https://www.geonames.org/ontology#H.LK', label: [] },
+    ]);
   });
 
   it('returns the place name in the requested language', async () => {
@@ -612,6 +632,7 @@ function termsQuery({
                 latitude
                 longitude
                 addressCountry
+                additionalType { uri label { language value } }
               }
             }
           }
@@ -677,6 +698,7 @@ function lookupQuery({
               latitude
               longitude
               addressCountry
+              additionalType { uri label { language value } }
             }
           }
           `
@@ -697,6 +719,7 @@ function lookupQuery({
               latitude
               longitude
               addressCountry
+              additionalType { uri label { language value } }
             }
           }
           `

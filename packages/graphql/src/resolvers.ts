@@ -202,7 +202,9 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
       uri: exactMatch.id.value,
       prefLabel: filterLiteralsByLanguage(exactMatch.prefLabels, languages),
     })),
-    place: denotedPlace(term, filterLiteralsByLanguage(term.names, languages)),
+    place: denotedPlace(term, (literals) =>
+      filterLiteralsByLanguage(literals, languages),
+    ),
   };
 }
 
@@ -215,7 +217,10 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
  * nothing to put in the node, so it gets no node rather than an empty one that reads as a
  * described place.
  */
-function denotedPlace(term: Term, name: RDF.Literal[]) {
+function denotedPlace(
+  term: Term,
+  inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
+) {
   if (!term.types.some((type) => placeClasses.has(type.value))) {
     return null;
   }
@@ -225,14 +230,24 @@ function denotedPlace(term: Term, name: RDF.Literal[]) {
   // An empty country is as unusable as an empty coordinate, and ISO 3166-1 has no empty code.
   const addressCountry = term.addressCountry?.value.trim() || null;
 
-  // Tested against every name the source holds, not against the ones the client asked for, so
+  // Tested against everything the source holds, not against what survives the language filter, so
   // whether the node exists is a fact about the term rather than about the requested language.
   return latitude === null &&
     longitude === null &&
     addressCountry === null &&
-    term.names.length === 0
+    term.names.length === 0 &&
+    term.additionalTypes.length === 0
     ? null
-    : { latitude, longitude, addressCountry, name };
+    : {
+        name: inRequestedLanguages(term.names),
+        latitude,
+        longitude,
+        addressCountry,
+        additionalType: term.additionalTypes.map((additionalType) => ({
+          uri: additionalType.id.value,
+          label: inRequestedLanguages(additionalType.prefLabels),
+        })),
+      };
 }
 
 // Both Schema.org namespaces, because source queries use either one.
@@ -276,19 +291,19 @@ function mapToTerm(term: Term, languages: string[]) {
       uri: exactMatch.id.value,
       prefLabel: literalValues(exactMatch.prefLabels, languages),
     })),
-    place: denotedPlace(term, placeNames(term, languages)),
+    place: denotedPlace(term, (literals) => placeLabels(literals, languages)),
   };
 }
 
 /**
- * `Place.name` is language-tagged in the monolingual API too, since the node arrived after
+ * A place’s labels are language-tagged in the monolingual API too, since the node arrived after
  * `Term`’s plain-string labels were frozen. The language selection still follows the labels
  * around it – the same Dutch default and English fallback that {@link literalValues} applies –
  * so a place is named the way its term is labelled.
  */
-const placeNames = (term: Term, languages: string[] = ['nl']) => {
-  const names = filterLiteralsByLanguage(term.names, languages);
-  return names.length > 0 ? names : filterLiteralsByLanguage(term.names, ['en']);
+const placeLabels = (literals: RDF.Literal[], languages: string[] = ['nl']) => {
+  const labels = filterLiteralsByLanguage(literals, languages);
+  return labels.length > 0 ? labels : filterLiteralsByLanguage(literals, ['en']);
 };
 
 function source(

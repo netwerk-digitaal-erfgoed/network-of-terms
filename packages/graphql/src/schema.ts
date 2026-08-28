@@ -196,6 +196,17 @@ export const schema = (languages: string[]) => `
 
     "The country that the place is in, as an ISO 3166-1 alpha-2 code, for example \`NL\`. It carries as data the disambiguation that a source such as GeoNames otherwise only offers as a suffix on \`prefLabel\`."
     addressCountry: String
+
+    "What kind of place this is, according to the source’s own vocabulary – a GeoNames feature code such as \`https://www.geonames.org/ontology#P.PPLA\`, for example. The vocabularies differ per source and the Network of Terms does not harmonise them, so a client either recognises the vocabulary or joins to it itself."
+    additionalType: [AdditionalType]!
+  }
+
+  """
+  A type from a vocabulary outside the Network of Terms, identified by its URI. \`label\` is empty unless the source publishes one alongside the URI, which most do not.
+  """
+  type AdditionalType {
+    uri: ID!
+    label: [LanguageString]!
   }
   
   type TranslatedRelatedTerm {
