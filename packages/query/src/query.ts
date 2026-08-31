@@ -88,16 +88,22 @@ export function substituteBindings(
   query: string,
   bindings: Record<string, RDF.Term>,
 ): string {
-  let result = query;
-  for (const [name, term] of Object.entries(bindings)) {
-    // A replacer function, because a replacement *string* gives `$` a meaning: a search term
-    // containing `$'` would splice the query text following the match into the term, ending the
-    // string literal and letting the caller write the rest of the query.
-    result = result.replaceAll(new RegExp(`\\?${name}\\b`, 'g'), () =>
-      termToString(term),
-    );
+  const names = Object.keys(bindings);
+  if (names.length === 0) {
+    return query;
   }
-  return result;
+
+  // One pass over the query, rather than one pass per binding: a term substituted by an earlier
+  // binding would otherwise be searched again by the later ones, so a search for the literal
+  // `?datasetUri` came out as the dataset's IRI.
+  //
+  // The replacement is a function, because a replacement *string* gives `$` a meaning: a search
+  // term containing `$'` would splice the query text following the match into the term, ending the
+  // string literal and letting the caller write the rest of the query.
+  return query.replaceAll(
+    new RegExp(`\\?(${names.join('|')})\\b`, 'g'),
+    (_, name: string) => termToString(bindings[name]),
+  );
 }
 
 /**
@@ -197,7 +203,7 @@ export class QueryTermsService {
 
   async lookup(iris: IRI[], distribution: Distribution, timeoutMs: number) {
     return this.run(
-      distribution.lookupQuery.replace(
+      distribution.lookupQuery.replaceAll(
         '?uris',
         iris.map((iri) => `<${iri}>`).join(' '),
       ),

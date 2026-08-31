@@ -313,6 +313,19 @@ describe('substituteBindings', () => {
     expect(query).toBe('FILTER("fiets" = "fiets")');
   });
 
+  // Each binding used to be substituted in its own pass over the query, so a term inserted by an
+  // earlier binding was searched again by the later ones.
+  it('does not substitute into a term it just substituted', () => {
+    const query = substituteBindings('FILTER(?query) ?s schema:dataset ?datasetUri', {
+      query: dataFactory.literal('?datasetUri'),
+      datasetUri: dataFactory.namedNode('https://example.com/dataset'),
+    });
+
+    expect(query).toBe(
+      'FILTER("?datasetUri") ?s schema:dataset <https://example.com/dataset>',
+    );
+  });
+
   // `String.replaceAll` reads `$` patterns in a replacement string: `$'` stands for the text
   // following the match, so a search term containing it used to end the string literal and let the
   // caller write the rest of the query.
