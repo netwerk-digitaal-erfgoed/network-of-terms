@@ -25,6 +25,7 @@ import {
 import * as RDF from '@rdfjs/types';
 import { dereferenceGenre } from '@netwerk-digitaal-erfgoed/network-of-terms-catalog';
 import type { StatusClient } from './status.js';
+import { config } from './config.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function listSources(object: any, args: any, context: any): Promise<any> {
@@ -85,6 +86,15 @@ async function queryTerms(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function lookupTerms(object: any, args: any, context: any) {
+  // A lookup is split into batches sized to what each source will take, so there is no limit here
+  // that a caller should ever meet. This one is a safety valve: a thousand URIs is already minutes
+  // of work at the slowest source, and nothing else stops one request occupying it for longer.
+  if (args.uris.length > config.MAX_LOOKUP_URIS) {
+    throw new globalThis.Error(
+      `A lookup takes at most ${config.MAX_LOOKUP_URIS} URIs, got ${args.uris.length}.`,
+    );
+  }
+
   const service = new LookupService(
     context.catalog,
     new QueryTermsService({

@@ -1,4 +1,4 @@
-import { envSchema } from 'env-schema';
+import { envSchema, JSONSchemaType } from 'env-schema';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -25,9 +25,26 @@ const schema = {
       type: 'string',
       default: 'info',
     },
+    MAX_LOOKUP_URIS: {
+      type: 'number',
+      default: 1000,
+      description:
+        'Maximum number of URIs in a single lookup. Not a limit anyone should meet in normal use: ' +
+        'the query service splits a lookup into batches per source and sizes them to what each ' +
+        'source will take. It is there so that one request cannot occupy a source indefinitely - ' +
+        'a thousand URIs is already minutes of work at the slowest source.',
+    },
   },
 };
 
-export const config = envSchema({
+interface Env {
+  TRUST_PROXY: boolean;
+  CATALOG_PATH: string;
+  STATUS_SERVICE_URL: string;
+  LOG_LEVEL: string;
+  MAX_LOOKUP_URIS: number;
+}
+
+export const config: JSONSchemaType<Env> = envSchema({
   schema,
 });
