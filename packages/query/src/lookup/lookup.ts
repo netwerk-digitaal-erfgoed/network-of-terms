@@ -65,16 +65,28 @@ const FORBIDDEN_IN_IRIREF = /[<>"{}|^`\\\u0000-\u0020]/u;
  * NotFoundError, the one outcome a client is entitled to remember.
  *
  * 25 keeps a comfortable margin below where Getty, the least forgiving source measured, gives up.
+ * It is a starting point rather than a fixed size: see batchSizes.
  */
-const LOOKUP_BATCH_SIZE = 25;
+const MAX_LOOKUP_BATCH_SIZE = 25;
 
-function batched<T>(items: T[], size: number): T[][] {
-  const batches: T[][] = [];
-  for (let index = 0; index < items.length; index += size) {
-    batches.push(items.slice(index, index + size));
-  }
+/**
+ * The batch size each source is currently answering, halved when it fails and doubled again when it
+ * succeeds, between 1 and MAX_LOOKUP_BATCH_SIZE.
+ *
+ * A source's limit is not a property we can look up or configure once. Where it sits differs by two
+ * orders of magnitude between sources, it is a cliff rather than a slope – EuroVoc answers 80 IRIs
+ * in 1.2s and 100 in 143s – and it moves with how busy the source is. So rather than carry a number
+ * per source in the catalog, which would be a measurement of one afternoon, each source's size is
+ * learned from what it does and kept for the lifetime of the process.
+ *
+ * Doubling on success matters as much as halving on failure: without it, one outage would pin a
+ * source at 1 IRI per query for as long as the process lived.
+ */
+const batchSizes = new Map<string, number>();
 
-  return batches;
+/** Only for tests, which would otherwise inherit the sizes a previous test taught us. */
+export function forgetLookupBatchSizes(): void {
+  batchSizes.clear();
 }
 
 export class LookupService {
@@ -118,23 +130,48 @@ export class LookupService {
         [...irisByQueriedDataset.entries()].map(
           async ([queriedDataset, datasetIris]) => {
             const distribution = queriedDataset.distributions[0];
+            const source = distribution.iri.toString();
             const datasetResponses = [];
-            for (const batch of batched(datasetIris, LOOKUP_BATCH_SIZE)) {
+            let remaining = datasetIris;
+
+            while (remaining.length > 0) {
+              const size = batchSizes.get(source) ?? MAX_LOOKUP_BATCH_SIZE;
+              const batch = remaining.slice(0, size);
               const remainingMs = deadline - Date.now();
-              datasetResponses.push([
-                queriedDataset,
+
+              if (remainingMs <= 0) {
+                datasetResponses.push([
+                  queriedDataset,
+                  batch,
+                  new TermsResponse(new TimeoutError(distribution, timeoutMs), 0),
+                ] as const);
+                remaining = remaining.slice(batch.length);
+                continue;
+              }
+
+              const response = await this.queryService.lookup(
                 batch,
-                remainingMs > 0
-                  ? await this.queryService.lookup(
-                      batch,
-                      distribution,
-                      remainingMs,
-                    )
-                  : new TermsResponse(
-                      new TimeoutError(distribution, timeoutMs),
-                      0,
-                    ),
-              ] as const);
+                distribution,
+                remainingMs,
+              );
+
+              // A batch of several IRIs that fails may be one the source could not take, so halve
+              // it and try again with what is left of the deadline. A batch of one has nothing left
+              // to halve: that IRI gets the error.
+              if (response.result instanceof Error && batch.length > 1) {
+                batchSizes.set(source, Math.floor(batch.length / 2));
+                continue;
+              }
+
+              if (!(response.result instanceof Error)) {
+                batchSizes.set(
+                  source,
+                  Math.min(batch.length * 2, MAX_LOOKUP_BATCH_SIZE),
+                );
+              }
+
+              datasetResponses.push([queriedDataset, batch, response] as const);
+              remaining = remaining.slice(batch.length);
             }
 
             return datasetResponses;

@@ -1,12 +1,25 @@
 import { testCatalog } from '../src/test-utils.js';
-import { LookupService, QueryTermsService } from '../src/index.js';
-import { describe, expect, it, vi } from 'vitest';
+import {
+  Distribution,
+  forgetLookupBatchSizes,
+  LookupService,
+  QueryTermsService,
+  ServerError,
+  TermsResponse,
+} from '../src/index.js';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const catalog = testCatalog(1000);
 
 function lookupServiceWithSpy() {
   const queryService = {
-    lookup: vi.fn(async () => ({ terms: [], errors: [], responseTimeMs: 0 })),
+    lookup: vi.fn(
+      async (
+        _iris: string[],
+        _distribution: Distribution,
+        _timeoutMs: number,
+      ): Promise<unknown> => ({ terms: [], errors: [], responseTimeMs: 0 }),
+    ),
   };
   return {
     service: new LookupService(
@@ -18,6 +31,8 @@ function lookupServiceWithSpy() {
 }
 
 describe('LookupService', () => {
+  beforeEach(() => forgetLookupBatchSizes());
+
   it('queries for an IRI the catalog knows', async () => {
     const { service, queryService } = lookupServiceWithSpy();
     await service.lookup(['https://example.com/resources/art'], 1000);
@@ -82,6 +97,56 @@ describe('LookupService', () => {
     expect(timeouts[0]).toBeLessThanOrEqual(50);
     // Each batch gets what is left of the 50ms, so the later ones get less than the earlier ones.
     expect(timeouts[1]).toBeLessThan(timeouts[0]);
+  });
+
+  // Where a source gives up differs by two orders of magnitude, moves with how busy it is, and is
+  // a cliff rather than a slope, so the size is learned from what the source does.
+  it('halves the batch when a source cannot take it, and retries what is left', async () => {
+    const { service, queryService } = lookupServiceWithSpy();
+    const distribution = catalog.datasets[0].distributions[0];
+    queryService.lookup.mockImplementation(async (batch: string[]) =>
+      batch.length > 6
+        ? new TermsResponse(new ServerError(distribution, 'terminated'), 0)
+        : { terms: [], errors: [], responseTimeMs: 0 },
+    );
+    const iris = Array.from(
+      { length: 12 },
+      (_, index) => `https://example.com/resources/term${index}`,
+    );
+
+    await service.lookup(iris, 5000);
+
+    const sizes = queryService.lookup.mock.calls.map(
+      (call) => (call as unknown as [string[]])[0].length,
+    );
+    // 12 fails, 6 succeeds, and the rest follow at the size the source accepted.
+    expect(sizes).toEqual([12, 6, 6]);
+  });
+
+  it('grows the batch again once a source accepts one', async () => {
+    const { service, queryService } = lookupServiceWithSpy();
+    const distribution = catalog.datasets[0].distributions[0];
+    let failNext = true;
+    queryService.lookup.mockImplementation(async () => {
+      if (failNext) {
+        failNext = false;
+        return new TermsResponse(new ServerError(distribution, 'terminated'), 0);
+      }
+
+      return { terms: [], errors: [], responseTimeMs: 0 };
+    });
+    const iris = Array.from(
+      { length: 40 },
+      (_, index) => `https://example.com/resources/term${index}`,
+    );
+
+    await service.lookup(iris, 5000);
+
+    const sizes = queryService.lookup.mock.calls.map(
+      (call) => (call as unknown as [string[]])[0].length,
+    );
+    // 25 fails, 12 succeeds, the next batch is allowed to be twice that, and 4 IRIs are left over.
+    expect(sizes).toEqual([25, 12, 24, 4]);
   });
 
   it('still queries for the valid IRIs in a batch containing a malformed one', async () => {
