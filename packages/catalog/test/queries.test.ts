@@ -31,6 +31,17 @@ describe.each(queryFiles)('%s', (file) => {
   });
 
   /**
+   * The query service fills in `?uris` by string replacement, so a lookup query needs exactly one:
+   * a second would be left as an unbound variable, and `VALUES ?uri { ?uris }` then joins against
+   * every term the source holds rather than failing.
+   */
+  it.runIf(file.startsWith('lookup/'))('names ?uris exactly once', () => {
+    const occurrences = fs.readFileSync(path, 'utf8').match(/\?uris\b/g) ?? [];
+
+    expect(occurrences).toHaveLength(1);
+  });
+
+  /**
    * Catches a prefix a query uses but never declares. Four queries carried one until the
    * declarations were added, in the change that made lookups batch; this only keeps them from
    * coming back. The failure is easy to miss because an endpoint that predefines the prefix
