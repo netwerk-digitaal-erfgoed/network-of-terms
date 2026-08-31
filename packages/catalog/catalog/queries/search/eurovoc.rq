@@ -67,7 +67,7 @@ WHERE {
         }
         UNION {
             ?uri skos:exactMatch ?exactMatch_uri .
-            ?exactMatch_uri skos:exactMatch ?exactMatch_prefLabel .
+            ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
             FILTER(LANG(?exactMatch_prefLabel) = "nl" || LANG(?exactMatch_prefLabel) = "en")
         }
     }
