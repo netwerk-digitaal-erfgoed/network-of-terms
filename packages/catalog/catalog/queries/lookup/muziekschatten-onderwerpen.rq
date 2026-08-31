@@ -10,6 +10,10 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_schema_name .
 }
+# The properties below stay in OPTIONALs, where the other lookup queries use one UNION branch
+# each: the BIND below reads ?schema_keywords and ?dc together, and a UNION
+# would leave one side of that expression unbound. The cross-product they keep is small enough
+# not to reach the LIMIT – 120 triples for 25 terms.
 WHERE {
     VALUES ?uri { ?uris }
 

@@ -12,6 +12,10 @@ CONSTRUCT {
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
+# The properties below stay in OPTIONALs, where the other lookup queries use one UNION branch
+# each: the BIND below combines ?altLabel, ?opusnummer, ?thematisch_nummer and ?eerste_datum, and a UNION
+# would leave one side of that expression unbound. The cross-product they keep is small enough
+# not to reach the LIMIT – 164 triples for 25 terms.
 WHERE {
     VALUES ?uri { ?uris }
 
