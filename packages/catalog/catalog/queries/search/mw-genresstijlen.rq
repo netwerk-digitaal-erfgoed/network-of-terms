@@ -25,15 +25,20 @@ WHERE {
 
     ?uri  rdfs:label ?rdfs_label .
 
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri rdfs:label ?broader_prefLabel
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri a muziekweb:Genre }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri rdfs:label ?broader_prefLabel
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri rdfs:label ?narrower_prefLabel
+        }
+        UNION { ?uri rdfs:comment ?rdfs_comment }
+        UNION { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
     }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri rdfs:label ?narrower_prefLabel
-    }
-    OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
-    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
 

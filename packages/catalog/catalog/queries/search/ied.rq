@@ -26,33 +26,36 @@ WHERE {
         }
         #LIMIT#
     }
-    OPTIONAL {
-        ?uri skos:prefLabel ?prefLabel .
-        FILTER(LANG(?prefLabel) = "nl" )
-    }
-    OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote .
-        FILTER(LANG(?scopeNote) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:hiddenLabel ?hiddenLabel .
-        FILTER(LANG(?hiddenLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri skos:prefLabel ?broader_prefLabel .
-        FILTER(LANG(?broader_prefLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri skos:prefLabel ?narrower_prefLabel .
-        FILTER(LANG(?narrower_prefLabel) = "nl")
-    }
-    OPTIONAL {
-        ?uri skos:exactMatch ?exactMatch_uri . # Has no labels.
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri a skos:Concept }
+        UNION {
+            ?uri skos:prefLabel ?prefLabel .
+            FILTER(LANG(?prefLabel) = "nl" )
+        }
+        UNION {
+            ?uri skos:scopeNote ?scopeNote .
+            FILTER(LANG(?scopeNote) = "nl")
+        }
+        UNION {
+            ?uri skos:altLabel ?altLabel .
+            FILTER(LANG(?altLabel) = "nl")
+        }
+        UNION {
+            ?uri skos:hiddenLabel ?hiddenLabel .
+            FILTER(LANG(?hiddenLabel) = "nl")
+        }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+            FILTER(LANG(?broader_prefLabel) = "nl")
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri skos:prefLabel ?narrower_prefLabel .
+            FILTER(LANG(?narrower_prefLabel) = "nl")
+        }
+        UNION { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
     }
 }

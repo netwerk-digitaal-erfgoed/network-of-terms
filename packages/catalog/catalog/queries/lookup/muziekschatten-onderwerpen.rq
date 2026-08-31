@@ -10,6 +10,9 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri .
     ?broader_uri skos:prefLabel ?broader_schema_name .
 }
+# The properties below stay in OPTIONALs rather than becoming UNION branches, because the BIND
+# below reads ?schema_keywords and ?dc together and a UNION would leave one side of that
+# expression unbound. See “One UNION branch per multi-valued property” in the catalog README.
 WHERE {
     VALUES ?uri { ?uris }
 
@@ -53,4 +56,4 @@ WHERE {
 
     OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

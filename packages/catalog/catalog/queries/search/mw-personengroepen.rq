@@ -21,9 +21,14 @@ WHERE {
         #LIMIT#
     }
 
-    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
-    OPTIONAL { ?uri skos:altLabel ?altLabel }
-    OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
-    OPTIONAL { ?uri schema:description ?schema_description }
-    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri a schema:MusicGroup }
+        UNION { ?uri skos:prefLabel ?prefLabel }
+        UNION { ?uri skos:altLabel ?altLabel }
+        UNION { ?uri skos:hiddenLabel ?hiddenLabel }
+        UNION { ?uri schema:description ?schema_description }
+        UNION { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
+    }
 }

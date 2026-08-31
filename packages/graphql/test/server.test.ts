@@ -238,6 +238,25 @@ describe('Server', () => {
     expect(body.data.terms[0].result.terms).toHaveLength(1); // Terms found.
   });
 
+  // A lookup is split into batches sized to what each source will take, so this limit is a safety
+  // valve rather than something a caller should meet: it only stops one request occupying a source
+  // for minutes on end.
+  it('refuses a lookup of more URIs than it will take at once', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: Array.from(
+          { length: 1001 },
+          (_, index) => `https://example.com/resources/term${index}`,
+        ),
+      }),
+    );
+
+    expect(body.data.lookup).toBeNull();
+    expect(body.errors[0].message).toEqual(
+      'A lookup takes at most 1000 URIs, got 1001.',
+    );
+  });
+
   it('responds to GraphQL lookup query', async () => {
     const body = await query(
       lookupQuery({

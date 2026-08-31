@@ -25,26 +25,31 @@ WHERE {
                 skos:prefLabel ?prefLabel ;
                 skos:altLabel ?altLabel .
 
-            OPTIONAL { ?uri skos:scopeNote ?scopeNote }
-            OPTIONAL {
-                ?uri skos:exactMatch ?exactMatch_uri .
-                OPTIONAL { ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel }
-            }
-            OPTIONAL {
-                ?uri skos:broader ?broader_uri .
-                OPTIONAL { ?broader_uri skos:prefLabel ?broader_prefLabel }
-            }
-            OPTIONAL {
-                ?uri skos:narrower ?narrower_uri .
-                OPTIONAL { ?narrower_uri skos:prefLabel ?narrower_prefLabel }
-            }
-            OPTIONAL {
-                ?uri skos:related ?related_uri .
-                OPTIONAL { ?related_uri skos:prefLabel ?related_prefLabel }
-            }
-            OPTIONAL {
-                ?uri skos:seeAlso ?seeAlso_uri .
-                OPTIONAL { ?seeAlso_uri skos:prefLabel ?seeAlso_prefLabel }
+            # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+            # see “One UNION branch per multi-valued property” in the catalog README.
+            {
+                { ?uri a skos:Concept }
+                UNION { ?uri skos:scopeNote ?scopeNote }
+                UNION {
+                    ?uri skos:exactMatch ?exactMatch_uri .
+                    OPTIONAL { ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel }
+                }
+                UNION {
+                    ?uri skos:broader ?broader_uri .
+                    OPTIONAL { ?broader_uri skos:prefLabel ?broader_prefLabel }
+                }
+                UNION {
+                    ?uri skos:narrower ?narrower_uri .
+                    OPTIONAL { ?narrower_uri skos:prefLabel ?narrower_prefLabel }
+                }
+                UNION {
+                    ?uri skos:related ?related_uri .
+                    OPTIONAL { ?related_uri skos:prefLabel ?related_prefLabel }
+                }
+                UNION {
+                    ?uri skos:seeAlso ?seeAlso_uri .
+                    OPTIONAL { ?seeAlso_uri skos:prefLabel ?seeAlso_prefLabel }
+                }
             }
 
         }

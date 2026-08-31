@@ -79,41 +79,54 @@ WHERE {
         }
         #LIMIT#
     }
-    OPTIONAL {
-        ?uri skosxl:altLabel [
-            dcterms:language ?language ;
-            skosxl:literalForm ?altLabel
-        ]
-    }
-    OPTIONAL {
-        ?uri skos:scopeNote [
-            dcterms:language ?language ;
-            rdf:value ?scopeNote
-        ]
-    }
-    OPTIONAL {
-        ?uri rdfs:seeAlso ?rdfs_seeAlso
-    }
-    OPTIONAL {
-        ?uri gvp:broaderPreferred ?broader_uri .
-        ?broader_uri skosxl:prefLabel [
-            dcterms:language ?language ;
-            skosxl:literalForm ?broader_prefLabel
-        ]
-    }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri skosxl:prefLabel [
-            dcterms:language ?language ;
-            skosxl:literalForm ?narrower_prefLabel
-        ]
-    }
-    OPTIONAL {
-        ?uri skos:exactMatch ?exactMatch_uri .
-        FILTER(?exactMatch_uri != ?uri) # Exclude self-reference.
-        ?exactMatch_uri skosxl:prefLabel [
-            dcterms:language ?language ;
-            skosxl:literalForm ?exactMatch_prefLabel
-        ]
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    # The branches share the ?language values above rather than each declaring their own, which is
+    # also why none of them may sit in an OPTIONAL here: GraphDB stops applying the outer VALUES to
+    # a branch inside one and answers with labels in every language Getty holds.
+    {
+        {
+            ?uri skosxl:prefLabel [
+                dcterms:language ?language ;
+                skosxl:literalForm ?prefLabel
+            ]
+        }
+        UNION {
+            ?uri skosxl:altLabel [
+                dcterms:language ?language ;
+                skosxl:literalForm ?altLabel
+            ]
+        }
+        UNION {
+            ?uri skos:scopeNote [
+                dcterms:language ?language ;
+                rdf:value ?scopeNote
+            ]
+        }
+        UNION {
+            ?uri rdfs:seeAlso ?rdfs_seeAlso
+        }
+        UNION {
+            ?uri gvp:broaderPreferred ?broader_uri .
+            ?broader_uri skosxl:prefLabel [
+                dcterms:language ?language ;
+                skosxl:literalForm ?broader_prefLabel
+            ]
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri skosxl:prefLabel [
+                dcterms:language ?language ;
+                skosxl:literalForm ?narrower_prefLabel
+            ]
+        }
+        UNION {
+            ?uri skos:exactMatch ?exactMatch_uri .
+            FILTER(?exactMatch_uri != ?uri) # Exclude self-reference.
+            ?exactMatch_uri skosxl:prefLabel [
+                dcterms:language ?language ;
+                skosxl:literalForm ?exactMatch_prefLabel
+            ]
+        }
     }
 }

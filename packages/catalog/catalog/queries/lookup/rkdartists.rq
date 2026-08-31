@@ -10,6 +10,10 @@ CONSTRUCT {
         skos:exactMatch ?exactMatch_uri ;
         rdfs:seeAlso ?seeAlso .
 }
+# The properties below stay in OPTIONALs rather than becoming UNION branches, because the BINDs
+# below combine ?birthDate, ?deathDate and the subquery’s aggregates and a UNION would leave one
+# side of that expression unbound. See “One UNION branch per multi-valued property” in the catalog
+# README.
 WHERE {
     # For example:
     # Rembrandt: <https://data.rkd.nl/artists/66219>

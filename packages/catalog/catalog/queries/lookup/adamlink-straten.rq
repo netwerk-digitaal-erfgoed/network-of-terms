@@ -19,13 +19,18 @@ WHERE {
     GRAPH <https://lod.uba.uva.nl/ATM/Adamlink/graphs/streets> {
         ?uri a hg:Street .
     
-        OPTIONAL { ?uri skos:prefLabel ?prefLabel }
-        OPTIONAL { ?uri skos:altLabel ?altLabel }
-        OPTIONAL {
-            ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
-            BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+        # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+        # see “One UNION branch per multi-valued property” in the catalog README.
+        {
+            { ?uri a hg:Street }
+            UNION { ?uri skos:prefLabel ?prefLabel }
+            UNION { ?uri skos:altLabel ?altLabel }
+            UNION {
+                ?uri hg:liesIn <http://sws.geonames.org/2759793/> # Gemeente Amsterdam
+                BIND("Straat in Gemeente Amsterdam" AS ?scopeNote)
+            }
+            UNION { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
         }
-        OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
     }
 }
-LIMIT 1000
+LIMIT 10000

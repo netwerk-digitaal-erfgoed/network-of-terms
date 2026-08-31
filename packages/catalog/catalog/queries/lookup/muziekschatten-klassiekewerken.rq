@@ -1,4 +1,5 @@
 PREFIX rdaw: <http://rdaregistry.info/Elements/w/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
@@ -11,6 +12,10 @@ CONSTRUCT {
     ?broader_uri skos:prefLabel ?broader_prefLabel .
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
 }
+# The properties below stay in OPTIONALs rather than becoming UNION branches, because the BIND
+# below combines ?altLabel, ?opusnummer, ?thematisch_nummer and ?eerste_datum and a UNION would
+# leave one side of that expression unbound. See “One UNION branch per multi-valued property” in
+# the catalog README.
 WHERE {
     VALUES ?uri { ?uris }
 
@@ -43,4 +48,4 @@ WHERE {
         ) AS ?scopeNote
     )
 }
-LIMIT 1000
+LIMIT 10000

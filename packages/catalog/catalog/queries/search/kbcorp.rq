@@ -22,14 +22,19 @@ WHERE {
         #LIMIT#
     }
 
-    OPTIONAL { ?uri schema:name ?schema_name }
-    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
-    OPTIONAL { ?uri schema:description ?schema_description }
-    OPTIONAL {
-        ?uri ?matchPredicate ?exactMatch_uri .
-        VALUES ?matchPredicate { owl:sameAs schema:sameAs }
-        OPTIONAL {
-            ?exactMatch_uri rdfs:label ?exactMatch_prefLabel .
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/corps> }
+        UNION { ?uri schema:name ?schema_name }
+        UNION { ?uri schema:alternateName ?schema_alternateName }
+        UNION { ?uri schema:description ?schema_description }
+        UNION {
+            ?uri ?matchPredicate ?exactMatch_uri .
+            VALUES ?matchPredicate { owl:sameAs schema:sameAs }
+            OPTIONAL {
+                ?exactMatch_uri rdfs:label ?exactMatch_prefLabel .
+            }
         }
     }
 }

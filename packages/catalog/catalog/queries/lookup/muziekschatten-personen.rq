@@ -10,6 +10,9 @@ CONSTRUCT {
         skos:scopeNote ?schema_hasOccupation ;
         skos:exactMatch ?exactMatch_uri .
 }
+# The properties below stay in OPTIONALs rather than becoming UNION branches, because the BIND
+# below combines ?schema_familyName and ?schema_givenName and a UNION would leave one side of that
+# expression unbound. See “One UNION branch per multi-valued property” in the catalog README.
 WHERE {
     VALUES ?uri { ?uris }
 
@@ -45,4 +48,4 @@ WHERE {
     BIND(CONCAT(?name, IF(?dates != "", CONCAT(" (", ?dates, ")"), "")) AS ?prefLabel)
     OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

@@ -85,6 +85,43 @@ Search and lookup queries are SPARQL `CONSTRUCT` queries that the Network of Ter
 - `?uris` in lookup queries – replaced by `VALUES ?uri { … }` with the URIs being looked up.
 - `?datasetUri` in search queries – bound to the IRI of the dataset being searched.
 
+#### One UNION branch per multi-valued property
+
+A term’s labels, notes and related terms are each multi-valued and independent of one another. Joining them with
+`OPTIONAL` makes the source return their cross-product, so the rows a term costs are the product of its values rather
+than their sum: one richly-linked AAT term produced 658 rows on its own, which filled a `LIMIT` of 1000 before the
+second term of a batch was reached, and the terms that did not fit were reported to the caller as not found.
+
+So **give each independently multi-valued property its own branch of a `UNION`**:
+
+```sparql
+?uri a skos:Concept .
+
+{
+    { ?uri a skos:Concept }
+    UNION { ?uri skos:prefLabel ?prefLabel }
+    UNION { ?uri skos:altLabel ?altLabel }
+    UNION {
+        ?uri skos:broader ?broader_uri .
+        ?broader_uri skos:prefLabel ?broader_prefLabel .
+    }
+}
+```
+
+Two things about that shape are easy to get wrong:
+
+- **The group is not an `OPTIONAL`.** Wrap it in one and both Virtuoso and GraphDB stop applying the patterns outside
+  the group to the branches inside it: Virtuoso drops branches outright, and GraphDB ignores an outer `VALUES ?language`
+  and answers with labels in every language the source holds. Neither fails loudly; you get fewer or wrong triples.
+- **The first branch repeats a pattern the term already matches**, `?uri a skos:Concept` above. Without it a term
+  carrying none of the properties matches no branch at all and drops out of the result. Repeat a pattern that is
+  required outside the group, or that the search query’s subquery has already matched.
+
+Keep related single-valued properties together in one `OPTIONAL` instead. Where a `BIND` or `COALESCE` combines
+variables from several blocks – a preferred label built from `schema:familyName` and `schema:givenName`, say – they have
+to stay in one block, because a `UNION` would leave one side unbound; `lookup/muziekschatten-personen.rq` and four
+others do this, and say so. Single-valued properties do not multiply, so there is nothing to gain there anyway.
+
 #### Attributing terms to the right dataset
 
 Several datasets may share a terms URI prefix (`schema:url`), for example when one thesaurus is published as multiple

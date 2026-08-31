@@ -14,19 +14,17 @@ WHERE {
 
     ?uri skos:prefLabel ?prefLabel .
 
-    OPTIONAL {
-        ?uri skos:scopeNote ?scopeNote
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri skos:prefLabel ?prefLabel }
+        UNION { ?uri skos:scopeNote ?scopeNote }
+        UNION { ?uri skos:altLabel ?altLabel . }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri skos:prefLabel ?broader_prefLabel .
+        }
+        UNION { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
     }
-
-    OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-    }
-
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri skos:prefLabel ?broader_prefLabel .
-    }
-
-    OPTIONAL { ?uri skos:exactMatch ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

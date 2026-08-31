@@ -1,3 +1,4 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
@@ -19,13 +20,18 @@ WHERE {
     ?uri rdfs:label ?prefLabel .
     FILTER(LANG(?prefLabel) IN ("nl", "en", "mul"))
 
-    OPTIONAL {
-        ?uri skos:altLabel ?altLabel .
-        FILTER(LANG(?altLabel) IN ("nl", "en", "mul"))
-    }
-    OPTIONAL {
-        ?uri schema:description ?description .
-        FILTER(LANG(?description) = "nl" || LANG(?description) = "en")
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri rdfs:label ?prefLabel }
+        UNION {
+            ?uri skos:altLabel ?altLabel .
+            FILTER(LANG(?altLabel) IN ("nl", "en", "mul"))
+        }
+        UNION {
+            ?uri schema:description ?description .
+            FILTER(LANG(?description) = "nl" || LANG(?description) = "en")
+        }
     }
 }
-LIMIT 1000
+LIMIT 10000

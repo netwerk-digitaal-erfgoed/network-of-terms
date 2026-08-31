@@ -1,4 +1,5 @@
 PREFIX muziekweb: <https://data.muziekweb.nl/vocab/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <http://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -32,20 +33,28 @@ WHERE {
         (schema:MusicGroup <https://data.muziekweb.nl/MuziekwebOrganization/Muziekweb#mw-personengroepen>)
     }
 
-    OPTIONAL { ?uri rdfs:label ?rdfs_label }
-    OPTIONAL { ?uri skos:prefLabel ?prefLabel }
-    OPTIONAL { ?uri skos:altLabel ?altLabel }
-    OPTIONAL { ?uri skos:hiddenLabel ?hiddenLabel }
-    OPTIONAL { ?uri rdfs:comment ?rdfs_comment }
-    OPTIONAL { ?uri schema:description ?schema_description }
-    OPTIONAL {
-        ?uri skos:broader ?broader_uri .
-        ?broader_uri rdfs:label ?broader_prefLabel
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        # Spelled out per type rather than as ?uri a ?type: Virtuoso’s compiler fails on a branch
+        # whose variable comes from a multi-variable VALUES.
+        { ?uri a muziekweb:Genre }
+        UNION { ?uri a schema:MusicGroup }
+        UNION { ?uri rdfs:label ?rdfs_label }
+        UNION { ?uri skos:prefLabel ?prefLabel }
+        UNION { ?uri skos:altLabel ?altLabel }
+        UNION { ?uri skos:hiddenLabel ?hiddenLabel }
+        UNION { ?uri rdfs:comment ?rdfs_comment }
+        UNION { ?uri schema:description ?schema_description }
+        UNION {
+            ?uri skos:broader ?broader_uri .
+            ?broader_uri rdfs:label ?broader_prefLabel
+        }
+        UNION {
+            ?uri skos:narrower ?narrower_uri .
+            ?narrower_uri rdfs:label ?narrower_prefLabel
+        }
+        UNION { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
     }
-    OPTIONAL {
-        ?uri skos:narrower ?narrower_uri .
-        ?narrower_uri rdfs:label ?narrower_prefLabel
-    }
-    OPTIONAL { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
 }
-LIMIT 1000
+LIMIT 10000

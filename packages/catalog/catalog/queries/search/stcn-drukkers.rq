@@ -29,12 +29,13 @@ WHERE {
     # http://data.bibliotheken.nl/id/thes/p075556251 for Plantijn working in Leiden
     # http://data.bibliotheken.nl/id/thes/p338012834 for Plantijn working in Antwerp
     # The original source (STCN) shows also a time period, this data currently not available in the LOD version.
-    OPTIONAL {
-     ?uri schema:location/schema:address/schema:addressLocality ?scopeNote
-    }
-    OPTIONAL { ?uri schema:name ?schema_name }
-    OPTIONAL { ?uri schema:alternateName ?schema_alternateName }
-    OPTIONAL {
-        ?uri schema:sameAs ?exactMatch_uri . # Has no labels.
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/stcn/printers> }
+        UNION { ?uri schema:location/schema:address/schema:addressLocality ?scopeNote }
+        UNION { ?uri schema:name ?schema_name }
+        UNION { ?uri schema:alternateName ?schema_alternateName }
+        UNION { ?uri schema:sameAs ?exactMatch_uri } # Has no labels.
     }
 }
