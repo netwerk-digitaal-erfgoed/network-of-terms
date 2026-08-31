@@ -25,9 +25,8 @@ WHERE {
                 skos:prefLabel ?prefLabel ;
                 skos:altLabel ?altLabel .
 
-            # Each property below is independently multi-valued, so use UNION (one branch per
-            # property) instead of OPTIONAL to prevent a cross-product, which multiplies the rows a
-            # multi-term lookup has to carry.
+            # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+            # see “One UNION branch per multi-valued property” in the catalog README.
             {
                 { ?uri a skos:Concept }
                 UNION { ?uri skos:scopeNote ?scopeNote }

@@ -79,14 +79,11 @@ WHERE {
         }
         #LIMIT#
     }
-    # Each property below is independently multi-valued, so use UNION (one branch per property)
-    # instead of OPTIONAL to prevent a cross-product: a term then costs the sum of its values in
-    # rows rather than their product. The prefLabel branch repeats the pattern above, so the group
-    # always matches and no term drops out of the result.
-    #
-    # The branches share the ?language values above, and none of them may be wrapped in an OPTIONAL:
-    # GraphDB then stops applying the outer VALUES to the branch and answers with labels in every
-    # language Getty holds.
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    # The branches share the ?language values above rather than each declaring their own, which is
+    # also why none of them may sit in an OPTIONAL here: GraphDB stops applying the outer VALUES to
+    # a branch inside one and answers with labels in every language Getty holds.
     {
         {
             ?uri skosxl:prefLabel [

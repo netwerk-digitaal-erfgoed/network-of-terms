@@ -16,10 +16,9 @@ CONSTRUCT {
 
     ?seeAlso_uri skos:prefLabel ?seeAlso_label .
 }
-# The properties below stay in OPTIONALs, where the other lookup queries use one UNION branch
-# each: the blocks below depend on each other through ?exactMatch_uri and ?geo, and a UNION
-# would leave one side of that expression unbound. The cross-product they keep is small enough
-# not to reach the LIMIT – 211 triples for 25 terms.
+# The properties below stay in OPTIONALs rather than becoming UNION branches, because the blocks
+# below depend on each other through ?exactMatch_uri and ?geo and a UNION would leave one side of
+# that expression unbound. See “One UNION branch per multi-valued property” in the catalog README.
 WHERE {
     # For example:
     # Jodenbreestraat: <https://adamlink.nl/geo/street/jodenbreestraat/2158>

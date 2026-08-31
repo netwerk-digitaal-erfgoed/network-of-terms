@@ -21,14 +21,8 @@ WHERE {
     ?uri a skos:Concept ;
          skos:inScheme ?dataset .
 
-    # Each property below is independently multi-valued, so use UNION (one branch per property)
-    # instead of OPTIONAL to prevent a cross-product. Besides being far slower, the cross-product
-    # multiplies rows past the LIMIT below, which drops whole terms from a multi-term lookup.
-    #
-    # The group must not be an OPTIONAL: Virtuoso and GraphDB then stop applying the patterns
-    # outside it to the branches, and answer with the wrong rows or none at all. The first
-    # branch repeats a pattern the term already matches, so the group matches every term even
-    # when it carries none of the properties below.
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
     {
         { ?uri a skos:Concept }
         UNION {

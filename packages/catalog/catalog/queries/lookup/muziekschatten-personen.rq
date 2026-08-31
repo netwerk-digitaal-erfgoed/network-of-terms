@@ -10,10 +10,9 @@ CONSTRUCT {
         skos:scopeNote ?schema_hasOccupation ;
         skos:exactMatch ?exactMatch_uri .
 }
-# The properties below stay in OPTIONALs, where the other lookup queries use one UNION branch
-# each: the BIND below combines ?schema_familyName and ?schema_givenName, and a UNION
-# would leave one side of that expression unbound. The cross-product they keep is small enough
-# not to reach the LIMIT – 101 triples for 25 terms.
+# The properties below stay in OPTIONALs rather than becoming UNION branches, because the BIND
+# below combines ?schema_familyName and ?schema_givenName and a UNION would leave one side of that
+# expression unbound. See “One UNION branch per multi-valued property” in the catalog README.
 WHERE {
     VALUES ?uri { ?uris }
 
