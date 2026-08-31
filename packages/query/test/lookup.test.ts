@@ -59,6 +59,31 @@ describe('LookupService', () => {
     expect(results.map((result) => result.uri)).toEqual(iris);
   });
 
+  // timeoutMs is what the caller allows the whole lookup: a request that is split into batches must
+  // not take a multiple of it.
+  it('spends the caller’s timeout across the batches, not per batch', async () => {
+    const { service, queryService } = lookupServiceWithSpy();
+    queryService.lookup.mockImplementation(
+      async () =>
+        new Promise((resolve) =>
+          setTimeout(() => resolve({ terms: [], errors: [], responseTimeMs: 0 }), 30),
+        ),
+    );
+    const iris = Array.from(
+      { length: 60 },
+      (_, index) => `https://example.com/resources/term${index}`,
+    );
+
+    await service.lookup(iris, 50);
+
+    const timeouts = queryService.lookup.mock.calls.map(
+      (call) => (call as unknown as [string[], unknown, number])[2],
+    );
+    expect(timeouts[0]).toBeLessThanOrEqual(50);
+    // Each batch gets what is left of the 50ms, so the later ones get less than the earlier ones.
+    expect(timeouts[1]).toBeLessThan(timeouts[0]);
+  });
+
   it('still queries for the valid IRIs in a batch containing a malformed one', async () => {
     const { service, queryService } = lookupServiceWithSpy();
     await service.lookup(

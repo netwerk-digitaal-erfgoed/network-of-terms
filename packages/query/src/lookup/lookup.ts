@@ -4,6 +4,7 @@ import {
   QueryTermsService,
   ServerError,
   Terms,
+  TermsResponse,
   TimeoutError,
 } from '../query.js';
 import { Term } from '../terms.js';
@@ -107,20 +108,32 @@ export class LookupService {
     // dataset run one after another, so a large request stays a single query at a time per source
     // instead of the burst that would get us rate-limited; different sources are queried in
     // parallel, as before.
+    //
+    // timeoutMs is what the caller allows the whole lookup, so the batches share it as a deadline
+    // rather than each getting the full amount: batching a request must not make it take longer
+    // than the caller asked for.
+    const deadline = Date.now() + timeoutMs;
     const responses = (
       await Promise.all(
         [...irisByQueriedDataset.entries()].map(
           async ([queriedDataset, datasetIris]) => {
+            const distribution = queriedDataset.distributions[0];
             const datasetResponses = [];
             for (const batch of batched(datasetIris, LOOKUP_BATCH_SIZE)) {
+              const remainingMs = deadline - Date.now();
               datasetResponses.push([
                 queriedDataset,
                 batch,
-                await this.queryService.lookup(
-                  batch,
-                  queriedDataset.distributions[0],
-                  timeoutMs,
-                ),
+                remainingMs > 0
+                  ? await this.queryService.lookup(
+                      batch,
+                      distribution,
+                      remainingMs,
+                    )
+                  : new TermsResponse(
+                      new TimeoutError(distribution, timeoutMs),
+                      0,
+                    ),
               ] as const);
             }
 
