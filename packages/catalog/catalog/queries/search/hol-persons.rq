@@ -1,0 +1,35 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+    ?uri a skos:Concept ;
+        skos:prefLabel ?prefLabel ;
+        skos:altLabel ?altLabel ;
+        skos:scopeNote ?scopeNote ;
+        skos:exactMatch ?exactMatch_uri .
+}
+WHERE {
+    {
+        SELECT DISTINCT ?uri WHERE {
+            ?uri a skos:Concept ;
+                skos:inScheme <https://terms.thehouseoflegacies.nl/scheme/persons> ;
+                ?labelPredicate ?label .
+
+            # skos:hiddenLabel carries diacritic-folded forms, so “israels” matches “Israëls”.
+            VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
+
+            FILTER(CONTAINS(LCASE(?label), ?query))
+        }
+        #LIMIT#
+    }
+
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri a skos:Concept }
+        UNION { ?uri skos:prefLabel ?prefLabel }
+        UNION { ?uri skos:altLabel ?altLabel }
+        UNION { ?uri skos:scopeNote ?scopeNote }
+        UNION { ?uri owl:sameAs ?exactMatch_uri } # Has no labels.
+    }
+}
