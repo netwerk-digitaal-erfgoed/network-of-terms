@@ -1,0 +1,67 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://terms.thehouseoflegacies.nl/dataset/persons",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "The House of Legacies: Persons"
+    },
+    {
+      "@language": "nl",
+      "@value": "The House of Legacies: Personen"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.thehouseoflegacies.nl/"
+    }
+  ],
+  "url": ["https://pid.thehouseoflegacies.nl/ark:43442/"],
+  "mainEntityOfPage": ["https://terms.thehouseoflegacies.nl/dataset/persons"],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Makers, performers and other contributors to the Dutch performing arts, taken from the archive of The House of Legacies, an inclusive archive of the legacies of performing artists of colour. Each person is linked to the productions, groups and archival records that document their work, from artists born in the late nineteenth century to makers active today."
+    },
+    {
+      "@language": "nl",
+      "@value": "Makers, uitvoerders en andere bijdragers aan de Nederlandse podiumkunsten, afkomstig uit het archief van The House of Legacies, een inclusief archief van de nalatenschappen van podiumkunstenaars van kleur. Elk persoon is verbonden aan de voorstellingen, gezelschappen en archiefstukken die het werk documenteren, van kunstenaars geboren in de late negentiende eeuw tot makers die vandaag actief zijn."
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://terms.thehouseoflegacies.nl/query",
+      "@type": "DataDownload",
+      "contentUrl": "https://terms.thehouseoflegacies.nl/query",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/hol-persons.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/hol-persons.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
