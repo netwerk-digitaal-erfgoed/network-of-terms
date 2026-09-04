@@ -28,7 +28,8 @@ CONSTRUCT {
         skos:scopeNote ?schema_hasOccupation ;
         skos:exactMatch ?exactMatch_uri ;
         schema:givenName ?schema_givenName ;
-        schema:familyName ?schema_familyName .
+        schema:familyName ?schema_familyName ;
+        schema:hasOccupation ?schema_hasOccupation .
 }
 WHERE {
     {

@@ -10,7 +10,8 @@ CONSTRUCT {
         skos:scopeNote ?schema_hasOccupation ;
         skos:exactMatch ?exactMatch_uri ;
         schema:givenName ?schema_givenName ;
-        schema:familyName ?schema_familyName .
+        schema:familyName ?schema_familyName ;
+        schema:hasOccupation ?schema_hasOccupation .
 }
 # The properties below stay in OPTIONALs rather than becoming UNION branches, because the BIND
 # below combines ?schema_familyName and ?schema_givenName and a UNION would leave one side of that

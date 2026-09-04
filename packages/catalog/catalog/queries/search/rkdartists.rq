@@ -80,8 +80,8 @@ WHERE {
         UNION { ?uri rdfs:seeAlso ?exactMatch_uri . }
         UNION { ?uri schema:birthPlace ?birthPlace_uri . FILTER(isIRI(?birthPlace_uri)) }
         UNION { ?uri schema:deathPlace ?deathPlace_uri . FILTER(isIRI(?deathPlace_uri)) }
-        UNION { ?uri schema:additionalType ?occupation . FILTER(isLiteral(?occupation)) }
-        UNION { ?uri schema:nationality ?nationality . FILTER(isLiteral(?nationality)) }
+        UNION { ?uri schema:additionalType ?occupation . FILTER(isLiteral(?occupation) && ?type = schema:Person) }
+        UNION { ?uri schema:nationality ?nationality . FILTER(isLiteral(?nationality) && ?type = schema:Person) }
     }
 
     BIND(IF(CONTAINS(STR(?birthDate), "/"), STRDT(STR(?birthDate), edtf:EDTF), ?birthDate) AS ?birthDate_edtf)

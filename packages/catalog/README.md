@@ -216,7 +216,9 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
       schema:endDate ?endDate .
   ```
 
-  Mint the role node as an IRI derived from the term’s, as for `schema:geo`. RKDartists states an
+  Mint the role node as an IRI derived from the term’s, as for `schema:geo`; a blank node is read
+  too, but is minted once per solution row. A literal on the role’s `schema:hasOccupation` names
+  the role, as it would on the term. RKDartists states an
   occupation’s IRI and its Dutch and English labels as parallel values with nothing pairing them,
   which is why its occupations are literals: pairing them would assign every label to every IRI.
 - One `UNION` branch per property, since each is multi-valued on its own: a person with seven

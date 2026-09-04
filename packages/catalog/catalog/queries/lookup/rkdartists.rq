@@ -87,13 +87,15 @@ WHERE {
     # 0.4% of persons, so its IRI is paired with the literals from the subquery above; where a
     # person has two, each IRI gets both names. Occupations and nationalities are too often
     # multi-valued for that, so they are returned as the literals alone, each a reference by name.
+    # An organisation has an additionalType too – ‘museum’ – which is not an occupation, so those
+    # two branches are for persons only.
     OPTIONAL {
         { ?uri schema:alternateName ?altLabel . }
         UNION { ?uri rdfs:seeAlso ?exactMatch_uri . }
         UNION { ?uri schema:birthPlace ?birthPlace_uri . FILTER(isIRI(?birthPlace_uri)) }
         UNION { ?uri schema:deathPlace ?deathPlace_uri . FILTER(isIRI(?deathPlace_uri)) }
-        UNION { ?uri schema:additionalType ?occupation . FILTER(isLiteral(?occupation)) }
-        UNION { ?uri schema:nationality ?nationality . FILTER(isLiteral(?nationality)) }
+        UNION { ?uri schema:additionalType ?occupation . FILTER(isLiteral(?occupation) && ?type = schema:Person) }
+        UNION { ?uri schema:nationality ?nationality . FILTER(isLiteral(?nationality) && ?type = schema:Person) }
     }
 
     # RKD’s dates are EDTF Level 0 as published: a plain ISO 8601 date at whatever precision it
