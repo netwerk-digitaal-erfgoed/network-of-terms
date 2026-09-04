@@ -75,6 +75,9 @@ export const schema = (languages: string[]) => `
 
     "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
     place: Place
+
+    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person."
+    person: Person
   }
 
   type RelatedTerm {
@@ -179,6 +182,9 @@ export const schema = (languages: string[]) => `
 
     "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
     place: Place
+
+    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person."
+    person: Person
   }
 
   """
@@ -206,6 +212,37 @@ export const schema = (languages: string[]) => `
   """
   type AdditionalType {
     uri: ID!
+    name: [LanguageString]!
+  }
+
+  """
+  The person that a term denotes. It carries only what SKOS cannot state: the person’s names stay on \`prefLabel\` and \`altLabel\`, and their alignments to other sources on \`exactMatch\`.
+  """
+  type Person {
+    "Date of birth, as an EDTF string (Extended Date/Time Format, the Library of Congress profile of ISO 8601-1 and 8601-2): a date at whatever precision the source knows (\`1606\`, \`1606-07\`, \`1606-07-15\`), an interval (\`1606-07-15/1607\`), or a qualified date (\`1620~\` for circa, \`1643?\` for uncertain, \`139X\` for a decade). Passed through as the source states it, so a source that publishes something else is returned verbatim; the Network of Terms does not validate it. Null when the source states none."
+    birthDate: String
+
+    "Date of death, in the same form as \`birthDate\`."
+    deathDate: String
+
+    "Where the person was born, in the source’s own vocabulary."
+    birthPlace: [Reference]!
+
+    "Where the person died, in the source’s own vocabulary."
+    deathPlace: [Reference]!
+
+    "What the person did, in the source’s own vocabulary."
+    hasOccupation: [Reference]!
+
+    "The person’s nationality, in the source’s own vocabulary."
+    nationality: [Reference]!
+  }
+
+  """
+  Something a source refers to, by URI, by name, or both. A source with a vocabulary of its own gives the URI and whatever names it publishes for it; a source that only knows a name gives that name and no URI, one reference per name, since nothing tells its names in two languages for one thing apart from its names for two things. The vocabularies differ per source and the Network of Terms does not harmonise them.
+  """
+  type Reference {
+    uri: ID
     name: [LanguageString]!
   }
   

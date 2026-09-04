@@ -14,6 +14,7 @@ import {
   NotFoundError,
   QueryMode,
   QueryTermsService,
+  Reference,
   ServerError,
   SourceNotFoundError,
   SourceResult,
@@ -215,6 +216,9 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
     place: denotedPlace(term, (literals) =>
       filterLiteralsByLanguage(literals, languages),
     ),
+    person: denotedPerson(term, (literals) =>
+      filterLiteralsByLanguage(literals, languages),
+    ),
   };
 }
 
@@ -267,6 +271,72 @@ const placeClasses = new Set([
 ]);
 
 /**
+ * The person that the term denotes, or null if its source describes none.
+ *
+ * As with {@link denotedPlace}, the node carries only what SKOS cannot state: names stay on the
+ * labels and alignments on `exactMatch`, so what is left is the dates, places, occupations and
+ * nationality. A term typed as a person whose source states none of them gets no node.
+ *
+ * A date is passed through as the source states it. Sources are not validated, and the field is
+ * documented as EDTF, which reads a plain ISO 8601 date, an interval and a qualified date alike.
+ * Where a source states several – Wikidata can, when its sources disagree – the first is taken.
+ */
+function denotedPerson(
+  term: Term,
+  inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
+) {
+  if (!term.types.some((type) => personClasses.has(type.value))) {
+    return null;
+  }
+
+  const birthDate = term.birthDates[0]?.value ?? null;
+  const deathDate = term.deathDates[0]?.value ?? null;
+
+  // Tested against everything the source holds, not against what survives the language filter,
+  // for the reason given in denotedPlace.
+  const references = referencesIn(inRequestedLanguages);
+
+  return birthDate === null &&
+    deathDate === null &&
+    term.birthPlaces.length === 0 &&
+    term.deathPlaces.length === 0 &&
+    term.occupations.length === 0 &&
+    term.nationalities.length === 0
+    ? null
+    : {
+        birthDate,
+        deathDate,
+        birthPlace: references(term.birthPlaces),
+        deathPlace: references(term.deathPlaces),
+        hasOccupation: references(term.occupations),
+        nationality: references(term.nationalities),
+      };
+}
+
+/**
+ * A reference by name alone is one reference per name, since nothing tells the source’s Dutch and
+ * English names for the same thing apart from its names for two things. So once the names in the
+ * languages the client did not ask for are filtered out, what is left of such a reference is
+ * nothing at all, and it is dropped rather than returned as an entry with neither URI nor name.
+ */
+const referencesIn =
+  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
+  (references: Reference[]) =>
+    references
+      .map((reference) => ({
+        uri: reference.iri?.value ?? null,
+        name: inRequestedLanguages(reference.names),
+      }))
+      .filter(
+        (reference) => reference.uri !== null || reference.name.length > 0,
+      );
+
+const personClasses = new Set([
+  'https://schema.org/Person',
+  'http://schema.org/Person',
+]);
+
+/**
  * Sources are not validated, so a coordinate may be absent, empty or not a number at all. Anything
  * we cannot read as a finite number becomes null: an unknown coordinate is not a field error, and
  * `Number('')` would silently place the term at 0°, 0°.
@@ -302,6 +372,7 @@ function mapToTerm(term: Term, languages: string[]) {
       prefLabel: literalValues(exactMatch.prefLabels, languages),
     })),
     place: denotedPlace(term, (literals) => placeLabels(literals, languages)),
+    person: denotedPerson(term, (literals) => placeLabels(literals, languages)),
   };
 }
 
@@ -313,7 +384,9 @@ function mapToTerm(term: Term, languages: string[]) {
  */
 const placeLabels = (literals: RDF.Literal[], languages: string[] = ['nl']) => {
   const labels = filterLiteralsByLanguage(literals, languages);
-  return labels.length > 0 ? labels : filterLiteralsByLanguage(literals, ['en']);
+  return labels.length > 0
+    ? labels
+    : filterLiteralsByLanguage(literals, ['en']);
 };
 
 function source(
