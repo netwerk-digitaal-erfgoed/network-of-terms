@@ -17,7 +17,11 @@ export default defineConfig(() => ({
         autoUpdate: true,
         lines: 100,
         functions: 100,
-        branches: 96.9,
+        // Below what a run reaches, not at it: the `genres` resolver’s fallback branch is taken only
+        // when the genre lookup over the network fails, so the measured figure moves between 95.8
+        // and 97.2 from one run to the next. autoUpdate raises this on a lucky local run; do not
+        // commit that.
+        branches: 95.5,
         statements: 100,
       },
     },
