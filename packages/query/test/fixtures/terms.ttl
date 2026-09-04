@@ -99,6 +99,19 @@
     schema:givenName "Harry" ;
     schema:familyName "Mulisch" .
 
+# A person whose source names things in English only, which the monolingual API falls back to.
+<https://example.com/resources/person-english-only>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Turner, William"@en ;
+    schema:nationality "British"@en ;
+    schema:hasOccupation "painter"@en .
+
+# A person whose source states an empty date, which is no date, so the node does not exist.
+<https://example.com/resources/person-empty-date>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Naamloos"@nl ;
+    schema:birthDate "" .
+
 # A person whose source states a birth place and nothing else, so the node still exists.
 <https://example.com/resources/person-only-born-somewhere>
     a skos:Concept, schema:Person ;

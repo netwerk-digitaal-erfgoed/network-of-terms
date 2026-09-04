@@ -373,6 +373,57 @@ describe('TermsTransformer', () => {
       ).toEqual([rembrandt.value]);
     });
 
+    it('names a role by the occupation literal on the role node', () => {
+      const role = dataFactory.namedNode('https://example.com/rembrandt#role');
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('hasOccupation'), role),
+          dataFactory.quad(role, rdf.type, schema('Role')),
+          dataFactory.quad(
+            role,
+            schema('hasOccupation'),
+            dataFactory.literal('schilder', 'nl'),
+          ),
+          dataFactory.quad(
+            role,
+            schema('startDate'),
+            dataFactory.literal('1625'),
+          ),
+        ),
+      );
+
+      expect(term.occupations).toHaveLength(1);
+      expect(term.occupations[0].occupation).toBeUndefined();
+      expect(term.occupations[0].roleNames.map((name) => name.value)).toEqual([
+        'schilder',
+      ]);
+      expect(term.occupations[0].startDate?.value).toEqual('1625');
+    });
+
+    it('reads a schema:Role node stated as a blank node', () => {
+      const role = dataFactory.blankNode('role');
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('hasOccupation'), role),
+          dataFactory.quad(role, rdf.type, schema('Role')),
+          dataFactory.quad(
+            role,
+            schema('roleName'),
+            dataFactory.literal('werkzaam', 'nl'),
+          ),
+          dataFactory.quad(
+            role,
+            schema('endDate'),
+            dataFactory.literal('1669'),
+          ),
+        ),
+      );
+
+      expect(term.occupations).toHaveLength(1);
+      expect(term.occupations[0].roleNames[0].value).toEqual('werkzaam');
+      expect(term.occupations[0].endDate?.value).toEqual('1669');
+    });
+
     it('drops a schema:Role node that neither names nor identifies what the person did', () => {
       const role = dataFactory.namedNode('https://example.com/rembrandt#role');
       const [term] = transform(

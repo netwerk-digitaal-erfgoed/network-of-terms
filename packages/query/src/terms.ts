@@ -259,8 +259,10 @@ export class TermsTransformer {
    * {@link reference} reads as a role without a period.
    */
   private role = (object: RDF.Term): OccupationRole[] => {
+    // A role node may be a blank node too, as the schema:geo node may; an IRI is preferred for
+    // the reason the catalog README gives, not required.
     const node =
-      object.termType === 'NamedNode'
+      object.termType === 'NamedNode' || object.termType === 'BlankNode'
         ? this.termsMap.get(object.value)
         : undefined;
     if (node === undefined || !node.types.some(isRoleClass)) {
@@ -276,16 +278,24 @@ export class TermsTransformer {
     }
 
     // The property is repeated on the role to reach the occupation, per Schema.org; a role may
-    // also be named without one. Only the first occupation is taken, since a role is one thing.
+    // also be named without one. Only the first occupation is taken, since a role is one thing. An
+    // occupation the role only names is a name for the role, as it is on a term.
     const occupation = node.occupations
       .filter((occupation) => occupation.termType === 'NamedNode')
       .flatMap(this.reference)[0];
-    return occupation === undefined && node.roleNames.length === 0
+    const roleNames = [
+      ...node.roleNames,
+      ...node.occupations.filter(
+        (occupation): occupation is RDF.Literal =>
+          occupation.termType === 'Literal',
+      ),
+    ];
+    return occupation === undefined && roleNames.length === 0
       ? []
       : [
           new OccupationRole(
             occupation,
-            node.roleNames,
+            roleNames,
             node.startDate,
             node.endDate,
           ),
