@@ -26,7 +26,7 @@ export class Term {
     readonly deathDates: RDF.Literal[] = [],
     readonly birthPlaces: Reference[] = [],
     readonly deathPlaces: Reference[] = [],
-    readonly occupations: Role[] = [],
+    readonly occupations: OccupationRole[] = [],
     readonly nationalities: Reference[] = [],
     readonly givenNames: RDF.Literal[] = [],
     readonly familyNames: RDF.Literal[] = [],
@@ -64,7 +64,7 @@ export class Reference {
  * role. A source that constructs no role but a bare occupation is read as a role without a period:
  * an IRI becomes the occupation, a literal the role’s name.
  */
-export class Role {
+export class OccupationRole {
   constructor(
     readonly occupation: Reference | undefined,
     readonly roleNames: RDF.Literal[],
@@ -258,7 +258,7 @@ export class TermsTransformer {
    * its occupation, name and period, and anything else is a bare occupation, which
    * {@link reference} reads as a role without a period.
    */
-  private role = (object: RDF.Term): Role[] => {
+  private role = (object: RDF.Term): OccupationRole[] => {
     const node =
       object.termType === 'NamedNode'
         ? this.termsMap.get(object.value)
@@ -266,7 +266,7 @@ export class TermsTransformer {
     if (node === undefined || !node.types.some(isRoleClass)) {
       return this.reference(object).map(
         (reference) =>
-          new Role(
+          new OccupationRole(
             reference.iri === undefined ? undefined : reference,
             reference.iri === undefined ? reference.names : [],
             undefined,
@@ -282,7 +282,14 @@ export class TermsTransformer {
       .flatMap(this.reference)[0];
     return occupation === undefined && node.roleNames.length === 0
       ? []
-      : [new Role(occupation, node.roleNames, node.startDate, node.endDate)];
+      : [
+          new OccupationRole(
+            occupation,
+            node.roleNames,
+            node.startDate,
+            node.endDate,
+          ),
+        ];
   };
 
   /**
