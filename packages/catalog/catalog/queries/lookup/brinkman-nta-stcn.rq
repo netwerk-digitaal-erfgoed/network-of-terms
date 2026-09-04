@@ -7,7 +7,9 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX void: <http://rdfs.org/ns/void#>
 
 CONSTRUCT {
-    ?uri a skos:Concept ;
+    ?uri a skos:Concept, ?type ;
+        schema:givenName ?schema_givenName ;
+        schema:familyName ?schema_familyName ;
         skos:prefLabel ?prefLabel ;
         skos:prefLabel ?rdfs_label ;
         skos:altLabel ?altLabel ;
@@ -81,6 +83,8 @@ WHERE {
         UNION { ?uri schema:name ?schema_name }
         UNION { ?uri schema:alternateName ?schema_alternateName }
         UNION { ?uri schema:description ?schema_description }
+        UNION { ?uri schema:givenName ?schema_givenName }
+        UNION { ?uri schema:familyName ?schema_familyName }
         UNION {
             ?uri ?matchPredicate ?exactMatch_uri .
             VALUES ?matchPredicate { owl:sameAs schema:sameAs }

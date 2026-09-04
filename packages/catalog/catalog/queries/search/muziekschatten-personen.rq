@@ -22,11 +22,13 @@ PREFIX som: <https://data.muziekschatten.nl/som/>
 # <https://data.muziekschatten.nl/som/b7bc6d966287e0f0e0f491752ff65ba5>
 
 CONSTRUCT {
-    ?uri a skos:Concept;
+    ?uri a skos:Concept, schema:Person ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?schema_alternateName ;
         skos:scopeNote ?schema_hasOccupation ;
-        skos:exactMatch ?exactMatch_uri .
+        skos:exactMatch ?exactMatch_uri ;
+        schema:givenName ?schema_givenName ;
+        schema:familyName ?schema_familyName .
 }
 WHERE {
     {
