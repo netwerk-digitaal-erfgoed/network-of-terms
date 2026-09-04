@@ -57,6 +57,8 @@ export const testCatalog = (port: number) =>
             ?geo ?geo_p ?geo_o .
             ?additionalType ?additionalType_p ?additionalType_o .
             ?referredPlace ?referredPlace_p ?referredPlace_o .
+            ?role ?role_p ?role_o .
+            ?occupation ?occupation_p ?occupation_o .
           }
           WHERE {
             {
@@ -85,6 +87,11 @@ export const testCatalog = (port: number) =>
               ?s schema:birthPlace|schema:deathPlace ?referredPlace .
               ?referredPlace ?referredPlace_p ?referredPlace_o .
             }
+            OPTIONAL {
+              ?s schema:hasOccupation ?role .
+              ?role ?role_p ?role_o .
+              OPTIONAL { ?role schema:hasOccupation ?occupation . ?occupation ?occupation_p ?occupation_o . }
+            }
           }`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -101,6 +108,8 @@ export const testCatalog = (port: number) =>
             ?geo ?geo_p ?geo_o .
             ?additionalType ?additionalType_p ?additionalType_o .
             ?referredPlace ?referredPlace_p ?referredPlace_o .
+            ?role ?role_p ?role_o .
+            ?occupation ?occupation_p ?occupation_o .
           }
           WHERE {
             ?s ?p ?o.
@@ -114,6 +123,11 @@ export const testCatalog = (port: number) =>
             OPTIONAL {
               ?s schema:birthPlace|schema:deathPlace ?referredPlace .
               ?referredPlace ?referredPlace_p ?referredPlace_o .
+            }
+            OPTIONAL {
+              ?s schema:hasOccupation ?role .
+              ?role ?role_p ?role_o .
+              OPTIONAL { ?role schema:hasOccupation ?occupation . ?occupation ?occupation_p ?occupation_o . }
             }
             OPTIONAL { 
               ?s skos:broader ?broader_uri.

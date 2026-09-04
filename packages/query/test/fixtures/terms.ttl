@@ -66,8 +66,27 @@
     schema:deathDate "1669-10-04" ;
     schema:birthPlace <https://example.com/places/leiden> ;
     schema:deathPlace "Amsterdam (stad)"@nl, "Amsterdam (city)"@en ;
-    schema:hasOccupation "schilder"@nl, "painter"@en, "etser"@nl, "etcher"@en ;
+    # Occupations the source only names become roles named by them; a schema:Role node it
+    # constructs is read for its occupation, name and period, the way Schema.org reads one.
+    schema:hasOccupation "schilder"@nl, "painter"@en, "etser"@nl, "etcher"@en,
+        <https://example.com/resources/rembrandt#role-1>, <https://example.com/resources/rembrandt#role-2> ;
     schema:nationality "Noord-Nederlands"@nl, "North Netherlandish"@en .
+
+<https://example.com/resources/rembrandt#role-1>
+    a schema:Role ;
+    schema:hasOccupation <https://example.com/occupations/art-collector> ;
+    schema:startDate "1625" ;
+    schema:endDate "1669" .
+
+<https://example.com/occupations/art-collector>
+    schema:name "kunstverzamelaar"@nl, "art collector"@en .
+
+# A role the source names but does not identify, as RKD’s period of activity.
+<https://example.com/resources/rembrandt#role-2>
+    a schema:Role ;
+    schema:roleName "werkzaam"@nl, "active"@en ;
+    schema:startDate "1625" ;
+    schema:endDate "1669" .
 
 <https://example.com/places/leiden>
     schema:name "Leiden (stad)"@nl, "Leiden (city)"@en .

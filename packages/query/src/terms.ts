@@ -26,7 +26,7 @@ export class Term {
     readonly deathDates: RDF.Literal[] = [],
     readonly birthPlaces: Reference[] = [],
     readonly deathPlaces: Reference[] = [],
-    readonly occupations: Reference[] = [],
+    readonly occupations: Role[] = [],
     readonly nationalities: Reference[] = [],
     readonly givenNames: RDF.Literal[] = [],
     readonly familyNames: RDF.Literal[] = [],
@@ -52,6 +52,24 @@ export class Reference {
   constructor(
     readonly iri: RDF.NamedNode | undefined,
     readonly names: RDF.Literal[],
+  ) {}
+}
+
+/**
+ * What a person does or did, in the shape of Schema.org’s `Role`: an occupation the source
+ * identifies, or a role the source only names, and the period where the source states one.
+ *
+ * Schema.org lets a `Role` sit between `schema:hasOccupation` and the `Occupation`, repeating
+ * `schema:hasOccupation` on the role to reach it, and puts the dates and the `roleName` on the
+ * role. A source that constructs no role but a bare occupation is read as a role without a period:
+ * an IRI becomes the occupation, a literal the role’s name.
+ */
+export class Role {
+  constructor(
+    readonly occupation: Reference | undefined,
+    readonly roleNames: RDF.Literal[],
+    readonly startDate: RDF.Literal | undefined,
+    readonly endDate: RDF.Literal | undefined,
   ) {}
 }
 
@@ -83,6 +101,10 @@ class SparqlResultTerm {
   nationalities: RDF.Term[] = [];
   givenNames: RDF.Literal[] = [];
   familyNames: RDF.Literal[] = [];
+  // Read from a schema:Role node a term points at, never from the term itself.
+  roleNames: RDF.Literal[] = [];
+  startDate: RDF.Literal | undefined = undefined;
+  endDate: RDF.Literal | undefined = undefined;
 }
 
 export class TermsTransformer {
@@ -138,6 +160,12 @@ export class TermsTransformer {
     ['http://schema.org/givenName', 'givenNames'],
     ['https://schema.org/familyName', 'familyNames'],
     ['http://schema.org/familyName', 'familyNames'],
+    ['https://schema.org/roleName', 'roleNames'],
+    ['http://schema.org/roleName', 'roleNames'],
+    ['https://schema.org/startDate', 'startDate'],
+    ['http://schema.org/startDate', 'startDate'],
+    ['https://schema.org/endDate', 'endDate'],
+    ['http://schema.org/endDate', 'endDate'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -201,7 +229,7 @@ export class TermsTransformer {
         term.deathDates,
         term.birthPlaces.flatMap(this.reference),
         term.deathPlaces.flatMap(this.reference),
-        term.occupations.flatMap(this.reference),
+        term.occupations.flatMap(this.role),
         term.nationalities.flatMap(this.reference),
         term.givenNames,
         term.familyNames,
@@ -223,6 +251,38 @@ export class TermsTransformer {
       return [];
     }
     return [new Reference(object, this.namedType(object).prefLabels)];
+  };
+
+  /**
+   * What `schema:hasOccupation` points at, as a {@link Role}: a `schema:Role` node is read for
+   * its occupation, name and period, and anything else is a bare occupation, which
+   * {@link reference} reads as a role without a period.
+   */
+  private role = (object: RDF.Term): Role[] => {
+    const node =
+      object.termType === 'NamedNode'
+        ? this.termsMap.get(object.value)
+        : undefined;
+    if (node === undefined || !node.types.some(isRoleClass)) {
+      return this.reference(object).map(
+        (reference) =>
+          new Role(
+            reference.iri === undefined ? undefined : reference,
+            reference.iri === undefined ? reference.names : [],
+            undefined,
+            undefined,
+          ),
+      );
+    }
+
+    // The property is repeated on the role to reach the occupation, per Schema.org; a role may
+    // also be named without one. Only the first occupation is taken, since a role is one thing.
+    const occupation = node.occupations
+      .filter((occupation) => occupation.termType === 'NamedNode')
+      .flatMap(this.reference)[0];
+    return occupation === undefined && node.roleNames.length === 0
+      ? []
+      : [new Role(occupation, node.roleNames, node.startDate, node.endDate)];
   };
 
   /**
@@ -282,6 +342,11 @@ export class TermsTransformer {
       return acc;
     }, []);
 }
+
+// Both Schema.org namespaces, because source queries use either one.
+const isRoleClass = (type: RDF.Term) =>
+  type.value === 'https://schema.org/Role' ||
+  type.value === 'http://schema.org/Role';
 
 const alphabeticallyByPrefLabel = (a: RelatedTerm, b: RelatedTerm) => {
   const prefLabelA = a.prefLabels[0]?.value ?? '';

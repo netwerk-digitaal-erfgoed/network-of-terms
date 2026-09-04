@@ -284,15 +284,110 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.occupations.map((occupation) => occupation.iri)).toEqual([
+      // An occupation the source only names is a role named by it, without a period.
+      expect(term.occupations.map((role) => role.occupation)).toEqual([
         undefined,
         undefined,
       ]);
-      expect(
-        term.occupations.map((occupation) => occupation.names[0].value),
-      ).toEqual(['schilder', 'painter']);
+      expect(term.occupations.map((role) => role.roleNames[0].value)).toEqual([
+        'schilder',
+        'painter',
+      ]);
+      expect(term.occupations[0].startDate).toBeUndefined();
       expect(term.nationalities[0].names[0].value).toEqual('Noord-Nederlands');
       expect(term.deathPlaces[0].names[0].value).toEqual('Amsterdam');
+    });
+
+    it('reads an occupation the source identifies as a role without a period', () => {
+      const painter = dataFactory.namedNode(
+        'https://example.com/occupations/painter',
+      );
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('hasOccupation'), painter),
+          dataFactory.quad(
+            painter,
+            schema('name'),
+            dataFactory.literal('schilder', 'nl'),
+          ),
+        ),
+      );
+
+      expect(term.occupations).toHaveLength(1);
+      expect(term.occupations[0].occupation?.iri?.value).toEqual(painter.value);
+      expect(term.occupations[0].occupation?.names[0].value).toEqual(
+        'schilder',
+      );
+      expect(term.occupations[0].roleNames).toEqual([]);
+    });
+
+    it('reads a schema:Role node for its occupation, name and period', () => {
+      const role = dataFactory.namedNode('https://example.com/rembrandt#role');
+      const collector = dataFactory.namedNode(
+        'https://example.com/occupations/collector',
+      );
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('hasOccupation'), role),
+          dataFactory.quad(role, rdf.type, schema('Role')),
+          // The property is repeated on the role to reach the occupation, per Schema.org.
+          dataFactory.quad(role, schema('hasOccupation'), collector),
+          dataFactory.quad(
+            role,
+            schema('roleName'),
+            dataFactory.literal('verzamelaar', 'nl'),
+          ),
+          dataFactory.quad(
+            role,
+            schema('startDate'),
+            dataFactory.literal('1625'),
+          ),
+          dataFactory.quad(
+            role,
+            schema('endDate'),
+            dataFactory.literal('1669'),
+          ),
+          dataFactory.quad(
+            collector,
+            schema('name'),
+            dataFactory.literal('kunstverzamelaar', 'nl'),
+          ),
+        ),
+      );
+
+      expect(term.occupations).toHaveLength(1);
+      const [dated] = term.occupations;
+      expect(dated.occupation?.iri?.value).toEqual(collector.value);
+      expect(dated.occupation?.names[0].value).toEqual('kunstverzamelaar');
+      expect(dated.roleNames[0].value).toEqual('verzamelaar');
+      expect(dated.startDate?.value).toEqual('1625');
+      expect(dated.endDate?.value).toEqual('1669');
+      // The role node is not a term of its own.
+      expect(
+        transform(
+          person(
+            dataFactory.quad(rembrandt, schema('hasOccupation'), role),
+            dataFactory.quad(role, rdf.type, schema('Role')),
+          ),
+        ).map((term) => term.id.value),
+      ).toEqual([rembrandt.value]);
+    });
+
+    it('drops a schema:Role node that neither names nor identifies what the person did', () => {
+      const role = dataFactory.namedNode('https://example.com/rembrandt#role');
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('hasOccupation'), role),
+          dataFactory.quad(role, rdf.type, schema('Role')),
+          dataFactory.quad(
+            role,
+            schema('startDate'),
+            dataFactory.literal('1625'),
+          ),
+        ),
+      );
+
+      expect(term.occupations).toEqual([]);
     });
 
     it('drops a reference the source states as a blank node', () => {
