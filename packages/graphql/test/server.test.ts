@@ -400,9 +400,36 @@ describe('Server', () => {
     expect(term.result.person.deathPlace).toEqual([
       { uri: null, name: [{ language: 'nl', value: 'Amsterdam (stad)' }] },
     ]);
+    // Occupations the source only names are roles named by them, one per name; a schema:Role
+    // node it constructs comes with its occupation or name and its period.
     expect(term.result.person.hasOccupation).toEqual([
-      { uri: null, name: [{ language: 'nl', value: 'schilder' }] },
-      { uri: null, name: [{ language: 'nl', value: 'etser' }] },
+      {
+        occupation: null,
+        roleName: [{ language: 'nl', value: 'schilder' }],
+        startDate: null,
+        endDate: null,
+      },
+      {
+        occupation: null,
+        roleName: [{ language: 'nl', value: 'etser' }],
+        startDate: null,
+        endDate: null,
+      },
+      {
+        occupation: {
+          uri: 'https://example.com/occupations/art-collector',
+          name: [{ language: 'nl', value: 'kunstverzamelaar' }],
+        },
+        roleName: [],
+        startDate: '1625',
+        endDate: '1669',
+      },
+      {
+        occupation: null,
+        roleName: [{ language: 'nl', value: 'werkzaam' }],
+        startDate: '1625',
+        endDate: '1669',
+      },
     ]);
     expect(term.result.person.nationality[0].name).toEqual([
       { language: 'nl', value: 'Noord-Nederlands' },
@@ -771,7 +798,7 @@ function termsQuery({
                 deathDate
                 birthPlace { uri name { language value } }
                 deathPlace { uri name { language value } }
-                hasOccupation { uri name { language value } }
+                hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
                 nationality { uri name { language value } }
               }
             }
@@ -847,7 +874,7 @@ function lookupQuery({
               deathDate
               birthPlace { uri name { language value } }
               deathPlace { uri name { language value } }
-              hasOccupation { uri name { language value } }
+              hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
               nationality { uri name { language value } }
             }
           }
@@ -878,7 +905,7 @@ function lookupQuery({
               deathDate
               birthPlace { uri name { language value } }
               deathPlace { uri name { language value } }
-              hasOccupation { uri name { language value } }
+              hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
               nationality { uri name { language value } }
             }
           }

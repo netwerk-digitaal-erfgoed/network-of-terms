@@ -237,8 +237,8 @@ export const schema = (languages: string[]) => `
     "Where the person died, in the source’s own vocabulary."
     deathPlace: [Reference]!
 
-    "What the person did, in the source’s own vocabulary."
-    hasOccupation: [Reference]!
+    "What the person does or did, each as a role: the occupation as a term in the source’s vocabulary, or a role the source only names, with the period where the source states one."
+    hasOccupation: [Role]!
 
     "The person’s nationality, in the source’s own vocabulary."
     nationality: [Reference]!
@@ -250,6 +250,23 @@ export const schema = (languages: string[]) => `
   type Reference {
     uri: ID
     name: [LanguageString]!
+  }
+
+  """
+  What a person does or did, in the shape of Schema.org’s \`Role\`. At least one of \`occupation\` and \`roleName\` is set: the occupation where the source identifies it as a term, the role’s own name where the source only names it. A period is given where the source states one; an occupation without a period leaves both dates null.
+  """
+  type Role {
+    "The occupation, as a term in the source’s own vocabulary, with whatever names the source gives it. Null where the source only names the role."
+    occupation: Reference
+
+    "The role’s own name, in the requested languages. Empty where the source identifies the occupation as a term instead."
+    roleName: [LanguageString]!
+
+    "When the role began, as an EDTF string like \`birthDate\`. Null where the source states no period."
+    startDate: String
+
+    "When the role ended, as an EDTF string. Null where the source states no period or the role is current."
+    endDate: String
   }
   
   type TranslatedRelatedTerm {

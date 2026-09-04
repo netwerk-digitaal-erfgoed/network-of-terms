@@ -15,6 +15,7 @@ import {
   QueryMode,
   QueryTermsService,
   Reference,
+  Role,
   ServerError,
   SourceNotFoundError,
   SourceResult,
@@ -313,10 +314,32 @@ function denotedPerson(
         deathDate,
         birthPlace: references(term.birthPlaces),
         deathPlace: references(term.deathPlaces),
-        hasOccupation: references(term.occupations),
+        hasOccupation: rolesIn(inRequestedLanguages)(term.occupations),
         nationality: references(term.nationalities),
       };
 }
+
+/**
+ * A role is kept when its occupation or its name survives the language filter, for the reason
+ * {@link referencesIn} gives; a period alone would say ‘did something from 1625 to 1669’.
+ */
+const rolesIn =
+  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
+  (roles: Role[]) =>
+    roles
+      .map((role) => ({
+        occupation:
+          role.occupation === undefined
+            ? null
+            : {
+                uri: role.occupation.iri?.value ?? null,
+                name: inRequestedLanguages(role.occupation.names),
+              },
+        roleName: inRequestedLanguages(role.roleNames),
+        startDate: role.startDate?.value ?? null,
+        endDate: role.endDate?.value ?? null,
+      }))
+      .filter((role) => role.occupation !== null || role.roleName.length > 0);
 
 /**
  * A reference by name alone is one reference per name, since nothing tells the source’s Dutch and
