@@ -199,12 +199,26 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
   normalise a source’s own notation – `ca. 1548`, `16XX`, `1710/11` – inside the query without a
   tested mapping to EDTF; until there is one, leave the property out rather than construct a
   value that is not EDTF.
-- A place, occupation or nationality is a **reference**: construct the source’s own **URI** where
-  it has one, and name it with `schema:name` or `skos:prefLabel` as for `schema:additionalType`
-  above. Where the source only has a name, construct the literal as the object itself; the API
-  returns it as a reference with a name and no URI. RKDartists states an occupation’s IRI and its
-  Dutch and English labels as parallel values with nothing pairing them, which is why its
-  occupations are literals: pairing them would assign every label to every IRI.
+- A place or nationality is a **reference**: construct the source’s own **URI** where it has one,
+  and name it with `schema:name` or `skos:prefLabel` as for `schema:additionalType` above. Where
+  the source only has a name, construct the literal as the object itself; the API returns it as a
+  reference with a name and no URI.
+- An occupation is read as Schema.org’s **`Role`**, so a source has three ways to state one. A URI
+  is an occupation the source identifies, named as above; a literal is a role the source only
+  names (`roleName`); and a `schema:Role` node carries the period, with `schema:hasOccupation`
+  repeated on it to reach the occupation, or `schema:roleName` where there is none:
+
+  ```sparql
+  ?uri schema:hasOccupation ?role .
+  ?role a schema:Role ;
+      schema:hasOccupation ?occupation ;   # or schema:roleName ?roleName
+      schema:startDate ?startDate ;
+      schema:endDate ?endDate .
+  ```
+
+  Mint the role node as an IRI derived from the term’s, as for `schema:geo`. RKDartists states an
+  occupation’s IRI and its Dutch and English labels as parallel values with nothing pairing them,
+  which is why its occupations are literals: pairing them would assign every label to every IRI.
 - One `UNION` branch per property, since each is multi-valued on its own: a person with seven
   occupations, five alternate names and seven alignments is 19 rows that way and 245 as
   `OPTIONAL`s.
