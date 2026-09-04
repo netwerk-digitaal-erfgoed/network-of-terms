@@ -217,8 +217,11 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
     place: denotedPlace(term, (literals) =>
       filterLiteralsByLanguage(literals, languages),
     ),
-    person: denotedPerson(term, (literals) =>
-      filterLiteralsByLanguage(literals, languages),
+    person: denotedPerson(
+      term,
+      (literals) => filterLiteralsByLanguage(literals, languages),
+      (sets) =>
+        sets.map((literals) => filterLiteralsByLanguage(literals, languages)),
     ),
   };
 }
@@ -286,17 +289,18 @@ const placeClasses = new Set([
 function denotedPerson(
   term: Term,
   inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
+  acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][],
 ) {
   if (!term.types.some((type) => personClasses.has(type.value))) {
     return null;
   }
 
-  const birthDate = term.birthDates[0]?.value ?? null;
-  const deathDate = term.deathDates[0]?.value ?? null;
+  const birthDate = dateValue(term.birthDates[0]);
+  const deathDate = dateValue(term.deathDates[0]);
 
   // Tested against everything the source holds, not against what survives the language filter,
   // for the reason given in denotedPlace.
-  const references = referencesIn(inRequestedLanguages);
+  const references = referencesIn(acrossSet);
 
   return term.givenNames.length === 0 &&
     term.familyNames.length === 0 &&
@@ -314,50 +318,67 @@ function denotedPerson(
         deathDate,
         birthPlace: references(term.birthPlaces),
         deathPlace: references(term.deathPlaces),
-        hasOccupation: rolesIn(inRequestedLanguages)(term.occupations),
+        hasOccupation: rolesIn(acrossSet)(term.occupations),
         nationality: references(term.nationalities),
       };
 }
+
+/**
+ * Sources are not validated, so a date may be an empty string; that is no date, as an empty
+ * country is no country in {@link denotedPlace}.
+ */
+const dateValue = (literal: RDF.Literal | undefined) =>
+  literal?.value.trim() || null;
 
 /**
  * A role is kept when its occupation or its name survives the language filter, for the reason
  * {@link referencesIn} gives; a period alone would say ‘did something from 1625 to 1669’.
  */
 const rolesIn =
-  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
-  (roles: OccupationRole[]) =>
-    roles
-      .map((role) => ({
+  (acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][]) =>
+  (roles: OccupationRole[]) => {
+    // Every name list of every role goes through the language selection at once, so that a
+    // fallback applies to the set and not to each role on its own.
+    const names = acrossSet(
+      roles.flatMap((role) => [role.occupation?.names ?? [], role.roleNames]),
+    );
+    return roles
+      .map((role, index) => ({
         occupation:
           role.occupation === undefined
             ? null
             : {
                 uri: role.occupation.iri?.value ?? null,
-                name: inRequestedLanguages(role.occupation.names),
+                name: names[2 * index],
               },
-        roleName: inRequestedLanguages(role.roleNames),
-        startDate: role.startDate?.value ?? null,
-        endDate: role.endDate?.value ?? null,
+        roleName: names[2 * index + 1],
+        startDate: dateValue(role.startDate),
+        endDate: dateValue(role.endDate),
       }))
       .filter((role) => role.occupation !== null || role.roleName.length > 0);
+  };
 
 /**
  * A reference by name alone is one reference per name, since nothing tells the source’s Dutch and
  * English names for the same thing apart from its names for two things. So once the names in the
  * languages the client did not ask for are filtered out, what is left of such a reference is
  * nothing at all, and it is dropped rather than returned as an entry with neither URI nor name.
+ * The language selection runs over all references at once, since a fallback that judged each
+ * name-only reference on its own would keep the English name beside the Dutch one.
  */
 const referencesIn =
-  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
-  (references: Reference[]) =>
-    references
-      .map((reference) => ({
+  (acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][]) =>
+  (references: Reference[]) => {
+    const names = acrossSet(references.map((reference) => reference.names));
+    return references
+      .map((reference, index) => ({
         uri: reference.iri?.value ?? null,
-        name: inRequestedLanguages(reference.names),
+        name: names[index],
       }))
       .filter(
         (reference) => reference.uri !== null || reference.name.length > 0,
       );
+  };
 
 const personClasses = new Set([
   'https://schema.org/Person',
@@ -400,7 +421,11 @@ function mapToTerm(term: Term, languages: string[]) {
       prefLabel: literalValues(exactMatch.prefLabels, languages),
     })),
     place: denotedPlace(term, (literals) => placeLabels(literals, languages)),
-    person: denotedPerson(term, (literals) => placeLabels(literals, languages)),
+    person: denotedPerson(
+      term,
+      (literals) => placeLabels(literals, languages),
+      (sets) => placeLabelsAcross(sets, languages),
+    ),
   };
 }
 
@@ -415,6 +440,23 @@ const placeLabels = (literals: RDF.Literal[], languages: string[] = ['nl']) => {
   return labels.length > 0
     ? labels
     : filterLiteralsByLanguage(literals, ['en']);
+};
+
+/**
+ * {@link placeLabels} over several name lists at once, falling back to English only when none of
+ * them has a name in the requested languages. Applied per list, the fallback would keep a
+ * reference by its English name beside the one by its Dutch name, since each is a list of one.
+ */
+const placeLabelsAcross = (
+  sets: RDF.Literal[][],
+  languages: string[] = ['nl'],
+) => {
+  const labels = sets.map((literals) =>
+    filterLiteralsByLanguage(literals, languages),
+  );
+  return labels.some((literals) => literals.length > 0)
+    ? labels
+    : sets.map((literals) => filterLiteralsByLanguage(literals, ['en']));
 };
 
 function source(

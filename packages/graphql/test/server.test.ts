@@ -150,6 +150,7 @@ describe('Server', () => {
       'Maastricht (NL)',
       'Marion Michelle Koblitz',
       'Mulisch, Harry',
+      'Naamloos',
       'Nergenshuizen',
       'Nergensland',
       'Onbekende schilder',
@@ -157,6 +158,7 @@ describe('Server', () => {
       'Rembrandt',
       '',
       'Rijnland',
+      'Turner, William',
     ]); // Results with score must come first.
 
     const relatedPrefLabels = artwork.related.map(
@@ -192,7 +194,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(14); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(16); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -225,7 +227,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(14); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(16); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -483,6 +485,50 @@ describe('Server', () => {
     expect(term.result.person.birthPlace[0].name).toEqual([
       { language: 'nl', value: 'Leiden (stad)' },
     ]);
+  });
+
+  it('returns each name-only reference once in monolingual lookup', async () => {
+    const body = await query(
+      lookupQuery({ uris: ['https://example.com/resources/rembrandt'] }),
+    );
+    const person = body.data.lookup[0].result.person;
+    // The English fallback applies to the set, so the Dutch names do not bring the English ones
+    // along as references of their own.
+    expect(person.deathPlace).toEqual([
+      { uri: null, name: [{ language: 'nl', value: 'Amsterdam (stad)' }] },
+    ]);
+    expect(
+      person.hasOccupation.map((role: { roleName: { value: string }[] }) =>
+        role.roleName.map((name) => name.value),
+      ),
+    ).toEqual([['schilder'], ['etser'], [], ['werkzaam']]);
+    expect(person.nationality).toHaveLength(1);
+  });
+
+  it('falls back to English names in monolingual lookup when there are no Dutch ones', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/person-english-only'],
+      }),
+    );
+    const person = body.data.lookup[0].result.person;
+    expect(person.nationality).toEqual([
+      { uri: null, name: [{ language: 'en', value: 'British' }] },
+    ]);
+    expect(person.hasOccupation[0].roleName).toEqual([
+      { language: 'en', value: 'painter' },
+    ]);
+  });
+
+  it('returns no person for one whose source states only an empty date', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/person-empty-date'],
+        languages: ['nl'],
+      }),
+    );
+    expect(body.errors).toBeUndefined();
+    expect(body.data.lookup[0].result.person).toBeNull();
   });
 
   it('returns no person for a term that denotes something else', async () => {
