@@ -15,7 +15,7 @@ import {
   QueryMode,
   QueryTermsService,
   Reference,
-  Role,
+  OccupationRole,
   ServerError,
   SourceNotFoundError,
   SourceResult,
@@ -325,7 +325,7 @@ function denotedPerson(
  */
 const rolesIn =
   (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
-  (roles: Role[]) =>
+  (roles: OccupationRole[]) =>
     roles
       .map((role) => ({
         occupation:

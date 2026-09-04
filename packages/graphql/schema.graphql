@@ -238,7 +238,7 @@
     deathPlace: [Reference]!
 
     "What the person does or did, each as a role: the occupation as a term in the source’s vocabulary, or a role the source only names, with the period where the source states one."
-    hasOccupation: [Role]!
+    hasOccupation: [OccupationRole]!
 
     "The person’s nationality, in the source’s own vocabulary."
     nationality: [Reference]!
@@ -255,7 +255,7 @@
   """
   What a person does or did, in the shape of Schema.org’s `Role`. At least one of `occupation` and `roleName` is set: the occupation where the source identifies it as a term, the role’s own name where the source only names it. A period is given where the source states one; an occupation without a period leaves both dates null.
   """
-  type Role {
+  type OccupationRole {
     "The occupation, as a term in the source’s own vocabulary, with whatever names the source gives it. Null where the source only names the role."
     occupation: Reference
 
