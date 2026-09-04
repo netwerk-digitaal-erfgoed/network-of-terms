@@ -21,6 +21,13 @@ export class Term {
     readonly names: RDF.Literal[] = [],
     readonly addressCountry: RDF.Literal | undefined = undefined,
     readonly additionalTypes: RelatedTerm[] = [],
+    // What the source states about the person a term denotes; all empty for any other term.
+    readonly birthDates: RDF.Literal[] = [],
+    readonly deathDates: RDF.Literal[] = [],
+    readonly birthPlaces: Reference[] = [],
+    readonly deathPlaces: Reference[] = [],
+    readonly occupations: Reference[] = [],
+    readonly nationalities: Reference[] = [],
   ) {}
 }
 
@@ -28,6 +35,21 @@ export class RelatedTerm {
   constructor(
     readonly id: RDF.Term,
     readonly prefLabels: RDF.Literal[],
+  ) {}
+}
+
+/**
+ * Something a source refers to, by IRI, by name, or both.
+ *
+ * A source that publishes its own vocabulary states an IRI, and whatever names it gives that IRI
+ * are collected here. A source that only knows a name – WO2-biografieën for birth places,
+ * RKDartists for occupations, whose IRIs cannot be paired with their labels – states a literal,
+ * which becomes a reference with no IRI and that one name.
+ */
+export class Reference {
+  constructor(
+    readonly iri: RDF.NamedNode | undefined,
+    readonly names: RDF.Literal[],
   ) {}
 }
 
@@ -51,6 +73,12 @@ class SparqlResultTerm {
   geo: RDF.Term | undefined = undefined;
   addressCountry: RDF.Literal | undefined = undefined;
   additionalTypes: RDF.Term[] = [];
+  birthDates: RDF.Literal[] = [];
+  deathDates: RDF.Literal[] = [];
+  birthPlaces: RDF.Term[] = [];
+  deathPlaces: RDF.Term[] = [];
+  occupations: RDF.Term[] = [];
+  nationalities: RDF.Term[] = [];
 }
 
 export class TermsTransformer {
@@ -90,6 +118,18 @@ export class TermsTransformer {
     ['http://schema.org/addressCountry', 'addressCountry'],
     ['https://schema.org/additionalType', 'additionalTypes'],
     ['http://schema.org/additionalType', 'additionalTypes'],
+    ['https://schema.org/birthDate', 'birthDates'],
+    ['http://schema.org/birthDate', 'birthDates'],
+    ['https://schema.org/deathDate', 'deathDates'],
+    ['http://schema.org/deathDate', 'deathDates'],
+    ['https://schema.org/birthPlace', 'birthPlaces'],
+    ['http://schema.org/birthPlace', 'birthPlaces'],
+    ['https://schema.org/deathPlace', 'deathPlaces'],
+    ['http://schema.org/deathPlace', 'deathPlaces'],
+    ['https://schema.org/hasOccupation', 'occupations'],
+    ['http://schema.org/hasOccupation', 'occupations'],
+    ['https://schema.org/nationality', 'nationalities'],
+    ['http://schema.org/nationality', 'nationalities'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -146,10 +186,34 @@ export class TermsTransformer {
         location.longitude,
         term.names,
         location.addressCountry,
-        term.additionalTypes.map(this.namedType).sort(alphabeticallyByPrefLabel),
+        term.additionalTypes
+          .map(this.namedType)
+          .sort(alphabeticallyByPrefLabel),
+        term.birthDates,
+        term.deathDates,
+        term.birthPlaces.flatMap(this.reference),
+        term.deathPlaces.flatMap(this.reference),
+        term.occupations.flatMap(this.reference),
+        term.nationalities.flatMap(this.reference),
       );
     });
   }
+
+  /**
+   * What a source refers to, named the way {@link namedType} names an IRI. A literal is a
+   * reference by name alone, which is all some sources have to offer (see {@link Reference}).
+   * Anything else – a blank node, say – is a reference the source has given no way to read, so
+   * it yields nothing rather than an empty reference.
+   */
+  private reference = (object: RDF.Term): Reference[] => {
+    if (object.termType === 'Literal') {
+      return [new Reference(undefined, [object])];
+    }
+    if (object.termType !== 'NamedNode') {
+      return [];
+    }
+    return [new Reference(object, this.namedType(object).prefLabels)];
+  };
 
   /**
    * Where the term is, read from the `schema:geo` node it points at and from the term itself.

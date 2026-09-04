@@ -52,33 +52,38 @@ export const testCatalog = (port: number) =>
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
           PREFIX schema: <https://schema.org/>
-          CONSTRUCT { 
+          CONSTRUCT {
             ?s ?p ?o .
             ?geo ?geo_p ?geo_o .
             ?additionalType ?additionalType_p ?additionalType_o .
+            ?referredPlace ?referredPlace_p ?referredPlace_o .
           }
           WHERE {
             {
               SELECT DISTINCT ?s WHERE {
                 ?s ?labelPredicate ?label .
                 VALUES ?labelPredicate { skos:prefLabel skos:altLabel skos:hiddenLabel }
-                FILTER (regex(?label, ?query, "i"))            
+                FILTER (regex(?label, ?query, "i"))
               }
               #LIMIT#
             }
-              
+
             ?s ?p ?o .
-           
-            OPTIONAL { 
+
+            OPTIONAL {
               ?s skos:exactMatch ?match .
               ?match skos:prefLabel ?match_label .
-            }  
-            
+            }
+
             # The schema:geo node carries no label of its own, so it is not selected above.
             OPTIONAL { ?s schema:geo ?geo . ?geo ?geo_p ?geo_o . }
             OPTIONAL {
               ?s schema:additionalType ?additionalType .
               ?additionalType ?additionalType_p ?additionalType_o .
+            }
+            OPTIONAL {
+              ?s schema:birthPlace|schema:deathPlace ?referredPlace .
+              ?referredPlace ?referredPlace_p ?referredPlace_o .
             }
           }`,
           `
@@ -95,8 +100,9 @@ export const testCatalog = (port: number) =>
             ?related_uri skos:prefLabel ?related_prefLabel .
             ?geo ?geo_p ?geo_o .
             ?additionalType ?additionalType_p ?additionalType_o .
-          } 
-          WHERE { 
+            ?referredPlace ?referredPlace_p ?referredPlace_o .
+          }
+          WHERE {
             ?s ?p ?o.
             VALUES ?s { ?uris }
             # The schema:geo node is not among the URIs looked up, so it is reached through ?s.
@@ -104,6 +110,10 @@ export const testCatalog = (port: number) =>
             OPTIONAL {
               ?s schema:additionalType ?additionalType .
               ?additionalType ?additionalType_p ?additionalType_o .
+            }
+            OPTIONAL {
+              ?s schema:birthPlace|schema:deathPlace ?referredPlace .
+              ?referredPlace ?referredPlace_p ?referredPlace_o .
             }
             OPTIONAL { 
               ?s skos:broader ?broader_uri.

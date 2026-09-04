@@ -52,6 +52,30 @@
     # Wikidata-style ‘default for all languages’ label; see issue #1884.
     skos:prefLabel "Marion Michelle Koblitz"@mul .
 
+# A person in the shape that sources construct. The dates are EDTF strings, typed as such where
+# they say more than a plain ISO 8601 date. The birth place is an IRI from the source’s own
+# vocabulary, named by that vocabulary; the occupations and nationality are names alone, which is
+# all RKDartists can pair with a person.
+<https://example.com/resources/rembrandt>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Rembrandt"@nl ;
+    skos:altLabel "Rembrandt van Rijn"@nl ;
+    schema:birthDate "1606-07-15/1607"^^<http://id.loc.gov/datatypes/edtf/EDTF> ;
+    schema:deathDate "1669-10-04" ;
+    schema:birthPlace <https://example.com/places/leiden> ;
+    schema:deathPlace "Amsterdam (stad)"@nl, "Amsterdam (city)"@en ;
+    schema:hasOccupation "schilder"@nl, "painter"@en, "etser"@nl, "etcher"@en ;
+    schema:nationality "Noord-Nederlands"@nl, "North Netherlandish"@en .
+
+<https://example.com/places/leiden>
+    schema:name "Leiden (stad)"@nl, "Leiden (city)"@en .
+
+# A person whose source states a birth place and nothing else, so the node still exists.
+<https://example.com/resources/person-only-born-somewhere>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Onbekende schilder"@nl ;
+    schema:birthPlace <https://example.com/places/leiden> .
+
 # A place in the shape that sources construct: the coordinates and the country hang off a
 # schema:geo node, since schema:addressCountry does not have schema:Place in its domain. Its
 # prefLabel carries the country suffix that GeoNames appends, which is exactly what schema:name
