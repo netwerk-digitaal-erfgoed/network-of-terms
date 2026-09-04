@@ -28,6 +28,8 @@ export class Term {
     readonly deathPlaces: Reference[] = [],
     readonly occupations: Reference[] = [],
     readonly nationalities: Reference[] = [],
+    readonly givenNames: RDF.Literal[] = [],
+    readonly familyNames: RDF.Literal[] = [],
   ) {}
 }
 
@@ -79,6 +81,8 @@ class SparqlResultTerm {
   deathPlaces: RDF.Term[] = [];
   occupations: RDF.Term[] = [];
   nationalities: RDF.Term[] = [];
+  givenNames: RDF.Literal[] = [];
+  familyNames: RDF.Literal[] = [];
 }
 
 export class TermsTransformer {
@@ -130,6 +134,10 @@ export class TermsTransformer {
     ['http://schema.org/hasOccupation', 'occupations'],
     ['https://schema.org/nationality', 'nationalities'],
     ['http://schema.org/nationality', 'nationalities'],
+    ['https://schema.org/givenName', 'givenNames'],
+    ['http://schema.org/givenName', 'givenNames'],
+    ['https://schema.org/familyName', 'familyNames'],
+    ['http://schema.org/familyName', 'familyNames'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -195,6 +203,8 @@ export class TermsTransformer {
         term.deathPlaces.flatMap(this.reference),
         term.occupations.flatMap(this.reference),
         term.nationalities.flatMap(this.reference),
+        term.givenNames,
+        term.familyNames,
       );
     });
   }

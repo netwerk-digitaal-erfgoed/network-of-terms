@@ -60,6 +60,8 @@
     a skos:Concept, schema:Person ;
     skos:prefLabel "Rembrandt"@nl ;
     skos:altLabel "Rembrandt van Rijn"@nl ;
+    schema:givenName "Rembrandt" ;
+    schema:familyName "van Rijn" ;
     schema:birthDate "1606-07-15/1607"^^<http://id.loc.gov/datatypes/edtf/EDTF> ;
     schema:deathDate "1669-10-04" ;
     schema:birthPlace <https://example.com/places/leiden> ;
@@ -69,6 +71,14 @@
 
 <https://example.com/places/leiden>
     schema:name "Leiden (stad)"@nl, "Leiden (city)"@en .
+
+# A person whose source states only the split into given and family name, as the NTA does for most
+# of its authors, so the node still exists.
+<https://example.com/resources/person-only-split-name>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Mulisch, Harry"@nl ;
+    schema:givenName "Harry" ;
+    schema:familyName "Mulisch" .
 
 # A person whose source states a birth place and nothing else, so the node still exists.
 <https://example.com/resources/person-only-born-somewhere>

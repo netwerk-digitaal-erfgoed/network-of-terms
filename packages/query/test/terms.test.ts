@@ -213,6 +213,26 @@ describe('TermsTransformer', () => {
       expect(term.deathDates.map((date) => date.value)).toEqual(['1669-10-04']);
     });
 
+    it('collects the given and family names a source states apart', () => {
+      const [term] = transform(
+        person(
+          dataFactory.quad(
+            rembrandt,
+            schema('givenName'),
+            dataFactory.literal('Rembrandt'),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            schema('familyName'),
+            dataFactory.literal('van Rijn'),
+          ),
+        ),
+      );
+
+      expect(term.givenNames.map((name) => name.value)).toEqual(['Rembrandt']);
+      expect(term.familyNames.map((name) => name.value)).toEqual(['van Rijn']);
+    });
+
     it('names a place referred to by IRI from the names its source gives it', () => {
       const [term] = transform(
         person(
