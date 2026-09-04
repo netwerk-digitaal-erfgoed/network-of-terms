@@ -1,18 +1,29 @@
+PREFIX edtf: <http://id.loc.gov/datatypes/edtf/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <https://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
-    ?uri a skos:Concept ;
+    ?uri a skos:Concept, ?type ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_nl, ?scopeNote_en ;
         skos:exactMatch ?exactMatch_uri ;
-        rdfs:seeAlso ?seeAlso .
+        rdfs:seeAlso ?seeAlso ;
+        schema:birthDate ?birthDate_edtf ;
+        schema:deathDate ?deathDate_edtf ;
+        schema:birthPlace ?birthPlace_uri ;
+        schema:deathPlace ?deathPlace_uri ;
+        schema:hasOccupation ?occupation ;
+        schema:nationality ?nationality .
+    ?birthPlace_uri schema:name ?birthPlace_nl, ?birthPlace_en .
+    ?deathPlace_uri schema:name ?deathPlace_nl, ?deathPlace_en .
 }
+# See the lookup query, queries/lookup/rkdartists.rq, for why some properties are OPTIONALs and
+# others UNION branches, and for how the places, occupations and nationalities are read.
 WHERE {
     {
-        SELECT DISTINCT ?uri
+        SELECT DISTINCT ?uri ?type
             (GROUP_CONCAT(DISTINCT ?schema_description; separator="; ") as ?descriptions)
             (GROUP_CONCAT(DISTINCT ?additionalType_nl; separator=", ") as ?additionalTypes_nl)
             (GROUP_CONCAT(DISTINCT ?additionalType_en; separator=", ") as ?additionalTypes_en)
@@ -61,10 +72,20 @@ WHERE {
     }
 
     OPTIONAL { ?uri schema:name ?prefLabel . }
-    OPTIONAL { ?uri schema:alternateName ?altLabel . }
     OPTIONAL { ?uri schema:birthDate ?birthDate . }
     OPTIONAL { ?uri schema:deathDate ?deathDate . }
-    OPTIONAL { ?uri rdfs:seeAlso ?exactMatch_uri . }
+
+    OPTIONAL {
+        { ?uri schema:alternateName ?altLabel . }
+        UNION { ?uri rdfs:seeAlso ?exactMatch_uri . }
+        UNION { ?uri schema:birthPlace ?birthPlace_uri . FILTER(isIRI(?birthPlace_uri)) }
+        UNION { ?uri schema:deathPlace ?deathPlace_uri . FILTER(isIRI(?deathPlace_uri)) }
+        UNION { ?uri schema:additionalType ?occupation . FILTER(isLiteral(?occupation) && ?type = schema:Person) }
+        UNION { ?uri schema:nationality ?nationality . FILTER(isLiteral(?nationality) && ?type = schema:Person) }
+    }
+
+    BIND(IF(CONTAINS(STR(?birthDate), "/"), STRDT(STR(?birthDate), edtf:EDTF), ?birthDate) AS ?birthDate_edtf)
+    BIND(IF(CONTAINS(STR(?deathDate), "/"), STRDT(STR(?deathDate), edtf:EDTF), ?deathDate) AS ?deathDate_edtf)
 
     BIND(
         STRLANG(

@@ -168,6 +168,64 @@ and `skos:narrower`, so a place is never also stated with `schema:containedInPla
   Each property falls back separately, so a source may add a `schema:geo` node for the country
   alone and leave its coordinates where they are.
 
+#### Terms that denote a person
+
+A query whose terms denote persons should type them `schema:Person` and construct what SKOS cannot
+state. The person’s full names are not part of that: they stay on `skos:prefLabel` and
+`skos:altLabel`, and alignments to other authorities on `skos:exactMatch`. Keep composing
+`skos:scopeNote` as the source did before, since clients read it today.
+
+```sparql
+?uri a skos:Concept , schema:Person ;
+    schema:givenName ?givenName ;
+    schema:familyName ?familyName ;
+    schema:birthDate ?birthDate ;
+    schema:deathDate ?deathDate ;
+    schema:birthPlace ?birthPlace ;
+    schema:deathPlace ?deathPlace ;
+    schema:hasOccupation ?occupation ;
+    schema:nationality ?nationality .
+?birthPlace schema:name ?birthPlaceName .
+```
+
+- Every property is optional, and a term gets a `person` node in the API as soon as any of them is
+  constructed. `schema:givenName` and `schema:familyName` only where the source states the split
+  itself; never cut a whole name in the query.
+- **Dates pass through as the source states them**, as [EDTF](https://www.loc.gov/standards/datetime/)
+  strings: a plain ISO 8601 date at whatever precision the source knows, an interval
+  `1606-07-15/1607`, or a qualified date `1620~`. Type a value that is more than a plain date with
+  the EDTF datatype, `<http://id.loc.gov/datatypes/edtf/EDTF>`, and leave a plain date untyped:
+  `BIND(IF(CONTAINS(STR(?date), "/"), STRDT(STR(?date), edtf:EDTF), ?date) AS ?dateEdtf)`. Do not
+  normalise a source’s own notation – `ca. 1548`, `16XX`, `1710/11` – inside the query without a
+  tested mapping to EDTF; until there is one, leave the property out rather than construct a
+  value that is not EDTF.
+- A place or nationality is a **reference**: construct the source’s own **URI** where it has one,
+  and name it with `schema:name` or `skos:prefLabel` as for `schema:additionalType` above. Where
+  the source only has a name, construct the literal as the object itself; the API returns it as a
+  reference with a name and no URI.
+- An occupation is read as Schema.org’s **`Role`**, so a source has three ways to state one. A URI
+  is an occupation the source identifies, named as above; a literal is a role the source only
+  names (`roleName`); and a `schema:Role` node carries the period, with `schema:hasOccupation`
+  repeated on it to reach the occupation, or `schema:roleName` where there is none:
+
+  ```sparql
+  ?uri schema:hasOccupation ?role .
+  ?role a schema:Role ;
+      schema:hasOccupation ?occupation ;   # or schema:roleName ?roleName
+      schema:startDate ?startDate ;
+      schema:endDate ?endDate .
+  ```
+
+  Mint the role node as an IRI derived from the term’s, as for `schema:geo`; a blank node is read
+  too, but is minted once per solution row. A literal on the role’s `schema:hasOccupation` names
+  the role, as it would on the term. RKDartists states an
+  occupation’s IRI and its Dutch and English labels as parallel values with nothing pairing them,
+  which is why its occupations are literals: pairing them would assign every label to every IRI.
+- One `UNION` branch per property, since each is multi-valued on its own: a person with seven
+  occupations, five alternate names and seven alignments is 19 rows that way and 245 as
+  `OPTIONAL`s.
+- Both Schema.org namespaces are read, so keep the one the source uses.
+
 #### Full-text search
 
 Plain `FILTER(CONTAINS(…))` scans every candidate literal on each request. **Prefer the endpoint’s native full-text index** so the federated query stays fast. Common patterns:

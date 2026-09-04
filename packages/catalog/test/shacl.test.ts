@@ -45,7 +45,9 @@ describe('Dataset', () => {
       const report = await validator.validate(data);
       expect(report).toConform();
     }
-  });
+    // Validates every catalog entry in turn, which takes most of the default 10 s locally and
+    // more than that on a slow CI runner.
+  }, 60_000);
 });
 
 const listDatasets = () => fs.readdirSync(catalogPath + '/datasets');

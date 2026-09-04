@@ -149,11 +149,16 @@ describe('Server', () => {
       'Halvewegen',
       'Maastricht (NL)',
       'Marion Michelle Koblitz',
+      'Mulisch, Harry',
+      'Naamloos',
       'Nergenshuizen',
       'Nergensland',
+      'Onbekende schilder',
       '',
+      'Rembrandt',
       '',
       'Rijnland',
+      'Turner, William',
     ]); // Results with score must come first.
 
     const relatedPrefLabels = artwork.related.map(
@@ -189,7 +194,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(11); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(16); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -222,7 +227,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(11); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(16); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -363,6 +368,177 @@ describe('Server', () => {
       { language: 'nl', value: 'Marion Michelle Koblitz' },
     ]);
     expect(term.result.place).toBeNull(); // A person denotes no place.
+    expect(term.result.person).toBeNull(); // The source states nothing about the person.
+  });
+
+  it('returns the person that a term typed as schema:Person denotes', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/rembrandt'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('TranslatedTerm');
+    expect(term.result.place).toBeNull();
+    // Untagged, so returned as Dutch, like any other label.
+    expect(term.result.person.givenName).toEqual([
+      { language: 'nl', value: 'Rembrandt' },
+    ]);
+    expect(term.result.person.familyName).toEqual([
+      { language: 'nl', value: 'van Rijn' },
+    ]);
+    // Dates come through as the source states them: EDTF, here an interval.
+    expect(term.result.person.birthDate).toEqual('1606-07-15/1607');
+    expect(term.result.person.deathDate).toEqual('1669-10-04');
+    // A place the source identifies, named by the source’s own vocabulary.
+    expect(term.result.person.birthPlace).toEqual([
+      {
+        uri: 'https://example.com/places/leiden',
+        name: [{ language: 'nl', value: 'Leiden (stad)' }],
+      },
+    ]);
+    // A place the source only names: one reference per name, and only in the requested language.
+    expect(term.result.person.deathPlace).toEqual([
+      { uri: null, name: [{ language: 'nl', value: 'Amsterdam (stad)' }] },
+    ]);
+    // Occupations the source only names are roles named by them, one per name; a schema:Role
+    // node it constructs comes with its occupation or name and its period.
+    expect(term.result.person.hasOccupation).toEqual([
+      {
+        occupation: null,
+        roleName: [{ language: 'nl', value: 'schilder' }],
+        startDate: null,
+        endDate: null,
+      },
+      {
+        occupation: null,
+        roleName: [{ language: 'nl', value: 'etser' }],
+        startDate: null,
+        endDate: null,
+      },
+      {
+        occupation: {
+          uri: 'https://example.com/occupations/art-collector',
+          name: [{ language: 'nl', value: 'kunstverzamelaar' }],
+        },
+        roleName: [],
+        startDate: '1625',
+        endDate: '1669',
+      },
+      {
+        occupation: null,
+        roleName: [{ language: 'nl', value: 'werkzaam' }],
+        startDate: '1625',
+        endDate: '1669',
+      },
+    ]);
+    expect(term.result.person.nationality[0].name).toEqual([
+      { language: 'nl', value: 'Noord-Nederlands' },
+    ]);
+  });
+
+  it('returns a person whose source states only the split into given and family name', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/person-only-split-name'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.person.givenName).toEqual([
+      { language: 'nl', value: 'Harry' },
+    ]);
+    expect(term.result.person.familyName).toEqual([
+      { language: 'nl', value: 'Mulisch' },
+    ]);
+    expect(term.result.person.birthDate).toBeNull();
+  });
+
+  it('returns a person whose source states only where they were born', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/person-only-born-somewhere'],
+        languages: ['en'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.person.birthDate).toBeNull();
+    expect(term.result.person.deathDate).toBeNull();
+    expect(term.result.person.birthPlace).toEqual([
+      {
+        uri: 'https://example.com/places/leiden',
+        name: [{ language: 'en', value: 'Leiden (city)' }],
+      },
+    ]);
+    expect(term.result.person.hasOccupation).toEqual([]);
+  });
+
+  it('returns the denoted person in monolingual lookup too', async () => {
+    const body = await query(
+      lookupQuery({ uris: ['https://example.com/resources/rembrandt'] }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.__typename).toEqual('Term');
+    expect(term.result.person.birthDate).toEqual('1606-07-15/1607');
+    // Names are language-tagged even here, where the term’s own labels are plain strings.
+    expect(term.result.person.birthPlace[0].name).toEqual([
+      { language: 'nl', value: 'Leiden (stad)' },
+    ]);
+  });
+
+  it('returns each name-only reference once in monolingual lookup', async () => {
+    const body = await query(
+      lookupQuery({ uris: ['https://example.com/resources/rembrandt'] }),
+    );
+    const person = body.data.lookup[0].result.person;
+    // The English fallback applies to the set, so the Dutch names do not bring the English ones
+    // along as references of their own.
+    expect(person.deathPlace).toEqual([
+      { uri: null, name: [{ language: 'nl', value: 'Amsterdam (stad)' }] },
+    ]);
+    expect(
+      person.hasOccupation.map((role: { roleName: { value: string }[] }) =>
+        role.roleName.map((name) => name.value),
+      ),
+    ).toEqual([['schilder'], ['etser'], [], ['werkzaam']]);
+    expect(person.nationality).toHaveLength(1);
+  });
+
+  it('falls back to English names in monolingual lookup when there are no Dutch ones', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/person-english-only'],
+      }),
+    );
+    const person = body.data.lookup[0].result.person;
+    expect(person.nationality).toEqual([
+      { uri: null, name: [{ language: 'en', value: 'British' }] },
+    ]);
+    expect(person.hasOccupation[0].roleName).toEqual([
+      { language: 'en', value: 'painter' },
+    ]);
+  });
+
+  it('returns no person for one whose source states only an empty date', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/person-empty-date'],
+        languages: ['nl'],
+      }),
+    );
+    expect(body.errors).toBeUndefined();
+    expect(body.data.lookup[0].result.person).toBeNull();
+  });
+
+  it('returns no person for a term that denotes something else', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/place'],
+        languages: ['nl'],
+      }),
+    );
+    expect(body.data.lookup[0].result.person).toBeNull();
   });
 
   it('returns the place that a term typed as schema:Place denotes', async () => {
@@ -429,7 +605,7 @@ describe('Server', () => {
 
   it('returns the denoted place in monolingual lookup too', async () => {
     const body = await query(
-      lookupQuery({uris: ['https://example.com/resources/place']}),
+      lookupQuery({ uris: ['https://example.com/resources/place'] }),
     );
     const term = body.data.lookup[0];
     expect(term.result.__typename).toEqual('Term');
@@ -661,6 +837,16 @@ function termsQuery({
                 addressCountry
                 additionalType { uri name { language value } }
               }
+              person {
+                givenName { language value }
+                familyName { language value }
+                birthDate
+                deathDate
+                birthPlace { uri name { language value } }
+                deathPlace { uri name { language value } }
+                hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
+                nationality { uri name { language value } }
+              }
             }
           }
           ... on Error {
@@ -727,6 +913,16 @@ function lookupQuery({
               addressCountry
               additionalType { uri name { language value } }
             }
+            person {
+              givenName { language value }
+              familyName { language value }
+              birthDate
+              deathDate
+              birthPlace { uri name { language value } }
+              deathPlace { uri name { language value } }
+              hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
+              nationality { uri name { language value } }
+            }
           }
           `
               : `
@@ -747,6 +943,16 @@ function lookupQuery({
               longitude
               addressCountry
               additionalType { uri name { language value } }
+            }
+            person {
+              givenName { language value }
+              familyName { language value }
+              birthDate
+              deathDate
+              birthPlace { uri name { language value } }
+              deathPlace { uri name { language value } }
+              hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
+              nationality { uri name { language value } }
             }
           }
           `

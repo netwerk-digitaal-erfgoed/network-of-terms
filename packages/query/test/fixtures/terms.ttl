@@ -52,6 +52,72 @@
     # Wikidata-style ‘default for all languages’ label; see issue #1884.
     skos:prefLabel "Marion Michelle Koblitz"@mul .
 
+# A person in the shape that sources construct. The dates are EDTF strings, typed as such where
+# they say more than a plain ISO 8601 date. The birth place is an IRI from the source’s own
+# vocabulary, named by that vocabulary; the occupations and nationality are names alone, which is
+# all RKDartists can pair with a person.
+<https://example.com/resources/rembrandt>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Rembrandt"@nl ;
+    skos:altLabel "Rembrandt van Rijn"@nl ;
+    schema:givenName "Rembrandt" ;
+    schema:familyName "van Rijn" ;
+    schema:birthDate "1606-07-15/1607"^^<http://id.loc.gov/datatypes/edtf/EDTF> ;
+    schema:deathDate "1669-10-04" ;
+    schema:birthPlace <https://example.com/places/leiden> ;
+    schema:deathPlace "Amsterdam (stad)"@nl, "Amsterdam (city)"@en ;
+    # Occupations the source only names become roles named by them; a schema:Role node it
+    # constructs is read for its occupation, name and period, the way Schema.org reads one.
+    schema:hasOccupation "schilder"@nl, "painter"@en, "etser"@nl, "etcher"@en,
+        <https://example.com/resources/rembrandt#role-1>, <https://example.com/resources/rembrandt#role-2> ;
+    schema:nationality "Noord-Nederlands"@nl, "North Netherlandish"@en .
+
+<https://example.com/resources/rembrandt#role-1>
+    a schema:Role ;
+    schema:hasOccupation <https://example.com/occupations/art-collector> ;
+    schema:startDate "1625" ;
+    schema:endDate "1669" .
+
+<https://example.com/occupations/art-collector>
+    schema:name "kunstverzamelaar"@nl, "art collector"@en .
+
+# A role the source names but does not identify, as RKD’s period of activity.
+<https://example.com/resources/rembrandt#role-2>
+    a schema:Role ;
+    schema:roleName "werkzaam"@nl, "active"@en ;
+    schema:startDate "1625" ;
+    schema:endDate "1669" .
+
+<https://example.com/places/leiden>
+    schema:name "Leiden (stad)"@nl, "Leiden (city)"@en .
+
+# A person whose source states only the split into given and family name, as the NTA does for most
+# of its authors, so the node still exists.
+<https://example.com/resources/person-only-split-name>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Mulisch, Harry"@nl ;
+    schema:givenName "Harry" ;
+    schema:familyName "Mulisch" .
+
+# A person whose source names things in English only, which the monolingual API falls back to.
+<https://example.com/resources/person-english-only>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Turner, William"@en ;
+    schema:nationality "British"@en ;
+    schema:hasOccupation "painter"@en .
+
+# A person whose source states an empty date, which is no date, so the node does not exist.
+<https://example.com/resources/person-empty-date>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Naamloos"@nl ;
+    schema:birthDate "" .
+
+# A person whose source states a birth place and nothing else, so the node still exists.
+<https://example.com/resources/person-only-born-somewhere>
+    a skos:Concept, schema:Person ;
+    skos:prefLabel "Onbekende schilder"@nl ;
+    schema:birthPlace <https://example.com/places/leiden> .
+
 # A place in the shape that sources construct: the coordinates and the country hang off a
 # schema:geo node, since schema:addressCountry does not have schema:Place in its domain. Its
 # prefLabel carries the country suffix that GeoNames appends, which is exactly what schema:name
