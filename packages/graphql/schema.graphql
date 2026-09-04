@@ -216,9 +216,15 @@
   }
 
   """
-  The person that a term denotes. It carries only what SKOS cannot state: the person’s names stay on `prefLabel` and `altLabel`, and their alignments to other sources on `exactMatch`.
+  The person that a term denotes. It carries only what SKOS cannot state: the person’s full names stay on `prefLabel` and `altLabel`, and their alignments to other sources on `exactMatch`.
   """
   type Person {
+    "The person’s given name, where the source states it apart from the family name. Empty where the source publishes the name whole; `prefLabel` carries the whole name either way."
+    givenName: [LanguageString]!
+
+    "The person’s family name, where the source states it apart from the given name."
+    familyName: [LanguageString]!
+
     "Date of birth, as an EDTF string (Extended Date/Time Format, the Library of Congress profile of ISO 8601-1 and 8601-2): a date at whatever precision the source knows (`1606`, `1606-07`, `1606-07-15`), an interval (`1606-07-15/1607`), or a qualified date (`1620~` for circa, `1643?` for uncertain, `139X` for a decade). Passed through as the source states it, so a source that publishes something else is returned verbatim; the Network of Terms does not validate it. Null when the source states none."
     birthDate: String
 

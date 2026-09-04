@@ -273,9 +273,10 @@ const placeClasses = new Set([
 /**
  * The person that the term denotes, or null if its source describes none.
  *
- * As with {@link denotedPlace}, the node carries only what SKOS cannot state: names stay on the
- * labels and alignments on `exactMatch`, so what is left is the dates, places, occupations and
- * nationality. A term typed as a person whose source states none of them gets no node.
+ * As with {@link denotedPlace}, the node carries only what SKOS cannot state: full names stay on
+ * the labels and alignments on `exactMatch`, so what is left is the split into given and family
+ * name, the dates, places, occupations and nationality. A term typed as a person whose source
+ * states none of them gets no node.
  *
  * A date is passed through as the source states it. Sources are not validated, and the field is
  * documented as EDTF, which reads a plain ISO 8601 date, an interval and a qualified date alike.
@@ -296,7 +297,9 @@ function denotedPerson(
   // for the reason given in denotedPlace.
   const references = referencesIn(inRequestedLanguages);
 
-  return birthDate === null &&
+  return term.givenNames.length === 0 &&
+    term.familyNames.length === 0 &&
+    birthDate === null &&
     deathDate === null &&
     term.birthPlaces.length === 0 &&
     term.deathPlaces.length === 0 &&
@@ -304,6 +307,8 @@ function denotedPerson(
     term.nationalities.length === 0
     ? null
     : {
+        givenName: inRequestedLanguages(term.givenNames),
+        familyName: inRequestedLanguages(term.familyNames),
         birthDate,
         deathDate,
         birthPlace: references(term.birthPlaces),

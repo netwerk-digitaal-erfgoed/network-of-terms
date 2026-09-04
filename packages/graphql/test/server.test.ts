@@ -149,6 +149,7 @@ describe('Server', () => {
       'Halvewegen',
       'Maastricht (NL)',
       'Marion Michelle Koblitz',
+      'Mulisch, Harry',
       'Nergenshuizen',
       'Nergensland',
       'Onbekende schilder',
@@ -191,7 +192,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(13); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(14); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -224,7 +225,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(13); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(14); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -378,6 +379,13 @@ describe('Server', () => {
     const term = body.data.lookup[0];
     expect(term.result.__typename).toEqual('TranslatedTerm');
     expect(term.result.place).toBeNull();
+    // Untagged, so returned as Dutch, like any other label.
+    expect(term.result.person.givenName).toEqual([
+      { language: 'nl', value: 'Rembrandt' },
+    ]);
+    expect(term.result.person.familyName).toEqual([
+      { language: 'nl', value: 'van Rijn' },
+    ]);
     // Dates come through as the source states them: EDTF, here an interval.
     expect(term.result.person.birthDate).toEqual('1606-07-15/1607');
     expect(term.result.person.deathDate).toEqual('1669-10-04');
@@ -399,6 +407,23 @@ describe('Server', () => {
     expect(term.result.person.nationality[0].name).toEqual([
       { language: 'nl', value: 'Noord-Nederlands' },
     ]);
+  });
+
+  it('returns a person whose source states only the split into given and family name', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/person-only-split-name'],
+        languages: ['nl'],
+      }),
+    );
+    const term = body.data.lookup[0];
+    expect(term.result.person.givenName).toEqual([
+      { language: 'nl', value: 'Harry' },
+    ]);
+    expect(term.result.person.familyName).toEqual([
+      { language: 'nl', value: 'Mulisch' },
+    ]);
+    expect(term.result.person.birthDate).toBeNull();
   });
 
   it('returns a person whose source states only where they were born', async () => {
@@ -740,6 +765,8 @@ function termsQuery({
                 additionalType { uri name { language value } }
               }
               person {
+                givenName { language value }
+                familyName { language value }
                 birthDate
                 deathDate
                 birthPlace { uri name { language value } }
@@ -814,6 +841,8 @@ function lookupQuery({
               additionalType { uri name { language value } }
             }
             person {
+              givenName { language value }
+              familyName { language value }
               birthDate
               deathDate
               birthPlace { uri name { language value } }
@@ -843,6 +872,8 @@ function lookupQuery({
               additionalType { uri name { language value } }
             }
             person {
+              givenName { language value }
+              familyName { language value }
               birthDate
               deathDate
               birthPlace { uri name { language value } }
