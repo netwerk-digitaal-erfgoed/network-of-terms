@@ -12,12 +12,12 @@ CONSTRUCT {
         rdfs:seeAlso ?seeAlso ;
         schema:birthDate ?birthDate_edtf ;
         schema:deathDate ?deathDate_edtf ;
-        schema:birthPlace ?birthPlace_uri ;
-        schema:deathPlace ?deathPlace_uri ;
+        schema:birthPlace ?birthPlace_uri, ?birthPlace_alternative_nl, ?birthPlace_alternative_en ;
+        schema:deathPlace ?deathPlace_uri, ?deathPlace_alternative_nl, ?deathPlace_alternative_en ;
         schema:hasOccupation ?occupation ;
         schema:nationality ?nationality .
-    ?birthPlace_uri schema:name ?birthPlace_nl, ?birthPlace_en .
-    ?deathPlace_uri schema:name ?deathPlace_nl, ?deathPlace_en .
+    ?birthPlace_uri schema:name ?birthPlace_name_nl, ?birthPlace_name_en .
+    ?deathPlace_uri schema:name ?deathPlace_name_nl, ?deathPlace_name_en .
 }
 # The dates and places below stay in OPTIONALs rather than becoming UNION branches, because the
 # scopeNote BINDs combine ?birthDate, ?deathDate and the subquery’s aggregates and a UNION would
@@ -33,6 +33,8 @@ WHERE {
             (GROUP_CONCAT(DISTINCT ?schema_description; separator="; ") as ?descriptions)
             (GROUP_CONCAT(DISTINCT ?additionalType_nl; separator=", ") as ?additionalTypes_nl)
             (GROUP_CONCAT(DISTINCT ?additionalType_en; separator=", ") as ?additionalTypes_en)
+            (COUNT(DISTINCT ?birthPlace_iri) AS ?birthPlaceCount)
+            (COUNT(DISTINCT ?deathPlace_iri) AS ?deathPlaceCount)
             ?birthPlace_nl
             ?birthPlace_en
             ?deathPlace_nl
@@ -42,6 +44,10 @@ WHERE {
             VALUES ?type { schema:Person schema:Organization }
 
             OPTIONAL { ?uri schema:description ?schema_description . }
+
+            # How many places the source states, to tell a place from a list of alternatives below.
+            OPTIONAL { ?uri schema:birthPlace ?birthPlace_iri . FILTER(isIRI(?birthPlace_iri)) }
+            OPTIONAL { ?uri schema:deathPlace ?deathPlace_iri . FILTER(isIRI(?deathPlace_iri)) }
 
             OPTIONAL {
                 ?uri schema:birthPlace ?birthPlace_nl .
@@ -84,9 +90,9 @@ WHERE {
     # RKD publishes a birth place, an occupation and a nationality twice over: as an IRI into its own
     # thesaurus, and as Dutch and English literals beside it, with nothing pairing the two. The
     # thesaurus itself is not in this endpoint. A birth or death place is single-valued for all but
-    # 0.4% of persons, so its IRI is paired with the literals from the subquery above; where a
-    # person has two, each IRI gets both names. Occupations and nationalities are too often
-    # multi-valued for that, so they are returned as the literals alone, each a reference by name.
+    # 476 persons, so its IRI is named with the literals from the subquery above; see the BINDs below
+    # for the rest. Occupations and nationalities are too often multi-valued for that, so they are
+    # returned as the literals alone, each a reference by name.
     # An organisation has an additionalType too – ‘museum’ – which is not an occupation, so those
     # two branches are for persons only.
     OPTIONAL {
@@ -97,6 +103,22 @@ WHERE {
         UNION { ?uri schema:additionalType ?occupation . FILTER(isLiteral(?occupation) && ?type = schema:Person) }
         UNION { ?uri schema:nationality ?nationality . FILTER(isLiteral(?nationality) && ?type = schema:Person) }
     }
+
+    # A birth or death place is stated twice, as a thesaurus IRI and as Dutch and English literals,
+    # with nothing pairing the two, and the thesaurus is not in this endpoint. For all but 476 persons
+    # there is one place, and the IRI takes the literals as its names. The rest are alternatives the
+    # literature disagrees on – ‘geboorteplaats onzeker’, Cortona or Siena – so naming each IRI with
+    # every literal would turn ‘Cortona or Siena’ into ‘Cortona, also called Siena’. Those come out as
+    # the IRIs unnamed and the literals as places by name alone. An unbound variable in the IF makes
+    # the BIND fail, which leaves the variable unbound and the triple unconstructed.
+    BIND(IF(?birthPlaceCount = 1, ?birthPlace_nl, ?noValue) AS ?birthPlace_name_nl)
+    BIND(IF(?birthPlaceCount = 1, ?birthPlace_en, ?noValue) AS ?birthPlace_name_en)
+    BIND(IF(?birthPlaceCount > 1, ?birthPlace_nl, ?noValue) AS ?birthPlace_alternative_nl)
+    BIND(IF(?birthPlaceCount > 1, ?birthPlace_en, ?noValue) AS ?birthPlace_alternative_en)
+    BIND(IF(?deathPlaceCount = 1, ?deathPlace_nl, ?noValue) AS ?deathPlace_name_nl)
+    BIND(IF(?deathPlaceCount = 1, ?deathPlace_en, ?noValue) AS ?deathPlace_name_en)
+    BIND(IF(?deathPlaceCount > 1, ?deathPlace_nl, ?noValue) AS ?deathPlace_alternative_nl)
+    BIND(IF(?deathPlaceCount > 1, ?deathPlace_en, ?noValue) AS ?deathPlace_alternative_en)
 
     # RKD’s dates are EDTF Level 0 as published: a plain ISO 8601 date at whatever precision it
     # knows, or an interval such as ‘1606-07-15/1607’. An interval is more than a schema:Date, so it
