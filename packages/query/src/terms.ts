@@ -24,10 +24,10 @@ export class Term {
     // What the source states about the person a term denotes; all empty for any other term.
     readonly birthDates: RDF.Literal[] = [],
     readonly deathDates: RDF.Literal[] = [],
-    readonly birthPlaces: Reference[] = [],
-    readonly deathPlaces: Reference[] = [],
+    readonly birthPlaces: Referents = new Referents([], []),
+    readonly deathPlaces: Referents = new Referents([], []),
     readonly occupations: OccupationRole[] = [],
-    readonly nationalities: Reference[] = [],
+    readonly nationalities: Referents = new Referents([], []),
     readonly givenNames: RDF.Literal[] = [],
     readonly familyNames: RDF.Literal[] = [],
   ) {}
@@ -41,16 +41,26 @@ export class RelatedTerm {
 }
 
 /**
- * Something a source refers to, by IRI, by name, or both.
- *
- * A source that publishes its own vocabulary states an IRI, and whatever names it gives that IRI
- * are collected here. A source that only knows a name – WO2-biografieën for birth places,
- * RKDartists for occupations, whose IRIs cannot be paired with their labels – states a literal,
- * which becomes a reference with no IRI and that one name.
+ * Something a source refers to by IRI, with whatever names its vocabulary gives that IRI – the
+ * shape of an exact match, which always has a URI and sometimes labels.
  */
 export class Reference {
   constructor(
-    readonly iri: RDF.NamedNode | undefined,
+    readonly iri: RDF.NamedNode,
+    readonly names: RDF.Literal[],
+  ) {}
+}
+
+/**
+ * What a source states for a property: the terms it refers to, and the names it gives as text
+ * without identifying what they name. A literal object is a value, not a thing, so it is kept
+ * apart from the references rather than dressed up as one without an IRI. WO2-biografieën states
+ * birth places as names only; RKDartists states a nationality both ways, with nothing pairing
+ * the two.
+ */
+export class Referents {
+  constructor(
+    readonly terms: Reference[],
     readonly names: RDF.Literal[],
   ) {}
 }
@@ -227,10 +237,10 @@ export class TermsTransformer {
           .sort(alphabeticallyByPrefLabel),
         term.birthDates,
         term.deathDates,
-        term.birthPlaces.flatMap(this.reference),
-        term.deathPlaces.flatMap(this.reference),
+        this.referents(term.birthPlaces),
+        this.referents(term.deathPlaces),
         term.occupations.flatMap(this.role),
-        term.nationalities.flatMap(this.reference),
+        this.referents(term.nationalities),
         term.givenNames,
         term.familyNames,
       );
@@ -238,20 +248,21 @@ export class TermsTransformer {
   }
 
   /**
-   * What a source refers to, named the way {@link namedType} names an IRI. A literal is a
-   * reference by name alone, which is all some sources have to offer (see {@link Reference}).
-   * Anything else – a blank node, say – is a reference the source has given no way to read, so
-   * it yields nothing rather than an empty reference.
+   * The objects of a property, split into the IRIs the source refers to – each named the way
+   * {@link namedType} names one – and the literals it states. A blank node is something the source
+   * has given no way to read, so it yields nothing.
    */
-  private reference = (object: RDF.Term): Reference[] => {
-    if (object.termType === 'Literal') {
-      return [new Reference(undefined, [object])];
-    }
-    if (object.termType !== 'NamedNode') {
-      return [];
-    }
-    return [new Reference(object, this.namedType(object).prefLabels)];
-  };
+  private referents = (objects: RDF.Term[]): Referents =>
+    new Referents(
+      objects
+        .filter(
+          (object): object is RDF.NamedNode => object.termType === 'NamedNode',
+        )
+        .map((iri) => new Reference(iri, this.namedType(iri).prefLabels)),
+      objects.filter(
+        (object): object is RDF.Literal => object.termType === 'Literal',
+      ),
+    );
 
   /**
    * What `schema:hasOccupation` points at, as a {@link Role}: a `schema:Role` node is read for
@@ -266,30 +277,24 @@ export class TermsTransformer {
         ? this.termsMap.get(object.value)
         : undefined;
     if (node === undefined || !node.types.some(isRoleClass)) {
-      return this.reference(object).map(
-        (reference) =>
-          new OccupationRole(
-            reference.iri === undefined ? undefined : reference,
-            reference.iri === undefined ? reference.names : [],
-            undefined,
-            undefined,
-          ),
-      );
+      // A bare occupation is a role without a period: an IRI its occupation, a literal its name.
+      const { terms, names } = this.referents([object]);
+      return [
+        ...terms.map(
+          (term) => new OccupationRole(term, [], undefined, undefined),
+        ),
+        ...names.map(
+          (name) => new OccupationRole(undefined, [name], undefined, undefined),
+        ),
+      ];
     }
 
     // The property is repeated on the role to reach the occupation, per Schema.org; a role may
     // also be named without one. Only the first occupation is taken, since a role is one thing. An
     // occupation the role only names is a name for the role, as it is on a term.
-    const occupation = node.occupations
-      .filter((occupation) => occupation.termType === 'NamedNode')
-      .flatMap(this.reference)[0];
-    const roleNames = [
-      ...node.roleNames,
-      ...node.occupations.filter(
-        (occupation): occupation is RDF.Literal =>
-          occupation.termType === 'Literal',
-      ),
-    ];
+    const { terms, names } = this.referents(node.occupations);
+    const occupation = terms[0];
+    const roleNames = [...node.roleNames, ...names];
     return occupation === undefined && roleNames.length === 0
       ? []
       : [
