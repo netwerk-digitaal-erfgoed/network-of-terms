@@ -231,10 +231,10 @@
     "Date of death, in the same form as `birthDate`."
     deathDate: String
 
-    "Where the person was born, in the source’s own vocabulary."
+    "Where the person was born, in the source’s own vocabulary. Several entries are alternatives the source could not decide between, as when the literature disagrees on a painter’s birthplace; they are not several places."
     birthPlace: [Reference]!
 
-    "Where the person died, in the source’s own vocabulary."
+    "Where the person died, in the source’s own vocabulary. Several entries are alternatives, as for `birthPlace`."
     deathPlace: [Reference]!
 
     "What the person does or did, each as a role: the occupation as a term in the source’s vocabulary, or a role the source only names, with the period where the source states one."
@@ -245,7 +245,7 @@
   }
 
   """
-  Something a source refers to, by URI, by name, or both. A source with a vocabulary of its own gives the URI and whatever names it publishes for it; a source that only knows a name gives that name and no URI, one reference per name, since nothing tells its names in two languages for one thing apart from its names for two things. The vocabularies differ per source and the Network of Terms does not harmonise them.
+  Something a source refers to, by URI, by name, or both. A source with a vocabulary of its own gives the URI and whatever names it publishes for it; a source that only knows a name gives that name and no URI, one reference per name, since nothing tells its names in two languages for one thing apart from its names for two things. The vocabularies differ per source and the Network of Terms does not harmonise them, but where the URI belongs to a source the Network of Terms covers – a GeoNames or Wikidata place, say – `lookup` resolves it to a term.
   """
   type Reference {
     uri: ID
