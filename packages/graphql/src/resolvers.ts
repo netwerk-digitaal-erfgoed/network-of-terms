@@ -14,7 +14,7 @@ import {
   NotFoundError,
   QueryMode,
   QueryTermsService,
-  Reference,
+  Referents,
   OccupationRole,
   ServerError,
   SourceNotFoundError,
@@ -300,26 +300,28 @@ function denotedPerson(
 
   // Tested against everything the source holds, not against what survives the language filter,
   // for the reason given in denotedPlace.
-  const references = referencesIn(acrossSet);
+  const referents = referentsIn(inRequestedLanguages);
+  const isEmpty = (referents: Referents) =>
+    referents.terms.length === 0 && referents.names.length === 0;
 
   return term.givenNames.length === 0 &&
     term.familyNames.length === 0 &&
     birthDate === null &&
     deathDate === null &&
-    term.birthPlaces.length === 0 &&
-    term.deathPlaces.length === 0 &&
+    isEmpty(term.birthPlaces) &&
+    isEmpty(term.deathPlaces) &&
     term.occupations.length === 0 &&
-    term.nationalities.length === 0
+    isEmpty(term.nationalities)
     ? null
     : {
         givenName: inRequestedLanguages(term.givenNames),
         familyName: inRequestedLanguages(term.familyNames),
         birthDate,
         deathDate,
-        birthPlace: references(term.birthPlaces),
-        deathPlace: references(term.deathPlaces),
+        birthPlace: referents(term.birthPlaces),
+        deathPlace: referents(term.deathPlaces),
         hasOccupation: rolesIn(acrossSet)(term.occupations),
-        nationality: references(term.nationalities),
+        nationality: referents(term.nationalities),
       };
 }
 
@@ -331,8 +333,11 @@ const dateValue = (literal: RDF.Literal | undefined) =>
   literal?.value.trim() || null;
 
 /**
- * A role is kept when its occupation or its name survives the language filter, for the reason
- * {@link referencesIn} gives; a period alone would say ‘did something from 1625 to 1669’.
+ * A role is kept when its occupation or its name survives the language filter; a period alone
+ * would say ‘did something from 1625 to 1669’. A source that only names its occupations states
+ * one role per name, since nothing tells its Dutch and English names for one occupation apart
+ * from its names for two, so once the names in the languages the client did not ask for are
+ * gone, a role may have nothing left and is dropped rather than returned empty.
  */
 const rolesIn =
   (acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][]) =>
@@ -348,7 +353,7 @@ const rolesIn =
           role.occupation === undefined
             ? null
             : {
-                uri: role.occupation.iri?.value ?? null,
+                uri: role.occupation.iri.value,
                 name: names[2 * index],
               },
         roleName: names[2 * index + 1],
@@ -359,26 +364,19 @@ const rolesIn =
   };
 
 /**
- * A reference by name alone is one reference per name, since nothing tells the source’s Dutch and
- * English names for the same thing apart from its names for two things. So once the names in the
- * languages the client did not ask for are filtered out, what is left of such a reference is
- * nothing at all, and it is dropped rather than returned as an entry with neither URI nor name.
- * The language selection runs over all references at once, since a fallback that judged each
- * name-only reference on its own would keep the English name beside the Dutch one.
+ * What the source refers to, and what it only names, as the API states them: the terms with their
+ * names in the requested languages, as an exact match is labelled, and the names the source gave
+ * as text, selected as one list.
  */
-const referencesIn =
-  (acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][]) =>
-  (references: Reference[]) => {
-    const names = acrossSet(references.map((reference) => reference.names));
-    return references
-      .map((reference, index) => ({
-        uri: reference.iri?.value ?? null,
-        name: names[index],
-      }))
-      .filter(
-        (reference) => reference.uri !== null || reference.name.length > 0,
-      );
-  };
+const referentsIn =
+  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
+  (referents: Referents) => ({
+    term: referents.terms.map((reference) => ({
+      uri: reference.iri.value,
+      name: inRequestedLanguages(reference.names),
+    })),
+    name: inRequestedLanguages(referents.names),
+  });
 
 const personClasses = new Set([
   'https://schema.org/Person',

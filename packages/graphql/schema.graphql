@@ -231,24 +231,32 @@
     "Date of death, in the same form as `birthDate`."
     deathDate: String
 
-    "Where the person was born, in the source’s own vocabulary. Several entries are alternatives the source could not decide between, as when the literature disagrees on a painter’s birthplace; they are not several places."
-    birthPlace: [Reference]!
+    "Where the person was born: the place as a term where the source identifies it, and as a name where it only names it. Several places are alternatives the source could not decide between, as when the literature disagrees on a painter’s birthplace; they are not several places."
+    birthPlace: Referents!
 
-    "Where the person died, in the source’s own vocabulary. Several entries are alternatives, as for `birthPlace`."
-    deathPlace: [Reference]!
+    "Where the person died, as for `birthPlace`."
+    deathPlace: Referents!
 
     "What the person does or did, each as a role: the occupation as a term in the source’s vocabulary, or a role the source only names, with the period where the source states one."
     hasOccupation: [OccupationRole]!
 
-    "The person’s nationality, in the source’s own vocabulary."
-    nationality: [Reference]!
+    "The person’s nationality, as a term or as a name, as for `birthPlace`."
+    nationality: Referents!
   }
 
   """
-  Something a source refers to, by URI, by name, or both. A source with a vocabulary of its own gives the URI and whatever names it publishes for it; a source that only knows a name gives that name and no URI, one reference per name, since nothing tells its names in two languages for one thing apart from its names for two things. The vocabularies differ per source and the Network of Terms does not harmonise them, but where the URI belongs to a source the Network of Terms covers – a GeoNames or Wikidata place, say – `lookup` resolves it to a term.
+  Something a source refers to by URI, with whatever names its vocabulary publishes for it – the shape of an `exactMatch`, which always has a URI and sometimes labels. The vocabularies differ per source and the Network of Terms does not harmonise them, but where the URI belongs to a source the Network of Terms covers – a GeoNames or Wikidata place, say – `lookup` resolves it to a term.
   """
   type Reference {
-    uri: ID
+    uri: ID!
+    name: [LanguageString]!
+  }
+
+  """
+  What a source states for a property: the terms it refers to, and the names it gives as text without identifying what they name. A source with a vocabulary of its own fills `term`; one that only knows a name fills `name`; RKDartists fills both for a nationality, with nothing pairing the two.
+  """
+  type Referents {
+    term: [Reference]!
     name: [LanguageString]!
   }
 
