@@ -76,7 +76,7 @@
     "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
     place: Place
 
-    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person."
+    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person. Whether the node exists does not depend on the requested languages: a source that names things only in a language the client did not ask for yields a node with those fields empty."
     person: Person
   }
 
@@ -183,7 +183,7 @@
     "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
     place: Place
 
-    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person."
+    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person. Whether the node exists does not depend on the requested languages: a source that names things only in a language the client did not ask for yields a node with those fields empty."
     person: Person
   }
 

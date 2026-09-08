@@ -220,8 +220,7 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
     person: denotedPerson(
       term,
       (literals) => filterLiteralsByLanguage(literals, languages),
-      (sets) =>
-        sets.map((literals) => filterLiteralsByLanguage(literals, languages)),
+      () => (literals) => filterLiteralsByLanguage(literals, languages),
     ),
   };
 }
@@ -289,7 +288,7 @@ const placeClasses = new Set([
 function denotedPerson(
   term: Term,
   inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
-  acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][],
+  acrossSet: LanguageSelector,
 ) {
   if (!term.types.some((type) => personClasses.has(type.value))) {
     return null;
@@ -337,29 +336,30 @@ const dateValue = (literal: RDF.Literal | undefined) =>
  * from its names for two, so once the names in the languages the client did not ask for are
  * gone, a role may have nothing left and is dropped rather than returned empty.
  */
-const rolesIn =
-  (acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][]) =>
-  (roles: OccupationRole[]) => {
-    // Every name list of every role goes through the language selection at once, so that a
-    // fallback applies to the set and not to each role on its own.
-    const names = acrossSet(
-      roles.flatMap((role) => [role.occupation?.names ?? [], role.roleNames]),
-    );
-    return roles
-      .map((role, index) => ({
-        occupation:
-          role.occupation === undefined
-            ? null
-            : {
-                uri: role.occupation.iri.value,
-                name: names[2 * index],
-              },
-        roleName: names[2 * index + 1],
-        startDate: dateValue(role.startDate),
-        endDate: dateValue(role.endDate),
-      }))
-      .filter((role) => role.occupation !== null || role.roleName.length > 0);
-  };
+const rolesIn = (acrossSet: LanguageSelector) => (roles: OccupationRole[]) => {
+  // Every name list of every role decides the language selection together, so that a fallback
+  // applies to the set and not to each role on its own.
+  const select = acrossSet(
+    roles.flatMap((role) => [
+      role.occupation?.prefLabels ?? [],
+      role.roleNames,
+    ]),
+  );
+  return roles
+    .map((role) => ({
+      occupation:
+        role.occupation === undefined
+          ? null
+          : {
+              uri: role.occupation.id.value,
+              name: select(role.occupation.prefLabels),
+            },
+      roleName: select(role.roleNames),
+      startDate: dateValue(role.startDate),
+      endDate: dateValue(role.endDate),
+    }))
+    .filter((role) => role.occupation !== null || role.roleName.length > 0);
+};
 
 /**
  * The entities a source mentions, as the API states them. An entity the source only names is one
@@ -368,17 +368,23 @@ const rolesIn =
  * on its own would keep the one named in English beside the one named in Dutch. An unlinked entity
  * with no name left in the requested languages is dropped rather than returned empty.
  */
-const entitiesIn =
-  (acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][]) =>
-  (entities: Entity[]) => {
-    const names = acrossSet(entities.map((entity) => entity.names));
-    return entities
-      .map((entity, index) => ({
-        uri: entity.iri?.value ?? null,
-        name: names[index],
-      }))
-      .filter((entity) => entity.uri !== null || entity.name.length > 0);
-  };
+const entitiesIn = (acrossSet: LanguageSelector) => (entities: Entity[]) => {
+  const select = acrossSet(entities.map((entity) => entity.names));
+  return entities
+    .map((entity) => ({
+      uri: entity.iri?.value ?? null,
+      name: select(entity.names),
+    }))
+    .filter((entity) => entity.uri !== null || entity.name.length > 0);
+};
+
+/**
+ * Given every name list a field holds, the selection to apply to each of them: the languages the
+ * client asked for, or a fallback that the set as a whole earns.
+ */
+type LanguageSelector = (
+  sets: RDF.Literal[][],
+) => (literals: RDF.Literal[]) => RDF.Literal[];
 
 const personClasses = new Set([
   'https://schema.org/Person',
@@ -443,21 +449,21 @@ const placeLabels = (literals: RDF.Literal[], languages: string[] = ['nl']) => {
 };
 
 /**
- * {@link placeLabels} over several name lists at once, falling back to English only when none of
- * them has a name in the requested languages. Applied per list, the fallback would keep a
- * reference by its English name beside the one by its Dutch name, since each is a list of one.
+ * {@link placeLabels} decided over several name lists at once, falling back to English only when
+ * none of them has a name in the requested languages. Applied per list, the fallback would keep
+ * an entity by its English name beside the one by its Dutch name, since each is a list of one.
  */
-const placeLabelsAcross = (
-  sets: RDF.Literal[][],
-  languages: string[] = ['nl'],
-) => {
-  const labels = sets.map((literals) =>
-    filterLiteralsByLanguage(literals, languages),
-  );
-  return labels.some((literals) => literals.length > 0)
-    ? labels
-    : sets.map((literals) => filterLiteralsByLanguage(literals, ['en']));
-};
+const placeLabelsAcross =
+  (sets: RDF.Literal[][], languages: string[] = ['nl']) =>
+  (literals: RDF.Literal[]) =>
+    filterLiteralsByLanguage(
+      literals,
+      sets.some(
+        (names) => filterLiteralsByLanguage(names, languages).length > 0,
+      )
+        ? languages
+        : ['en'],
+    );
 
 function source(
   distribution: Distribution,
