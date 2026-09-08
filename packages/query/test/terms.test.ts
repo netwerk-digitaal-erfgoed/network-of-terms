@@ -250,15 +250,15 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.birthPlaces.terms).toHaveLength(1);
-      expect(term.birthPlaces.terms[0].iri.value).toEqual(leiden.value);
-      expect(term.birthPlaces.terms[0].names.map((name) => name.value)).toEqual(
-        ['Leiden (city)', 'Leiden (stad)'],
-      );
-      expect(term.birthPlaces.names).toEqual([]);
+      expect(term.birthPlaces).toHaveLength(1);
+      expect(term.birthPlaces[0].iri?.value).toEqual(leiden.value);
+      expect(term.birthPlaces[0].names.map((name) => name.value)).toEqual([
+        'Leiden (city)',
+        'Leiden (stad)',
+      ]);
     });
 
-    it('keeps what the source only names apart from what it refers to', () => {
+    it('reads what the source only names as an entity without an IRI', () => {
       const [term] = transform(
         person(
           dataFactory.quad(
@@ -294,13 +294,11 @@ describe('TermsTransformer', () => {
         'painter',
       ]);
       expect(term.occupations[0].startDate).toBeUndefined();
-      expect(term.nationalities.terms).toEqual([]);
-      expect(term.nationalities.names.map((name) => name.value)).toEqual([
+      expect(term.nationalities[0].iri).toBeUndefined();
+      expect(term.nationalities[0].names.map((name) => name.value)).toEqual([
         'Noord-Nederlands',
       ]);
-      expect(term.deathPlaces.names.map((name) => name.value)).toEqual([
-        'Amsterdam',
-      ]);
+      expect(term.deathPlaces[0].names[0].value).toEqual('Amsterdam');
     });
 
     it('reads an occupation the source identifies as a role without a period', () => {
@@ -457,8 +455,7 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.birthPlaces.terms).toEqual([]);
-      expect(term.birthPlaces.names).toEqual([]);
+      expect(term.birthPlaces).toEqual([]);
     });
 
     it('does not return a referred-to place as a term of its own', () => {

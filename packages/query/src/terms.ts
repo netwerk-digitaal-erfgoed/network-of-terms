@@ -24,10 +24,10 @@ export class Term {
     // What the source states about the person a term denotes; all empty for any other term.
     readonly birthDates: RDF.Literal[] = [],
     readonly deathDates: RDF.Literal[] = [],
-    readonly birthPlaces: Referents = new Referents([], []),
-    readonly deathPlaces: Referents = new Referents([], []),
+    readonly birthPlaces: Entity[] = [],
+    readonly deathPlaces: Entity[] = [],
     readonly occupations: OccupationRole[] = [],
-    readonly nationalities: Referents = new Referents([], []),
+    readonly nationalities: Entity[] = [],
     readonly givenNames: RDF.Literal[] = [],
     readonly familyNames: RDF.Literal[] = [],
   ) {}
@@ -52,15 +52,15 @@ export class Reference {
 }
 
 /**
- * What a source states for a property: the terms it refers to, and the names it gives as text
- * without identifying what they name. A literal object is a value, not a thing, so it is kept
- * apart from the references rather than dressed up as one without an IRI. WO2-biografieën states
- * birth places as names only; RKDartists states a nationality both ways, with nothing pairing
- * the two.
+ * Something a source mentions: identified by an IRI where the source links it, with whatever names
+ * its vocabulary gives that IRI, and by name alone where it does not. WO2-biografieën states birth
+ * places as names only; RKDartists states a nationality as an IRI beside literals, with nothing
+ * pairing the two unless there is only one. Each object of the property is one entity, so a
+ * source that states several has mentioned several, which for a birthplace are alternatives.
  */
-export class Referents {
+export class Entity {
   constructor(
-    readonly terms: Reference[],
+    readonly iri: RDF.NamedNode | undefined,
     readonly names: RDF.Literal[],
   ) {}
 }
@@ -237,10 +237,10 @@ export class TermsTransformer {
           .sort(alphabeticallyByPrefLabel),
         term.birthDates,
         term.deathDates,
-        this.referents(term.birthPlaces),
-        this.referents(term.deathPlaces),
+        term.birthPlaces.flatMap(this.entity),
+        term.deathPlaces.flatMap(this.entity),
         term.occupations.flatMap(this.role),
-        this.referents(term.nationalities),
+        term.nationalities.flatMap(this.entity),
         term.givenNames,
         term.familyNames,
       );
@@ -248,21 +248,19 @@ export class TermsTransformer {
   }
 
   /**
-   * The objects of a property, split into the IRIs the source refers to – each named the way
-   * {@link namedType} names one – and the literals it states. A blank node is something the source
+   * An object of a property as the {@link Entity} it mentions: an IRI named the way
+   * {@link namedType} names one, or a literal as a name alone. A blank node is something the source
    * has given no way to read, so it yields nothing.
    */
-  private referents = (objects: RDF.Term[]): Referents =>
-    new Referents(
-      objects
-        .filter(
-          (object): object is RDF.NamedNode => object.termType === 'NamedNode',
-        )
-        .map((iri) => new Reference(iri, this.namedType(iri).prefLabels)),
-      objects.filter(
-        (object): object is RDF.Literal => object.termType === 'Literal',
-      ),
-    );
+  private entity = (object: RDF.Term): Entity[] => {
+    if (object.termType === 'NamedNode') {
+      return [new Entity(object, this.namedType(object).prefLabels)];
+    }
+    if (object.termType === 'Literal') {
+      return [new Entity(undefined, [object])];
+    }
+    return [];
+  };
 
   /**
    * What `schema:hasOccupation` points at, as a {@link Role}: a `schema:Role` node is read for
@@ -278,23 +276,33 @@ export class TermsTransformer {
         : undefined;
     if (node === undefined || !node.types.some(isRoleClass)) {
       // A bare occupation is a role without a period: an IRI its occupation, a literal its name.
-      const { terms, names } = this.referents([object]);
-      return [
-        ...terms.map(
-          (term) => new OccupationRole(term, [], undefined, undefined),
-        ),
-        ...names.map(
-          (name) => new OccupationRole(undefined, [name], undefined, undefined),
-        ),
-      ];
+      return this.entity(object).map((entity) =>
+        entity.iri === undefined
+          ? new OccupationRole(undefined, entity.names, undefined, undefined)
+          : new OccupationRole(
+              new Reference(entity.iri, entity.names),
+              [],
+              undefined,
+              undefined,
+            ),
+      );
     }
 
     // The property is repeated on the role to reach the occupation, per Schema.org; a role may
     // also be named without one. Only the first occupation is taken, since a role is one thing. An
     // occupation the role only names is a name for the role, as it is on a term.
-    const { terms, names } = this.referents(node.occupations);
-    const occupation = terms[0];
-    const roleNames = [...node.roleNames, ...names];
+    const mentioned = node.occupations.flatMap(this.entity);
+    const linked = mentioned.find((entity) => entity.iri !== undefined);
+    const occupation =
+      linked?.iri === undefined
+        ? undefined
+        : new Reference(linked.iri, linked.names);
+    const roleNames = [
+      ...node.roleNames,
+      ...mentioned
+        .filter((entity) => entity.iri === undefined)
+        .flatMap((entity) => entity.names),
+    ];
     return occupation === undefined && roleNames.length === 0
       ? []
       : [
