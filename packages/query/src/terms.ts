@@ -41,17 +41,6 @@ export class RelatedTerm {
 }
 
 /**
- * Something a source refers to by IRI, with whatever names its vocabulary gives that IRI – the
- * shape of an exact match, which always has a URI and sometimes labels.
- */
-export class Reference {
-  constructor(
-    readonly iri: RDF.NamedNode,
-    readonly names: RDF.Literal[],
-  ) {}
-}
-
-/**
  * Something a source mentions: identified by an IRI where the source links it, with whatever names
  * its vocabulary gives that IRI, and by name alone where it does not. WO2-biografieën states birth
  * places as names only; RKDartists states a nationality as an IRI beside literals, with nothing
@@ -76,7 +65,7 @@ export class Entity {
  */
 export class OccupationRole {
   constructor(
-    readonly occupation: Reference | undefined,
+    readonly occupation: RelatedTerm | undefined,
     readonly roleNames: RDF.Literal[],
     readonly startDate: RDF.Literal | undefined,
     readonly endDate: RDF.Literal | undefined,
@@ -280,7 +269,7 @@ export class TermsTransformer {
         entity.iri === undefined
           ? new OccupationRole(undefined, entity.names, undefined, undefined)
           : new OccupationRole(
-              new Reference(entity.iri, entity.names),
+              this.namedType(entity.iri),
               [],
               undefined,
               undefined,
@@ -292,11 +281,9 @@ export class TermsTransformer {
     // also be named without one. Only the first occupation is taken, since a role is one thing. An
     // occupation the role only names is a name for the role, as it is on a term.
     const mentioned = node.occupations.flatMap(this.entity);
-    const linked = mentioned.find((entity) => entity.iri !== undefined);
+    const linked = mentioned.find((entity) => entity.iri !== undefined)?.iri;
     const occupation =
-      linked?.iri === undefined
-        ? undefined
-        : new Reference(linked.iri, linked.names);
+      linked === undefined ? undefined : this.namedType(linked);
     const roleNames = [
       ...node.roleNames,
       ...mentioned

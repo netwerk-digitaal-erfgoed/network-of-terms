@@ -317,8 +317,8 @@ describe('TermsTransformer', () => {
       );
 
       expect(term.occupations).toHaveLength(1);
-      expect(term.occupations[0].occupation?.iri?.value).toEqual(painter.value);
-      expect(term.occupations[0].occupation?.names[0].value).toEqual(
+      expect(term.occupations[0].occupation?.id.value).toEqual(painter.value);
+      expect(term.occupations[0].occupation?.prefLabels[0].value).toEqual(
         'schilder',
       );
       expect(term.occupations[0].roleNames).toEqual([]);
@@ -360,8 +360,8 @@ describe('TermsTransformer', () => {
 
       expect(term.occupations).toHaveLength(1);
       const [dated] = term.occupations;
-      expect(dated.occupation?.iri?.value).toEqual(collector.value);
-      expect(dated.occupation?.names[0].value).toEqual('kunstverzamelaar');
+      expect(dated.occupation?.id.value).toEqual(collector.value);
+      expect(dated.occupation?.prefLabels[0].value).toEqual('kunstverzamelaar');
       expect(dated.roleNames[0].value).toEqual('verzamelaar');
       expect(dated.startDate?.value).toEqual('1625');
       expect(dated.endDate?.value).toEqual('1669');
