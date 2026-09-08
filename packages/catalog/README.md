@@ -199,12 +199,15 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
   normalise a source’s own notation – `ca. 1548`, `16XX`, `1710/11` – inside the query without a
   tested mapping to EDTF; until there is one, leave the property out rather than construct a
   value that is not EDTF.
-- A place or nationality is stated as a **term** or as a **name**. Construct the source’s own
-  **URI** where it has one, and name it with `schema:name` or `skos:prefLabel` as for
+- A place or nationality is an **entity** the source mentions. Construct the source’s own **URI**
+  where it has one, and name it with `schema:name` or `skos:prefLabel` as for
   `schema:additionalType` above. Where the source only has a name, construct the literal as the
-  object itself. The API keeps the two apart, as `term` and `name`, since a literal is a value
-  and not a thing without an identifier. Where a source states several places, they are read as
-  alternatives it could not decide between.
+  object itself; the API returns it as an entity with a name and no URI. Each object is one
+  entity, so construct one per thing the source mentions, and where a source states several
+  places, they are read as alternatives it could not decide between. RKDartists states a place
+  or nationality as a URI beside Dutch and English literals with nothing pairing them, so its
+  queries name the URI with the literals only when the person has one, and construct the
+  literals as entities of their own otherwise.
 - An occupation is read as Schema.org’s **`Role`**, so a source has three ways to state one. A URI
   is an occupation the source identifies, named as above; a literal is a role the source only
   names (`roleName`); and a `schema:Role` node carries the period, with `schema:hasOccupation`
