@@ -392,20 +392,16 @@ describe('Server', () => {
     expect(term.result.person.birthDate).toEqual('1606-07-15/1607');
     expect(term.result.person.deathDate).toEqual('1669-10-04');
     // A place the source identifies, named by the source’s own vocabulary.
-    expect(term.result.person.birthPlace).toEqual({
-      term: [
-        {
-          uri: 'https://example.com/places/leiden',
-          name: [{ language: 'nl', value: 'Leiden (stad)' }],
-        },
-      ],
-      name: [],
-    });
-    // A place the source only names, in the requested language.
-    expect(term.result.person.deathPlace).toEqual({
-      term: [],
-      name: [{ language: 'nl', value: 'Amsterdam (stad)' }],
-    });
+    expect(term.result.person.birthPlace).toEqual([
+      {
+        uri: 'https://example.com/places/leiden',
+        name: [{ language: 'nl', value: 'Leiden (stad)' }],
+      },
+    ]);
+    // A place the source only names: one entity per name, and only in the requested language.
+    expect(term.result.person.deathPlace).toEqual([
+      { uri: null, name: [{ language: 'nl', value: 'Amsterdam (stad)' }] },
+    ]);
     // Occupations the source only names are roles named by them, one per name; a schema:Role
     // node it constructs comes with its occupation or name and its period.
     expect(term.result.person.hasOccupation).toEqual([
@@ -437,10 +433,9 @@ describe('Server', () => {
         endDate: '1669',
       },
     ]);
-    expect(term.result.person.nationality).toEqual({
-      term: [],
-      name: [{ language: 'nl', value: 'Noord-Nederlands' }],
-    });
+    expect(term.result.person.nationality).toEqual([
+      { uri: null, name: [{ language: 'nl', value: 'Noord-Nederlands' }] },
+    ]);
   });
 
   it('returns a person whose source states only the split into given and family name', async () => {
@@ -470,7 +465,7 @@ describe('Server', () => {
     const term = body.data.lookup[0];
     expect(term.result.person.birthDate).toBeNull();
     expect(term.result.person.deathDate).toBeNull();
-    expect(term.result.person.birthPlace.term).toEqual([
+    expect(term.result.person.birthPlace).toEqual([
       {
         uri: 'https://example.com/places/leiden',
         name: [{ language: 'en', value: 'Leiden (city)' }],
@@ -487,7 +482,7 @@ describe('Server', () => {
     expect(term.result.__typename).toEqual('Term');
     expect(term.result.person.birthDate).toEqual('1606-07-15/1607');
     // Names are language-tagged even here, where the term’s own labels are plain strings.
-    expect(term.result.person.birthPlace.term[0].name).toEqual([
+    expect(term.result.person.birthPlace[0].name).toEqual([
       { language: 'nl', value: 'Leiden (stad)' },
     ]);
   });
@@ -497,17 +492,17 @@ describe('Server', () => {
       lookupQuery({ uris: ['https://example.com/resources/rembrandt'] }),
     );
     const person = body.data.lookup[0].result.person;
-    // The English fallback applies to a list as a whole, so the Dutch names do not bring the
-    // English ones along.
-    expect(person.deathPlace.name).toEqual([
-      { language: 'nl', value: 'Amsterdam (stad)' },
+    // The English fallback applies to the set, so the Dutch names do not bring the English ones
+    // along as entities of their own.
+    expect(person.deathPlace).toEqual([
+      { uri: null, name: [{ language: 'nl', value: 'Amsterdam (stad)' }] },
     ]);
     expect(
       person.hasOccupation.map((role: { roleName: { value: string }[] }) =>
         role.roleName.map((name) => name.value),
       ),
     ).toEqual([['schilder'], ['etser'], [], ['werkzaam']]);
-    expect(person.nationality.name).toHaveLength(1);
+    expect(person.nationality).toHaveLength(1);
   });
 
   it('falls back to English names in monolingual lookup when there are no Dutch ones', async () => {
@@ -517,10 +512,9 @@ describe('Server', () => {
       }),
     );
     const person = body.data.lookup[0].result.person;
-    expect(person.nationality).toEqual({
-      term: [],
-      name: [{ language: 'en', value: 'British' }],
-    });
+    expect(person.nationality).toEqual([
+      { uri: null, name: [{ language: 'en', value: 'British' }] },
+    ]);
     expect(person.hasOccupation[0].roleName).toEqual([
       { language: 'en', value: 'painter' },
     ]);
@@ -848,10 +842,10 @@ function termsQuery({
                 familyName { language value }
                 birthDate
                 deathDate
-                birthPlace { term { uri name { language value } } name { language value } }
-                deathPlace { term { uri name { language value } } name { language value } }
+                birthPlace { uri name { language value } }
+                deathPlace { uri name { language value } }
                 hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
-                nationality { term { uri name { language value } } name { language value } }
+                nationality { uri name { language value } }
               }
             }
           }
@@ -924,10 +918,10 @@ function lookupQuery({
               familyName { language value }
               birthDate
               deathDate
-              birthPlace { term { uri name { language value } } name { language value } }
-              deathPlace { term { uri name { language value } } name { language value } }
+              birthPlace { uri name { language value } }
+              deathPlace { uri name { language value } }
               hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
-              nationality { term { uri name { language value } } name { language value } }
+              nationality { uri name { language value } }
             }
           }
           `
@@ -955,10 +949,10 @@ function lookupQuery({
               familyName { language value }
               birthDate
               deathDate
-              birthPlace { term { uri name { language value } } name { language value } }
-              deathPlace { term { uri name { language value } } name { language value } }
+              birthPlace { uri name { language value } }
+              deathPlace { uri name { language value } }
               hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
-              nationality { term { uri name { language value } } name { language value } }
+              nationality { uri name { language value } }
             }
           }
           `

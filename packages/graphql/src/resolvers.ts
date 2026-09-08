@@ -14,7 +14,7 @@ import {
   NotFoundError,
   QueryMode,
   QueryTermsService,
-  Referents,
+  Entity,
   OccupationRole,
   ServerError,
   SourceNotFoundError,
@@ -300,28 +300,26 @@ function denotedPerson(
 
   // Tested against everything the source holds, not against what survives the language filter,
   // for the reason given in denotedPlace.
-  const referents = referentsIn(inRequestedLanguages);
-  const isEmpty = (referents: Referents) =>
-    referents.terms.length === 0 && referents.names.length === 0;
+  const entities = entitiesIn(acrossSet);
 
   return term.givenNames.length === 0 &&
     term.familyNames.length === 0 &&
     birthDate === null &&
     deathDate === null &&
-    isEmpty(term.birthPlaces) &&
-    isEmpty(term.deathPlaces) &&
+    term.birthPlaces.length === 0 &&
+    term.deathPlaces.length === 0 &&
     term.occupations.length === 0 &&
-    isEmpty(term.nationalities)
+    term.nationalities.length === 0
     ? null
     : {
         givenName: inRequestedLanguages(term.givenNames),
         familyName: inRequestedLanguages(term.familyNames),
         birthDate,
         deathDate,
-        birthPlace: referents(term.birthPlaces),
-        deathPlace: referents(term.deathPlaces),
+        birthPlace: entities(term.birthPlaces),
+        deathPlace: entities(term.deathPlaces),
         hasOccupation: rolesIn(acrossSet)(term.occupations),
-        nationality: referents(term.nationalities),
+        nationality: entities(term.nationalities),
       };
 }
 
@@ -364,19 +362,23 @@ const rolesIn =
   };
 
 /**
- * What the source refers to, and what it only names, as the API states them: the terms with their
- * names in the requested languages, as an exact match is labelled, and the names the source gave
- * as text, selected as one list.
+ * The entities a source mentions, as the API states them. An entity the source only names is one
+ * per name, since nothing tells its Dutch and English names for one thing apart from its names
+ * for two, so the language selection runs over all of them at once: a fallback that judged each
+ * on its own would keep the one named in English beside the one named in Dutch. An unlinked entity
+ * with no name left in the requested languages is dropped rather than returned empty.
  */
-const referentsIn =
-  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
-  (referents: Referents) => ({
-    term: referents.terms.map((reference) => ({
-      uri: reference.iri.value,
-      name: inRequestedLanguages(reference.names),
-    })),
-    name: inRequestedLanguages(referents.names),
-  });
+const entitiesIn =
+  (acrossSet: (sets: RDF.Literal[][]) => RDF.Literal[][]) =>
+  (entities: Entity[]) => {
+    const names = acrossSet(entities.map((entity) => entity.names));
+    return entities
+      .map((entity, index) => ({
+        uri: entity.iri?.value ?? null,
+        name: names[index],
+      }))
+      .filter((entity) => entity.uri !== null || entity.name.length > 0);
+  };
 
 const personClasses = new Set([
   'https://schema.org/Person',
