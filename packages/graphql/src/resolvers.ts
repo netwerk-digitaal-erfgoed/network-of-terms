@@ -14,6 +14,8 @@ import {
   NotFoundError,
   QueryMode,
   QueryTermsService,
+  Entity,
+  OccupationRole,
   ServerError,
   SourceNotFoundError,
   SourceResult,
@@ -215,6 +217,11 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
     place: denotedPlace(term, (literals) =>
       filterLiteralsByLanguage(literals, languages),
     ),
+    person: denotedPerson(
+      term,
+      (literals) => filterLiteralsByLanguage(literals, languages),
+      () => (literals) => filterLiteralsByLanguage(literals, languages),
+    ),
   };
 }
 
@@ -267,6 +274,124 @@ const placeClasses = new Set([
 ]);
 
 /**
+ * The person that the term denotes, or null if its source describes none.
+ *
+ * As with {@link denotedPlace}, the node carries only what SKOS cannot state: full names stay on
+ * the labels and alignments on `exactMatch`, so what is left is the split into given and family
+ * name, the dates, places, occupations and nationality. A term typed as a person whose source
+ * states none of them gets no node.
+ *
+ * A date is passed through as the source states it. Sources are not validated, and the field is
+ * documented as EDTF, which reads a plain ISO 8601 date, an interval and a qualified date alike.
+ * Where a source states several – Wikidata can, when its sources disagree – the first is taken.
+ */
+function denotedPerson(
+  term: Term,
+  inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
+  acrossSet: LanguageSelector,
+) {
+  if (!term.types.some((type) => personClasses.has(type.value))) {
+    return null;
+  }
+
+  const birthDate = dateValue(term.birthDates[0]);
+  const deathDate = dateValue(term.deathDates[0]);
+
+  // Tested against everything the source holds, not against what survives the language filter,
+  // for the reason given in denotedPlace.
+  const entities = entitiesIn(acrossSet);
+
+  return term.givenNames.length === 0 &&
+    term.familyNames.length === 0 &&
+    birthDate === null &&
+    deathDate === null &&
+    term.birthPlaces.length === 0 &&
+    term.deathPlaces.length === 0 &&
+    term.occupations.length === 0 &&
+    term.nationalities.length === 0
+    ? null
+    : {
+        givenName: inRequestedLanguages(term.givenNames),
+        familyName: inRequestedLanguages(term.familyNames),
+        birthDate,
+        deathDate,
+        birthPlace: entities(term.birthPlaces),
+        deathPlace: entities(term.deathPlaces),
+        hasOccupation: rolesIn(acrossSet)(term.occupations),
+        nationality: entities(term.nationalities),
+      };
+}
+
+/**
+ * Sources are not validated, so a date may be an empty string; that is no date, as an empty
+ * country is no country in {@link denotedPlace}.
+ */
+const dateValue = (literal: RDF.Literal | undefined) =>
+  literal?.value.trim() || null;
+
+/**
+ * A role is kept when its occupation or its name survives the language filter; a period alone
+ * would say ‘did something from 1625 to 1669’. A source that only names its occupations states
+ * one role per name, since nothing tells its Dutch and English names for one occupation apart
+ * from its names for two, so once the names in the languages the client did not ask for are
+ * gone, a role may have nothing left and is dropped rather than returned empty.
+ */
+const rolesIn = (acrossSet: LanguageSelector) => (roles: OccupationRole[]) => {
+  // Every name list of every role decides the language selection together, so that a fallback
+  // applies to the set and not to each role on its own.
+  const select = acrossSet(
+    roles.flatMap((role) => [
+      role.occupation?.prefLabels ?? [],
+      role.roleNames,
+    ]),
+  );
+  return roles
+    .map((role) => ({
+      occupation:
+        role.occupation === undefined
+          ? null
+          : {
+              uri: role.occupation.id.value,
+              name: select(role.occupation.prefLabels),
+            },
+      roleName: select(role.roleNames),
+      startDate: dateValue(role.startDate),
+      endDate: dateValue(role.endDate),
+    }))
+    .filter((role) => role.occupation !== null || role.roleName.length > 0);
+};
+
+/**
+ * The entities a source mentions, as the API states them. An entity the source only names is one
+ * per name, since nothing tells its Dutch and English names for one thing apart from its names
+ * for two, so the language selection runs over all of them at once: a fallback that judged each
+ * on its own would keep the one named in English beside the one named in Dutch. An unlinked entity
+ * with no name left in the requested languages is dropped rather than returned empty.
+ */
+const entitiesIn = (acrossSet: LanguageSelector) => (entities: Entity[]) => {
+  const select = acrossSet(entities.map((entity) => entity.names));
+  return entities
+    .map((entity) => ({
+      uri: entity.iri?.value ?? null,
+      name: select(entity.names),
+    }))
+    .filter((entity) => entity.uri !== null || entity.name.length > 0);
+};
+
+/**
+ * Given every name list a field holds, the selection to apply to each of them: the languages the
+ * client asked for, or a fallback that the set as a whole earns.
+ */
+type LanguageSelector = (
+  sets: RDF.Literal[][],
+) => (literals: RDF.Literal[]) => RDF.Literal[];
+
+const personClasses = new Set([
+  'https://schema.org/Person',
+  'http://schema.org/Person',
+]);
+
+/**
  * Sources are not validated, so a coordinate may be absent, empty or not a number at all. Anything
  * we cannot read as a finite number becomes null: an unknown coordinate is not a field error, and
  * `Number('')` would silently place the term at 0°, 0°.
@@ -302,6 +427,11 @@ function mapToTerm(term: Term, languages: string[]) {
       prefLabel: literalValues(exactMatch.prefLabels, languages),
     })),
     place: denotedPlace(term, (literals) => placeLabels(literals, languages)),
+    person: denotedPerson(
+      term,
+      (literals) => placeLabels(literals, languages),
+      (sets) => placeLabelsAcross(sets, languages),
+    ),
   };
 }
 
@@ -313,8 +443,27 @@ function mapToTerm(term: Term, languages: string[]) {
  */
 const placeLabels = (literals: RDF.Literal[], languages: string[] = ['nl']) => {
   const labels = filterLiteralsByLanguage(literals, languages);
-  return labels.length > 0 ? labels : filterLiteralsByLanguage(literals, ['en']);
+  return labels.length > 0
+    ? labels
+    : filterLiteralsByLanguage(literals, ['en']);
 };
+
+/**
+ * {@link placeLabels} decided over several name lists at once, falling back to English only when
+ * none of them has a name in the requested languages. Applied per list, the fallback would keep
+ * an entity by its English name beside the one by its Dutch name, since each is a list of one.
+ */
+const placeLabelsAcross =
+  (sets: RDF.Literal[][], languages: string[] = ['nl']) =>
+  (literals: RDF.Literal[]) =>
+    filterLiteralsByLanguage(
+      literals,
+      sets.some(
+        (names) => filterLiteralsByLanguage(names, languages).length > 0,
+      )
+        ? languages
+        : ['en'],
+    );
 
 function source(
   distribution: Distribution,

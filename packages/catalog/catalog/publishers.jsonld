@@ -385,6 +385,21 @@
         }
       ],
       "alternateName": "Korpora"
+    },
+    {
+      "@id": "https://www.thehouseoflegacies.nl/",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "The House of Legacies"
+        },
+        {
+          "@language": "nl",
+          "@value": "The House of Legacies"
+        }
+      ],
+      "alternateName": "House of Legacies"
     }
   ]
 }

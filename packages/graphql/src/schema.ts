@@ -75,6 +75,9 @@ export const schema = (languages: string[]) => `
 
     "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
     place: Place
+
+    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person. Whether the node exists does not depend on the requested languages: a source that names things only in a language the client did not ask for yields a node with those fields empty."
+    person: Person
   }
 
   type RelatedTerm {
@@ -179,6 +182,9 @@ export const schema = (languages: string[]) => `
 
     "The place that this term denotes, if its source describes one. Null when the source describes no place, whether because the term denotes something else or because the source gives no details about the place."
     place: Place
+
+    "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person. Whether the node exists does not depend on the requested languages: a source that names things only in a language the client did not ask for yields a node with those fields empty."
+    person: Person
   }
 
   """
@@ -207,6 +213,68 @@ export const schema = (languages: string[]) => `
   type AdditionalType {
     uri: ID!
     name: [LanguageString]!
+  }
+
+  """
+  The person that a term denotes. It carries only what SKOS cannot state: the person’s full names stay on \`prefLabel\` and \`altLabel\`, and their alignments to other sources on \`exactMatch\`.
+  """
+  type Person {
+    "The person’s given name, where the source states it apart from the family name. Empty where the source publishes the name whole; \`prefLabel\` carries the whole name either way."
+    givenName: [LanguageString]!
+
+    "The person’s family name, where the source states it apart from the given name."
+    familyName: [LanguageString]!
+
+    "Date of birth, as an EDTF string (Extended Date/Time Format, the Library of Congress profile of ISO 8601-1 and 8601-2): a date at whatever precision the source knows (\`1606\`, \`1606-07\`, \`1606-07-15\`), an interval (\`1606-07-15/1607\`), or a qualified date (\`1620~\` for circa, \`1643?\` for uncertain, \`139X\` for a decade). Passed through as the source states it, so a source that publishes something else is returned verbatim; the Network of Terms does not validate it. Null when the source states none."
+    birthDate: String
+
+    "Date of death, in the same form as \`birthDate\`."
+    deathDate: String
+
+    "Where the person was born, as the entities the source mentions: identified by URI where the source links the place, by name alone where it does not. Several entries are alternatives the source could not decide between, as when the literature disagrees on a painter’s birthplace; they are not several places."
+    birthPlace: [Entity]!
+
+    "Where the person died, as for \`birthPlace\`."
+    deathPlace: [Entity]!
+
+    "What the person does or did, each as a role: the occupation as a term in the source’s vocabulary, or a role the source only names, with the period where the source states one."
+    hasOccupation: [OccupationRole]!
+
+    "The person’s nationality, as for \`birthPlace\`."
+    nationality: [Entity]!
+  }
+
+  """
+  Something a source refers to by URI, with whatever names its vocabulary publishes for it – the shape of an \`exactMatch\`, which always has a URI and sometimes labels. The vocabularies differ per source and the Network of Terms does not harmonise them, but where the URI belongs to a source the Network of Terms covers – a GeoNames or Wikidata place, say – \`lookup\` resolves it to a term.
+  """
+  type Reference {
+    uri: ID!
+    name: [LanguageString]!
+  }
+
+  """
+  Something a source mentions. Identified by a URI where the source links it, with the names its vocabulary gives it; by name alone where it does not, in which case \`uri\` is null and each name the source states is an entity of its own, since nothing tells its names in two languages for one thing apart from its names for two. Where the URI belongs to a source the Network of Terms covers – a GeoNames or Wikidata place, say – \`lookup\` resolves it to a term.
+  """
+  type Entity {
+    uri: ID
+    name: [LanguageString]!
+  }
+
+  """
+  What a person does or did, in the shape of Schema.org’s \`Role\`. At least one of \`occupation\` and \`roleName\` is set: the occupation where the source identifies it as a term, the role’s own name where the source only names it. A period is given where the source states one; an occupation without a period leaves both dates null.
+  """
+  type OccupationRole {
+    "The occupation, as a term in the source’s own vocabulary, with whatever names the source gives it. Null where the source only names the role."
+    occupation: Reference
+
+    "The role’s own name, in the requested languages. Empty where the source identifies the occupation as a term instead."
+    roleName: [LanguageString]!
+
+    "When the role began, as an EDTF string like \`birthDate\`. Null where the source states no period."
+    startDate: String
+
+    "When the role ended, as an EDTF string. Null where the source states no period or the role is current."
+    endDate: String
   }
   
   type TranslatedRelatedTerm {

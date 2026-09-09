@@ -1,6 +1,6 @@
 {
   "name": "@netwerk-digitaal-erfgoed/network-of-terms-query",
-  "version": "7.1.4",
+  "version": "7.2.0",
   "description": "Engine for querying sources in the Network of Terms",
   "keywords": [],
   "homepage": "https://github.com/netwerk-digitaal-erfgoed/network-of-terms#readme",
@@ -41,7 +41,7 @@
     "@rdfjs/types": "2.0.1",
     "env-schema": "7.0.0",
     "jest-dev-server": "11.0.0",
-    "joi": "18.2.3",
+    "joi": "18.2.8",
     "nock": "14.0.16",
     "pino": "10.3.1",
     "pretty-ms": "9.3.0",
