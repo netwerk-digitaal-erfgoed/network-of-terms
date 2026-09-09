@@ -4,11 +4,14 @@ PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX som: <https://data.muziekschatten.nl/som/>
 
 CONSTRUCT {
-    ?uri a skos:Concept;
+    ?uri a skos:Concept, schema:Person ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?schema_alternateName ;
         skos:scopeNote ?schema_hasOccupation ;
-        skos:exactMatch ?exactMatch_uri .
+        skos:exactMatch ?exactMatch_uri ;
+        schema:givenName ?schema_givenName ;
+        schema:familyName ?schema_familyName ;
+        schema:hasOccupation ?schema_hasOccupation .
 }
 # The properties below stay in OPTIONALs rather than becoming UNION branches, because the BIND
 # below combines ?schema_familyName and ?schema_givenName and a UNION would leave one side of that

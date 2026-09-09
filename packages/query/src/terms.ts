@@ -21,6 +21,15 @@ export class Term {
     readonly names: RDF.Literal[] = [],
     readonly addressCountry: RDF.Literal | undefined = undefined,
     readonly additionalTypes: RelatedTerm[] = [],
+    // What the source states about the person a term denotes; all empty for any other term.
+    readonly birthDates: RDF.Literal[] = [],
+    readonly deathDates: RDF.Literal[] = [],
+    readonly birthPlaces: Entity[] = [],
+    readonly deathPlaces: Entity[] = [],
+    readonly occupations: OccupationRole[] = [],
+    readonly nationalities: Entity[] = [],
+    readonly givenNames: RDF.Literal[] = [],
+    readonly familyNames: RDF.Literal[] = [],
   ) {}
 }
 
@@ -28,6 +37,38 @@ export class RelatedTerm {
   constructor(
     readonly id: RDF.Term,
     readonly prefLabels: RDF.Literal[],
+  ) {}
+}
+
+/**
+ * Something a source mentions: identified by an IRI where the source links it, with whatever names
+ * its vocabulary gives that IRI, and by name alone where it does not. WO2-biografieën states birth
+ * places as names only; RKDartists states a nationality as an IRI beside literals, with nothing
+ * pairing the two unless there is only one. Each object of the property is one entity, so a
+ * source that states several has mentioned several, which for a birthplace are alternatives.
+ */
+export class Entity {
+  constructor(
+    readonly iri: RDF.NamedNode | undefined,
+    readonly names: RDF.Literal[],
+  ) {}
+}
+
+/**
+ * What a person does or did, in the shape of Schema.org’s `Role`: an occupation the source
+ * identifies, or a role the source only names, and the period where the source states one.
+ *
+ * Schema.org lets a `Role` sit between `schema:hasOccupation` and the `Occupation`, repeating
+ * `schema:hasOccupation` on the role to reach it, and puts the dates and the `roleName` on the
+ * role. A source that constructs no role but a bare occupation is read as a role without a period:
+ * an IRI becomes the occupation, a literal the role’s name.
+ */
+export class OccupationRole {
+  constructor(
+    readonly occupation: RelatedTerm | undefined,
+    readonly roleNames: RDF.Literal[],
+    readonly startDate: RDF.Literal | undefined,
+    readonly endDate: RDF.Literal | undefined,
   ) {}
 }
 
@@ -51,6 +92,18 @@ class SparqlResultTerm {
   geo: RDF.Term | undefined = undefined;
   addressCountry: RDF.Literal | undefined = undefined;
   additionalTypes: RDF.Term[] = [];
+  birthDates: RDF.Literal[] = [];
+  deathDates: RDF.Literal[] = [];
+  birthPlaces: RDF.Term[] = [];
+  deathPlaces: RDF.Term[] = [];
+  occupations: RDF.Term[] = [];
+  nationalities: RDF.Term[] = [];
+  givenNames: RDF.Literal[] = [];
+  familyNames: RDF.Literal[] = [];
+  // Read from a schema:Role node a term points at, never from the term itself.
+  roleNames: RDF.Literal[] = [];
+  startDate: RDF.Literal | undefined = undefined;
+  endDate: RDF.Literal | undefined = undefined;
 }
 
 export class TermsTransformer {
@@ -90,6 +143,28 @@ export class TermsTransformer {
     ['http://schema.org/addressCountry', 'addressCountry'],
     ['https://schema.org/additionalType', 'additionalTypes'],
     ['http://schema.org/additionalType', 'additionalTypes'],
+    ['https://schema.org/birthDate', 'birthDates'],
+    ['http://schema.org/birthDate', 'birthDates'],
+    ['https://schema.org/deathDate', 'deathDates'],
+    ['http://schema.org/deathDate', 'deathDates'],
+    ['https://schema.org/birthPlace', 'birthPlaces'],
+    ['http://schema.org/birthPlace', 'birthPlaces'],
+    ['https://schema.org/deathPlace', 'deathPlaces'],
+    ['http://schema.org/deathPlace', 'deathPlaces'],
+    ['https://schema.org/hasOccupation', 'occupations'],
+    ['http://schema.org/hasOccupation', 'occupations'],
+    ['https://schema.org/nationality', 'nationalities'],
+    ['http://schema.org/nationality', 'nationalities'],
+    ['https://schema.org/givenName', 'givenNames'],
+    ['http://schema.org/givenName', 'givenNames'],
+    ['https://schema.org/familyName', 'familyNames'],
+    ['http://schema.org/familyName', 'familyNames'],
+    ['https://schema.org/roleName', 'roleNames'],
+    ['http://schema.org/roleName', 'roleNames'],
+    ['https://schema.org/startDate', 'startDate'],
+    ['http://schema.org/startDate', 'startDate'],
+    ['https://schema.org/endDate', 'endDate'],
+    ['http://schema.org/endDate', 'endDate'],
   ]);
 
   fromQuad(quad: RDF.Quad): void {
@@ -146,10 +221,86 @@ export class TermsTransformer {
         location.longitude,
         term.names,
         location.addressCountry,
-        term.additionalTypes.map(this.namedType).sort(alphabeticallyByPrefLabel),
+        term.additionalTypes
+          .map(this.namedType)
+          .sort(alphabeticallyByPrefLabel),
+        term.birthDates,
+        term.deathDates,
+        term.birthPlaces.flatMap(this.entity),
+        term.deathPlaces.flatMap(this.entity),
+        term.occupations.flatMap(this.role),
+        term.nationalities.flatMap(this.entity),
+        term.givenNames,
+        term.familyNames,
       );
     });
   }
+
+  /**
+   * An object of a property as the {@link Entity} it mentions: an IRI named the way
+   * {@link namedType} names one, or a literal as a name alone. A blank node is something the source
+   * has given no way to read, so it yields nothing.
+   */
+  private entity = (object: RDF.Term): Entity[] => {
+    if (object.termType === 'NamedNode') {
+      return [new Entity(object, this.namedType(object).prefLabels)];
+    }
+    if (object.termType === 'Literal') {
+      return [new Entity(undefined, [object])];
+    }
+    return [];
+  };
+
+  /**
+   * What `schema:hasOccupation` points at, as a {@link Role}: a `schema:Role` node is read for
+   * its occupation, name and period, and anything else is a bare occupation, which
+   * {@link reference} reads as a role without a period.
+   */
+  private role = (object: RDF.Term): OccupationRole[] => {
+    // A role node may be a blank node too, as the schema:geo node may; an IRI is preferred for
+    // the reason the catalog README gives, not required.
+    const node =
+      object.termType === 'NamedNode' || object.termType === 'BlankNode'
+        ? this.termsMap.get(object.value)
+        : undefined;
+    if (node === undefined || !node.types.some(isRoleClass)) {
+      // A bare occupation is a role without a period: an IRI its occupation, a literal its name.
+      return this.entity(object).map((entity) =>
+        entity.iri === undefined
+          ? new OccupationRole(undefined, entity.names, undefined, undefined)
+          : new OccupationRole(
+              this.namedType(entity.iri),
+              [],
+              undefined,
+              undefined,
+            ),
+      );
+    }
+
+    // The property is repeated on the role to reach the occupation, per Schema.org; a role may
+    // also be named without one. Only the first occupation is taken, since a role is one thing. An
+    // occupation the role only names is a name for the role, as it is on a term.
+    const mentioned = node.occupations.flatMap(this.entity);
+    const linked = mentioned.find((entity) => entity.iri !== undefined)?.iri;
+    const occupation =
+      linked === undefined ? undefined : this.namedType(linked);
+    const roleNames = [
+      ...node.roleNames,
+      ...mentioned
+        .filter((entity) => entity.iri === undefined)
+        .flatMap((entity) => entity.names),
+    ];
+    return occupation === undefined && roleNames.length === 0
+      ? []
+      : [
+          new OccupationRole(
+            occupation,
+            roleNames,
+            node.startDate,
+            node.endDate,
+          ),
+        ];
+  };
 
   /**
    * Where the term is, read from the `schema:geo` node it points at and from the term itself.
@@ -208,6 +359,11 @@ export class TermsTransformer {
       return acc;
     }, []);
 }
+
+// Both Schema.org namespaces, because source queries use either one.
+const isRoleClass = (type: RDF.Term) =>
+  type.value === 'https://schema.org/Role' ||
+  type.value === 'http://schema.org/Role';
 
 const alphabeticallyByPrefLabel = (a: RelatedTerm, b: RelatedTerm) => {
   const prefLabelA = a.prefLabels[0]?.value ?? '';

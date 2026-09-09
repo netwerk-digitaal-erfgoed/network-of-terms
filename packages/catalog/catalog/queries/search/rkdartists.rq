@@ -1,21 +1,37 @@
+PREFIX edtf: <http://id.loc.gov/datatypes/edtf/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX schema: <https://schema.org/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
 CONSTRUCT {
-    ?uri a skos:Concept ;
+    ?uri a skos:Concept, ?type ;
         skos:prefLabel ?prefLabel ;
         skos:altLabel ?altLabel ;
         skos:scopeNote ?scopeNote_nl, ?scopeNote_en ;
         skos:exactMatch ?exactMatch_uri ;
-        rdfs:seeAlso ?seeAlso .
+        rdfs:seeAlso ?seeAlso ;
+        schema:birthDate ?birthDate_edtf ;
+        schema:deathDate ?deathDate_edtf ;
+        schema:birthPlace ?birthPlace_uri, ?birthPlace_alternative_nl, ?birthPlace_alternative_en ;
+        schema:deathPlace ?deathPlace_uri, ?deathPlace_alternative_nl, ?deathPlace_alternative_en ;
+        schema:hasOccupation ?occupation ;
+        schema:nationality ?nationality_uri, ?nationality_alternative .
+    ?birthPlace_uri schema:name ?birthPlace_name_nl, ?birthPlace_name_en .
+    ?deathPlace_uri schema:name ?deathPlace_name_nl, ?deathPlace_name_en .
+    ?nationality_named schema:name ?nationality_name .
 }
+# See the lookup query, queries/lookup/rkdartists.rq, for why some properties are OPTIONALs and
+# others UNION branches, and for how the places, occupations and nationalities are read.
 WHERE {
     {
-        SELECT DISTINCT ?uri
+        SELECT DISTINCT ?uri ?type
             (GROUP_CONCAT(DISTINCT ?schema_description; separator="; ") as ?descriptions)
             (GROUP_CONCAT(DISTINCT ?additionalType_nl; separator=", ") as ?additionalTypes_nl)
             (GROUP_CONCAT(DISTINCT ?additionalType_en; separator=", ") as ?additionalTypes_en)
+            (COUNT(DISTINCT ?birthPlace_iri) AS ?birthPlaceCount)
+            (COUNT(DISTINCT ?deathPlace_iri) AS ?deathPlaceCount)
+            (COUNT(DISTINCT ?nationality_iri) AS ?nationalityCount)
+            (SAMPLE(?nationality_iri) AS ?nationality_sample)
             ?birthPlace_nl
             ?birthPlace_en
             ?deathPlace_nl
@@ -29,6 +45,15 @@ WHERE {
             VALUES ?type { schema:Person schema:Organization }
 
             OPTIONAL { ?uri schema:description ?schema_description . }
+
+            # How many places and nationalities the source states, to tell one from a list of
+            # alternatives below; the nationality IRI itself is sampled, which is exact when there is
+            # one. Its literals are not projected here: every non-aggregated variable this subquery
+            # projects multiplies its rows, and a person with six nationalities in two languages
+            # would take 36 rows out of the LIMIT that is meant to count persons.
+            OPTIONAL { ?uri schema:birthPlace ?birthPlace_iri . FILTER(isIRI(?birthPlace_iri)) }
+            OPTIONAL { ?uri schema:deathPlace ?deathPlace_iri . FILTER(isIRI(?deathPlace_iri)) }
+            OPTIONAL { ?uri schema:nationality ?nationality_iri . FILTER(isIRI(?nationality_iri)) }
 
             OPTIONAL {
                 ?uri schema:birthPlace ?birthPlace_nl .
@@ -61,10 +86,49 @@ WHERE {
     }
 
     OPTIONAL { ?uri schema:name ?prefLabel . }
-    OPTIONAL { ?uri schema:alternateName ?altLabel . }
     OPTIONAL { ?uri schema:birthDate ?birthDate . }
     OPTIONAL { ?uri schema:deathDate ?deathDate . }
-    OPTIONAL { ?uri rdfs:seeAlso ?exactMatch_uri . }
+
+    #
+    # The group is not an OPTIONAL, and its first branch repeats a pattern the term already matches,
+    # for the reasons the README gives: an OPTIONAL stops Virtuoso applying the patterns outside the
+    # group to the branches, and without the first branch a term with none of the properties drops
+    # out of the result.
+    {
+        { ?uri a ?type . }
+        UNION { ?uri schema:alternateName ?altLabel . }
+        UNION { ?uri rdfs:seeAlso ?exactMatch_uri . }
+        UNION { ?uri schema:birthPlace ?birthPlace_uri . FILTER(isIRI(?birthPlace_uri)) }
+        UNION { ?uri schema:deathPlace ?deathPlace_uri . FILTER(isIRI(?deathPlace_uri)) }
+        UNION { ?uri a schema:Person ; schema:additionalType ?occupation . FILTER(isLiteral(?occupation)) }
+        UNION { ?uri a schema:Person ; schema:nationality ?nationality_uri . FILTER(isIRI(?nationality_uri)) }
+        UNION { ?uri a schema:Person ; schema:nationality ?nationality_literal . FILTER(isLiteral(?nationality_literal)) }
+    }
+
+    # A birth or death place, and a nationality, is stated twice, as a thesaurus IRI and as Dutch
+    # and English literals, with nothing pairing the two, and the thesaurus is not in this endpoint.
+    # For all but 476 persons there is one place, and for 94% one nationality, and then the IRI takes
+    # the literals as its names. The rest are alternatives the literature disagrees on – ‘geboorteplaats
+    # onzeker’, Cortona or Siena – so naming each IRI with every literal would turn ‘Cortona or Siena’
+    # into ‘Cortona, also called Siena’. Those come out as the IRIs unnamed and the literals as entities
+    # by name alone, as does a place or nationality stated by literals only. An unbound variable in
+    # the IF makes the BIND fail, which leaves the variable unbound and the triple unconstructed.
+    BIND(IF(?birthPlaceCount = 1, ?birthPlace_nl, ?noValue) AS ?birthPlace_name_nl)
+    BIND(IF(?birthPlaceCount = 1, ?birthPlace_en, ?noValue) AS ?birthPlace_name_en)
+    BIND(IF(?birthPlaceCount != 1, ?birthPlace_nl, ?noValue) AS ?birthPlace_alternative_nl)
+    BIND(IF(?birthPlaceCount != 1, ?birthPlace_en, ?noValue) AS ?birthPlace_alternative_en)
+    BIND(IF(?deathPlaceCount = 1, ?deathPlace_nl, ?noValue) AS ?deathPlace_name_nl)
+    BIND(IF(?deathPlaceCount = 1, ?deathPlace_en, ?noValue) AS ?deathPlace_name_en)
+    BIND(IF(?deathPlaceCount != 1, ?deathPlace_nl, ?noValue) AS ?deathPlace_alternative_nl)
+    BIND(IF(?deathPlaceCount != 1, ?deathPlace_en, ?noValue) AS ?deathPlace_alternative_en)
+    # The nationality literals arrive on rows of their own UNION branch, with the sampled IRI from
+    # the subquery beside them, so a single nationality is named from those rows.
+    BIND(IF(?nationalityCount = 1, ?nationality_sample, ?noValue) AS ?nationality_named)
+    BIND(IF(?nationalityCount = 1, ?nationality_literal, ?noValue) AS ?nationality_name)
+    BIND(IF(?nationalityCount != 1, ?nationality_literal, ?noValue) AS ?nationality_alternative)
+
+    BIND(IF(CONTAINS(STR(?birthDate), "/"), STRDT(STR(?birthDate), edtf:EDTF), ?birthDate) AS ?birthDate_edtf)
+    BIND(IF(CONTAINS(STR(?deathDate), "/"), STRDT(STR(?deathDate), edtf:EDTF), ?deathDate) AS ?deathDate_edtf)
 
     BIND(
         STRLANG(
