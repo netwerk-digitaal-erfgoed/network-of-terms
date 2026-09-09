@@ -13,5 +13,8 @@ describe('Schema', () => {
     await expect(schema(catalog.getLanguages())).toMatchFileSnapshot(
       '../schema.graphql',
     );
-  }, 30_000);
+    // Loading the catalog parses every dataset file through Comunica, which takes a few seconds
+    // here and 20–30 s on a shared CI runner with other Nx tasks in parallel. Not the network:
+    // the load makes two requests, both for the schema.org context.
+  }, 120_000);
 });
