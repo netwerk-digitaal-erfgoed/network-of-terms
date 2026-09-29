@@ -44,8 +44,8 @@
       "@id": "https://www.cultureelerfgoed.nl"
     }
   ],
-  "url": ["https://data.cultureelerfgoed.nl/term/id/abr/"],
-  "mainEntityOfPage": ["https://thesaurus.cultureelerfgoed.nl/"],
+  "url": [{ "@id": "https://data.cultureelerfgoed.nl/term/id/abr/" }],
+  "mainEntityOfPage": [{ "@id": "https://thesaurus.cultureelerfgoed.nl/" }],
   "description": [
     {
       "@language": "nl",

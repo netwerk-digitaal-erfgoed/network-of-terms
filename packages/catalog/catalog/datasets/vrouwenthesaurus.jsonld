@@ -22,8 +22,8 @@
       "@id": "https://atria.nl"
     }
   ],
-  "url": ["https://vrouwenthesaurus.org/conceptid/"],
-  "mainEntityOfPage": ["https://vrouwenthesaurus.org/conceptid.html"],
+  "url": [{ "@id": "https://vrouwenthesaurus.org/conceptid/" }],
+  "mainEntityOfPage": [{ "@id": "https://vrouwenthesaurus.org/conceptid.html" }],
   "description": [
     {
       "@language": "en",

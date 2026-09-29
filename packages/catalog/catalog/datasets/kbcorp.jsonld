@@ -22,8 +22,8 @@
       "@id": "http://data.bibliotheken.nl/id/thes/p075301482"
     }
   ],
-  "url": ["http://data.bibliotheken.nl/id/thes/"],
-  "mainEntityOfPage": ["https://data.bibliotheken.nl/KB/-/stories/Corporatiethesaurus-van-de-KB"],
+  "url": [{ "@id": "http://data.bibliotheken.nl/id/thes/" }],
+  "mainEntityOfPage": [{ "@id": "https://data.bibliotheken.nl/KB/-/stories/Corporatiethesaurus-van-de-KB" }],
   "description": [
     {
       "@language": "en",

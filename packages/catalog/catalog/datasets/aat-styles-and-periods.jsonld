@@ -36,7 +36,7 @@
     }
   ],
   "mainEntityOfPage": [
-    "https://www.getty.edu/research/tools/vocabularies/aat/about.html"
+    { "@id": "https://www.getty.edu/research/tools/vocabularies/aat/about.html" }
   ],
   "description": [
     {

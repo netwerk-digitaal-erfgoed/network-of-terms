@@ -22,7 +22,7 @@
       "@id": "https://www.wikidata.org/entity/Q180"
     }
   ],
-  "mainEntityOfPage": ["https://www.wikidata.org"],
+  "mainEntityOfPage": [{ "@id": "https://www.wikidata.org" }],
   "description": [
     {
       "@language": "en",

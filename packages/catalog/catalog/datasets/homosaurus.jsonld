@@ -22,8 +22,8 @@
       "@id": "https://ihlia.nl"
     }
   ],
-  "url": ["https://data.ihlia.nl/homosaurus/"],
-  "mainEntityOfPage": ["https://homosaurus.org"],
+  "url": [{ "@id": "https://data.ihlia.nl/homosaurus/" }],
+  "mainEntityOfPage": [{ "@id": "https://homosaurus.org" }],
   "description": [
     {
       "@language": "en",

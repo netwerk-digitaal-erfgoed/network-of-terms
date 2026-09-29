@@ -22,9 +22,9 @@
       "@id": "https://www.wo2net.nl"
     }
   ],
-  "url": ["https://data.niod.nl/WO2_biografieen/"],
+  "url": [{ "@id": "https://data.niod.nl/WO2_biografieen/" }],
   "mainEntityOfPage": [
-    "https://data.niod.nl/WO2_biografieen.html"
+    { "@id": "https://data.niod.nl/WO2_biografieen.html" }
   ],
   "description": [
     {

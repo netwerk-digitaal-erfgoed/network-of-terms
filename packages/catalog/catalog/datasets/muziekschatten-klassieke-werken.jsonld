@@ -22,8 +22,8 @@
       "@id": "https://www.podiumkunst.net"
     }
   ],
-  "url": ["https://data.muziekschatten.nl/som/work/"],
-  "mainEntityOfPage": ["https://data.muziekschatten.nl/"],
+  "url": [{ "@id": "https://data.muziekschatten.nl/som/work/" }],
+  "mainEntityOfPage": [{ "@id": "https://data.muziekschatten.nl/" }],
   "description": [
     {
       "@language": "en",

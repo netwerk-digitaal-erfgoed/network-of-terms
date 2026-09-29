@@ -32,8 +32,8 @@
       "@id": "https://www.korpora.nl"
     }
   ],
-  "url": ["https://digitaalerfgoed.poolparty.biz/data/rdf/"],
-  "mainEntityOfPage": ["https://digitaalerfgoed.poolparty.biz/data/rfd.html"],
+  "url": [{ "@id": "https://digitaalerfgoed.poolparty.biz/data/rdf/" }],
+  "mainEntityOfPage": [{ "@id": "https://digitaalerfgoed.poolparty.biz/data/rfd.html" }],
   "description": [
     {
       "@language": "en",

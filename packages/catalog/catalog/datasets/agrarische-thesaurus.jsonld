@@ -52,9 +52,9 @@
       "@id": "https://erfgoedgelderland.nl/"
     }
   ],
-  "url": ["https://digitaalerfgoed.poolparty.biz/agrarischethesaurus/"],
+  "url": [{ "@id": "https://digitaalerfgoed.poolparty.biz/agrarischethesaurus/" }],
   "mainEntityOfPage": [
-    "https://erfgoedgelderland.nl/nieuws/van-aardappelhaak-tot-zwingelmolen-nieuwe-thesaurus-agrarische-collecties/"
+    { "@id": "https://erfgoedgelderland.nl/nieuws/van-aardappelhaak-tot-zwingelmolen-nieuwe-thesaurus-agrarische-collecties/" }
   ],
   "description": [
     {

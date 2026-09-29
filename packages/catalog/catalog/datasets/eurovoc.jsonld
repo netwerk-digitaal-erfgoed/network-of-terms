@@ -28,8 +28,8 @@
       "@id": "https://op.europa.eu/"
     }
   ],
-  "url": ["http://eurovoc.europa.eu/"],
-  "mainEntityOfPage": ["https://data.europa.eu/data/datasets/eurovoc"],
+  "url": [{ "@id": "http://eurovoc.europa.eu/" }],
+  "mainEntityOfPage": [{ "@id": "https://data.europa.eu/data/datasets/eurovoc" }],
   "description": [
     {
       "@language": "en",

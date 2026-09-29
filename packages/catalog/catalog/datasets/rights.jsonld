@@ -33,13 +33,13 @@
     }
   ],
   "url": [
-    "https://data.cultureelerfgoed.nl/rights/",
-    "https://creativecommons.org/",
-    "http://rightsstatements.org/",
-    "https://rightsstatements.org/"
+    { "@id": "https://data.cultureelerfgoed.nl/rights/" },
+    { "@id": "https://creativecommons.org/" },
+    { "@id": "http://rightsstatements.org/" },
+    { "@id": "https://rightsstatements.org/" }
   ],
   "mainEntityOfPage": [
-    "https://data.cultureelerfgoed.nl/rights.html"
+    { "@id": "https://data.cultureelerfgoed.nl/rights.html" }
   ],
   "description": [
     {

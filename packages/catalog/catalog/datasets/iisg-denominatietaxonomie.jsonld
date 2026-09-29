@@ -23,8 +23,8 @@
     }
   ],
   "url": [
-    "https://iisg.amsterdam/resource/ListOfDenominations/" ],
-  "mainEntityOfPage": ["https://iisg.amsterdam/resource/ListOfDenominations/"],
+    { "@id": "https://iisg.amsterdam/resource/ListOfDenominations/" } ],
+  "mainEntityOfPage": [{ "@id": "https://iisg.amsterdam/resource/ListOfDenominations/" }],
   "description": [
     {
       "@language": "en",

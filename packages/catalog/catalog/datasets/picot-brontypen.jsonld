@@ -33,10 +33,10 @@
     }
   ],
   "url": [
-    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/"
+    { "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/" }
   ],
   "mainEntityOfPage": [
-    "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens"
+    { "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens" }
   ],
   "description": [
     {

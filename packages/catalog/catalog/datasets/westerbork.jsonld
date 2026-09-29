@@ -38,8 +38,8 @@
       "@id": "https://kampwesterbork.nl"
     }
   ],
-  "url": ["https://digitaalerfgoed.poolparty.biz/westerbork/"],
-  "mainEntityOfPage": ["https://digitaalerfgoed.poolparty.biz/westerbork.html"],
+  "url": [{ "@id": "https://digitaalerfgoed.poolparty.biz/westerbork/" }],
+  "mainEntityOfPage": [{ "@id": "https://digitaalerfgoed.poolparty.biz/westerbork.html" }],
   "description": [
     {
       "@language": "en",

@@ -22,8 +22,8 @@
       "@id": "https://www.amsterdamtimemachine.nl"
     }
   ],
-  "url": ["https://adamlink.nl/geo/address/"],
-  "mainEntityOfPage": ["https://adamlink.nl"],
+  "url": [{ "@id": "https://adamlink.nl/geo/address/" }],
+  "mainEntityOfPage": [{ "@id": "https://adamlink.nl" }],
   "description": [
     {
       "@language": "en",

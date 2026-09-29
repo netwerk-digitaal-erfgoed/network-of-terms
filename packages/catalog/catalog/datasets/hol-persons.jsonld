@@ -22,8 +22,8 @@
       "@id": "https://www.thehouseoflegacies.nl/"
     }
   ],
-  "url": ["https://pid.thehouseoflegacies.nl/ark:43442/"],
-  "mainEntityOfPage": ["https://terms.thehouseoflegacies.nl/dataset/persons"],
+  "url": [{ "@id": "https://pid.thehouseoflegacies.nl/ark:43442/" }],
+  "mainEntityOfPage": [{ "@id": "https://terms.thehouseoflegacies.nl/dataset/persons" }],
   "description": [
     {
       "@language": "en",
