@@ -22,7 +22,7 @@
       "@id": "https://www.geonames.org/team.html"
     }
   ],
-  "mainEntityOfPage": ["https://www.geonames.org/about.html"],
+  "mainEntityOfPage": [{ "@id": "https://www.geonames.org/about.html" }],
   "description": [
     {
       "@language": "en",

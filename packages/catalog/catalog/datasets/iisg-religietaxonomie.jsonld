@@ -23,8 +23,8 @@
     }
   ],
   "url": [
-    "https://iisg.amsterdam/resource/TaxonomyOfReligions/"],
-  "mainEntityOfPage": ["https://iisg.amsterdam/resource/TaxonomyOfReligions/"],
+    { "@id": "https://iisg.amsterdam/resource/TaxonomyOfReligions/" }],
+  "mainEntityOfPage": [{ "@id": "https://iisg.amsterdam/resource/TaxonomyOfReligions/" }],
   "description": [
     {
       "@language": "en",

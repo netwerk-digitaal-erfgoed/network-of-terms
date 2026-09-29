@@ -22,9 +22,9 @@
       "@id": "https://www.beeldengeluid.nl/"
     }
   ],
-  "url": ["http://data.beeldengeluid.nl/gtaa/"],
+  "url": [{ "@id": "http://data.beeldengeluid.nl/gtaa/" }],
   "mainEntityOfPage": [
-    "https://www.beeldengeluid.nl/kennis/kennisthemas/metadata/gemeenschappelijke-thesaurus-audiovisuele-archieven"
+    { "@id": "https://www.beeldengeluid.nl/kennis/kennisthemas/metadata/gemeenschappelijke-thesaurus-audiovisuele-archieven" }
   ],
   "description": [
     {

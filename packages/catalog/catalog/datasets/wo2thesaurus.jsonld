@@ -31,8 +31,8 @@
       "@id": "https://www.niod.nl"
     }
   ],
-  "url": ["https://data.niod.nl/WO2_Thesaurus/"],
-  "mainEntityOfPage": ["https://data.niod.nl/WO2_Thesaurus.html"],
+  "url": [{ "@id": "https://data.niod.nl/WO2_Thesaurus/" }],
+  "mainEntityOfPage": [{ "@id": "https://data.niod.nl/WO2_Thesaurus.html" }],
   "description": [
     {
       "@language": "en",

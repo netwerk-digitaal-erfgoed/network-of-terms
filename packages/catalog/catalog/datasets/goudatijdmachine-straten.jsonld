@@ -35,10 +35,10 @@
     }
   ],
   "url": [
-    "https://n2t.net/ark:/60537/"
+    { "@id": "https://n2t.net/ark:/60537/" }
   ],
   "mainEntityOfPage": [
-    "https://www.goudatijdmachine.nl/straatnamen/"
+    { "@id": "https://www.goudatijdmachine.nl/straatnamen/" }
   ],
   "description": [
     {
