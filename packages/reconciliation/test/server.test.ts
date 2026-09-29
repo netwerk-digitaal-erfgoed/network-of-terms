@@ -46,6 +46,15 @@ describe('Server', () => {
     expect(response.statusCode).toEqual(200);
   });
 
+  // Reverse proxies such as Traefik merge the double slash after the scheme.
+  it('returns reconciliation service manifest when a proxy merged the slashes in the IRI', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/reconcile/https:/data.rkd.nl/rkdartists',
+    });
+    expect(response.statusCode).toEqual(200);
+  });
+
   it('returns 404 if reconciliation service does not exist', async () => {
     const response = await httpServer.inject({
       method: 'GET',
@@ -223,6 +232,15 @@ describe('Server', () => {
       ),
     );
     expect(response.body).toContain('RKDartists');
+  });
+
+  it('shows HTML term preview when a proxy merged the slashes in the IRI', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https:/example.com/resources/artwork',
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toContain('<h1>Nachtwacht</h1>');
   });
 
   it('shows HTML term preview if term has no altLabels', async () => {

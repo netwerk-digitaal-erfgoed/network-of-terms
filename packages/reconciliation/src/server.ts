@@ -54,7 +54,7 @@ export async function server(
   });
 
   server.get<{ Params: { '*': string } }>('/reconcile/*', (request, reply) => {
-    const dataset = request.params['*'];
+    const dataset = iriFromPath(request.params['*']);
     const manifest = findManifest(dataset, catalog, request.root);
     if (manifest === undefined) {
       void reply.code(404).send();
@@ -85,7 +85,7 @@ export async function server(
         );
         return;
       }
-      const dataset = request.params['*'];
+      const dataset = iriFromPath(request.params['*']);
       const manifest = findManifest(dataset, catalog, request.root);
       if (manifest === undefined) {
         void reply.code(404).send();
@@ -132,7 +132,7 @@ export async function server(
   server.get<{ Params: { '*': string } }>(
     '/preview/*',
     async (request, reply) => {
-      const termIri = request.params['*'];
+      const termIri = iriFromPath(request.params['*']);
       const [lookupResult] = await lookupService.lookup([termIri], 10000);
       const source = catalog.getDatasetByDistributionIri(
         lookupResult.distribution.iri,
@@ -155,6 +155,13 @@ export async function server(
 }
 
 export type locale = typeof en;
+
+/**
+ * Restore the IRI in a path wildcard. Reverse proxies such as Traefik merge duplicate slashes
+ * in the path, which turns `https://example.com` into `https:/example.com`.
+ */
+const iriFromPath = (path: string) =>
+  path.replace(/^(https?):\/(?!\/)/, '$1://');
 
 /**
  * Reconciliation queries are JSON-encoded in a x-www-form-urlencoded ‘queries’ parameter, so unpack that parameter.
