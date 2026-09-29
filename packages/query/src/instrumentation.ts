@@ -13,6 +13,14 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { metrics, ValueType } from '@opentelemetry/api';
 import { hostname } from 'node:os';
 
+/**
+ * Export the metrics recorded since the last periodic export, then stop exporting. Call this
+ * on shutdown: without it, a replaced pod loses up to one export interval of metrics.
+ */
+export function shutdownInstrumentation(): Promise<void> {
+  return meterProvider.shutdown();
+}
+
 const sourceQueriesHistogramName = 'queries.source';
 
 // Incubating in @opentelemetry/semantic-conventions, which recommends copying such constants.

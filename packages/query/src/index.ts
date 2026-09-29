@@ -6,6 +6,7 @@ export * from './terms.js';
 export * from './search/query-mode.js';
 export * from './distributions.js';
 export * from './helpers/logger.js';
+export { shutdownInstrumentation } from './instrumentation.js';
 
 import { QueryEngine } from '@comunica/query-sparql';
 

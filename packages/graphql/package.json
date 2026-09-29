@@ -23,6 +23,7 @@
     "@fastify/cors": "11.3.0",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
+    "close-with-grace": "2.5.0",
     "env-schema": "7.0.0",
     "fastify": "5.12.1",
     "graphql": "16.13.0",
@@ -34,7 +35,9 @@
   },
   "nx": {
     "name": "graphql",
-    "tags": ["release:docker"],
+    "tags": [
+      "release:docker"
+    ],
     "release": {
       "docker": {
         "repositoryName": "network-of-terms-graphql"
