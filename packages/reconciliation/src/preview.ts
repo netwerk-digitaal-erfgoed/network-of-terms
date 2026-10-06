@@ -14,6 +14,7 @@ export function preview(
   source: Dataset,
   locale: locale,
   language: string,
+  viewUrlTemplate: string,
 ) {
   const term = lookupResult.result;
   if (term instanceof Term) {
@@ -47,9 +48,10 @@ export function preview(
           source.creators[0]?.alternateName['']
         })</dd>
       </dl>
-      </p><a target="_blank" href="https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=${
-        term.id.value
-      }">${locale.view}</a>
+      </p><a target="_blank" href="${viewUrlTemplate.replace(
+        '{uri}',
+        term.id.value,
+      )}">${locale.view}</a>
   </body>
   </html>`;
   } else {
