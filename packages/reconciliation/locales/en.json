@@ -1,5 +1,7 @@
 {
   "altLabels": "Alternative labels",
+  "birth": "Born",
+  "death": "Died",
   "broader": "Broader terms",
   "narrower": "Narrower terms",
   "related": "Related terms",

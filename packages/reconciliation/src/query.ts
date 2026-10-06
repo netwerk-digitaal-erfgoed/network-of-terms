@@ -4,6 +4,7 @@ import {
   literalValues,
   QueryMode,
   QueryTermsService,
+  Term,
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { score } from './score.js';
@@ -46,7 +47,10 @@ export async function reconciliationQuery(
             id: term.id.value.toString(),
             name: literalValues(term.prefLabels, [language]).join(' • '), // Join similarly to network-of-terms-demo.
             score: score(queryString, term),
-            description: literalValues(term.altLabels, [language]).join(' • '),
+            description: [
+              ...lifespan(term),
+              ...literalValues(term.altLabels, [language]),
+            ].join(' • '),
           }))
           .sort((a, b) => b.score - a.score)
           .slice(0, limit),
@@ -73,4 +77,14 @@ export type ReconciliationCandidate = {
   name: string;
   score: number;
   description?: string;
+};
+
+// The birth and death dates of the person a term denotes, as ‘1606-07-15 – 1669-10-04’, so that
+// namesakes can be told apart in the list of candidates. Empty for any other term.
+const lifespan = (term: Term) => {
+  const dates = [term.birthDates, term.deathDates].map((dates) =>
+    dates.map((date) => date.value).join(', '),
+  );
+
+  return dates.some((date) => date !== '') ? [dates.join(' – ').trim()] : [];
 };
