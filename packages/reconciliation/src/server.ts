@@ -146,6 +146,7 @@ export async function server(
             source,
             locales[request.preferredLanguage],
             request.preferredLanguage,
+            config.VIEW_URL_TEMPLATE as string,
           ),
         );
     },

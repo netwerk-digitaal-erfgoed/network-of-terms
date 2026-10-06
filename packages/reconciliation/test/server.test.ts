@@ -97,6 +97,22 @@ describe('Server', () => {
     expect(results.q3.result).toEqual([]); // No results.
   });
 
+  it('describes a person candidate by birth and death dates', async () => {
+    const response = await reconciliationQuery(
+      'https://data.rkd.nl/rkdartists',
+      { q1: { query: 'rembrandt' } },
+    );
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+
+    expect(
+      results.q1.result.find(
+        (candidate: { id: string }) =>
+          candidate.id === 'https://example.com/resources/rembrandt',
+      ).description,
+    ).toEqual('1606-07-15/1607 – 1669-10-04 • Rembrandt van Rijn');
+  });
+
   it('responds to successful reconciliation API request with backwards compatible distribution URI', async () => {
     const response = await reconciliationQuery(
       'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
@@ -188,11 +204,19 @@ describe('Server', () => {
         prefLabels: [{ str: 'The Night Watch' }],
         altLabels: [{ str: 'Night Watch alt' }],
         scopeNotes: [{ str: 'One of the most famous Dutch paintings' }],
+        birthDates: [],
+        deathDates: [],
+        birthPlaces: [],
+        deathPlaces: [],
       },
       'https://example.com/resources/painter': {
         prefLabels: [{ str: 'Rembrandt' }],
         altLabels: [],
         scopeNotes: [],
+        birthDates: [],
+        deathDates: [],
+        birthPlaces: [],
+        deathPlaces: [],
       },
     });
   });
@@ -213,6 +237,34 @@ describe('Server', () => {
         prefLabels: [{ str: 'Marion Michelle Koblitz' }],
         altLabels: [],
         scopeNotes: [],
+        birthDates: [],
+        deathDates: [],
+        birthPlaces: [],
+        deathPlaces: [],
+      },
+    });
+  });
+
+  it('returns what the source states about a person in data extension response', async () => {
+    const response = await dataExtensionQuery({
+      url: '/extend',
+      language: 'nl',
+      query: {
+        ids: ['https://example.com/resources/rembrandt'],
+        properties: [{ id: 'birthDates' }],
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(results.rows).toEqual({
+      'https://example.com/resources/rembrandt': {
+        prefLabels: [{ str: 'Rembrandt' }],
+        altLabels: [{ str: 'Rembrandt van Rijn' }],
+        scopeNotes: [],
+        birthDates: [{ str: '1606-07-15/1607' }],
+        deathDates: [{ str: '1669-10-04' }],
+        birthPlaces: [{ str: 'Leiden (stad)' }],
+        deathPlaces: [{ str: 'Amsterdam (stad)' }],
       },
     });
   });
@@ -234,6 +286,33 @@ describe('Server', () => {
     expect(response.body).toContain('RKDartists');
   });
 
+  it('shows birth and death of a person in HTML term preview', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/rembrandt',
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toMatch(
+      new RegExp(
+        '<dt>Geboren</dt>\\s*<dd>1606-07-15&#x2f;1607 &#8226; Leiden &#x28;stad&#x29;</dd>',
+      ),
+    );
+    expect(response.body).toMatch(
+      new RegExp(
+        '<dt>Overleden</dt>\\s*<dd>1669-10-04 &#8226; Amsterdam &#x28;stad&#x29;</dd>',
+      ),
+    );
+  });
+
+  it('shows no birth or death in HTML term preview of a term that is not a person', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/artwork',
+    });
+    expect(response.body).not.toContain('Geboren');
+    expect(response.body).not.toContain('Overleden');
+  });
+
   it('shows HTML term preview when a proxy merged the slashes in the IRI', async () => {
     const response = await httpServer.inject({
       method: 'GET',
@@ -253,7 +332,23 @@ describe('Server', () => {
     });
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
-    expect(response.body).toMatch('Bekijk in Termennetwerk');
+    expect(response.body).toContain(
+      '<a target="_blank" href="https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=https://example.com/resources/painter">Meer informatie</a>',
+    );
+  });
+
+  it('links HTML term preview to the configured URL', async () => {
+    const configuredServer = await server(catalog, {
+      ...config,
+      VIEW_URL_TEMPLATE: '{uri}',
+    });
+    const response = await configuredServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/painter',
+    });
+    expect(response.body).toContain(
+      'href="https://example.com/resources/painter"',
+    );
   });
 
   it('translates HTML preview', async () => {
