@@ -81,34 +81,3 @@ jobs:
             docker tag "$image" "$REPO:latest"
             docker push "$REPO:latest"
           done <<< "${{ steps.docker.outputs.images }}"
-
-      - uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Deploy to Kubernetes
-        if: steps.docker.outputs.images
-        run: |
-          doctl kubernetes cluster kubeconfig save nde
-          echo "🚀 Deploying discovered images to Kubernetes..."
-
-          while IFS= read -r image; do
-            case "$image" in
-              *network-of-terms-graphql*)
-                echo "🚀 Deploying $image"
-                kubectl set image deployment/network-of-terms-graphql app=$image --record &
-                ;;
-              *network-of-terms-reconciliation*)
-                echo "🚀 Deploying $image"
-                kubectl set image deployment/network-of-terms-reconciliation app=$image --record &
-                ;;
-              *)
-                echo "⚠️ Unknown image pattern: $image - skipping"
-                ;;
-            esac
-          done <<< "${{ steps.docker.outputs.images }}"
-
-          # Verify all deployments
-          echo "✅ Verifying deployments..."
-          kubectl rollout status deployment/network-of-terms-graphql deployment/network-of-terms-reconciliation 2>/dev/null || true
-          echo "✅ All deployments completed"
