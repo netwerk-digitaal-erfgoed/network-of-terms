@@ -9,6 +9,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'monthly'
+    open-pull-requests-limit: 30 # Above the default of 5, which drops the remaining updates until the next monthly run.
     ignore:
       - dependency-name: 'jsonld-context-parser' # Must match the version that Comunica depends on: https://github.com/comunica/comunica/blob/master/packages/actor-rdf-parse-jsonld/package.json#L48
     groups:
