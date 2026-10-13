@@ -7,9 +7,11 @@ const schema = {
       type: 'boolean',
       default: false,
     },
-    // Where the preview links to for more about a term; {uri} is replaced with the term’s IRI.
+    // Where the preview links to for more about a term: {uri} is replaced with the term’s
+    // percent-encoded IRI, {+uri} with the IRI as it is.
     VIEW_URL_TEMPLATE: {
       type: 'string',
+      pattern: '\\{\\+?uri\\}',
       default:
         'https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri={uri}',
     },

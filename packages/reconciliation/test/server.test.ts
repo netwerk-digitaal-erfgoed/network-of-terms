@@ -9,6 +9,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query/test-utils';
 import { DataExtensionQuery } from '../src/data-extension.js';
 import { config } from '../src/config.js';
+import { escapeHtml } from '@hapi/hoek';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);
@@ -269,6 +270,23 @@ describe('Server', () => {
     });
   });
 
+  it('returns no date for an empty date in data extension response', async () => {
+    const response = await dataExtensionQuery({
+      url: '/extend',
+      language: 'nl',
+      query: {
+        ids: ['https://example.com/resources/person-empty-date'],
+        properties: [{ id: 'birthDates' }],
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(
+      results.rows['https://example.com/resources/person-empty-date']
+        .birthDates,
+    ).toEqual([]);
+  });
+
   it('shows HTML term preview, defaulting to Dutch', async () => {
     const response = await httpServer.inject({
       method: 'GET',
@@ -333,22 +351,34 @@ describe('Server', () => {
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
     expect(response.body).toContain(
-      '<a target="_blank" href="https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=https://example.com/resources/painter">Meer informatie</a>',
+      `<a target="_blank" href="${escapeHtml(
+        'https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=https%3A%2F%2Fexample.com%2Fresources%2Fpainter',
+      )}">Meer informatie</a>`,
     );
   });
 
   it('links HTML term preview to the configured URL', async () => {
     const configuredServer = await server(catalog, {
       ...config,
-      VIEW_URL_TEMPLATE: '{uri}',
+      VIEW_URL_TEMPLATE: '{+uri}',
     });
     const response = await configuredServer.inject({
       method: 'GET',
       url: '/preview/https://example.com/resources/painter',
     });
     expect(response.body).toContain(
-      'href="https://example.com/resources/painter"',
+      `href="${escapeHtml('https://example.com/resources/painter')}"`,
     );
+  });
+
+  it('shows no birth in HTML term preview of a person whose birth date is empty', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/person-empty-date',
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(response.body).toContain('<h1>Naamloos</h1>');
+    expect(response.body).not.toContain('Geboren');
   });
 
   it('translates HTML preview', async () => {

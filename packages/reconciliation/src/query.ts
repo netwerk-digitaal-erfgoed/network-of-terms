@@ -7,6 +7,7 @@ import {
   Term,
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import { dateValues } from './date-values.js';
 import { score } from './score.js';
 
 /**
@@ -83,7 +84,7 @@ export type ReconciliationCandidate = {
 // namesakes can be told apart in the list of candidates. Empty for any other term.
 const lifespan = (term: Term) => {
   const dates = [term.birthDates, term.deathDates].map((dates) =>
-    dates.map((date) => date.value).join(', '),
+    dateValues(dates).join(', '),
   );
 
   return dates.some((date) => date !== '') ? [dates.join(' – ').trim()] : [];

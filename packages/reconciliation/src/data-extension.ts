@@ -4,21 +4,13 @@ import {
   LookupService,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import { dateValues } from './date-values.js';
 import { placeNames } from './place-names.js';
 
 export type DataExtensionQuery = {
   ids: string[];
   properties: { id: string }[];
 };
-
-type DataExtensionPropertyId =
-  | 'prefLabels'
-  | 'altLabels'
-  | 'scopeNotes'
-  | 'birthDates'
-  | 'deathDates'
-  | 'birthPlaces'
-  | 'deathPlaces';
 
 export const dataExtensionProperties: {
   id: DataExtensionPropertyId;
@@ -83,6 +75,15 @@ export async function extendQuery(
   return downcastToReconciliationSpecV0_2(futureSpecResult);
 }
 
+type DataExtensionPropertyId =
+  | 'prefLabels'
+  | 'altLabels'
+  | 'scopeNotes'
+  | 'birthDates'
+  | 'deathDates'
+  | 'birthPlaces'
+  | 'deathPlaces';
+
 const propertyValues: Record<
   DataExtensionPropertyId,
   (term: Term, language: string) => string[]
@@ -90,8 +91,8 @@ const propertyValues: Record<
   prefLabels: (term, language) => literalValues(term.prefLabels, [language]),
   altLabels: (term, language) => literalValues(term.altLabels, [language]),
   scopeNotes: (term, language) => literalValues(term.scopeNotes, [language]),
-  birthDates: (term) => term.birthDates.map((date) => date.value),
-  deathDates: (term) => term.deathDates.map((date) => date.value),
+  birthDates: (term) => dateValues(term.birthDates),
+  deathDates: (term) => dateValues(term.deathDates),
   birthPlaces: (term, language) => placeNames(term.birthPlaces, language),
   deathPlaces: (term, language) => placeNames(term.deathPlaces, language),
 };
