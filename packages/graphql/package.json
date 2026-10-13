@@ -25,7 +25,7 @@
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
     "close-with-grace": "2.5.0",
     "env-schema": "7.0.0",
-    "fastify": "5.12.1",
+    "fastify": "5.12.5",
     "graphql": "16.13.0",
     "mercurius": "16.10.0",
     "mercurius-logging": "2.0.0"
