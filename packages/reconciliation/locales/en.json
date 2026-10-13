@@ -1,9 +1,11 @@
 {
   "altLabels": "Alternative labels",
+  "birth": "Born",
+  "death": "Died",
   "broader": "Broader terms",
   "narrower": "Narrower terms",
   "related": "Related terms",
   "notFound": "Not found",
-  "view": "View at Network of Terms",
+  "view": "More information",
   "source": "Terminology source"
 }

@@ -4,6 +4,8 @@ import {
   LookupService,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import { dateValues } from './date-values.js';
+import { placeNames } from './place-names.js';
 
 export type DataExtensionQuery = {
   ids: string[];
@@ -11,7 +13,7 @@ export type DataExtensionQuery = {
 };
 
 export const dataExtensionProperties: {
-  id: 'prefLabels' | 'altLabels' | 'scopeNotes';
+  id: DataExtensionPropertyId;
   name: string;
 }[] = [
   {
@@ -25,6 +27,23 @@ export const dataExtensionProperties: {
   {
     id: 'scopeNotes',
     name: 'scopeNotes',
+  },
+  // What the source states about the person a term denotes; empty for any other term.
+  {
+    id: 'birthDates',
+    name: 'birthDates',
+  },
+  {
+    id: 'deathDates',
+    name: 'deathDates',
+  },
+  {
+    id: 'birthPlaces',
+    name: 'birthPlaces',
+  },
+  {
+    id: 'deathPlaces',
+    name: 'deathPlaces',
   },
 ];
 
@@ -43,9 +62,10 @@ export async function extendQuery(
       id: lookupResult.uri.toString(),
       properties: dataExtensionProperties.map((property) => ({
         id: property.id,
-        values: literalValues((lookupResult.result as Term)[property.id], [
+        values: propertyValues[property.id](
+          lookupResult.result as Term,
           language,
-        ]).map((value) => ({
+        ).map((value) => ({
           str: value,
         })),
       })),
@@ -54,6 +74,28 @@ export async function extendQuery(
 
   return downcastToReconciliationSpecV0_2(futureSpecResult);
 }
+
+type DataExtensionPropertyId =
+  | 'prefLabels'
+  | 'altLabels'
+  | 'scopeNotes'
+  | 'birthDates'
+  | 'deathDates'
+  | 'birthPlaces'
+  | 'deathPlaces';
+
+const propertyValues: Record<
+  DataExtensionPropertyId,
+  (term: Term, language: string) => string[]
+> = {
+  prefLabels: (term, language) => literalValues(term.prefLabels, [language]),
+  altLabels: (term, language) => literalValues(term.altLabels, [language]),
+  scopeNotes: (term, language) => literalValues(term.scopeNotes, [language]),
+  birthDates: (term) => dateValues(term.birthDates),
+  deathDates: (term) => dateValues(term.deathDates),
+  birthPlaces: (term, language) => placeNames(term.birthPlaces, language),
+  deathPlaces: (term, language) => placeNames(term.deathPlaces, language),
+};
 
 const downcastToReconciliationSpecV0_2 = (
   futureSpecResult: DataExtensionResult,
