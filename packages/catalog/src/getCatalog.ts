@@ -13,7 +13,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { fileURLToPath } from 'url';
 import { ldkit, rdf, schema } from 'ldkit/namespaces';
-import { createLens, type IQueryEngine } from 'ldkit';
+import { createLens, type IQueryEngine, type Options } from 'ldkit';
 import type RDF from '@rdfjs/types';
 import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -27,7 +27,12 @@ export async function getCatalog(path?: string): Promise<Catalog> {
   return fromStore(store);
 }
 
-const catalogSchema = {
+// The catalog is read through three lenses rather than one. A lens fetches all its
+// properties in a single query, wrapping each in an OPTIONAL, so every
+// multi-valued property multiplies against all others. Keeping the creator and
+// the distribution out of the query for the dataset’s own properties stops their
+// values from multiplying against each other.
+const datasetSchema = {
   '@type': schema.Dataset,
   name: {
     '@id': schema.name,
@@ -53,6 +58,21 @@ const catalogSchema = {
     '@array': true,
     '@optional': true,
   },
+  mainEntityOfPage: schema.mainEntityOfPage,
+  // Multiple: a dataset may hold terms in more than one URI space, e.g. the
+  // Rights thesaurus, which reuses the canonical Creative Commons and
+  // RightsStatements.org URIs. Optional: datasets that share a terms-URI prefix
+  // with a broader dataset (e.g. Wikidata subsets) omit it, so lookups resolve
+  // to the broader one.
+  url: {
+    '@id': schema.url,
+    '@array': true,
+    '@optional': true,
+  },
+} as const;
+
+const creatorSchema = {
+  '@type': schema.Dataset,
   creator: {
     '@id': schema.creator,
     '@optional': true,
@@ -70,6 +90,10 @@ const catalogSchema = {
       },
     },
   },
+} as const;
+
+const distributionSchema = {
+  '@type': schema.Dataset,
   distribution: {
     '@id': schema.distribution,
     '@optional': true,
@@ -109,30 +133,37 @@ const catalogSchema = {
       },
     },
   },
-  mainEntityOfPage: schema.mainEntityOfPage,
-  // Multiple: a dataset may hold terms in more than one URI space, e.g. the
-  // Rights thesaurus, which reuses the canonical Creative Commons and
-  // RightsStatements.org URIs. Optional: datasets that share a terms-URI prefix
-  // with a broader dataset (e.g. Wikidata subsets) omit it, so lookups resolve
-  // to the broader one.
-  url: {
-    '@id': schema.url,
-    '@array': true,
-    '@optional': true,
-  },
 } as const;
 
 const engine = new QueryEngine();
 
 export async function fromStore(store: RDF.Store): Promise<Catalog> {
-  const lens = createLens(catalogSchema, {
+  const options: Options = {
     sources: [store],
     // Cast needed: rdf-parse uses Comunica v4 types, incompatible with v5.
     engine: engine as unknown as IQueryEngine,
     distinctConstruct: true,
-  });
+  };
 
-  const datasets = await lens.find();
+  const creators = new Map(
+    (await createLens(creatorSchema, options).find()).map((dataset) => [
+      dataset.$id,
+      dataset.creator,
+    ]),
+  );
+  const distributions = new Map(
+    (await createLens(distributionSchema, options).find()).map((dataset) => [
+      dataset.$id,
+      dataset.distribution,
+    ]),
+  );
+  const datasets = (await createLens(datasetSchema, options).find()).map(
+    (dataset) => ({
+      ...dataset,
+      creator: creators.get(dataset.$id),
+      distribution: distributions.get(dataset.$id),
+    }),
+  );
 
   return new Catalog(
     datasets.map(
