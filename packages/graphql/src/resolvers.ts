@@ -226,110 +226,60 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
 }
 
 /**
- * The place that the term denotes, or null if its source describes none.
- *
- * The node carries only what SKOS cannot state, so the term’s position in the place hierarchy stays
- * on `broader` and `narrower` and is not repeated here. That leaves the coordinates, the country
- * and the place’s own name: a term typed as a place whose source publishes none of them has
- * nothing to put in the node, so it gets no node rather than an empty one that reads as a
- * described place.
+ * The place that the term denotes, or null if its source describes none. Whether it does is decided
+ * on everything the source holds, not on what survives the language filter, so it is a fact about
+ * the term rather than about the requested language.
  */
 function denotedPlace(
   term: Term,
   inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
 ) {
-  if (!term.types.some((type) => placeClasses.has(type.value))) {
-    return null;
-  }
-
-  const latitude = floatValue(term.latitude);
-  const longitude = floatValue(term.longitude);
-  // An empty country is as unusable as an empty coordinate, and ISO 3166-1 has no empty code.
-  const addressCountry = term.addressCountry?.value.trim() || null;
-
-  // Tested against everything the source holds, not against what survives the language filter, so
-  // whether the node exists is a fact about the term rather than about the requested language.
-  return latitude === null &&
-    longitude === null &&
-    addressCountry === null &&
-    term.names.length === 0 &&
-    term.additionalTypes.length === 0
+  const place = term.place;
+  return place === undefined
     ? null
     : {
-        name: inRequestedLanguages(term.names),
-        latitude,
-        longitude,
-        addressCountry,
-        additionalType: term.additionalTypes.map((additionalType) => ({
+        name: inRequestedLanguages(place.names),
+        latitude: place.latitude ?? null,
+        longitude: place.longitude ?? null,
+        addressCountry: place.addressCountry ?? null,
+        additionalType: place.additionalTypes.map((additionalType) => ({
           uri: additionalType.id.value,
           name: inRequestedLanguages(additionalType.prefLabels),
         })),
       };
 }
 
-// Both Schema.org namespaces, because source queries use either one.
-const placeClasses = new Set([
-  'https://schema.org/Place',
-  'http://schema.org/Place',
-]);
-
 /**
- * The person that the term denotes, or null if its source describes none.
+ * The person that the term denotes, or null if its source describes none, decided as for
+ * {@link denotedPlace}.
  *
- * As with {@link denotedPlace}, the node carries only what SKOS cannot state: full names stay on
- * the labels and alignments on `exactMatch`, so what is left is the split into given and family
- * name, the dates, places, occupations, nationality and gender. A term typed as a person whose source
- * states none of them gets no node.
- *
- * A date is passed through as the source states it. Sources are not validated, and the field is
- * documented as EDTF, which reads a plain ISO 8601 date, an interval and a qualified date alike.
- * Where a source states several – Wikidata can, when its sources disagree – the first is taken.
+ * The API returns one birth and one death date, documented as EDTF, which reads a plain ISO 8601
+ * date, an interval and a qualified date alike. Where a source states several – Wikidata can, when
+ * its sources disagree – the first is taken.
  */
 function denotedPerson(
   term: Term,
   inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
   acrossSet: LanguageSelector,
 ) {
-  if (!term.types.some((type) => personClasses.has(type.value))) {
+  const person = term.person;
+  if (person === undefined) {
     return null;
   }
 
-  const birthDate = dateValue(term.birthDates[0]);
-  const deathDate = dateValue(term.deathDates[0]);
-
-  // Tested against everything the source holds, not against what survives the language filter,
-  // for the reason given in denotedPlace.
   const entities = entitiesIn(acrossSet);
-
-  return term.givenNames.length === 0 &&
-    term.familyNames.length === 0 &&
-    birthDate === null &&
-    deathDate === null &&
-    term.birthPlaces.length === 0 &&
-    term.deathPlaces.length === 0 &&
-    term.occupations.length === 0 &&
-    term.nationalities.length === 0 &&
-    term.genders.length === 0
-    ? null
-    : {
-        givenName: inRequestedLanguages(term.givenNames),
-        familyName: inRequestedLanguages(term.familyNames),
-        birthDate,
-        deathDate,
-        birthPlace: entities(term.birthPlaces),
-        deathPlace: entities(term.deathPlaces),
-        hasOccupation: rolesIn(acrossSet)(term.occupations),
-        nationality: entities(term.nationalities),
-        gender: entities(term.genders),
-      };
+  return {
+    givenName: inRequestedLanguages(person.givenNames),
+    familyName: inRequestedLanguages(person.familyNames),
+    birthDate: person.birthDates[0] ?? null,
+    deathDate: person.deathDates[0] ?? null,
+    birthPlace: entities(person.birthPlaces),
+    deathPlace: entities(person.deathPlaces),
+    hasOccupation: rolesIn(acrossSet)(person.occupations),
+    nationality: entities(person.nationalities),
+    gender: entities(person.genders),
+  };
 }
-
-/**
- * Sources are not validated, so a date may be an empty string; that is no date, as an empty
- * country is no country in {@link denotedPlace}.
- */
-const dateValue = (literal: RDF.Literal | undefined) =>
-  literal?.value.trim() || null;
 
 /**
  * A role is kept when its occupation or its name survives the language filter; a period alone
@@ -357,8 +307,8 @@ const rolesIn = (acrossSet: LanguageSelector) => (roles: OccupationRole[]) => {
               name: select(role.occupation.prefLabels),
             },
       roleName: select(role.roleNames),
-      startDate: dateValue(role.startDate),
-      endDate: dateValue(role.endDate),
+      startDate: role.startDate ?? null,
+      endDate: role.endDate ?? null,
     }))
     .filter((role) => role.occupation !== null || role.roleName.length > 0);
 };
@@ -387,21 +337,6 @@ const entitiesIn = (acrossSet: LanguageSelector) => (entities: Entity[]) => {
 type LanguageSelector = (
   sets: RDF.Literal[][],
 ) => (literals: RDF.Literal[]) => RDF.Literal[];
-
-const personClasses = new Set([
-  'https://schema.org/Person',
-  'http://schema.org/Person',
-]);
-
-/**
- * Sources are not validated, so a coordinate may be absent, empty or not a number at all. Anything
- * we cannot read as a finite number becomes null: an unknown coordinate is not a field error, and
- * `Number('')` would silently place the term at 0°, 0°.
- */
-const floatValue = (literal: RDF.Literal | undefined) => {
-  const value = Number(literal?.value);
-  return Number.isFinite(value) && literal?.value.trim() !== '' ? value : null;
-};
 
 function mapToTerm(term: Term, languages: string[]) {
   return {
