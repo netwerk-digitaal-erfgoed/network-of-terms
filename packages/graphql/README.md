@@ -55,11 +55,11 @@ To run your own instance of the Network of Terms GraphQL API with a custom [cata
 
 ### Environment variables
 
-| Variable       | Description                          | Default   |
-|----------------|--------------------------------------|-----------|
-| `CATALOG_PATH` | Path to the catalog directory        | `catalog` |
-| `LOG_LEVEL`    | Pino log level (debug, info, warn…)  | `info`    |
-| `TRUST_PROXY`  | Trust proxy headers                  | `false`   |
+| Variable       | Description                         | Default                                                   |
+| -------------- | ----------------------------------- | --------------------------------------------------------- |
+| `CATALOG_PATH` | Path to the catalog directory       | the bundled `catalog` directory next to the server’s code |
+| `LOG_LEVEL`    | Pino log level (debug, info, warn…) | `info`                                                    |
+| `TRUST_PROXY`  | Trust proxy headers                 | `false`                                                   |
 
 ## GraphQL API
 

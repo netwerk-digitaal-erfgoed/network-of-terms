@@ -38,6 +38,7 @@ example http://localhost:3123/reconcile/https://data.rkd.nl/rkdartists.
 | Variable            | Description                                                                                                                                     | Default                                                            |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `TRUST_PROXY`       | Trust proxy headers                                                                                                                             | `false`                                                            |
+| `CATALOG_PATH`      | Path to the catalog directory                                                                                                                   | the bundled `catalog` directory next to the server’s code          |
 | `VIEW_URL_TEMPLATE` | Where the term preview links to for more about a term. `{uri}` is replaced with the term’s percent-encoded IRI, `{+uri}` with the IRI as it is. | `https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri={uri}` |
 
 See [Running the tests](../../docs/tests.md) for more information about this repository’s test suite.
