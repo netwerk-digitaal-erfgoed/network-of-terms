@@ -9,6 +9,8 @@ export default defineConfig(() => ({
     environment: 'node',
     include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     testTimeout: 10_000,
+    // Load the shipped catalog, not one from CATALOG_PATH in the developer’s shell.
+    env: { CATALOG_PATH: '' },
     coverage: {
       enabled: true,
       reporter: ['text'],
