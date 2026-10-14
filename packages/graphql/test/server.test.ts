@@ -146,6 +146,7 @@ describe('Server', () => {
       'Rembrandt',
       'Nachtwacht',
       'Kunstige dingen',
+      '',
       'Halvewegen',
       'Maastricht (NL)',
       'Marion Michelle Koblitz',
@@ -194,7 +195,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(16); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(17); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -227,7 +228,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(16); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(17); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {

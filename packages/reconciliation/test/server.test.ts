@@ -7,7 +7,10 @@ import {
   testCatalog,
   teardown,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query/test-utils';
-import { DataExtensionQuery } from '../src/data-extension.js';
+import {
+  DataExtensionQuery,
+  dataExtensionProperties,
+} from '../src/data-extension.js';
 import { config } from '../src/config.js';
 import { escapeHtml } from '@hapi/hoek';
 
@@ -200,6 +203,15 @@ describe('Server', () => {
 
     expect(results).toEqual(results2);
 
+    expect(results.meta).toContainEqual({
+      id: 'relatedTerms',
+      name: 'relatedTerms',
+      type: {
+        id: 'http://www.w3.org/2004/02/skos/core#Concept',
+        name: 'Concept',
+      },
+    });
+
     expect(results.rows).toEqual({
       'https://example.com/resources/artwork': {
         prefLabels: [{ str: 'The Night Watch' }],
@@ -210,6 +222,14 @@ describe('Server', () => {
         birthPlaces: [],
         deathPlaces: [],
         genders: [],
+        broaderTerms: [{ str: 'https://example.com/resources/2' }],
+        narrowerTerms: [],
+        relatedTerms: [
+          { str: 'https://example.com/resources/painting' },
+          { id: 'https://example.com/resources/art', name: 'All things art' },
+          { id: 'https://example.com/resources/painter', name: 'Rembrandt' },
+        ],
+        exactMatches: [{ str: 'https://example.com/resources/match' }],
       },
       'https://example.com/resources/painter': {
         prefLabels: [{ str: 'Rembrandt' }],
@@ -220,6 +240,10 @@ describe('Server', () => {
         birthPlaces: [],
         deathPlaces: [],
         genders: [],
+        broaderTerms: [],
+        narrowerTerms: [],
+        relatedTerms: [],
+        exactMatches: [],
       },
     });
   });
@@ -230,7 +254,7 @@ describe('Server', () => {
       language: 'en',
       query: {
         ids: ['https://example.com/resources/photographer'],
-        properties: [{ id: 'prefLabel' }],
+        properties: [{ id: 'prefLabels' }],
       },
     });
     expect(response.statusCode).toEqual(200);
@@ -238,13 +262,49 @@ describe('Server', () => {
     expect(results.rows).toEqual({
       'https://example.com/resources/photographer': {
         prefLabels: [{ str: 'Marion Michelle Koblitz' }],
-        altLabels: [],
-        scopeNotes: [],
-        birthDates: [],
-        deathDates: [],
-        birthPlaces: [],
-        deathPlaces: [],
-        genders: [],
+      },
+    });
+  });
+
+  it('names a related term in any language when it has no name in the requested one', async () => {
+    const response = await dataExtensionQuery({
+      url: '/extend',
+      language: 'nl',
+      query: {
+        ids: ['https://example.com/resources/bauhaus'],
+        properties: [{ id: 'relatedTerms' }],
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(results.rows).toEqual({
+      'https://example.com/resources/bauhaus': {
+        relatedTerms: [
+          {
+            id: 'https://example.com/resources/werkbund',
+            name: 'Deutscher Werkbund',
+          },
+        ],
+      },
+    });
+  });
+
+  it('returns only the requested properties in data extension response', async () => {
+    const response = await dataExtensionQuery({
+      url: '/extend',
+      query: {
+        ids: ['https://example.com/resources/artwork'],
+        properties: [{ id: 'exactMatches' }, { id: 'unknown' }],
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    expect(results.meta).toEqual([
+      { id: 'exactMatches', name: 'exactMatches' },
+    ]);
+    expect(results.rows).toEqual({
+      'https://example.com/resources/artwork': {
+        exactMatches: [{ str: 'https://example.com/resources/match' }],
       },
     });
   });
@@ -255,7 +315,7 @@ describe('Server', () => {
       language: 'nl',
       query: {
         ids: ['https://example.com/resources/rembrandt'],
-        properties: [{ id: 'birthDates' }],
+        properties: allProperties,
       },
     });
     expect(response.statusCode).toEqual(200);
@@ -270,6 +330,10 @@ describe('Server', () => {
         birthPlaces: [{ str: 'Leiden (stad)' }],
         deathPlaces: [{ str: 'Amsterdam (stad)' }],
         genders: [{ str: 'https://schema.org/Male' }],
+        broaderTerms: [],
+        narrowerTerms: [],
+        relatedTerms: [],
+        exactMatches: [],
       },
     });
   });
@@ -466,7 +530,11 @@ async function dataExtensionQuery({
         'https://example.com/resources/artwork',
         'https://example.com/resources/painter',
       ],
-      properties: [{ id: 'altLabel' }],
+      properties: allProperties,
     },
   });
 }
+
+const allProperties = dataExtensionProperties.map((property) => ({
+  id: property.id,
+}));

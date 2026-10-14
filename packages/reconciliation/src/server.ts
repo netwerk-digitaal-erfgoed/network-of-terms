@@ -79,6 +79,7 @@ export async function server(
         void reply.send(
           await extendQuery(
             (request.body as DataExtensionQuery).ids.map((termIri) => termIri),
+            (request.body as DataExtensionQuery).properties,
             lookupService,
             request.preferredLanguage,
           ),
@@ -122,6 +123,7 @@ export async function server(
       void reply.send(
         await extendQuery(
           request.body.ids,
+          request.body.properties,
           lookupService,
           request.preferredLanguage,
         ),

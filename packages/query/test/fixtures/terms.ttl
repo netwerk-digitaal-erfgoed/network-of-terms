@@ -47,6 +47,15 @@
 <https://example.com/resources/match>
     skos:prefLabel "Exact match"@en .
 
+# A term whose related term is named in neither Dutch nor English.
+<https://example.com/resources/bauhaus>
+    a skos:Concept ;
+    skos:prefLabel "Bauhaus"@de ;
+    skos:related <https://example.com/resources/werkbund> .
+
+<https://example.com/resources/werkbund>
+    skos:prefLabel "Deutscher Werkbund"@de .
+
 <https://example.com/resources/photographer>
     a skos:Concept, schema:Person ;
     # Wikidata-style ‘default for all languages’ label; see issue #1884.
