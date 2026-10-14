@@ -1,6 +1,4 @@
 import { envSchema, JSONSchemaType } from 'env-schema';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
 const schema = {
   type: 'object',
@@ -8,13 +6,6 @@ const schema = {
     TRUST_PROXY: {
       type: 'boolean',
       default: false,
-    },
-    CATALOG_PATH: {
-      type: 'string',
-      default: path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        'catalog',
-      ),
     },
     STATUS_SERVICE_URL: {
       type: 'string',
@@ -39,7 +30,6 @@ const schema = {
 
 interface Env {
   TRUST_PROXY: boolean;
-  CATALOG_PATH: string;
   STATUS_SERVICE_URL: string;
   LOG_LEVEL: string;
   MAX_LOOKUP_URIS: number;

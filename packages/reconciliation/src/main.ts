@@ -5,10 +5,7 @@ import closeWithGrace from 'close-with-grace';
 import { config } from './config.js';
 
 try {
-  const httpServer = await server(
-    await getCatalog(config.CATALOG_PATH || undefined),
-    config,
-  );
+  const httpServer = await server(await getCatalog(), config);
   // On SIGTERM, finish in-flight requests and export the last metrics before exiting.
   closeWithGrace(async ({ err }) => {
     if (err) {
@@ -20,4 +17,5 @@ try {
   await httpServer.listen({ port: 3123, host: '0.0.0.0' });
 } catch (err) {
   console.error(err);
+  process.exitCode = 1;
 }
