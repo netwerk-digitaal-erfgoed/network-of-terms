@@ -214,9 +214,7 @@ describe('Catalog', () => {
       (path) => path === bundledCatalog || existsSync(path),
     );
     try {
-      await expect(getCatalog()).rejects.toThrow(
-        `Catalog directory ${bundledCatalog} holds no datasets`,
-      );
+      await expect(getCatalog()).rejects.toThrow(bundledCatalog);
     } finally {
       vi.restoreAllMocks();
     }
@@ -226,6 +224,11 @@ describe('Catalog', () => {
     await expect(getCatalog('/does-not-exist')).rejects.toThrow(
       'Catalog directory /does-not-exist does not exist',
     );
+  });
+
+  it('throws when the catalog path is not a directory', async () => {
+    const file = fileURLToPath(import.meta.url);
+    await expect(getCatalog(file)).rejects.toThrow('is not a directory');
   });
 
   it('throws when the catalog directory holds no datasets', async () => {

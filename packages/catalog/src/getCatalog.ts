@@ -23,7 +23,7 @@ import { RdfStore } from 'rdf-stores';
  * Read the catalog from `path`, else from the `CATALOG_PATH` environment variable, else from the
  * catalog that ships with this package.
  *
- * @throws Error if the directory does not exist or holds no datasets.
+ * @throws Error if the path is not an existing directory or the directory holds no datasets.
  */
 export async function getCatalog(path?: string): Promise<Catalog> {
   const directory = (
@@ -31,8 +31,12 @@ export async function getCatalog(path?: string): Promise<Catalog> {
     process.env.CATALOG_PATH ||
     bundledCatalogPath()
   ).replace(/\\/g, '/'); // Windows compatibility.
-  if (!fs.existsSync(directory)) {
+  const stats = fs.statSync(directory, { throwIfNoEntry: false });
+  if (stats === undefined) {
     throw new Error(`Catalog directory ${directory} does not exist`);
+  }
+  if (!stats.isDirectory()) {
+    throw new Error(`Catalog path ${directory} is not a directory`);
   }
   const catalog = await fromStore(await fromFiles(directory));
   if (catalog.datasets.length === 0) {
