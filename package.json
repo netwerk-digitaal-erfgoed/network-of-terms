@@ -4,6 +4,9 @@
   "workspaces": [
     "./packages/*"
   ],
+  "scripts": {
+    "prepare": "husky"
+  },
   "devDependencies": {
     "@commitlint/cli": "20.4.2",
     "@commitlint/config-conventional": "21.2.2",
