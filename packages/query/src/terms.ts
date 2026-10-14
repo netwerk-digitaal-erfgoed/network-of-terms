@@ -57,6 +57,11 @@ export class Person {
     readonly occupations: OccupationRole[],
     readonly nationalities: Entity[],
     readonly genders: Entity[],
+    // Family members, each a person the source identifies, with whatever names it gives them.
+    readonly parents: RelatedTerm[],
+    readonly children: RelatedTerm[],
+    readonly spouses: RelatedTerm[],
+    readonly siblings: RelatedTerm[],
   ) {}
 }
 
@@ -129,6 +134,10 @@ class SparqlResultTerm {
   givenNames: RDF.Literal[] = [];
   familyNames: RDF.Literal[] = [];
   genders: RDF.Term[] = [];
+  parents: RDF.Term[] = [];
+  children: RDF.Term[] = [];
+  spouses: RDF.Term[] = [];
+  siblings: RDF.Term[] = [];
   // Read from a schema:Role node a term points at, never from the term itself.
   roleNames: RDF.Literal[] = [];
   startDate: RDF.Literal | undefined = undefined;
@@ -190,6 +199,14 @@ export class TermsTransformer {
     ['http://schema.org/familyName', 'familyNames'],
     ['https://schema.org/gender', 'genders'],
     ['http://schema.org/gender', 'genders'],
+    ['https://schema.org/parent', 'parents'],
+    ['http://schema.org/parent', 'parents'],
+    ['https://schema.org/children', 'children'],
+    ['http://schema.org/children', 'children'],
+    ['https://schema.org/spouse', 'spouses'],
+    ['http://schema.org/spouse', 'spouses'],
+    ['https://schema.org/sibling', 'siblings'],
+    ['http://schema.org/sibling', 'siblings'],
     ['https://schema.org/roleName', 'roleNames'],
     ['http://schema.org/roleName', 'roleNames'],
     ['https://schema.org/startDate', 'startDate'],
@@ -295,6 +312,10 @@ export class TermsTransformer {
         .flatMap(this.entity)
         .map(normalisedGender)
         .filter(firstOfEachIri),
+      this.relatives(term, 'parents'),
+      this.relatives(term, 'children'),
+      this.relatives(term, 'spouses'),
+      this.relatives(term, 'siblings'),
     );
 
     // Every field is a list, so a person without any is one whose source states nothing.
@@ -319,6 +340,30 @@ export class TermsTransformer {
     }
     return [];
   };
+
+  /**
+   * The persons a family relation points at, named as {@link namedType} names an IRI. Only an IRI
+   * identifies a relative: a literal is the source’s sentence about one, such as the NTA’s
+   * ‘vanaf 1607, echtgenoot van: …’, and names no person.
+   *
+   * A `schema:Role` node between the person and the relative, as STCN states for printers, is
+   * followed the way Schema.org reads one: the relation is repeated on the role to reach the
+   * relative.
+   */
+  private relatives = (
+    term: SparqlResultTerm,
+    relation: 'parents' | 'children' | 'spouses' | 'siblings',
+  ) =>
+    term[relation]
+      .flatMap((object) => {
+        const node = this.termsMap.get(object.value);
+        return node !== undefined && node.types.some(isRoleClass)
+          ? node[relation]
+          : [object];
+      })
+      .filter((object) => object.termType === 'NamedNode')
+      .map(this.namedType)
+      .sort(alphabeticallyByPrefLabel);
 
   /**
    * What `schema:hasOccupation` points at, as a {@link Role}: a `schema:Role` node is read for

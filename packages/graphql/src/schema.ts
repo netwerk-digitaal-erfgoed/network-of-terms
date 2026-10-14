@@ -245,6 +245,18 @@ export const schema = (languages: string[]) => `
 
     "The person’s gender, as for \`birthPlace\`. Male and female are always \`https://schema.org/Male\` and \`https://schema.org/Female\`, whichever Schema.org namespace the source uses; any other gender is returned as the source states it."
     gender: [Entity]!
+
+    "The person’s parents, each a person the source identifies by URI, with the names it gives them. A relative the source does not identify is left out: a sentence about one names no person."
+    parent: [Reference]!
+
+    "The person’s children, as for \`parent\`."
+    children: [Reference]!
+
+    "The person’s spouses, as for \`parent\`."
+    spouse: [Reference]!
+
+    "The person’s siblings, as for \`parent\`."
+    sibling: [Reference]!
   }
 
   """

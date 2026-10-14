@@ -59,6 +59,7 @@ export const testCatalog = (port: number) =>
             ?referredPlace ?referredPlace_p ?referredPlace_o .
             ?role ?role_p ?role_o .
             ?occupation ?occupation_p ?occupation_o .
+            ?relative ?relative_p ?relative_o .
           }
           WHERE {
             {
@@ -92,6 +93,10 @@ export const testCatalog = (port: number) =>
               ?role ?role_p ?role_o .
               OPTIONAL { ?role schema:hasOccupation ?occupation . ?occupation ?occupation_p ?occupation_o . }
             }
+            OPTIONAL {
+              ?s schema:parent|schema:children|schema:spouse|schema:sibling ?relative .
+              ?relative ?relative_p ?relative_o .
+            }
           }`,
           `
           PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -110,6 +115,7 @@ export const testCatalog = (port: number) =>
             ?referredPlace ?referredPlace_p ?referredPlace_o .
             ?role ?role_p ?role_o .
             ?occupation ?occupation_p ?occupation_o .
+            ?relative ?relative_p ?relative_o .
           }
           WHERE {
             ?s ?p ?o.
@@ -128,6 +134,10 @@ export const testCatalog = (port: number) =>
               ?s schema:hasOccupation ?role .
               ?role ?role_p ?role_o .
               OPTIONAL { ?role schema:hasOccupation ?occupation . ?occupation ?occupation_p ?occupation_o . }
+            }
+            OPTIONAL {
+              ?s schema:parent|schema:children|schema:spouse|schema:sibling ?relative .
+              ?relative ?relative_p ?relative_o .
             }
             OPTIONAL { 
               ?s skos:broader ?broader_uri.
