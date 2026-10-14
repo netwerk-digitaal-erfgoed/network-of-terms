@@ -7,7 +7,6 @@ import {
   Term,
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { dateValues } from './date-values.js';
 import { score } from './score.js';
 
 /**
@@ -83,8 +82,8 @@ export type ReconciliationCandidate = {
 // The birth and death dates of the person a term denotes, as ‘1606-07-15 – 1669-10-04’, so that
 // namesakes can be told apart in the list of candidates. Empty for any other term.
 const lifespan = (term: Term) => {
-  const dates = [term.birthDates, term.deathDates].map((dates) =>
-    dateValues(dates).join(', '),
+  const dates = [term.person?.birthDates, term.person?.deathDates].map(
+    (dates = []) => dates.join(', '),
   );
 
   return dates.some((date) => date !== '') ? [dates.join(' – ').trim()] : [];

@@ -4,7 +4,6 @@ import {
   LookupService,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { dateValues } from './date-values.js';
 import { entityNames } from './entity-names.js';
 
 export type DataExtensionQuery = {
@@ -96,12 +95,15 @@ const propertyValues: Record<
   prefLabels: (term, language) => literalValues(term.prefLabels, [language]),
   altLabels: (term, language) => literalValues(term.altLabels, [language]),
   scopeNotes: (term, language) => literalValues(term.scopeNotes, [language]),
-  birthDates: (term) => dateValues(term.birthDates),
-  deathDates: (term) => dateValues(term.deathDates),
-  birthPlaces: (term, language) => entityNames(term.birthPlaces, language),
-  deathPlaces: (term, language) => entityNames(term.deathPlaces, language),
+  birthDates: (term) => term.person?.birthDates ?? [],
+  deathDates: (term) => term.person?.deathDates ?? [],
+  birthPlaces: (term, language) =>
+    entityNames(term.person?.birthPlaces ?? [], language),
+  deathPlaces: (term, language) =>
+    entityNames(term.person?.deathPlaces ?? [], language),
   // Male and female carry no names, so they are their IRIs.
-  genders: (term, language) => entityNames(term.genders, language),
+  genders: (term, language) =>
+    entityNames(term.person?.genders ?? [], language),
 };
 
 const downcastToReconciliationSpecV0_2 = (

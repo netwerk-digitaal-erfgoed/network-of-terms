@@ -53,9 +53,9 @@ describe('TermsTransformer', () => {
       ),
     );
 
-    expect(term.latitude?.value).toEqual('50.84833');
-    expect(term.longitude?.value).toEqual('5.68889');
-    expect(term.addressCountry?.value).toEqual('NL');
+    expect(term.place?.latitude).toEqual(50.84833);
+    expect(term.place?.longitude).toEqual(5.68889);
+    expect(term.place?.addressCountry).toEqual('NL');
   });
 
   it('reads coordinates that a source states on the term itself', () => {
@@ -69,8 +69,8 @@ describe('TermsTransformer', () => {
       ),
     );
 
-    expect(term.latitude?.value).toEqual('50.84833');
-    expect(term.addressCountry).toBeUndefined();
+    expect(term.place?.latitude).toEqual(50.84833);
+    expect(term.place?.addressCountry).toBeUndefined();
   });
 
   it('reads the country from the geo node and the coordinates from the term', () => {
@@ -92,8 +92,8 @@ describe('TermsTransformer', () => {
       ),
     );
 
-    expect(term.latitude?.value).toEqual('50.84833');
-    expect(term.addressCountry?.value).toEqual('NL');
+    expect(term.place?.latitude).toEqual(50.84833);
+    expect(term.place?.addressCountry).toEqual('NL');
   });
 
   it('does not return the schema:geo node as a term of its own', () => {
@@ -135,10 +135,12 @@ describe('TermsTransformer', () => {
       ),
     );
 
-    expect(term.additionalTypes).toHaveLength(1);
-    expect(term.additionalTypes[0].id.value).toEqual(populatedPlace.value);
+    expect(term.place?.additionalTypes).toHaveLength(1);
+    expect(term.place?.additionalTypes[0].id.value).toEqual(
+      populatedPlace.value,
+    );
     expect(
-      term.additionalTypes[0].prefLabels.map((name) => name.value),
+      term.place?.additionalTypes[0].prefLabels.map((name) => name.value),
     ).toEqual(['Plaats', 'Populated place']);
   });
 
@@ -150,8 +152,8 @@ describe('TermsTransformer', () => {
       place(dataFactory.quad(maastricht, schema('additionalType'), lake)),
     );
 
-    expect(term.additionalTypes[0].id.value).toEqual(lake.value);
-    expect(term.additionalTypes[0].prefLabels).toEqual([]);
+    expect(term.place?.additionalTypes[0].id.value).toEqual(lake.value);
+    expect(term.place?.additionalTypes[0].prefLabels).toEqual([]);
   });
 
   it('collects every schema:name the source states', () => {
@@ -170,7 +172,7 @@ describe('TermsTransformer', () => {
       ),
     );
 
-    expect(term.names.map((name) => name.value)).toEqual([
+    expect(term.place?.names.map((name) => name.value)).toEqual([
       'Maastricht',
       'Maestricht',
     ]);
@@ -204,13 +206,8 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.birthDates.map((date) => date.value)).toEqual([
-        '1606-07-15/1607',
-      ]);
-      expect(term.birthDates[0].datatype.value).toEqual(
-        'http://id.loc.gov/datatypes/edtf/EDTF',
-      );
-      expect(term.deathDates.map((date) => date.value)).toEqual(['1669-10-04']);
+      expect(term.person?.birthDates).toEqual(['1606-07-15/1607']);
+      expect(term.person?.deathDates).toEqual(['1669-10-04']);
     });
 
     it('collects the given and family names a source states apart', () => {
@@ -229,8 +226,12 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.givenNames.map((name) => name.value)).toEqual(['Rembrandt']);
-      expect(term.familyNames.map((name) => name.value)).toEqual(['van Rijn']);
+      expect(term.person?.givenNames.map((name) => name.value)).toEqual([
+        'Rembrandt',
+      ]);
+      expect(term.person?.familyNames.map((name) => name.value)).toEqual([
+        'van Rijn',
+      ]);
     });
 
     it('names a place referred to by IRI from the names its source gives it', () => {
@@ -250,12 +251,11 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.birthPlaces).toHaveLength(1);
-      expect(term.birthPlaces[0].iri?.value).toEqual(leiden.value);
-      expect(term.birthPlaces[0].names.map((name) => name.value)).toEqual([
-        'Leiden (city)',
-        'Leiden (stad)',
-      ]);
+      expect(term.person?.birthPlaces).toHaveLength(1);
+      expect(term.person?.birthPlaces[0].iri?.value).toEqual(leiden.value);
+      expect(
+        term.person?.birthPlaces[0].names.map((name) => name.value),
+      ).toEqual(['Leiden (city)', 'Leiden (stad)']);
     });
 
     it('reads what the source only names as an entity without an IRI', () => {
@@ -285,20 +285,19 @@ describe('TermsTransformer', () => {
       );
 
       // An occupation the source only names is a role named by it, without a period.
-      expect(term.occupations.map((role) => role.occupation)).toEqual([
+      expect(term.person?.occupations.map((role) => role.occupation)).toEqual([
         undefined,
         undefined,
       ]);
-      expect(term.occupations.map((role) => role.roleNames[0].value)).toEqual([
-        'schilder',
-        'painter',
-      ]);
-      expect(term.occupations[0].startDate).toBeUndefined();
-      expect(term.nationalities[0].iri).toBeUndefined();
-      expect(term.nationalities[0].names.map((name) => name.value)).toEqual([
-        'Noord-Nederlands',
-      ]);
-      expect(term.deathPlaces[0].names[0].value).toEqual('Amsterdam');
+      expect(
+        term.person?.occupations.map((role) => role.roleNames[0].value),
+      ).toEqual(['schilder', 'painter']);
+      expect(term.person?.occupations[0].startDate).toBeUndefined();
+      expect(term.person?.nationalities[0].iri).toBeUndefined();
+      expect(
+        term.person?.nationalities[0].names.map((name) => name.value),
+      ).toEqual(['Noord-Nederlands']);
+      expect(term.person?.deathPlaces[0].names[0].value).toEqual('Amsterdam');
     });
 
     it('normalises a binary gender to the https Schema.org namespace', () => {
@@ -312,8 +311,10 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.genders).toHaveLength(1);
-      expect(term.genders[0].iri?.value).toEqual('https://schema.org/Male');
+      expect(term.person?.genders).toHaveLength(1);
+      expect(term.person?.genders[0].iri?.value).toEqual(
+        'https://schema.org/Male',
+      );
     });
 
     it('returns a gender stated in both Schema.org namespaces once', () => {
@@ -328,7 +329,7 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.genders.map((gender) => gender.iri?.value)).toEqual([
+      expect(term.person?.genders.map((gender) => gender.iri?.value)).toEqual([
         'https://schema.org/Female',
       ]);
     });
@@ -353,12 +354,14 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.genders.map((gender) => gender.iri?.value)).toEqual([
+      expect(term.person?.genders.map((gender) => gender.iri?.value)).toEqual([
         nonBinary.value,
         undefined,
       ]);
       expect(
-        term.genders.map((gender) => gender.names.map((name) => name.value)),
+        term.person?.genders.map((gender) =>
+          gender.names.map((name) => name.value),
+        ),
       ).toEqual([['non-binary'], ['vrouw']]);
     });
 
@@ -377,12 +380,14 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.occupations).toHaveLength(1);
-      expect(term.occupations[0].occupation?.id.value).toEqual(painter.value);
-      expect(term.occupations[0].occupation?.prefLabels[0].value).toEqual(
-        'schilder',
+      expect(term.person?.occupations).toHaveLength(1);
+      expect(term.person?.occupations[0].occupation?.id.value).toEqual(
+        painter.value,
       );
-      expect(term.occupations[0].roleNames).toEqual([]);
+      expect(
+        term.person?.occupations[0].occupation?.prefLabels[0].value,
+      ).toEqual('schilder');
+      expect(term.person?.occupations[0].roleNames).toEqual([]);
     });
 
     it('reads a schema:Role node for its occupation, name and period', () => {
@@ -419,13 +424,13 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.occupations).toHaveLength(1);
-      const [dated] = term.occupations;
+      expect(term.person?.occupations).toHaveLength(1);
+      const [dated] = term.person?.occupations ?? [];
       expect(dated.occupation?.id.value).toEqual(collector.value);
       expect(dated.occupation?.prefLabels[0].value).toEqual('kunstverzamelaar');
       expect(dated.roleNames[0].value).toEqual('verzamelaar');
-      expect(dated.startDate?.value).toEqual('1625');
-      expect(dated.endDate?.value).toEqual('1669');
+      expect(dated.startDate).toEqual('1625');
+      expect(dated.endDate).toEqual('1669');
       // The role node is not a term of its own.
       expect(
         transform(
@@ -456,12 +461,12 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.occupations).toHaveLength(1);
-      expect(term.occupations[0].occupation).toBeUndefined();
-      expect(term.occupations[0].roleNames.map((name) => name.value)).toEqual([
-        'schilder',
-      ]);
-      expect(term.occupations[0].startDate?.value).toEqual('1625');
+      expect(term.person?.occupations).toHaveLength(1);
+      expect(term.person?.occupations[0].occupation).toBeUndefined();
+      expect(
+        term.person?.occupations[0].roleNames.map((name) => name.value),
+      ).toEqual(['schilder']);
+      expect(term.person?.occupations[0].startDate).toEqual('1625');
     });
 
     it('reads a schema:Role node stated as a blank node', () => {
@@ -483,9 +488,11 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.occupations).toHaveLength(1);
-      expect(term.occupations[0].roleNames[0].value).toEqual('werkzaam');
-      expect(term.occupations[0].endDate?.value).toEqual('1669');
+      expect(term.person?.occupations).toHaveLength(1);
+      expect(term.person?.occupations[0].roleNames[0].value).toEqual(
+        'werkzaam',
+      );
+      expect(term.person?.occupations[0].endDate).toEqual('1669');
     });
 
     it('drops a schema:Role node that neither names nor identifies what the person did', () => {
@@ -502,7 +509,8 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.occupations).toEqual([]);
+      // A period alone is no role, and with nothing else stated there is no person.
+      expect(term.person).toBeUndefined();
     });
 
     it('drops a reference the source states as a blank node', () => {
@@ -516,7 +524,8 @@ describe('TermsTransformer', () => {
         ),
       );
 
-      expect(term.birthPlaces).toEqual([]);
+      // A blank node is no place, and with nothing else stated there is no person.
+      expect(term.person).toBeUndefined();
     });
 
     it('does not return a referred-to place as a term of its own', () => {

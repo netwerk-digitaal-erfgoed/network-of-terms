@@ -16,22 +16,47 @@ export class Term {
     readonly exactMatches: RelatedTerm[],
     readonly datasetIri: RDF.Term | undefined,
     readonly score: RDF.Literal | undefined,
-    readonly latitude: RDF.Literal | undefined,
-    readonly longitude: RDF.Literal | undefined,
-    // Defaulted, so that adding to a place stays additive for callers that construct a Term.
-    readonly names: RDF.Literal[] = [],
-    readonly addressCountry: RDF.Literal | undefined = undefined,
-    readonly additionalTypes: RelatedTerm[] = [],
-    // What the source states about the person a term denotes; all empty for any other term.
-    readonly birthDates: RDF.Literal[] = [],
-    readonly deathDates: RDF.Literal[] = [],
-    readonly birthPlaces: Entity[] = [],
-    readonly deathPlaces: Entity[] = [],
-    readonly occupations: OccupationRole[] = [],
-    readonly nationalities: Entity[] = [],
-    readonly givenNames: RDF.Literal[] = [],
-    readonly familyNames: RDF.Literal[] = [],
-    readonly genders: Entity[] = [],
+    // What the source states about the place or person the term denotes, beyond what SKOS states.
+    readonly place: Place | undefined = undefined,
+    readonly person: Person | undefined = undefined,
+  ) {}
+}
+
+/**
+ * The place a term denotes: what SKOS cannot state about it, so the term’s position in the place
+ * hierarchy stays on `broaderTerms` and `narrowerTerms`. A term has one only when it is typed
+ * `schema:Place` and its source states at least one of these, so a place without any reads as no
+ * place rather than as an empty one.
+ */
+export class Place {
+  constructor(
+    readonly names: RDF.Literal[],
+    readonly latitude: number | undefined,
+    readonly longitude: number | undefined,
+    // An ISO 3166-1 alpha-2 code, such as ‘NL’.
+    readonly addressCountry: string | undefined,
+    readonly additionalTypes: RelatedTerm[],
+  ) {}
+}
+
+/**
+ * The person a term denotes: what SKOS cannot state about them, so the full names stay on the
+ * term’s labels and the alignments on `exactMatches`. A term has one only when it is typed
+ * `schema:Person` and its source states at least one of these.
+ *
+ * Dates are EDTF strings, passed through as the source states them.
+ */
+export class Person {
+  constructor(
+    readonly givenNames: RDF.Literal[],
+    readonly familyNames: RDF.Literal[],
+    readonly birthDates: string[],
+    readonly deathDates: string[],
+    readonly birthPlaces: Entity[],
+    readonly deathPlaces: Entity[],
+    readonly occupations: OccupationRole[],
+    readonly nationalities: Entity[],
+    readonly genders: Entity[],
   ) {}
 }
 
@@ -69,8 +94,9 @@ export class OccupationRole {
   constructor(
     readonly occupation: RelatedTerm | undefined,
     readonly roleNames: RDF.Literal[],
-    readonly startDate: RDF.Literal | undefined,
-    readonly endDate: RDF.Literal | undefined,
+    // EDTF strings, as for the dates of a {@link Person}.
+    readonly startDate: string | undefined,
+    readonly endDate: string | undefined,
   ) {}
 }
 
@@ -204,7 +230,6 @@ export class TermsTransformer {
   asArray(): Term[] {
     return [...this.termsIris].map((iri) => {
       const term = this.termsMap.get(iri)!;
-      const location = this.location(term);
 
       return new Term(
         term.id,
@@ -222,28 +247,63 @@ export class TermsTransformer {
         this.mapRelatedTerms(term.exactMatches).sort(alphabeticallyByPrefLabel),
         term.inScheme,
         term.score,
-        location.latitude,
-        location.longitude,
-        term.names,
-        location.addressCountry,
-        term.additionalTypes
-          .map(this.namedType)
-          .sort(alphabeticallyByPrefLabel),
-        term.birthDates,
-        term.deathDates,
-        term.birthPlaces.flatMap(this.entity),
-        term.deathPlaces.flatMap(this.entity),
-        term.occupations.flatMap(this.role),
-        term.nationalities.flatMap(this.entity),
-        term.givenNames,
-        term.familyNames,
-        term.genders
-          .flatMap(this.entity)
-          .map(normalisedGender)
-          .filter(firstOfEachIri),
+        this.place(term),
+        this.person(term),
       );
     });
   }
+
+  private place = (term: SparqlResultTerm) => {
+    if (!term.types.some(isPlaceClass)) {
+      return undefined;
+    }
+
+    const location = this.location(term);
+    const place = new Place(
+      term.names,
+      numberValue(location.latitude),
+      numberValue(location.longitude),
+      // An empty country is as unusable as an empty coordinate, and ISO 3166-1 has no empty code.
+      stringValue(location.addressCountry),
+      term.additionalTypes.map(this.namedType).sort(alphabeticallyByPrefLabel),
+    );
+
+    return place.names.length === 0 &&
+      place.latitude === undefined &&
+      place.longitude === undefined &&
+      place.addressCountry === undefined &&
+      place.additionalTypes.length === 0
+      ? undefined
+      : place;
+  };
+
+  private person = (term: SparqlResultTerm) => {
+    if (!term.types.some(isPersonClass)) {
+      return undefined;
+    }
+
+    const person = new Person(
+      term.givenNames,
+      term.familyNames,
+      dateValues(term.birthDates),
+      dateValues(term.deathDates),
+      term.birthPlaces.flatMap(this.entity),
+      term.deathPlaces.flatMap(this.entity),
+      term.occupations.flatMap(this.role),
+      term.nationalities.flatMap(this.entity),
+      term.genders
+        .flatMap(this.entity)
+        .map(normalisedGender)
+        .filter(firstOfEachIri),
+    );
+
+    // Every field is a list, so a person without any is one whose source states nothing.
+    return Object.values(person).every(
+      (values: unknown[]) => values.length === 0,
+    )
+      ? undefined
+      : person;
+  };
 
   /**
    * An object of a property as the {@link Entity} it mentions: an IRI named the way
@@ -305,8 +365,8 @@ export class TermsTransformer {
           new OccupationRole(
             occupation,
             roleNames,
-            node.startDate,
-            node.endDate,
+            stringValue(node.startDate),
+            stringValue(node.endDate),
           ),
         ];
   };
@@ -370,9 +430,28 @@ export class TermsTransformer {
 }
 
 // Both Schema.org namespaces, because source queries use either one.
-const isRoleClass = (type: RDF.Term) =>
-  type.value === 'https://schema.org/Role' ||
-  type.value === 'http://schema.org/Role';
+const isSchemaClass = (name: string) => (type: RDF.Term) =>
+  type.value === `https://schema.org/${name}` ||
+  type.value === `http://schema.org/${name}`;
+const isRoleClass = isSchemaClass('Role');
+const isPlaceClass = isSchemaClass('Place');
+const isPersonClass = isSchemaClass('Person');
+
+// Sources are not validated, so a value may be empty or blank; that is no value.
+const stringValue = (literal: RDF.Literal | undefined) =>
+  literal?.value.trim() || undefined;
+
+const dateValues = (literals: RDF.Literal[]) =>
+  literals.flatMap((literal) => stringValue(literal) ?? []);
+
+// A coordinate that is not a finite number becomes no coordinate: `Number('')` would silently
+// place the term at 0°, 0°.
+const numberValue = (literal: RDF.Literal | undefined) => {
+  const value = stringValue(literal);
+  return value !== undefined && Number.isFinite(Number(value))
+    ? Number(value)
+    : undefined;
+};
 
 const dataFactory = new DataFactory();
 

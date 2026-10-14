@@ -8,7 +8,6 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { Literal } from '@rdfjs/types';
 import { escapeHtml } from '@hapi/hoek';
-import { dateValues } from './date-values.js';
 import { entityNames } from './entity-names.js';
 import { locale } from './server.js';
 
@@ -42,8 +41,8 @@ export function preview(
               )}</dd>`
             : ''
         }
-        ${lifeEvent(locale.birth, term.birthDates, term.birthPlaces, language)}
-        ${lifeEvent(locale.death, term.deathDates, term.deathPlaces, language)}
+        ${lifeEvent(locale.birth, term.person?.birthDates ?? [], term.person?.birthPlaces ?? [], language)}
+        ${lifeEvent(locale.death, term.person?.deathDates ?? [], term.person?.deathPlaces ?? [], language)}
         ${relatedTerms(locale.broader, term.broaderTerms, language)}
         ${relatedTerms(locale.narrower, term.narrowerTerms, language)}
         ${relatedTerms(locale.related, term.relatedTerms, language)}
@@ -77,11 +76,11 @@ const viewUrl = (template: string, iri: string) =>
 // the places. Empty for any other term.
 function lifeEvent(
   label: string,
-  dates: Literal[],
+  dates: string[],
   places: Entity[],
   language: string,
 ) {
-  const facts = [...dateValues(dates), ...entityNames(places, language)];
+  const facts = [...dates, ...entityNames(places, language)];
   if (facts.length === 0) {
     return '';
   }
