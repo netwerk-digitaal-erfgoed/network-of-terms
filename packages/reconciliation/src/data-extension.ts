@@ -5,7 +5,7 @@ import {
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { dateValues } from './date-values.js';
-import { placeNames } from './place-names.js';
+import { entityNames } from './entity-names.js';
 
 export type DataExtensionQuery = {
   ids: string[];
@@ -45,6 +45,10 @@ export const dataExtensionProperties: {
     id: 'deathPlaces',
     name: 'deathPlaces',
   },
+  {
+    id: 'genders',
+    name: 'genders',
+  },
 ];
 
 export async function extendQuery(
@@ -82,7 +86,8 @@ type DataExtensionPropertyId =
   | 'birthDates'
   | 'deathDates'
   | 'birthPlaces'
-  | 'deathPlaces';
+  | 'deathPlaces'
+  | 'genders';
 
 const propertyValues: Record<
   DataExtensionPropertyId,
@@ -93,8 +98,10 @@ const propertyValues: Record<
   scopeNotes: (term, language) => literalValues(term.scopeNotes, [language]),
   birthDates: (term) => dateValues(term.birthDates),
   deathDates: (term) => dateValues(term.deathDates),
-  birthPlaces: (term, language) => placeNames(term.birthPlaces, language),
-  deathPlaces: (term, language) => placeNames(term.deathPlaces, language),
+  birthPlaces: (term, language) => entityNames(term.birthPlaces, language),
+  deathPlaces: (term, language) => entityNames(term.deathPlaces, language),
+  // Male and female carry no names, so they are their IRIs.
+  genders: (term, language) => entityNames(term.genders, language),
 };
 
 const downcastToReconciliationSpecV0_2 = (

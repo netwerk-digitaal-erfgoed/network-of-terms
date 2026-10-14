@@ -436,6 +436,9 @@ describe('Server', () => {
     expect(term.result.person.nationality).toEqual([
       { uri: null, name: [{ language: 'nl', value: 'Noord-Nederlands' }] },
     ]);
+    expect(term.result.person.gender).toEqual([
+      { uri: 'https://schema.org/Male', name: [] },
+    ]);
   });
 
   it('returns a person whose source states only the split into given and family name', async () => {
@@ -846,6 +849,7 @@ function termsQuery({
                 deathPlace { uri name { language value } }
                 hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
                 nationality { uri name { language value } }
+                gender { uri name { language value } }
               }
             }
           }
@@ -922,6 +926,7 @@ function lookupQuery({
               deathPlace { uri name { language value } }
               hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
               nationality { uri name { language value } }
+              gender { uri name { language value } }
             }
           }
           `
@@ -953,6 +958,7 @@ function lookupQuery({
               deathPlace { uri name { language value } }
               hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
               nationality { uri name { language value } }
+              gender { uri name { language value } }
             }
           }
           `

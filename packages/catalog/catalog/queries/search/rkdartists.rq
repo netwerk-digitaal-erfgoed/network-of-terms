@@ -15,7 +15,8 @@ CONSTRUCT {
         schema:birthPlace ?birthPlace_uri, ?birthPlace_alternative_nl, ?birthPlace_alternative_en ;
         schema:deathPlace ?deathPlace_uri, ?deathPlace_alternative_nl, ?deathPlace_alternative_en ;
         schema:hasOccupation ?occupation ;
-        schema:nationality ?nationality_uri, ?nationality_alternative .
+        schema:nationality ?nationality_uri, ?nationality_alternative ;
+        schema:gender ?gender .
     ?birthPlace_uri schema:name ?birthPlace_name_nl, ?birthPlace_name_en .
     ?deathPlace_uri schema:name ?deathPlace_name_nl, ?deathPlace_name_en .
     ?nationality_named schema:name ?nationality_name .
@@ -88,6 +89,7 @@ WHERE {
     OPTIONAL { ?uri schema:name ?prefLabel . }
     OPTIONAL { ?uri schema:birthDate ?birthDate . }
     OPTIONAL { ?uri schema:deathDate ?deathDate . }
+    OPTIONAL { ?uri schema:gender ?gender . }
 
     #
     # The group is not an OPTIONAL, and its first branch repeats a pattern the term already matches,
