@@ -301,6 +301,67 @@ describe('TermsTransformer', () => {
       expect(term.deathPlaces[0].names[0].value).toEqual('Amsterdam');
     });
 
+    it('normalises a binary gender to the https Schema.org namespace', () => {
+      const [term] = transform(
+        person(
+          dataFactory.quad(
+            rembrandt,
+            dataFactory.namedNode('http://schema.org/gender'),
+            dataFactory.namedNode('http://schema.org/Male'),
+          ),
+        ),
+      );
+
+      expect(term.genders).toHaveLength(1);
+      expect(term.genders[0].iri?.value).toEqual('https://schema.org/Male');
+    });
+
+    it('returns a gender stated in both Schema.org namespaces once', () => {
+      const [term] = transform(
+        person(
+          dataFactory.quad(
+            rembrandt,
+            dataFactory.namedNode('http://schema.org/gender'),
+            dataFactory.namedNode('http://schema.org/Female'),
+          ),
+          dataFactory.quad(rembrandt, schema('gender'), schema('Female')),
+        ),
+      );
+
+      expect(term.genders.map((gender) => gender.iri?.value)).toEqual([
+        'https://schema.org/Female',
+      ]);
+    });
+
+    it('passes any other gender through as the source states it', () => {
+      const nonBinary = dataFactory.namedNode(
+        'http://www.wikidata.org/entity/Q48270',
+      );
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('gender'), nonBinary),
+          dataFactory.quad(
+            nonBinary,
+            schema('name'),
+            dataFactory.literal('non-binary', 'en'),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            schema('gender'),
+            dataFactory.literal('vrouw', 'nl'),
+          ),
+        ),
+      );
+
+      expect(term.genders.map((gender) => gender.iri?.value)).toEqual([
+        nonBinary.value,
+        undefined,
+      ]);
+      expect(
+        term.genders.map((gender) => gender.names.map((name) => name.value)),
+      ).toEqual([['non-binary'], ['vrouw']]);
+    });
+
     it('reads an occupation the source identifies as a role without a period', () => {
       const painter = dataFactory.namedNode(
         'https://example.com/occupations/painter',

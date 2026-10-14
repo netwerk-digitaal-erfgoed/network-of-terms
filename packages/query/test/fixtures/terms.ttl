@@ -70,7 +70,9 @@
     # constructs is read for its occupation, name and period, the way Schema.org reads one.
     schema:hasOccupation "schilder"@nl, "painter"@en, "etser"@nl, "etcher"@en,
         <https://example.com/resources/rembrandt#role-1>, <https://example.com/resources/rembrandt#role-2> ;
-    schema:nationality "Noord-Nederlands"@nl, "North Netherlandish"@en .
+    schema:nationality "Noord-Nederlands"@nl, "North Netherlandish"@en ;
+    # In the http namespace, as WO2-personen states it, which the API normalises to the https one.
+    <http://schema.org/gender> <http://schema.org/Male> .
 
 <https://example.com/resources/rembrandt#role-1>
     a schema:Role ;

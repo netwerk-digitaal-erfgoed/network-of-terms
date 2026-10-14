@@ -209,6 +209,7 @@ describe('Server', () => {
         deathDates: [],
         birthPlaces: [],
         deathPlaces: [],
+        genders: [],
       },
       'https://example.com/resources/painter': {
         prefLabels: [{ str: 'Rembrandt' }],
@@ -218,6 +219,7 @@ describe('Server', () => {
         deathDates: [],
         birthPlaces: [],
         deathPlaces: [],
+        genders: [],
       },
     });
   });
@@ -242,6 +244,7 @@ describe('Server', () => {
         deathDates: [],
         birthPlaces: [],
         deathPlaces: [],
+        genders: [],
       },
     });
   });
@@ -266,6 +269,7 @@ describe('Server', () => {
         deathDates: [{ str: '1669-10-04' }],
         birthPlaces: [{ str: 'Leiden (stad)' }],
         deathPlaces: [{ str: 'Amsterdam (stad)' }],
+        genders: [{ str: 'https://schema.org/Male' }],
       },
     });
   });

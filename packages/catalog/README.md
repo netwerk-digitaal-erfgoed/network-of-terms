@@ -184,7 +184,8 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
     schema:birthPlace ?birthPlace ;
     schema:deathPlace ?deathPlace ;
     schema:hasOccupation ?occupation ;
-    schema:nationality ?nationality .
+    schema:nationality ?nationality ;
+    schema:gender ?gender .
 ?birthPlace schema:name ?birthPlaceName .
 ```
 
@@ -208,6 +209,9 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
   or nationality as a URI beside Dutch and English literals with nothing pairing them, so its
   queries name the URI with the literals only when the person has one, and construct the
   literals as entities of their own otherwise.
+- A gender is an entity too. Construct the source’s own value: `schema:Male` and `schema:Female`
+  in either Schema.org namespace come out of the API as `https://schema.org/Male` and
+  `https://schema.org/Female`, and any other URI or literal as the source states it.
 - An occupation is read as Schema.org’s **`Role`**, so a source has three ways to state one. A URI
   is an occupation the source identifies, named as above; a literal is a role the source only
   names (`roleName`); and a `schema:Role` node carries the period, with `schema:hasOccupation`

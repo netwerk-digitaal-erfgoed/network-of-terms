@@ -9,7 +9,7 @@ import {
 import { Literal } from '@rdfjs/types';
 import { escapeHtml } from '@hapi/hoek';
 import { dateValues } from './date-values.js';
-import { placeNames } from './place-names.js';
+import { entityNames } from './entity-names.js';
 import { locale } from './server.js';
 
 export function preview(
@@ -81,7 +81,7 @@ function lifeEvent(
   places: Entity[],
   language: string,
 ) {
-  const facts = [...dateValues(dates), ...placeNames(places, language)];
+  const facts = [...dateValues(dates), ...entityNames(places, language)];
   if (facts.length === 0) {
     return '';
   }

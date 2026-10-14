@@ -278,7 +278,7 @@ const placeClasses = new Set([
  *
  * As with {@link denotedPlace}, the node carries only what SKOS cannot state: full names stay on
  * the labels and alignments on `exactMatch`, so what is left is the split into given and family
- * name, the dates, places, occupations and nationality. A term typed as a person whose source
+ * name, the dates, places, occupations, nationality and gender. A term typed as a person whose source
  * states none of them gets no node.
  *
  * A date is passed through as the source states it. Sources are not validated, and the field is
@@ -308,7 +308,8 @@ function denotedPerson(
     term.birthPlaces.length === 0 &&
     term.deathPlaces.length === 0 &&
     term.occupations.length === 0 &&
-    term.nationalities.length === 0
+    term.nationalities.length === 0 &&
+    term.genders.length === 0
     ? null
     : {
         givenName: inRequestedLanguages(term.givenNames),
@@ -319,6 +320,7 @@ function denotedPerson(
         deathPlace: entities(term.deathPlaces),
         hasOccupation: rolesIn(acrossSet)(term.occupations),
         nationality: entities(term.nationalities),
+        gender: entities(term.genders),
       };
 }
 

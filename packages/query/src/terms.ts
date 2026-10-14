@@ -1,4 +1,5 @@
 import type RDF from '@rdfjs/types';
+import { DataFactory } from 'rdf-data-factory';
 
 export class Term {
   constructor(
@@ -30,6 +31,7 @@ export class Term {
     readonly nationalities: Entity[] = [],
     readonly givenNames: RDF.Literal[] = [],
     readonly familyNames: RDF.Literal[] = [],
+    readonly genders: Entity[] = [],
   ) {}
 }
 
@@ -100,6 +102,7 @@ class SparqlResultTerm {
   nationalities: RDF.Term[] = [];
   givenNames: RDF.Literal[] = [];
   familyNames: RDF.Literal[] = [];
+  genders: RDF.Term[] = [];
   // Read from a schema:Role node a term points at, never from the term itself.
   roleNames: RDF.Literal[] = [];
   startDate: RDF.Literal | undefined = undefined;
@@ -159,6 +162,8 @@ export class TermsTransformer {
     ['http://schema.org/givenName', 'givenNames'],
     ['https://schema.org/familyName', 'familyNames'],
     ['http://schema.org/familyName', 'familyNames'],
+    ['https://schema.org/gender', 'genders'],
+    ['http://schema.org/gender', 'genders'],
     ['https://schema.org/roleName', 'roleNames'],
     ['http://schema.org/roleName', 'roleNames'],
     ['https://schema.org/startDate', 'startDate'],
@@ -232,6 +237,10 @@ export class TermsTransformer {
         term.nationalities.flatMap(this.entity),
         term.givenNames,
         term.familyNames,
+        term.genders
+          .flatMap(this.entity)
+          .map(normalisedGender)
+          .filter(firstOfEachIri),
       );
     });
   }
@@ -364,6 +373,33 @@ export class TermsTransformer {
 const isRoleClass = (type: RDF.Term) =>
   type.value === 'https://schema.org/Role' ||
   type.value === 'http://schema.org/Role';
+
+const dataFactory = new DataFactory();
+
+// Schema.org’s two genders, in the https namespace whichever one the source uses, so that a client
+// can tell them by URI alone. Any other gender is the source’s own and passes through as it is.
+const binaryGenders = new Map(
+  ['Male', 'Female'].flatMap((gender) => {
+    const iri = dataFactory.namedNode(`https://schema.org/${gender}`);
+    return [
+      [`https://schema.org/${gender}`, iri],
+      [`http://schema.org/${gender}`, iri],
+    ];
+  }),
+);
+
+const normalisedGender = (gender: Entity) =>
+  gender.iri === undefined
+    ? gender
+    : new Entity(
+        binaryGenders.get(gender.iri.value) ?? gender.iri,
+        gender.names,
+      );
+
+// One gender stated in both namespaces is one gender once normalised.
+const firstOfEachIri = (entity: Entity, index: number, entities: Entity[]) =>
+  entity.iri === undefined ||
+  entities.findIndex((other) => other.iri?.equals(entity.iri!)) === index;
 
 const alphabeticallyByPrefLabel = (a: RelatedTerm, b: RelatedTerm) => {
   const prefLabelA = a.prefLabels[0]?.value ?? '';

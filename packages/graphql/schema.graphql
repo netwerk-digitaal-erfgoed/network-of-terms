@@ -242,6 +242,9 @@
 
     "The person’s nationality, as for `birthPlace`."
     nationality: [Entity]!
+
+    "The person’s gender, as for `birthPlace`. Male and female are always `https://schema.org/Male` and `https://schema.org/Female`, whichever Schema.org namespace the source uses; any other gender is returned as the source states it."
+    gender: [Entity]!
   }
 
   """
