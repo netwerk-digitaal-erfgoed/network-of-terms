@@ -365,6 +365,77 @@ describe('TermsTransformer', () => {
       ).toEqual([['non-binary'], ['vrouw']]);
     });
 
+    it('reads family members as the persons the source names them', () => {
+      const saskia = dataFactory.namedNode('https://example.com/saskia');
+      const titus = dataFactory.namedNode('https://example.com/titus');
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('spouse'), saskia),
+          dataFactory.quad(
+            saskia,
+            schema('name'),
+            dataFactory.literal('Saskia van Uylenburgh'),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            dataFactory.namedNode('http://schema.org/children'),
+            titus,
+          ),
+          dataFactory.quad(
+            titus,
+            skos('prefLabel'),
+            dataFactory.literal('Titus van Rijn'),
+          ),
+          // A sentence about a relative names no person, so it is not one.
+          dataFactory.quad(
+            rembrandt,
+            schema('spouse'),
+            dataFactory.literal('vanaf 1634, echtgenoot van: Saskia'),
+          ),
+        ),
+      );
+
+      expect(term.person?.spouses.map((spouse) => spouse.id.value)).toEqual([
+        saskia.value,
+      ]);
+      expect(term.person?.spouses[0].prefLabels[0].value).toEqual(
+        'Saskia van Uylenburgh',
+      );
+      expect(
+        term.person?.children.map((child) => child.prefLabels[0].value),
+      ).toEqual(['Titus van Rijn']);
+      expect(term.person?.parents).toEqual([]);
+      expect(term.person?.siblings).toEqual([]);
+    });
+
+    it('follows a schema:Role node to the relative', () => {
+      const role = dataFactory.namedNode(
+        'https://example.com/rembrandt#spouse',
+      );
+      const saskia = dataFactory.namedNode('https://example.com/saskia');
+      const [term] = transform(
+        person(
+          dataFactory.quad(rembrandt, schema('spouse'), role),
+          dataFactory.quad(role, rdf.type, schema('Role')),
+          dataFactory.quad(role, schema('spouse'), saskia),
+          dataFactory.quad(
+            role,
+            schema('roleName'),
+            dataFactory.literal('Predecessor'),
+          ),
+          dataFactory.quad(
+            saskia,
+            schema('name'),
+            dataFactory.literal('Saskia van Uylenburgh'),
+          ),
+        ),
+      );
+
+      expect(term.person?.spouses.map((spouse) => spouse.id.value)).toEqual([
+        saskia.value,
+      ]);
+    });
+
     it('reads an occupation the source identifies as a role without a period', () => {
       const painter = dataFactory.namedNode(
         'https://example.com/occupations/painter',

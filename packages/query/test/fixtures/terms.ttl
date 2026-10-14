@@ -72,7 +72,17 @@
         <https://example.com/resources/rembrandt#role-1>, <https://example.com/resources/rembrandt#role-2> ;
     schema:nationality "Noord-Nederlands"@nl, "North Netherlandish"@en ;
     # In the http namespace, as WO2-personen states it, which the API normalises to the https one.
-    <http://schema.org/gender> <http://schema.org/Male> .
+    <http://schema.org/gender> <http://schema.org/Male> ;
+    # Relatives are persons the source identifies; a sentence about one, as the NTA states for
+    # spouses, names no person and is left out.
+    schema:spouse <https://example.com/resources/saskia>, "vanaf 1634, echtgenoot van: Saskia"@nl ;
+    schema:children <https://example.com/resources/titus> .
+
+<https://example.com/resources/saskia>
+    schema:name "Saskia van Uylenburgh" .
+
+<https://example.com/resources/titus>
+    skos:prefLabel "Titus van Rijn"@nl .
 
 <https://example.com/resources/rembrandt#role-1>
     a schema:Role ;

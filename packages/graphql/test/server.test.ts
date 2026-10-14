@@ -439,6 +439,22 @@ describe('Server', () => {
     expect(term.result.person.gender).toEqual([
       { uri: 'https://schema.org/Male', name: [] },
     ]);
+    // Relatives are the persons the source identifies; its sentence about a spouse is left out.
+    // An untagged name is read as Dutch, as any untagged label is.
+    expect(term.result.person.spouse).toEqual([
+      {
+        uri: 'https://example.com/resources/saskia',
+        name: [{ language: 'nl', value: 'Saskia van Uylenburgh' }],
+      },
+    ]);
+    expect(term.result.person.children).toEqual([
+      {
+        uri: 'https://example.com/resources/titus',
+        name: [{ language: 'nl', value: 'Titus van Rijn' }],
+      },
+    ]);
+    expect(term.result.person.parent).toEqual([]);
+    expect(term.result.person.sibling).toEqual([]);
   });
 
   it('returns a person whose source states only the split into given and family name', async () => {
@@ -850,6 +866,10 @@ function termsQuery({
                 hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
                 nationality { uri name { language value } }
                 gender { uri name { language value } }
+                parent { uri name { language value } }
+                children { uri name { language value } }
+                spouse { uri name { language value } }
+                sibling { uri name { language value } }
               }
             }
           }
@@ -927,6 +947,10 @@ function lookupQuery({
               hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
               nationality { uri name { language value } }
               gender { uri name { language value } }
+              parent { uri name { language value } }
+              children { uri name { language value } }
+              spouse { uri name { language value } }
+              sibling { uri name { language value } }
             }
           }
           `
@@ -959,6 +983,10 @@ function lookupQuery({
               hasOccupation { occupation { uri name { language value } } roleName { language value } startDate endDate }
               nationality { uri name { language value } }
               gender { uri name { language value } }
+              parent { uri name { language value } }
+              children { uri name { language value } }
+              spouse { uri name { language value } }
+              sibling { uri name { language value } }
             }
           }
           `

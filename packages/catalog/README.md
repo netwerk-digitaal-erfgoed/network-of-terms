@@ -191,8 +191,13 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
     schema:deathPlace ?deathPlace ;
     schema:hasOccupation ?occupation ;
     schema:nationality ?nationality ;
-    schema:gender ?gender .
+    schema:gender ?gender ;
+    schema:parent ?parent ;
+    schema:children ?child ;
+    schema:spouse ?spouse ;
+    schema:sibling ?sibling .
 ?birthPlace schema:name ?birthPlaceName .
+?spouse schema:name ?spouseName .
 ```
 
 - Every property is optional, and a term gets a `person` node in the API as soon as any of them is
@@ -218,6 +223,15 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
 - A gender is an entity too. Construct the source’s own value: `schema:Male` and `schema:Female`
   in either Schema.org namespace come out of the API as `https://schema.org/Male` and
   `https://schema.org/Female`, and any other URI or literal as the source states it.
+- A family member is a **person the source identifies**: construct the relative’s URI and name it
+  with `schema:name` or `skos:prefLabel`. A literal is not read as a relative, since what sources
+  state there is a sentence about one – the NTA’s `vanaf 1607, echtgenoot van: …` – rather than a
+  name. A source that puts a `schema:Role` between the person and the relative, as STCN does for
+  printers, may construct the role as it is: the relation repeated on the role reaches the
+  relative, as for an occupation below.
+  PiCo states a relation in two places: as a role in a record on the observation, and as
+  `schema:parent`, `schema:children`, `schema:spouse` or `schema:sibling` between
+  reconstructions. Construct the latter, which links persons rather than mentions.
 - An occupation is read as Schema.org’s **`Role`**, so a source has three ways to state one. A URI
   is an occupation the source identifies, named as above; a literal is a role the source only
   names (`roleName`); and a `schema:Role` node carries the period, with `schema:hasOccupation`

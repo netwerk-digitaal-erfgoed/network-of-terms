@@ -16,6 +16,7 @@ import {
   QueryTermsService,
   Entity,
   OccupationRole,
+  RelatedTerm,
   ServerError,
   SourceNotFoundError,
   SourceResult,
@@ -268,6 +269,12 @@ function denotedPerson(
   }
 
   const entities = entitiesIn(acrossSet);
+  // A relative is one person whatever its names, so its names fall back on their own.
+  const references = (relatives: RelatedTerm[]) =>
+    relatives.map((relative) => ({
+      uri: relative.id.value,
+      name: inRequestedLanguages(relative.prefLabels),
+    }));
   return {
     givenName: inRequestedLanguages(person.givenNames),
     familyName: inRequestedLanguages(person.familyNames),
@@ -278,6 +285,10 @@ function denotedPerson(
     hasOccupation: rolesIn(acrossSet)(person.occupations),
     nationality: entities(person.nationalities),
     gender: entities(person.genders),
+    parent: references(person.parents),
+    children: references(person.children),
+    spouse: references(person.spouses),
+    sibling: references(person.siblings),
   };
 }
 
