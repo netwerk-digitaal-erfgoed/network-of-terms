@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import {
   Catalog,
   Dataset,
@@ -8,6 +8,7 @@ import {
 import { getCatalog } from '../src/index.js';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 let catalog: Catalog;
 
@@ -190,4 +191,53 @@ describe('Catalog', () => {
     );
     expect(catalog.datasets.length).toBeGreaterThan(3);
   }, 50_000);
+
+  it('loads catalog from CATALOG_PATH', async () => {
+    process.env.CATALOG_PATH = resolve(
+      dirname(fileURLToPath(import.meta.url)),
+      'fixtures/credentials/',
+    );
+    try {
+      const catalog = await getCatalog();
+      expect(catalog.datasets.length).toBe(1);
+    } finally {
+      delete process.env.CATALOG_PATH;
+    }
+  });
+
+  it('prefers a catalog bundled next to the code', async () => {
+    const bundledCatalog = fileURLToPath(
+      new URL('../src/catalog', import.meta.url),
+    );
+    const existsSync = fs.existsSync;
+    vi.spyOn(fs, 'existsSync').mockImplementation(
+      (path) => path === bundledCatalog || existsSync(path),
+    );
+    try {
+      await expect(getCatalog()).rejects.toThrow(bundledCatalog);
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
+  it('throws when the catalog directory does not exist', async () => {
+    await expect(getCatalog('/does-not-exist')).rejects.toThrow(
+      'Catalog directory /does-not-exist does not exist',
+    );
+  });
+
+  it('throws when the catalog path is not a directory', async () => {
+    const file = fileURLToPath(import.meta.url);
+    await expect(getCatalog(file)).rejects.toThrow('is not a directory');
+  });
+
+  it('throws when the catalog directory holds no datasets', async () => {
+    const emptyDirectory = resolve(
+      dirname(fileURLToPath(import.meta.url)),
+      'fixtures/empty/',
+    );
+    await expect(getCatalog(emptyDirectory)).rejects.toThrow(
+      'holds no datasets',
+    );
+  });
 });

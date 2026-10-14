@@ -3,6 +3,12 @@
 This is the catalog of terminology sources that can be queried through the
 [Network of Terms](https://github.com/netwerk-digitaal-erfgoed/network-of-terms).
 
+## Loading the catalog
+
+`getCatalog()` reads the catalog from the `CATALOG_PATH` environment variable if it is set, and otherwise from the
+[catalog](catalog) directory that ships with this package. Pass a path to read a catalog from somewhere else. It throws
+if the directory doesn’t exist or holds no datasets.
+
 ## File layout
 
 The [catalog](catalog) directory holds everything that defines the set of terminology sources:

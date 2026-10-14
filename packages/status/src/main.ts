@@ -25,9 +25,6 @@ const packageJsonPath = existsSync(join(__dirname, 'package.json'))
 const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
 const userAgent = `network-of-terms-status/${packageJson.version} (+https://github.com/netwerk-digitaal-erfgoed/network-of-terms)`;
 
-// Catalog path relative to the built main.js
-const catalogPath = join(__dirname, 'catalog');
-
 try {
   logger.info('Starting SPARQL endpoint monitoring service...');
 
@@ -36,7 +33,7 @@ try {
   logger.info('Database initialized');
 
   // Load catalog
-  const catalog = await getCatalog(catalogPath);
+  const catalog = await getCatalog();
   logger.info({ datasetCount: catalog.datasets.length }, 'Catalog loaded');
 
   // Extract monitor configurations from catalog (one per dataset)

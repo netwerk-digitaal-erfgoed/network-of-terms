@@ -19,12 +19,30 @@ import { dirname, join } from 'node:path';
 import { Readable } from 'node:stream';
 import { RdfStore } from 'rdf-stores';
 
+/**
+ * Read the catalog from `path`, else from the `CATALOG_PATH` environment variable, else from the
+ * catalog that ships with this package.
+ *
+ * @throws Error if the path is not an existing directory or the directory holds no datasets.
+ */
 export async function getCatalog(path?: string): Promise<Catalog> {
   const directory = (
-    path ?? fileURLToPath(new URL('../catalog', import.meta.url))
+    path ||
+    process.env.CATALOG_PATH ||
+    bundledCatalogPath()
   ).replace(/\\/g, '/'); // Windows compatibility.
-  const store = await fromFiles(directory);
-  return fromStore(store);
+  const stats = fs.statSync(directory, { throwIfNoEntry: false });
+  if (stats === undefined) {
+    throw new Error(`Catalog directory ${directory} does not exist`);
+  }
+  if (!stats.isDirectory()) {
+    throw new Error(`Catalog path ${directory} is not a directory`);
+  }
+  const catalog = await fromStore(await fromFiles(directory));
+  if (catalog.datasets.length === 0) {
+    throw new Error(`Catalog directory ${directory} holds no datasets`);
+  }
+  return catalog;
 }
 
 // The catalog is read through three lenses rather than one. A lens fetches all its
@@ -224,6 +242,17 @@ export async function fromStore(store: RDF.Store): Promise<Catalog> {
         ),
     ),
   );
+}
+
+/**
+ * The catalog directory sits next to this package’s `dist/`, but the servers bundle this code
+ * into their own `dist/main.js` and copy the catalog to `dist/catalog`, next to the bundle.
+ */
+function bundledCatalogPath(): string {
+  const nextToBundle = fileURLToPath(new URL('catalog', import.meta.url));
+  return fs.existsSync(nextToBundle)
+    ? nextToBundle
+    : fileURLToPath(new URL('../catalog', import.meta.url));
 }
 
 /**

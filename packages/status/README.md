@@ -43,6 +43,7 @@ Configuration is done via environment variables:
 | Variable                   | Required | Default                                                      | Description                         |
 | -------------------------- | -------- | ------------------------------------------------------------ | ----------------------------------- |
 | `DATABASE_URL`             | Yes      | -                                                            | PostgreSQL connection string        |
+| `CATALOG_PATH`             | No       | the bundled `catalog` directory next to the service’s code   | Path to the catalog directory       |
 | `PORT`                     | No       | `3000`                                                       | HTTP server port                    |
 | `POLLING_INTERVAL_SECONDS` | No       | `300`                                                        | Interval between checks (5 minutes) |
 | `RUN_ON_START`             | No       | `true`                                                       | Run initial check on startup        |
