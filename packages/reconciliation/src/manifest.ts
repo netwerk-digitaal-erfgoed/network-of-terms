@@ -4,15 +4,15 @@ import {
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
+export const conceptType = {
+  id: 'http://www.w3.org/2004/02/skos/core#Concept',
+  name: 'Concept',
+};
+
 export class ServiceManifest {
   public readonly versions = ['0.1', '0.2'];
-  public readonly schemaSpace = 'http://www.w3.org/2004/02/skos/core#Concept';
-  public readonly defaultTypes = [
-    {
-      id: this.schemaSpace,
-      name: 'Concept',
-    },
-  ];
+  public readonly schemaSpace = conceptType.id;
+  public readonly defaultTypes = [conceptType];
   public readonly preview;
   public readonly extend;
 
