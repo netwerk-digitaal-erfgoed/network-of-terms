@@ -39,7 +39,7 @@ WHERE {
             ?deathPlace_en
         WHERE {
             ?uri ?predicate ?label .
-            ?label <bif:contains> ?virtuosoQuery .
+            FILTER(<bif:contains>(?label, ?virtuosoQuery))
             VALUES ?predicate { schema:name schema:alternateName }
 
             ?uri a ?type .
