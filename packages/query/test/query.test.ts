@@ -7,12 +7,15 @@ import {
   parameterizeGenres,
   QueryMode,
   QueryTermsService,
+  ServerError,
   SparqlDistribution,
+  Terms,
+  TimeoutError,
 } from '../src/index.js';
-import { QueryEngine } from '@comunica/query-sparql';
+import { SparqlEndpointFetcher } from 'fetch-sparql-endpoint';
 import { DataFactory } from 'rdf-data-factory';
-import { ArrayIterator } from 'asynciterator';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Readable } from 'node:stream';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 function createTestDataset(
   searchQuery: string,
@@ -39,23 +42,22 @@ function createTestDataset(
 }
 
 const catalog = testCatalog(1000);
-const comunicaMock = {
-  queryQuads: vi.fn(
-    (_query: string, _config: object) =>
-      new ArrayIterator([], { autoStart: false }),
+const fetcherMock = {
+  fetchTriples: vi.fn<SparqlEndpointFetcher['fetchTriples']>(
+    async () => Readable.from([]) as never,
   ),
 };
 const service = new QueryTermsService({
-  comunica: comunicaMock as unknown as QueryEngine,
+  fetcher: fetcherMock as unknown as SparqlEndpointFetcher,
 });
 
 describe('Query', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
   });
-  it('substitutes the dataset IRI into the query sent to Comunica', async () => {
+  it('substitutes the dataset IRI into the query sent to the endpoint', async () => {
     await query('https://data.beeldengeluid.nl/id/datadownload/0026');
-    const sentQuery = comunicaMock.queryQuads.mock.calls[0][0];
+    const sentQuery = fetcherMock.fetchTriples.mock.calls[0][1];
     expect(sentQuery).toContain(
       '<http://data.beeldengeluid.nl/gtaa/Persoonsnamen>',
     );
@@ -74,22 +76,128 @@ describe('Query', () => {
       10_000,
       10_000,
     );
-    const sentQuery = comunicaMock.queryQuads.mock.calls[0][0];
+    const sentQuery = fetcherMock.fetchTriples.mock.calls[0][1];
     expect(sentQuery).toContain('"van \\"gogh\\" \\\\ x"');
     expect(sentQuery).not.toContain('?query');
   });
 
   it('supports HTTP authentication', async () => {
-    const config = await query(
+    const [endpoint, , options] = await query(
       'https://data.beeldengeluid.nl/id/datadownload/0026',
     );
 
     // Must not contain credentials in URL...
-    expect(config.sources[0].value).toEqual(
-      'https://gtaa.apis.beeldengeluid.nl/sparql',
+    expect(endpoint).toEqual('https://gtaa.apis.beeldengeluid.nl/sparql');
+    // ... but in an Authorization header.
+    const fetchMock = vi.fn().mockResolvedValue(new Response(''));
+    vi.stubGlobal('fetch', fetchMock);
+    await options.fetch(endpoint, {});
+    vi.unstubAllGlobals();
+    const headers = fetchMock.mock.calls[0][1].headers as Headers;
+    expect(headers.get('Authorization')).toEqual(
+      `Basic ${Buffer.from('username:password').toString('base64')}`,
     );
-    // ... but in separate httpAuth context element.
-    expect(config.httpAuth).toEqual('username:password');
+  });
+});
+
+describe('Query against an endpoint', () => {
+  const endpointService = new QueryTermsService({
+    logger: { info: vi.fn(), error: vi.fn(), debug: vi.fn() } as never,
+  });
+  const { dataset, distribution } = createTestDataset(
+    'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
+  );
+  const search = (timeoutMs = 10_000) =>
+    endpointService.search(
+      'nachtwacht',
+      QueryMode.RAW,
+      dataset,
+      distribution,
+      10,
+      timeoutMs,
+    );
+  const stubEndpoint = (respond: (signal: AbortSignal) => Promise<Response>) =>
+    vi.stubGlobal(
+      'fetch',
+      vi.fn((_input: string, init: RequestInit) =>
+        respond(init.signal as AbortSignal),
+      ),
+    );
+  // A response that never ends, until the request is aborted.
+  const endlessBody = (signal: AbortSignal) =>
+    new ReadableStream({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('# still searching\n'));
+        signal.addEventListener('abort', () => controller.error(signal.reason));
+      },
+    });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('returns the terms the endpoint finds', async () => {
+    stubEndpoint(
+      async () =>
+        new Response(
+          '<https://example.org/nachtwacht> a <http://www.w3.org/2004/02/skos/core#Concept> ;\n' +
+            '  <http://www.w3.org/2004/02/skos/core#prefLabel> "Nachtwacht"@nl .\n',
+          { headers: { 'Content-Type': 'text/turtle' } },
+        ),
+    );
+    const response = await search();
+    expect(response.result).toBeInstanceOf(Terms);
+    expect((response.result as Terms).terms[0].id.value).toEqual(
+      'https://example.org/nachtwacht',
+    );
+  });
+
+  it('says who sends the request, which Wikidata requires', async () => {
+    stubEndpoint(async () => new Response('', { status: 200 }));
+    await search();
+    const headers = vi.mocked(fetch).mock.calls[0][1]!.headers as Headers;
+    expect(headers.get('User-Agent')).toContain('NetworkOfTerms');
+  });
+
+  it('reports an error response as a server error', async () => {
+    stubEndpoint(
+      async () => new Response('Virtuoso 37000 Error', { status: 400 }),
+    );
+    const response = await search();
+    expect(response.result).toBeInstanceOf(ServerError);
+    expect((response.result as ServerError).message).toContain(
+      'Virtuoso 37000 Error',
+    );
+  });
+
+  it('falls back to the default timeout when none is given', async () => {
+    stubEndpoint(async () => new Response('', { status: 200 }));
+    const response = await search(undefined as unknown as number);
+    expect(response.result).toBeInstanceOf(Terms);
+  });
+
+  it('times out while waiting for a response', async () => {
+    stubEndpoint(
+      (signal) =>
+        new Promise((_resolve, reject) =>
+          signal.addEventListener('abort', () => reject(signal.reason)),
+        ),
+    );
+    const response = await search(50);
+    expect(response.result).toBeInstanceOf(TimeoutError);
+  });
+
+  it('times out while the response is still streaming in, and aborts it', async () => {
+    let requestSignal: AbortSignal | undefined;
+    stubEndpoint(async (signal) => {
+      requestSignal = signal;
+      return new Response(endlessBody(signal), {
+        headers: { 'Content-Type': 'text/turtle' },
+      });
+    });
+    const response = await search(50);
+    expect(response.result).toBeInstanceOf(TimeoutError);
+    expect(requestSignal?.aborted).toBe(true);
   });
 });
 
@@ -104,15 +212,11 @@ const query = async (iri: string) => {
     10_000,
   );
 
-  return comunicaMock.queryQuads.mock.calls[0][1] as {
-    httpAuth: string;
-    sources: [
-      {
-        type: 'sparql';
-        value: string;
-      },
-    ];
-  };
+  return fetcherMock.fetchTriples.mock.calls[0] as unknown as [
+    string,
+    string,
+    { fetch: typeof fetch },
+  ];
 };
 
 describe('parameterizeGenres', () => {

@@ -107,7 +107,7 @@ describe('Server', () => {
     expect(body.data.terms).toHaveLength(2);
     expect(body.data.terms[0].result.__typename).toEqual('TimeoutError');
     expect(body.data.terms[1].result.__typename).toEqual('Terms');
-    expect(body.data.terms[0].responseTimeMs).toBeGreaterThan(1000); // timeoutMs set to 1000.
+    expect(body.data.terms[0].responseTimeMs).toBeGreaterThanOrEqual(2500); // timeoutMs set to 2500, below the 3000 ms delay of the timeout source.
   });
 
   it('responds to successful GraphQL terms query', async () => {
@@ -790,7 +790,7 @@ function termsQuery({
         ${genres !== undefined ? `genres: [${genres.map((genre) => `"${genre}"`).join(',')}]` : ''}
         query: "${query}"
         limit: ${limit}
-        timeoutMs: 1000
+        timeoutMs: 2500
         ${languages !== undefined ? `languages: [${languages.join(',')}]` : ''}
       ) {
         source {
@@ -894,7 +894,7 @@ function lookupQuery({
     query {
       lookup(
         uris: [${uris.map((uri) => `"${uri}"`).join(',')}],
-        timeoutMs: 1000
+        timeoutMs: 2500
         ${languages !== undefined ? `languages: [${languages.join(',')}]` : ''}
       ) {
         uri

@@ -1,15 +1,13 @@
 import * as Hoek from '@hapi/hoek';
 import { termToString } from 'rdf-string-ttl';
 import Joi from 'joi';
-import { createLoggingFetch } from './helpers/logging-fetch.js';
-import { LoggerPino } from './helpers/logger-pino.js';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from '@rdfjs/types';
 import { Term, TermsTransformer } from './terms.js';
 import { QueryMode, queryVariants } from './search/query-mode.js';
 import { Dataset, Distribution, IRI } from './catalog.js';
-import { QueryEngine } from '@comunica/query-sparql';
+import { SparqlEndpointFetcher } from 'fetch-sparql-endpoint';
 import { DataFactory } from 'rdf-data-factory';
 import { sourceQueriesHistogram } from './instrumentation.js';
 import { config } from './config.js';
@@ -71,18 +69,7 @@ export interface BuildSearchQueryResult {
 }
 
 /**
- * Substitute bindings into the query text rather than passing them as Comunica initialBindings.
- *
- * Comunica materialises initialBindings by joining a VALUES clause into every FILTER operation,
- * using all the bindings whether or not the sub-operation references them – so a query with two
- * bindings arrives at the endpoint carrying six copies of each, including inside UNION branches
- * that mention neither. Jena then stops pushing the bound variable into the branch and scans the
- * predicate instead: measured against GeoNames, one such clause took a search from 0.21s to a 30s
- * timeout. See https://github.com/comunica/comunica/issues/1759.
- *
- * Only searches carry bindings – lookup() interpolates its own IRIs – so this changes nothing for
- * lookups. A previous version of this workaround existed for a crash (comunica#1655) and was
- * removed once that was fixed; this one is about the query the endpoint receives.
+ * Substitute bindings into the query text, which is sent to the endpoint as-is.
  */
 export function substituteBindings(
   query: string,
@@ -169,15 +156,35 @@ export function parameterizeGenres(
   );
 }
 
+/**
+ * Sends each query as-is to the source’s SPARQL endpoint.
+ *
+ * Not through a query engine such as Comunica: every query goes to exactly one endpoint, so the only
+ * thing an engine adds is the risk of planning the query itself. Comunica did that for any query with
+ * an extension function the endpoint does not declare, such as Virtuoso’s bif:contains, and sent its
+ * pieces as unbounded queries that ran the server out of memory.
+ * See https://github.com/comunica/comunica/issues/1899.
+ *
+ * Shared, because it holds no state per request and building its query parser takes time. Short
+ * queries go out as GET, as they did with Comunica, so endpoints and caches see the same requests.
+ */
+const defaultFetcher = new SparqlEndpointFetcher({
+  forceGetIfUrlLengthBelow: 600,
+});
+
+/** Wikidata refuses requests without a User-Agent that says who sends them. */
+const userAgent =
+  'NetworkOfTerms (https://github.com/netwerk-digitaal-erfgoed/network-of-terms)';
+
 export class QueryTermsService {
   private readonly logger: Pino.Logger;
-  private readonly engine: QueryEngine;
-  private readonly fetch: typeof fetch;
+  private readonly fetcher: SparqlEndpointFetcher;
 
-  constructor(options: { comunica?: QueryEngine; logger?: Pino.Logger } = {}) {
-    this.engine = options.comunica || new QueryEngine();
+  constructor(
+    options: { fetcher?: SparqlEndpointFetcher; logger?: Pino.Logger } = {},
+  ) {
+    this.fetcher = options.fetcher || defaultFetcher;
     this.logger = options.logger || Pino.pino();
-    this.fetch = createLoggingFetch(this.logger);
   }
 
   async search(
@@ -218,7 +225,7 @@ export class QueryTermsService {
     timeoutMs: number,
     bindings: Record<string, RDF.Term> = {},
   ): Promise<TermsResponse> {
-    Joi.attempt(
+    timeoutMs = Joi.attempt(
       timeoutMs,
       Joi.number()
         .integer()
@@ -228,36 +235,44 @@ export class QueryTermsService {
     );
 
     const timer = new Hoek.Bench();
-    const logger = new LoggerPino({ logger: this.logger });
     // Extract HTTP credentials if the distribution URL contains any.
     const url = new URL(distribution.endpoint.toString());
     const finalQuery = substituteBindings(query, bindings);
     this.logger.info(`Querying "${url}" with "${finalQuery}"...`);
-    const quadStream = await this.engine.queryQuads(finalQuery, {
-      log: logger,
-      fetch: this.fetch,
-      httpAuth:
-        url.username === '' ? undefined : url.username + ':' + url.password,
-      httpTimeout: timeoutMs,
-      noCache: true,
-      sources: [
-        {
-          type: 'sparql',
-          value: url.origin + url.pathname,
-        },
-      ],
-    });
+
+    // The timeout covers the response body too, and an error aborts the request, so no response
+    // keeps streaming in after this source has been answered.
+    const abortController = new AbortController();
+    const timeoutSignal = AbortSignal.timeout(timeoutMs);
+    const signal = AbortSignal.any([abortController.signal, timeoutSignal]);
+    const requestFetch: typeof fetch = (input, init) => {
+      const headers = new Headers(init?.headers);
+      headers.set('User-Agent', userAgent);
+      if (url.username !== '') {
+        headers.set(
+          'Authorization',
+          `Basic ${Buffer.from(`${url.username}:${url.password}`).toString('base64')}`,
+        );
+      }
+      return fetch(input, { ...init, headers, signal });
+    };
 
     return new Promise((resolve) => {
       const termsTransformer = new TermsTransformer();
-      quadStream.on('error', (error) => {
+      const onError = (error: globalThis.Error) => {
+        // Aborting below makes the response stream error too; this source has been answered already.
+        if (abortController.signal.aborted) {
+          return;
+        }
+        abortController.abort();
         const elapsed = Math.round(timer.elapsed());
         this.logger.error(
           `An error occurred when querying "${distribution.endpoint}": ${error} with %o`,
           error,
         );
 
-        if (error.message.startsWith('Fetch timed out')) {
+        // However the error that the timeout causes is shaped, the timeout signal says it fired.
+        if (timeoutSignal.aborted) {
           sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
             distribution: distribution.iri.toString(),
             error: 'TimeoutError',
@@ -283,29 +298,39 @@ export class QueryTermsService {
             ),
           );
         }
-      });
-      quadStream.on('data', (quad: RDF.Quad) => {
-        termsTransformer.fromQuad(quad);
-      });
-      quadStream.on('end', () => {
-        const terms = termsTransformer
-          .asArray()
-          .sort(byScoreThenAlphabetically);
-        this.logger.info(
-          `Found ${terms.length} terms matching "${query}" in "${
-            distribution.endpoint
-          }" in ${PrettyMilliseconds(timer.elapsed())}`,
-        );
-        sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
-          distribution: distribution.iri.toString(),
-        });
-        resolve(
-          new TermsResponse(
-            new Terms(distribution, terms),
-            Math.round(timer.elapsed()),
-          ),
-        );
-      });
+      };
+
+      this.fetcher
+        .fetchTriples(url.origin + url.pathname, finalQuery, {
+          fetch: requestFetch,
+        })
+        .then((quadStream) => {
+          quadStream.on('error', onError);
+          quadStream.on('data', (quad: RDF.Quad) => {
+            termsTransformer.fromQuad(quad);
+          });
+          quadStream.on('end', () => {
+            // Settle, so an error the response stream emits after this is ignored.
+            abortController.abort();
+            const terms = termsTransformer
+              .asArray()
+              .sort(byScoreThenAlphabetically);
+            this.logger.info(
+              `Found ${terms.length} terms matching "${query}" in "${
+                distribution.endpoint
+              }" in ${PrettyMilliseconds(timer.elapsed())}`,
+            );
+            sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
+              distribution: distribution.iri.toString(),
+            });
+            resolve(
+              new TermsResponse(
+                new Terms(distribution, terms),
+                Math.round(timer.elapsed()),
+              ),
+            );
+          });
+        }, onError);
     });
   }
 }

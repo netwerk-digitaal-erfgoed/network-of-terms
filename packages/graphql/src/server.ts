@@ -10,7 +10,6 @@ import fastifyCors from '@fastify/cors';
 import { Server } from 'http';
 import {
   Catalog,
-  comunica,
   getHttpLogger,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { EnvSchemaData } from 'env-schema';
@@ -42,9 +41,6 @@ export async function server(
     context: async (req: FastifyRequest) => {
       return {
         catalog,
-        // Use a fresh Comunica instance for each request to prevent Comunica's rate-limiting from delaying requests.
-        // We need requests to fail within the user-supplied timeoutMs.
-        comunica: comunica(),
         catalogLanguage: req.language(['nl', 'en']) || 'nl',
         statusClient,
       };

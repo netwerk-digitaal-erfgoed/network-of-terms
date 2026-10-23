@@ -1,14 +1,13 @@
 import { testCatalog } from '../src/test-utils.js';
 import { DistributionsService, QueryMode } from '../src/index.js';
-import { QueryEngine } from '@comunica/query-sparql';
-import { ArrayIterator } from 'asynciterator';
+import { SparqlEndpointFetcher } from 'fetch-sparql-endpoint';
+import { Readable } from 'node:stream';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const catalog = testCatalog(1000);
-const comunicaMock = {
-  queryQuads: vi.fn(
-    (_query: string, _config: object) =>
-      new ArrayIterator([], { autoStart: false }),
+const fetcherMock = {
+  fetchTriples: vi.fn<SparqlEndpointFetcher['fetchTriples']>(
+    async () => Readable.from([]) as never,
   ),
 };
 
@@ -20,7 +19,7 @@ describe('DistributionsService', () => {
     service = new DistributionsService({
       logger: { info: vi.fn(), error: vi.fn() } as never,
       catalog,
-      comunica: comunicaMock as unknown as QueryEngine,
+      fetcher: fetcherMock as unknown as SparqlEndpointFetcher,
     });
   });
 
@@ -60,6 +59,6 @@ describe('DistributionsService', () => {
     // Source is queried regardless of genre match — genres are for within-source filtering only
     expect(results).toHaveLength(1);
     // Verify the SPARQL query was called (genres passed through to query())
-    expect(comunicaMock.queryQuads).toHaveBeenCalledTimes(1);
+    expect(fetcherMock.fetchTriples).toHaveBeenCalledTimes(1);
   });
 });

@@ -7,25 +7,35 @@ import {
   vi,
   type MockInstance,
 } from 'vitest';
-import { QueryEngine } from '@comunica/query-sparql';
 import type { IRI } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 const genreIri: IRI = 'http://example.com/genre/1';
 
-const mockBindings = (labels: { language: string; value: string }[]) =>
-  labels.map(label => ({
-    get: () => label,
-  }));
+const rdfXmlResponse = (labels: { language: string; value: string }[]) =>
+  new Response(
+    `<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+  <skos:Concept rdf:about="${genreIri}">
+    ${labels
+      .map(
+        (label) =>
+          `<skos:prefLabel xml:lang="${label.language}">${label.value}</skos:prefLabel>`,
+      )
+      .join('\n    ')}
+  </skos:Concept>
+</rdf:RDF>`,
+    { headers: { 'Content-Type': 'application/rdf+xml' } },
+  );
 
-let queryBindingsMock: MockInstance;
+let fetchMock: MockInstance;
 
 beforeEach(() => {
-  queryBindingsMock = vi
-    .spyOn(QueryEngine.prototype, 'queryBindings')
-    .mockResolvedValue({
-      toArray: async () =>
-        mockBindings([{ language: 'nl', value: 'Testgenre' }]),
-    } as never);
+  fetchMock = vi
+    .spyOn(globalThis, 'fetch')
+    .mockImplementation(async () =>
+      rdfXmlResponse([{ language: 'nl', value: 'Testgenre' }]),
+    );
 });
 
 afterEach(async () => {
@@ -35,7 +45,7 @@ afterEach(async () => {
 });
 
 const importGenre = async () =>
-  import('../src/genre.js').then(m => m.dereferenceGenre);
+  import('../src/genre.js').then((m) => m.dereferenceGenre);
 
 describe('dereferenceGenre', () => {
   it('fetches and caches a genre', async () => {
@@ -45,12 +55,13 @@ describe('dereferenceGenre', () => {
 
     expect(result).not.toBeNull();
     expect(result!.name.nl).toEqual('Testgenre');
-    expect(queryBindingsMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toEqual(`${genreIri}.rdf`);
 
     // Second call should return cached data without querying again.
     const cached = await dereferenceGenre(genreIri);
     expect(cached!.name.nl).toEqual('Testgenre');
-    expect(queryBindingsMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it('returns stale data and refreshes in the background when cache expires', async () => {
@@ -58,7 +69,7 @@ describe('dereferenceGenre', () => {
 
     // Prime the cache.
     await dereferenceGenre(genreIri);
-    expect(queryBindingsMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
 
     // Expire the cache.
     vi.spyOn(Date, 'now')
@@ -66,23 +77,20 @@ describe('dereferenceGenre', () => {
       .mockReturnValue(Date.now() + 86_400_001); // new cache entry
 
     // Update mock to return new data for the background refresh.
-    queryBindingsMock.mockResolvedValue({
-      toArray: async () =>
-        mockBindings([{ language: 'nl', value: 'Updated genre' }]),
-    } as never);
+    fetchMock.mockImplementation(async () =>
+      rdfXmlResponse([{ language: 'nl', value: 'Updated genre' }]),
+    );
 
     // Should return stale data immediately.
     const stale = await dereferenceGenre(genreIri);
     expect(stale!.name.nl).toEqual('Testgenre');
 
     // Wait for background refresh to complete.
-    await vi.waitFor(() =>
-      expect(queryBindingsMock).toHaveBeenCalledTimes(2),
-    );
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
   });
 
   it('returns null when fetch fails and no cache exists', async () => {
-    queryBindingsMock.mockRejectedValue(new Error('Network error'));
+    fetchMock.mockRejectedValue(new Error('Network error'));
     const dereferenceGenre = await importGenre();
 
     const result = await dereferenceGenre(genreIri);
@@ -90,25 +98,33 @@ describe('dereferenceGenre', () => {
     expect(result).toBeNull();
   });
 
-  it('does not cache empty results when upstream returns no bindings', async () => {
-    queryBindingsMock.mockResolvedValue({
-      toArray: async () => mockBindings([]),
-    } as never);
+  it('returns null when the upstream answers with an error status', async () => {
+    fetchMock.mockImplementation(
+      async () => new Response('Not found', { status: 404 }),
+    );
+    const dereferenceGenre = await importGenre();
+
+    const result = await dereferenceGenre(genreIri);
+
+    expect(result).toBeNull();
+  });
+
+  it('does not cache empty results when upstream returns no labels', async () => {
+    fetchMock.mockImplementation(async () => rdfXmlResponse([]));
     const dereferenceGenre = await importGenre();
 
     const result = await dereferenceGenre(genreIri);
     expect(result).toBeNull();
 
-    // Recovery: upstream starts returning bindings on the next call.
-    queryBindingsMock.mockResolvedValue({
-      toArray: async () =>
-        mockBindings([{ language: 'nl', value: 'Testgenre' }]),
-    } as never);
+    // Recovery: upstream starts returning labels on the next call.
+    fetchMock.mockImplementation(async () =>
+      rdfXmlResponse([{ language: 'nl', value: 'Testgenre' }]),
+    );
 
     const recovered = await dereferenceGenre(genreIri);
     expect(recovered).not.toBeNull();
     expect(recovered!.name.nl).toEqual('Testgenre');
-    expect(queryBindingsMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
   it('keeps stale data when background refresh fails', async () => {
@@ -119,16 +135,14 @@ describe('dereferenceGenre', () => {
 
     // Expire the cache and make refresh fail.
     vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 86_400_001);
-    queryBindingsMock.mockRejectedValue(new Error('Server down'));
+    fetchMock.mockRejectedValue(new Error('Server down'));
 
     // Should still return stale data.
     const stale = await dereferenceGenre(genreIri);
     expect(stale!.name.nl).toEqual('Testgenre');
 
     // Wait for the failed background refresh to settle.
-    await vi.waitFor(() =>
-      expect(queryBindingsMock).toHaveBeenCalledTimes(2),
-    );
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
 
     // Data should still be the original stale data.
     const stillStale = await dereferenceGenre(genreIri);
@@ -145,15 +159,12 @@ describe('dereferenceGenre', () => {
     vi.spyOn(Date, 'now').mockReturnValue(Date.now() + 86_400_001);
 
     // Make refresh slow.
-    queryBindingsMock.mockImplementation(
+    fetchMock.mockImplementation(
       () =>
-        new Promise(resolve =>
+        new Promise((resolve) =>
           setTimeout(
             () =>
-              resolve({
-                toArray: async () =>
-                  mockBindings([{ language: 'nl', value: 'Refreshed' }]),
-              }),
+              resolve(rdfXmlResponse([{ language: 'nl', value: 'Refreshed' }])),
             50,
           ),
         ),
@@ -165,11 +176,9 @@ describe('dereferenceGenre', () => {
     await dereferenceGenre(genreIri);
 
     // Wait for background refresh.
-    await vi.waitFor(() =>
-      expect(queryBindingsMock).toHaveBeenCalledTimes(2),
-    );
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
 
     // Should have only triggered one refresh despite multiple calls.
-    expect(queryBindingsMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

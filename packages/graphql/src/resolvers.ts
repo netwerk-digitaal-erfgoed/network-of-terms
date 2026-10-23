@@ -68,7 +68,6 @@ async function queryTerms(
   const service = new DistributionsService({
     logger: context.app.log,
     catalog: context.catalog,
-    comunica: context.comunica,
   });
   const results = await service.queryAll({
     sources: args.sources,
@@ -101,7 +100,6 @@ async function lookupTerms(object: any, args: any, context: any) {
   const service = new LookupService(
     context.catalog,
     new QueryTermsService({
-      comunica: context.comunica,
       logger: context.app.log,
     }),
   );
