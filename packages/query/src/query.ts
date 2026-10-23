@@ -310,6 +310,8 @@ export class QueryTermsService {
             termsTransformer.fromQuad(quad);
           });
           quadStream.on('end', () => {
+            // Settle, so an error the response stream emits after this is ignored.
+            abortController.abort();
             const terms = termsTransformer
               .asArray()
               .sort(byScoreThenAlphabetically);

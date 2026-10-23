@@ -32,6 +32,8 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre> => {
     signal: AbortSignal.timeout(timeout),
   });
   if (!response.ok || response.body === null) {
+    // Free the connection instead of leaving it to the timeout.
+    await response.body?.cancel();
     throw new Error(`HTTP ${response.status} for genre <${genre}>`);
   }
 
@@ -59,6 +61,7 @@ const doDereferenceGenre = async (genre: IRI): Promise<Genre> => {
     .filter(
       (quad) =>
         quad.predicate.value === skosPrefLabel &&
+        quad.object.termType === 'Literal' &&
         concepts.has(quad.subject.value),
     )
     .map((quad) => quad.object as Literal);
