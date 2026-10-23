@@ -31,7 +31,7 @@ cli ────────────┘
 
 **Libraries:**
 
-- **query** - Core query engine. Executes SPARQL queries against terminology sources. Uses Comunica for query execution.
+- **query** - Core query engine. Executes SPARQL queries against terminology sources. Sends each query as-is to the source’s SPARQL endpoint with fetch-sparql-endpoint.
 - **catalog** - Catalog of terminology sources. Contains JSONLD dataset definitions and SPARQL query templates in `catalog/` subdirectory.
 
 **Applications:**
