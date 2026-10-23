@@ -23,7 +23,7 @@ WHERE {
                 ?predicate ?label .
             VALUES ?predicate { skos:prefLabel skos:altLabel }
             FILTER(LANG(?label) = "nl")
-            FILTER(<bif:contains>(?label, ?virtuosoQuery))
+            ?label <bif:contains> ?virtuosoQuery .
         }
         #LIMIT#
     }

@@ -21,7 +21,7 @@ WHERE {
             ?uri schema:mainEntityOfPage/schema:isPartOf <http://data.bibliotheken.nl/id/dataset/persons> ;
                 ?predicate ?label .
             VALUES ?predicate { rdfs:label schema:name schema:alternateName }
-            FILTER(<bif:contains>(?label, ?virtuosoQuery))
+            ?label <bif:contains> ?virtuosoQuery .
         }
         #LIMIT#
     }
