@@ -2,11 +2,15 @@ import {
   IRI,
   StringDictionary,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { QueryEngine } from '@comunica/query-sparql';
-import type { Literal } from '@rdfjs/types';
+import type { Literal, Quad } from '@rdfjs/types';
+import { RdfXmlParser } from 'rdfxml-streaming-parser';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 
-const queryEngine = new QueryEngine();
 const timeout = 10_000;
+const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
+const skosConcept = 'http://www.w3.org/2004/02/skos/core#Concept';
+const skosPrefLabel = 'http://www.w3.org/2004/02/skos/core#prefLabel';
 const maxAge = 86_400_000; // 24 hours in ms.
 
 export class Genre {
@@ -20,31 +24,55 @@ const cache = new Map<string, { data: Genre; expires: number }>();
 const refreshing = new Set<string>();
 
 const doDereferenceGenre = async (genre: IRI): Promise<Genre> => {
-  const data = await queryEngine.queryBindings(
-    `SELECT ?prefLabel WHERE {
-      ?s a <http://www.w3.org/2004/02/skos/core#Concept> ;
-        <http://www.w3.org/2004/02/skos/core#prefLabel> ?prefLabel .
-    }`,
-    {
-      // We can't dereference at the actual URL because content negotiation is broken, so suffix .rdf.
-      sources: [`${genre.toString()}.rdf`],
-      httpTimeout: timeout,
-      httpBodyTimeout: true,
+  // We can't dereference at the actual URL because content negotiation is broken, so suffix .rdf.
+  const url = `${genre.toString()}.rdf`;
+  // The timeout covers the response body too.
+  const response = await fetch(url, {
+    headers: { Accept: 'application/rdf+xml' },
+    signal: AbortSignal.timeout(timeout),
+  });
+  if (!response.ok || response.body === null) {
+    throw new Error(`HTTP ${response.status} for genre <${genre}>`);
+  }
+
+  // A pipeline, so a body that breaks off (such as on the timeout) fails the parse instead of
+  // leaving it waiting.
+  const quads: Quad[] = [];
+  await pipeline(
+    Readable.fromWeb(response.body),
+    new RdfXmlParser({ baseIRI: url }),
+    async (parsed: AsyncIterable<Quad>) => {
+      for await (const quad of parsed) {
+        quads.push(quad);
+      }
     },
   );
-  const bindings = await data.toArray();
+  const concepts = new Set(
+    quads
+      .filter(
+        (quad) =>
+          quad.predicate.value === rdfType && quad.object.value === skosConcept,
+      )
+      .map((quad) => quad.subject.value),
+  );
+  const prefLabels = quads
+    .filter(
+      (quad) =>
+        quad.predicate.value === skosPrefLabel &&
+        concepts.has(quad.subject.value),
+    )
+    .map((quad) => quad.object as Literal);
 
-  if (bindings.length === 0) {
+  if (prefLabels.length === 0) {
     // Treat as failure so callers don’t cache an empty name dictionary
     // (e.g. when the upstream returns a non-RDF error page).
-    throw new Error(`No bindings returned for genre <${genre}>`);
+    throw new Error(`No labels returned for genre <${genre}>`);
   }
 
   return new Genre(
     genre,
-    bindings.reduce((acc: StringDictionary, binding) => {
-      acc[(binding.get('prefLabel') as Literal)!.language] =
-        binding.get('prefLabel')!.value;
+    prefLabels.reduce((acc: StringDictionary, prefLabel) => {
+      acc[prefLabel.language] = prefLabel.value;
       return acc;
     }, {}),
   );
