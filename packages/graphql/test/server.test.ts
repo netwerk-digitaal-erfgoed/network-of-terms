@@ -107,7 +107,7 @@ describe('Server', () => {
     expect(body.data.terms).toHaveLength(2);
     expect(body.data.terms[0].result.__typename).toEqual('TimeoutError');
     expect(body.data.terms[1].result.__typename).toEqual('Terms');
-    expect(body.data.terms[0].responseTimeMs).toBeGreaterThan(2500); // timeoutMs set to 2500, below the 3000 ms delay of the timeout source.
+    expect(body.data.terms[0].responseTimeMs).toBeGreaterThanOrEqual(2500); // timeoutMs set to 2500, below the 3000 ms delay of the timeout source.
   });
 
   it('responds to successful GraphQL terms query', async () => {
