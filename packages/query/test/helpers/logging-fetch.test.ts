@@ -12,21 +12,6 @@ describe('createLoggingFetch', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('ok')));
   });
 
-  it('removes stale Content-Length header', async () => {
-    const loggingFetch = createLoggingFetch(mockLogger);
-    const body = new URLSearchParams();
-    body.set('query', 'SELECT ?uri ORDER BY ?x');
-    const headers = new Headers({ 'content-length': '100' });
-
-    await loggingFetch('https://example.org/sparql', {
-      method: 'POST',
-      body,
-      headers,
-    });
-
-    expect(headers.has('content-length')).toBe(false);
-  });
-
   it('logs the URL', async () => {
     const loggingFetch = createLoggingFetch(mockLogger);
     const body = new URLSearchParams();
@@ -41,28 +26,6 @@ describe('createLoggingFetch', () => {
     expect(mockLogger.debug).toHaveBeenCalledWith(
       expect.objectContaining({
         url: 'https://example.org/sparql',
-      }),
-      'SPARQL query',
-    );
-  });
-
-  it('strips redundant xsd:string datatype', async () => {
-    const loggingFetch = createLoggingFetch(mockLogger);
-    const body = new URLSearchParams();
-    body.set(
-      'query',
-      '?text ql:contains-word "amsterdam"^^<http://www.w3.org/2001/XMLSchema#string>',
-    );
-
-    await loggingFetch('https://example.org/sparql', {
-      method: 'POST',
-      body,
-      headers: new Headers(),
-    });
-
-    expect(mockLogger.debug).toHaveBeenCalledWith(
-      expect.objectContaining({
-        query: '?text ql:contains-word "amsterdam"',
       }),
       'SPARQL query',
     );

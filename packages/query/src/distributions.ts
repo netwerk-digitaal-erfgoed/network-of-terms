@@ -1,10 +1,13 @@
-import { QueryEngine } from '@comunica/query-sparql';
 import Joi from 'joi';
 import Pino from 'pino';
-import { QueryTermsService, TermsResponse } from './query.js';
+import { SparqlEndpointFetcher } from 'fetch-sparql-endpoint';
+import {
+  QueryTermsService,
+  sparqlEndpointFetcher,
+  TermsResponse,
+} from './query.js';
 import { QueryMode } from './search/query-mode.js';
 import { Catalog, IRI } from './catalog.js';
-import { comunica } from './index.js';
 import { clientQueriesCounter } from './instrumentation.js';
 
 interface BaseQueryOptions {
@@ -42,16 +45,16 @@ const schemaQueryAll = schemaBase.append({
 export class DistributionsService {
   private logger: Pino.Logger;
   private catalog: Catalog;
-  private comunica: QueryEngine;
+  private fetcher: SparqlEndpointFetcher;
 
   constructor(options: {
     logger: Pino.Logger;
     catalog: Catalog;
-    comunica?: QueryEngine;
+    fetcher?: SparqlEndpointFetcher;
   }) {
     this.logger = options.logger;
     this.catalog = options.catalog;
-    this.comunica = options.comunica || comunica();
+    this.fetcher = options.fetcher || sparqlEndpointFetcher();
   }
 
   async query(options: QueryOptions, genres?: IRI[]): Promise<TermsResponse> {
@@ -64,7 +67,7 @@ export class DistributionsService {
     const distribution = dataset.getSparqlDistribution()!;
     const queryService = new QueryTermsService({
       logger: this.logger,
-      comunica: this.comunica,
+      fetcher: this.fetcher,
     });
     return queryService.search(
       args.query,

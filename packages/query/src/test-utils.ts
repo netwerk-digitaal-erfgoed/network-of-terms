@@ -13,7 +13,7 @@ import { SpawndChildProcess } from 'spawnd';
 import nock from 'nock';
 
 nock('https://example.com')
-  .get(/distributions\/timeout/)
+  .post(/distributions\/timeout/)
   .delay(3000)
   .reply(200)
   .persist();
