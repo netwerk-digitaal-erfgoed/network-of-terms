@@ -23,7 +23,10 @@ CONSTRUCT {
         }
     }
     {
-        ?uri sdo:name ?prefLabel .
+        # Typing ?uri keeps the BINDs below from being evaluated over every
+        # sdo:name in the graph before the join with the matches.
+        ?uri a gtm:Straat ;
+            sdo:name ?prefLabel .
         OPTIONAL {
             ?uri gtm:genoemdNaar ?genoemdNaar .
         }

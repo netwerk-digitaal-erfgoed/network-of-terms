@@ -20,7 +20,10 @@ CONSTRUCT {
     # Kapelstraat: <https://n2t.net/ark:/60537/b4ApaO>
     VALUES ?uri { ?uris }
     {
-        ?uri sdo:name ?prefLabel .
+        # Typing ?uri keeps the BINDs below from being evaluated over every
+        # sdo:name in the graph before the join with the VALUES.
+        ?uri a gtm:Straat ;
+            sdo:name ?prefLabel .
         OPTIONAL {
             ?uri gtm:genoemdNaar ?genoemdNaar .
         }
