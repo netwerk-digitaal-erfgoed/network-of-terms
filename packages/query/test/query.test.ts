@@ -163,6 +163,12 @@ describe('Query against an endpoint', () => {
     );
   });
 
+  it('falls back to the default timeout when none is given', async () => {
+    stubEndpoint(async () => new Response('', { status: 200 }));
+    const response = await search(undefined as unknown as number);
+    expect(response.result).toBeInstanceOf(Terms);
+  });
+
   it('times out while waiting for a response', async () => {
     stubEndpoint(
       (signal) =>

@@ -1,7 +1,6 @@
 import * as Hoek from '@hapi/hoek';
 import { termToString } from 'rdf-string-ttl';
 import Joi from 'joi';
-import { createLoggingFetch } from './helpers/logging-fetch.js';
 import Pino from 'pino';
 import PrettyMilliseconds from 'pretty-ms';
 import * as RDF from '@rdfjs/types';
@@ -165,20 +164,23 @@ export function parameterizeGenres(
  * an extension function the endpoint does not declare, such as Virtuoso’s bif:contains, and sent its
  * pieces as unbounded queries that ran the server out of memory.
  * See https://github.com/comunica/comunica/issues/1899.
+ *
+ * Shared, because it holds no state per request and building its query parser takes time. Short
+ * queries go out as GET, as they did with Comunica, so endpoints and caches see the same requests.
  */
-export const sparqlEndpointFetcher = () => new SparqlEndpointFetcher();
+const defaultFetcher = new SparqlEndpointFetcher({
+  forceGetIfUrlLengthBelow: 600,
+});
 
 export class QueryTermsService {
   private readonly logger: Pino.Logger;
   private readonly fetcher: SparqlEndpointFetcher;
-  private readonly fetch: typeof fetch;
 
   constructor(
     options: { fetcher?: SparqlEndpointFetcher; logger?: Pino.Logger } = {},
   ) {
-    this.fetcher = options.fetcher || sparqlEndpointFetcher();
+    this.fetcher = options.fetcher || defaultFetcher;
     this.logger = options.logger || Pino.pino();
-    this.fetch = createLoggingFetch(this.logger);
   }
 
   async search(
@@ -219,7 +221,7 @@ export class QueryTermsService {
     timeoutMs: number,
     bindings: Record<string, RDF.Term> = {},
   ): Promise<TermsResponse> {
-    Joi.attempt(
+    timeoutMs = Joi.attempt(
       timeoutMs,
       Joi.number()
         .integer()
@@ -237,10 +239,8 @@ export class QueryTermsService {
     // The timeout covers the response body too, and an error aborts the request, so no response
     // keeps streaming in after this source has been answered.
     const abortController = new AbortController();
-    const signal = AbortSignal.any([
-      abortController.signal,
-      AbortSignal.timeout(timeoutMs),
-    ]);
+    const timeoutSignal = AbortSignal.timeout(timeoutMs);
+    const signal = AbortSignal.any([abortController.signal, timeoutSignal]);
     const requestFetch: typeof fetch = (input, init) => {
       const headers = new Headers(init?.headers);
       if (url.username !== '') {
@@ -249,7 +249,7 @@ export class QueryTermsService {
           `Basic ${Buffer.from(`${url.username}:${url.password}`).toString('base64')}`,
         );
       }
-      return this.fetch(input, { ...init, headers, signal });
+      return fetch(input, { ...init, headers, signal });
     };
 
     return new Promise((resolve) => {
@@ -266,7 +266,8 @@ export class QueryTermsService {
           error,
         );
 
-        if (error.name === 'TimeoutError') {
+        // However the error that the timeout causes is shaped, the timeout signal says it fired.
+        if (timeoutSignal.aborted) {
           sourceQueriesHistogram.record(Math.round(timer.elapsed()), {
             distribution: distribution.iri.toString(),
             error: 'TimeoutError',

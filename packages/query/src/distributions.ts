@@ -1,11 +1,7 @@
 import Joi from 'joi';
 import Pino from 'pino';
 import { SparqlEndpointFetcher } from 'fetch-sparql-endpoint';
-import {
-  QueryTermsService,
-  sparqlEndpointFetcher,
-  TermsResponse,
-} from './query.js';
+import { QueryTermsService, TermsResponse } from './query.js';
 import { QueryMode } from './search/query-mode.js';
 import { Catalog, IRI } from './catalog.js';
 import { clientQueriesCounter } from './instrumentation.js';
@@ -45,7 +41,7 @@ const schemaQueryAll = schemaBase.append({
 export class DistributionsService {
   private logger: Pino.Logger;
   private catalog: Catalog;
-  private fetcher: SparqlEndpointFetcher;
+  private fetcher?: SparqlEndpointFetcher;
 
   constructor(options: {
     logger: Pino.Logger;
@@ -54,7 +50,7 @@ export class DistributionsService {
   }) {
     this.logger = options.logger;
     this.catalog = options.catalog;
-    this.fetcher = options.fetcher || sparqlEndpointFetcher();
+    this.fetcher = options.fetcher;
   }
 
   async query(options: QueryOptions, genres?: IRI[]): Promise<TermsResponse> {
