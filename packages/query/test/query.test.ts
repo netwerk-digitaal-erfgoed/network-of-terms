@@ -152,6 +152,13 @@ describe('Query against an endpoint', () => {
     );
   });
 
+  it('says who sends the request, which Wikidata requires', async () => {
+    stubEndpoint(async () => new Response('', { status: 200 }));
+    await search();
+    const headers = vi.mocked(fetch).mock.calls[0][1]!.headers as Headers;
+    expect(headers.get('User-Agent')).toContain('NetworkOfTerms');
+  });
+
   it('reports an error response as a server error', async () => {
     stubEndpoint(
       async () => new Response('Virtuoso 37000 Error', { status: 400 }),

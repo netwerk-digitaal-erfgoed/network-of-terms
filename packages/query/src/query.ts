@@ -172,6 +172,10 @@ const defaultFetcher = new SparqlEndpointFetcher({
   forceGetIfUrlLengthBelow: 600,
 });
 
+/** Wikidata refuses requests without a User-Agent that says who sends them. */
+const userAgent =
+  'NetworkOfTerms (https://github.com/netwerk-digitaal-erfgoed/network-of-terms)';
+
 export class QueryTermsService {
   private readonly logger: Pino.Logger;
   private readonly fetcher: SparqlEndpointFetcher;
@@ -243,6 +247,7 @@ export class QueryTermsService {
     const signal = AbortSignal.any([abortController.signal, timeoutSignal]);
     const requestFetch: typeof fetch = (input, init) => {
       const headers = new Headers(init?.headers);
+      headers.set('User-Agent', userAgent);
       if (url.username !== '') {
         headers.set(
           'Authorization',
