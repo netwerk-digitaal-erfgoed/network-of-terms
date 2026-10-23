@@ -264,6 +264,6 @@ Plain `FILTER(CONTAINS(…))` scans every candidate literal on each request. **P
 - **GraphDB (Lucene connector)** – named indexes via `luc:query` / `luc:entities`; list configured connectors with `?cntUri luc:listConnectors ?cntStr`.
 - **GraphDB (Elasticsearch connector)** – same pattern under the `elastic:` namespace.
 - **OpenLink Virtuoso** – [`bif:contains`](https://docs.openlinksw.com/virtuoso/bifcontainsoptions/), e.g. `?label bif:contains ?virtuosoQuery`.
-  Do not use the function form `FILTER(<bif:contains>(?label, ?virtuosoQuery))`: Comunica does not know the function, so it splits the query instead of sending it whole. Virtuoso then rejects the search part (SP031), and the rest of the `CONSTRUCT` goes out as unbounded `SELECT`s that can run the server out of memory.
+  On a Virtuoso service behind TriplyDB (such as `data.bibliotheken.nl`), use the function form `FILTER(<bif:contains>(?label, ?virtuosoQuery))`: TriplyDB parses the query first, and the triple-pattern form then silently returns no results.
 - **Wikidata** – the `wikibase:mwapi` service with `mwapi:search` (titles) or `mwapi:srsearch` (full text). See the [Wikidata MWAPI manual](https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/MWAPI).
 
