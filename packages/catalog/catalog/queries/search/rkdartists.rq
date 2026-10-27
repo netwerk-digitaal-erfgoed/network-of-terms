@@ -16,7 +16,16 @@ CONSTRUCT {
         schema:deathPlace ?deathPlace_uri, ?deathPlace_alternative_nl, ?deathPlace_alternative_en ;
         schema:hasOccupation ?occupation ;
         schema:nationality ?nationality_uri, ?nationality_alternative ;
-        schema:gender ?gender .
+        schema:gender ?gender ;
+        schema:additionalType ?organizationType_uri ;
+        schema:location ?activity_place ;
+        schema:event ?activity .
+    ?organizationType_named schema:name ?organizationType_name .
+    ?activity a schema:Event ;
+        schema:startDate ?activity_startDate ;
+        schema:endDate ?activity_endDate ;
+        schema:location ?activity_place .
+    ?activity_place schema:name ?activity_placeName .
     ?birthPlace_uri schema:name ?birthPlace_name_nl, ?birthPlace_name_en .
     ?deathPlace_uri schema:name ?deathPlace_name_nl, ?deathPlace_name_en .
     ?nationality_named schema:name ?nationality_name .
@@ -33,6 +42,8 @@ WHERE {
             (COUNT(DISTINCT ?deathPlace_iri) AS ?deathPlaceCount)
             (COUNT(DISTINCT ?nationality_iri) AS ?nationalityCount)
             (SAMPLE(?nationality_iri) AS ?nationality_sample)
+            (COUNT(DISTINCT ?organizationType_iri) AS ?organizationTypeCount)
+            (SAMPLE(?organizationType_iri) AS ?organizationType_sample)
             ?birthPlace_nl
             ?birthPlace_en
             ?deathPlace_nl
@@ -55,6 +66,11 @@ WHERE {
             OPTIONAL { ?uri schema:birthPlace ?birthPlace_iri . FILTER(isIRI(?birthPlace_iri)) }
             OPTIONAL { ?uri schema:deathPlace ?deathPlace_iri . FILTER(isIRI(?deathPlace_iri)) }
             OPTIONAL { ?uri schema:nationality ?nationality_iri . FILTER(isIRI(?nationality_iri)) }
+            # Likewise an organisation’s kind, which for 18% of organisations is several.
+            OPTIONAL {
+                ?uri a schema:Organization ; schema:additionalType ?organizationType_iri .
+                FILTER(isIRI(?organizationType_iri))
+            }
 
             OPTIONAL {
                 ?uri schema:birthPlace ?birthPlace_nl .
@@ -105,6 +121,19 @@ WHERE {
         UNION { ?uri a schema:Person ; schema:additionalType ?occupation . FILTER(isLiteral(?occupation)) }
         UNION { ?uri a schema:Person ; schema:nationality ?nationality_uri . FILTER(isIRI(?nationality_uri)) }
         UNION { ?uri a schema:Person ; schema:nationality ?nationality_literal . FILTER(isLiteral(?nationality_literal)) }
+        UNION { ?uri a schema:Organization ; schema:additionalType ?organizationType_uri . FILTER(isIRI(?organizationType_uri)) }
+        UNION { ?uri a schema:Organization ; schema:additionalType ?organizationType_literal . FILTER(isLiteral(?organizationType_literal)) }
+        UNION {
+            ?uri a schema:Organization ; schema:workLocation|schema:hasOccupation ?activity .
+            OPTIONAL { ?activity schema:startDate ?activity_startDate . }
+            OPTIONAL { ?activity schema:endDate ?activity_endDate . }
+        }
+        UNION {
+            ?uri a schema:Organization ; schema:workLocation ?activity .
+            ?activity schema:workLocation ?activity_place .
+            FILTER(isIRI(?activity_place))
+            OPTIONAL { ?activity schema:workLocation ?activity_placeName . FILTER(isLiteral(?activity_placeName)) }
+        }
     }
 
     # A birth or death place, and a nationality, is stated twice, as a thesaurus IRI and as Dutch
@@ -128,6 +157,10 @@ WHERE {
     BIND(IF(?nationalityCount = 1, ?nationality_sample, ?noValue) AS ?nationality_named)
     BIND(IF(?nationalityCount = 1, ?nationality_literal, ?noValue) AS ?nationality_name)
     BIND(IF(?nationalityCount != 1, ?nationality_literal, ?noValue) AS ?nationality_alternative)
+    # An organisation’s kind is named the same way, but has no entity to fall back on: several kinds
+    # are their IRIs unnamed.
+    BIND(IF(?organizationTypeCount = 1, ?organizationType_sample, ?noValue) AS ?organizationType_named)
+    BIND(IF(?organizationTypeCount = 1, ?organizationType_literal, ?noValue) AS ?organizationType_name)
 
     BIND(IF(CONTAINS(STR(?birthDate), "/"), STRDT(STR(?birthDate), edtf:EDTF), ?birthDate) AS ?birthDate_edtf)
     BIND(IF(CONTAINS(STR(?deathDate), "/"), STRDT(STR(?deathDate), edtf:EDTF), ?deathDate) AS ?deathDate_edtf)

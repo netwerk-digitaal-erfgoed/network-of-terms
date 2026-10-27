@@ -250,10 +250,55 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
   the role, as it would on the term. RKDartists states an
   occupation’s IRI and its Dutch and English labels as parallel values with nothing pairing them,
   which is why its occupations are literals: pairing them would assign every label to every IRI.
+
 - One `UNION` branch per property, since each is multi-valued on its own: a person with seven
   occupations, five alternate names and seven alignments is 19 rows that way and 245 as
   `OPTIONAL`s.
 - Both Schema.org namespaces are read, so keep the one the source uses.
+
+#### Terms that denote an organization
+
+A query whose terms denote organizations should type them `schema:Organization` and construct
+what SKOS cannot state, in Schema.org’s organization properties. The organization’s names stay on
+`skos:prefLabel` and `skos:altLabel`, and alignments to other authorities on `skos:exactMatch`.
+
+```sparql
+?uri a skos:Concept , schema:Organization ;
+    schema:additionalType ?kind ;
+    schema:foundingDate ?foundingDate ;
+    schema:dissolutionDate ?dissolutionDate ;
+    schema:location ?place , ?address ;
+    schema:parentOrganization ?parent ;
+    schema:event ?activity .
+?kind schema:name ?kindName .
+?place schema:name ?placeName .
+?address a schema:PostalAddress ;
+    schema:addressLocality ?locality ;
+    schema:addressCountry ?countryCode .
+?parent schema:name ?parentName .
+?activity a schema:Event ;
+    schema:startDate ?startDate ;
+    schema:endDate ?endDate ;
+    schema:location ?place .
+```
+
+- Every property is optional, and a term gets an `organization` node in the API as soon as any of
+  them is constructed. Dates are EDTF strings passed through as for a person.
+- `schema:additionalType` is what kind of organization this is, a URI in the source’s own
+  vocabulary, named as for a place.
+- A **location** is a place the source links, by URI and named as above, or an address it states
+  only as text: a `schema:PostalAddress` with `schema:addressLocality` and `schema:addressCountry`.
+  An address’s own IRI is never returned, so the KB’s skolem IRIs can be constructed as they are.
+  Leave out the street, postal code and post office box, which are contact details. An identical
+  address stated twice is returned once.
+- A **parent organization** is one the source identifies by URI; a literal is left out.
+- A **period of activity** is a `schema:Event` on `schema:event`, with its dates and, where the
+  source says, its place. It is not the organization’s existence, so never map it onto
+  `schema:foundingDate` or `schema:dissolutionDate`. RKDartists states its periods as roles on
+  `schema:hasOccupation` and `schema:workLocation`, which are Person-only; its queries construct
+  each role as an event, and the place of a `schema:workLocation` role as the event’s and the
+  organization’s `schema:location`.
+- One `UNION` branch per property, as for a person.
 
 #### Full-text search
 
@@ -266,4 +311,3 @@ Plain `FILTER(CONTAINS(…))` scans every candidate literal on each request. **P
 - **OpenLink Virtuoso** – [`bif:contains`](https://docs.openlinksw.com/virtuoso/bifcontainsoptions/), e.g. `?label bif:contains ?virtuosoQuery`.
   Some Virtuoso services, such as KB’s (`data.bibliotheken.nl`) and RKD’s on TriplyDB, silently return no results for that triple-pattern form; use the function form `FILTER(<bif:contains>(?label, ?virtuosoQuery))` there. Other TriplyDB services, such as Adamlink’s and Muziekweb’s, accept both.
 - **Wikidata** – the `wikibase:mwapi` service with `mwapi:search` (titles) or `mwapi:srsearch` (full text). See the [Wikidata MWAPI manual](https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/MWAPI).
-
