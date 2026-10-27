@@ -27,6 +27,14 @@ CONSTRUCT {
     ?narrower_uri skos:prefLabel ?narrower_prefLabel .
     ?related_uri skos:prefLabel ?related_prefLabel .
     ?exactMatch_uri skos:prefLabel ?exactMatch_prefLabel .
+    ?uri schema:foundingDate ?foundingDate ;
+        schema:dissolutionDate ?dissolutionDate ;
+        schema:parentOrganization ?parentOrganization_uri ;
+        schema:location ?address .
+    ?parentOrganization_uri schema:name ?parentOrganization_name .
+    ?address a schema:PostalAddress ;
+        schema:addressLocality ?address_locality ;
+        schema:addressCountry ?address_country .
 }
 WHERE {
     # For example:
@@ -95,6 +103,21 @@ WHERE {
 
         # For Corp
         UNION { ?uri schema:name ?rdfs_label }
+        UNION { ?uri schema:foundingDate ?foundingDate }
+        UNION { ?uri schema:dissolutionDate ?dissolutionDate }
+        UNION {
+            ?uri schema:parentOrganization ?parentOrganization_uri .
+            FILTER(isIRI(?parentOrganization_uri))
+            OPTIONAL { ?parentOrganization_uri schema:name ?parentOrganization_name }
+        }
+        # An address keeps only its locality and country: the street, postal code and post office
+        # box are contact details, not what tells two organizations apart.
+        UNION {
+            ?uri schema:location ?address .
+            ?address a schema:PostalAddress .
+            OPTIONAL { ?address schema:addressLocality ?address_locality }
+            OPTIONAL { ?address schema:addressCountry ?address_country }
+        }
 
         # For STCN
         UNION { ?uri schema:location/schema:address/schema:addressLocality ?scopeNote }

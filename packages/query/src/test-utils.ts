@@ -60,6 +60,8 @@ export const testCatalog = (port: number) =>
             ?role ?role_p ?role_o .
             ?occupation ?occupation_p ?occupation_o .
             ?relative ?relative_p ?relative_o .
+            ?organizationNode ?organizationNode_p ?organizationNode_o .
+            ?eventLocation ?eventLocation_p ?eventLocation_o .
           }
           WHERE {
             {
@@ -94,8 +96,13 @@ export const testCatalog = (port: number) =>
               OPTIONAL { ?role schema:hasOccupation ?occupation . ?occupation ?occupation_p ?occupation_o . }
             }
             OPTIONAL {
-              ?s schema:parent|schema:children|schema:spouse|schema:sibling ?relative .
+              ?s schema:parent|schema:children|schema:spouse|schema:sibling|schema:parentOrganization ?relative .
               ?relative ?relative_p ?relative_o .
+            }
+            OPTIONAL {
+              ?s schema:location|schema:event ?organizationNode .
+              ?organizationNode ?organizationNode_p ?organizationNode_o .
+              OPTIONAL { ?organizationNode schema:location ?eventLocation . ?eventLocation ?eventLocation_p ?eventLocation_o . }
             }
           }`,
           `
@@ -116,6 +123,8 @@ export const testCatalog = (port: number) =>
             ?role ?role_p ?role_o .
             ?occupation ?occupation_p ?occupation_o .
             ?relative ?relative_p ?relative_o .
+            ?organizationNode ?organizationNode_p ?organizationNode_o .
+            ?eventLocation ?eventLocation_p ?eventLocation_o .
           }
           WHERE {
             ?s ?p ?o.
@@ -136,8 +145,13 @@ export const testCatalog = (port: number) =>
               OPTIONAL { ?role schema:hasOccupation ?occupation . ?occupation ?occupation_p ?occupation_o . }
             }
             OPTIONAL {
-              ?s schema:parent|schema:children|schema:spouse|schema:sibling ?relative .
+              ?s schema:parent|schema:children|schema:spouse|schema:sibling|schema:parentOrganization ?relative .
               ?relative ?relative_p ?relative_o .
+            }
+            OPTIONAL {
+              ?s schema:location|schema:event ?organizationNode .
+              ?organizationNode ?organizationNode_p ?organizationNode_o .
+              OPTIONAL { ?organizationNode schema:location ?eventLocation . ?eventLocation ?eventLocation_p ?eventLocation_o . }
             }
             OPTIONAL { 
               ?s skos:broader ?broader_uri.

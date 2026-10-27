@@ -202,3 +202,50 @@
     skos:prefLabel "Halvewegen"@nl ;
     schema:latitude "53.20139"^^xsd:float ;
     schema:longitude "" .
+
+# An organization in the shape that sources construct. RKDartists states its kind and its periods
+# of activity, one of them in a place; the KB states founding and dissolution dates, a parent
+# organization and an address it only states as text.
+<https://example.com/resources/ceramique>
+    a skos:Concept, schema:Organization ;
+    skos:prefLabel "Société Céramique, N.V."@nl ;
+    schema:additionalType <https://example.com/types/ceramics-manufactory> ;
+    schema:foundingDate "1863"^^xsd:gYear ;
+    schema:dissolutionDate "1958"^^xsd:gYear ;
+    schema:parentOrganization <https://example.com/resources/sphinx> ;
+    schema:location <https://example.com/places/maastricht>,
+        [ a schema:PostalAddress ; schema:addressLocality "Maastricht" ; schema:addressCountry "NL" ] ;
+    schema:event <https://example.com/resources/ceramique#active>,
+        <https://example.com/resources/ceramique#active-in-maastricht> .
+
+<https://example.com/types/ceramics-manufactory>
+    schema:name "aardewerkfabriek"@nl, "ceramics manufactory"@en .
+
+<https://example.com/resources/sphinx>
+    skos:prefLabel "Sphinx, N.V."@nl .
+
+<https://example.com/places/maastricht>
+    schema:name "Maastricht (stad)"@nl, "Maastricht (city)"@en .
+
+<https://example.com/resources/ceramique#active>
+    a schema:Event ;
+    schema:startDate "1863" ;
+    schema:endDate "1958" .
+
+<https://example.com/resources/ceramique#active-in-maastricht>
+    a schema:Event ;
+    schema:startDate "1850" ;
+    schema:endDate "1958" ;
+    schema:location <https://example.com/places/maastricht> .
+
+# An organization whose source states little: no dates of its own, an address with a country
+# alone, addresses named only in a language a client may not ask for, and periods open at either
+# end.
+<https://example.com/resources/regout>
+    a skos:Concept, schema:Organization ;
+    skos:prefLabel "Petrus Regout & Co."@nl ;
+    schema:location [ a schema:PostalAddress ; schema:addressCountry "NL" ],
+        [ a schema:PostalAddress ; schema:addressLocality "Bruxelles"@fr ],
+        [ a schema:PostalAddress ; schema:addressLocality "Maestricht"@fr ; schema:addressCountry "NL" ] ;
+    schema:event [ a schema:Event ; schema:startDate "1834" ], [ a schema:Event ; schema:endDate "1925" ],
+        [ a schema:Event ; schema:location [ a schema:PostalAddress ; schema:addressLocality "Bruxelles"@fr ] ] .

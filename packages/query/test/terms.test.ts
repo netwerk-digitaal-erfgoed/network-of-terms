@@ -614,4 +614,349 @@ describe('TermsTransformer', () => {
       expect(terms.map((term) => term.id.value)).toEqual([rembrandt.value]);
     });
   });
+
+  describe('for an organization', () => {
+    const ceramique = dataFactory.namedNode('https://example.com/ceramique');
+    const maastrichtCity = dataFactory.namedNode(
+      'https://example.com/places/maastricht',
+    );
+    const organization = (...quads: RDF.Quad[]) => [
+      dataFactory.quad(ceramique, rdf.type, skos('Concept')),
+      dataFactory.quad(ceramique, rdf.type, schema('Organization')),
+      ...quads,
+    ];
+
+    it('returns no organization for one whose source states nothing about it', () => {
+      const [term] = transform(organization());
+
+      expect(term.organization).toBeUndefined();
+    });
+
+    it('returns no organization for a term that denotes something else', () => {
+      const [term] = transform(
+        place(
+          dataFactory.quad(
+            maastricht,
+            schema('foundingDate'),
+            dataFactory.literal('1863'),
+          ),
+        ),
+      );
+
+      expect(term.organization).toBeUndefined();
+    });
+
+    it('passes founding and dissolution dates through as the source states them', () => {
+      const [term] = transform(
+        organization(
+          dataFactory.quad(
+            ceramique,
+            // In the http namespace, as the KB states it.
+            dataFactory.namedNode('http://schema.org/foundingDate'),
+            dataFactory.literal(
+              '1863',
+              dataFactory.namedNode('http://www.w3.org/2001/XMLSchema#gYear'),
+            ),
+          ),
+          dataFactory.quad(
+            ceramique,
+            schema('dissolutionDate'),
+            dataFactory.literal('1958'),
+          ),
+        ),
+      );
+
+      expect(term.organization?.foundingDates).toEqual(['1863']);
+      expect(term.organization?.dissolutionDates).toEqual(['1958']);
+    });
+
+    it('names its kinds and parent organizations from the names its source gives them', () => {
+      const factory = dataFactory.namedNode(
+        'https://example.com/types/factory',
+      );
+      const parent = dataFactory.namedNode('https://example.com/regout');
+      const [term] = transform(
+        organization(
+          dataFactory.quad(ceramique, schema('additionalType'), factory),
+          dataFactory.quad(
+            factory,
+            schema('name'),
+            dataFactory.literal('aardewerkfabriek', 'nl'),
+          ),
+          dataFactory.quad(ceramique, schema('parentOrganization'), parent),
+          dataFactory.quad(
+            parent,
+            skos('prefLabel'),
+            dataFactory.literal('Petrus Regout & Co.'),
+          ),
+          // A parent the source only names identifies no organization.
+          dataFactory.quad(
+            ceramique,
+            schema('parentOrganization'),
+            dataFactory.literal('Gemeente Maastricht'),
+          ),
+        ),
+      );
+
+      expect(term.organization?.additionalTypes).toHaveLength(1);
+      expect(term.organization?.additionalTypes[0].id).toEqual(factory);
+      expect(term.organization?.additionalTypes[0].prefLabels[0].value).toEqual(
+        'aardewerkfabriek',
+      );
+      expect(term.organization?.parentOrganizations).toHaveLength(1);
+      expect(term.organization?.parentOrganizations[0].id).toEqual(parent);
+      expect(
+        term.organization?.parentOrganizations[0].prefLabels[0].value,
+      ).toEqual('Petrus Regout & Co.');
+    });
+
+    it('reads a location the source links as a named place', () => {
+      const [term] = transform(
+        organization(
+          dataFactory.quad(ceramique, schema('location'), maastrichtCity),
+          dataFactory.quad(
+            maastrichtCity,
+            schema('name'),
+            dataFactory.literal('Maastricht (stad)', 'nl'),
+          ),
+        ),
+      );
+
+      expect(term.organization?.locations).toHaveLength(1);
+      expect(term.organization?.locations[0].iri).toEqual(maastrichtCity);
+      expect(term.organization?.locations[0].names[0].value).toEqual(
+        'Maastricht (stad)',
+      );
+      expect(term.organization?.locations[0].addressCountry).toBeUndefined();
+    });
+
+    it('reads the country of a linked place from its schema:geo node, as for a place term', () => {
+      const geo = dataFactory.blankNode('maastricht-geo');
+      const [term] = transform(
+        organization(
+          dataFactory.quad(ceramique, schema('location'), maastrichtCity),
+          dataFactory.quad(maastrichtCity, schema('geo'), geo),
+          dataFactory.quad(
+            geo,
+            schema('addressCountry'),
+            dataFactory.literal('NL'),
+          ),
+        ),
+      );
+
+      expect(term.organization?.locations[0].addressCountry).toEqual('NL');
+    });
+
+    it('reads a location the source only names as a name alone', () => {
+      const [term] = transform(
+        organization(
+          dataFactory.quad(
+            ceramique,
+            schema('location'),
+            dataFactory.literal('Maastricht', 'nl'),
+          ),
+        ),
+      );
+
+      expect(term.organization?.locations).toHaveLength(1);
+      expect(term.organization?.locations[0].iri).toBeUndefined();
+      expect(term.organization?.locations[0].names[0].value).toEqual(
+        'Maastricht',
+      );
+    });
+
+    it('reads an address the source states only as text, once however often it is stated', () => {
+      // The KB mints an IRI per address that identifies nothing outside it.
+      const address = (id: string, locality?: string) => {
+        const node = dataFactory.namedNode(
+          `https://example.com/.well-known/genid/${id}`,
+        );
+        return [
+          dataFactory.quad(ceramique, schema('location'), node),
+          dataFactory.quad(node, rdf.type, schema('PostalAddress')),
+          ...(locality === undefined
+            ? []
+            : [
+                dataFactory.quad(
+                  node,
+                  schema('addressLocality'),
+                  dataFactory.literal(locality),
+                ),
+              ]),
+          dataFactory.quad(
+            node,
+            schema('addressCountry'),
+            dataFactory.literal('NL'),
+          ),
+        ];
+      };
+      const [term] = transform(
+        organization(
+          ...address('street', 'Den Haag'),
+          ...address('postbus', 'Den Haag'),
+          ...address('country'),
+          // A node that states neither a name nor a country locates nothing.
+          dataFactory.quad(
+            ceramique,
+            schema('location'),
+            dataFactory.blankNode('empty'),
+          ),
+          // A blank node is an address too, read for its name where it states no locality.
+          dataFactory.quad(
+            ceramique,
+            schema('location'),
+            dataFactory.blankNode('named'),
+          ),
+          dataFactory.quad(
+            dataFactory.blankNode('named'),
+            schema('name'),
+            dataFactory.literal('Brussel', 'nl'),
+          ),
+        ),
+      );
+
+      expect(
+        term.organization?.locations.map((location) => ({
+          iri: location.iri,
+          names: location.names.map((name) => name.value),
+          addressCountry: location.addressCountry,
+        })),
+      ).toEqual([
+        { iri: undefined, names: ['Den Haag'], addressCountry: 'NL' },
+        { iri: undefined, names: [], addressCountry: 'NL' },
+        { iri: undefined, names: ['Brussel'], addressCountry: undefined },
+      ]);
+    });
+
+    it('reads its periods of activity as events, ordered by when they began', () => {
+      const active = dataFactory.namedNode(
+        'https://example.com/ceramique/period-of-activity/',
+      );
+      const activeInMaastricht = dataFactory.namedNode(
+        'https://example.com/ceramique/occupation/1',
+      );
+      const [term] = transform(
+        organization(
+          dataFactory.quad(ceramique, schema('event'), active),
+          dataFactory.quad(active, rdf.type, schema('Event')),
+          dataFactory.quad(
+            active,
+            schema('startDate'),
+            dataFactory.literal('1863'),
+          ),
+          dataFactory.quad(
+            active,
+            schema('endDate'),
+            dataFactory.literal('1958'),
+          ),
+          dataFactory.quad(ceramique, schema('event'), activeInMaastricht),
+          dataFactory.quad(activeInMaastricht, rdf.type, schema('Event')),
+          dataFactory.quad(
+            activeInMaastricht,
+            schema('startDate'),
+            dataFactory.literal('1850'),
+          ),
+          dataFactory.quad(
+            activeInMaastricht,
+            schema('location'),
+            maastrichtCity,
+          ),
+          dataFactory.quad(
+            maastrichtCity,
+            schema('name'),
+            dataFactory.literal('Maastricht (stad)', 'nl'),
+          ),
+          // A period that states neither when nor where says nothing.
+          dataFactory.quad(
+            ceramique,
+            schema('event'),
+            dataFactory.namedNode('https://example.com/ceramique/nothing'),
+          ),
+          dataFactory.quad(
+            dataFactory.namedNode('https://example.com/ceramique/nothing'),
+            rdf.type,
+            schema('Event'),
+          ),
+          // So does an event the source states as a literal.
+          dataFactory.quad(
+            ceramique,
+            schema('event'),
+            dataFactory.literal('fuseerde in 1958'),
+          ),
+        ),
+      );
+
+      expect(
+        term.organization?.events.map((event) => ({
+          startDate: event.startDate,
+          endDate: event.endDate,
+          locations: event.locations.map((location) => location.iri?.value),
+        })),
+      ).toEqual([
+        {
+          startDate: '1850',
+          endDate: undefined,
+          locations: [maastrichtCity.value],
+        },
+        { startDate: '1863', endDate: '1958', locations: [] },
+      ]);
+    });
+
+    it('sorts an event without a start date last', () => {
+      const event = (id: string, endDate: string, startDate?: string) => {
+        const node = dataFactory.blankNode(id);
+        return [
+          dataFactory.quad(ceramique, schema('event'), node),
+          ...(startDate === undefined
+            ? []
+            : [
+                dataFactory.quad(
+                  node,
+                  schema('startDate'),
+                  dataFactory.literal(startDate),
+                ),
+              ]),
+          dataFactory.quad(
+            node,
+            schema('endDate'),
+            dataFactory.literal(endDate),
+          ),
+        ];
+      };
+      const [term] = transform(
+        organization(
+          ...event('undated', '1925'),
+          ...event('later', '1958', '1863'),
+          // Two that began in the same year keep the order the source states them in.
+          ...event('tied', '1900', '1863'),
+          ...event('earlier', '1859', '1850'),
+          ...event('also-undated', '2020'),
+        ),
+      );
+
+      expect(term.organization?.events.map((event) => event.endDate)).toEqual([
+        '1859',
+        '1958',
+        '1900',
+        '1925',
+        '2020',
+      ]);
+    });
+
+    it('does not return a location or an event as a term of its own', () => {
+      const event = dataFactory.namedNode(
+        'https://example.com/ceramique#event',
+      );
+      const terms = transform(
+        organization(
+          dataFactory.quad(ceramique, schema('location'), maastrichtCity),
+          dataFactory.quad(ceramique, schema('event'), event),
+          dataFactory.quad(event, rdf.type, schema('Event')),
+          dataFactory.quad(event, schema('location'), maastrichtCity),
+        ),
+      );
+
+      expect(terms.map((term) => term.id.value)).toEqual([ceramique.value]);
+    });
+  });
 });

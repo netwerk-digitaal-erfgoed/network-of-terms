@@ -15,6 +15,7 @@ import {
   QueryMode,
   QueryTermsService,
   Entity,
+  OrganizationLocation,
   OccupationRole,
   RelatedTerm,
   ServerError,
@@ -221,6 +222,9 @@ function mapToTranslatedTerm(term: Term, languages: string[]) {
       (literals) => filterLiteralsByLanguage(literals, languages),
       () => (literals) => filterLiteralsByLanguage(literals, languages),
     ),
+    organization: denotedOrganization(term, (literals) =>
+      filterLiteralsByLanguage(literals, languages),
+    ),
   };
 }
 
@@ -241,10 +245,9 @@ function denotedPlace(
         latitude: place.latitude ?? null,
         longitude: place.longitude ?? null,
         addressCountry: place.addressCountry ?? null,
-        additionalType: place.additionalTypes.map((additionalType) => ({
-          uri: additionalType.id.value,
-          name: inRequestedLanguages(additionalType.prefLabels),
-        })),
+        additionalType: referencesIn(inRequestedLanguages)(
+          place.additionalTypes,
+        ),
       };
 }
 
@@ -268,11 +271,7 @@ function denotedPerson(
 
   const entities = entitiesIn(acrossSet);
   // A relative is one person whatever its names, so its names fall back on their own.
-  const references = (relatives: RelatedTerm[]) =>
-    relatives.map((relative) => ({
-      uri: relative.id.value,
-      name: inRequestedLanguages(relative.prefLabels),
-    }));
+  const references = referencesIn(inRequestedLanguages);
   return {
     givenName: inRequestedLanguages(person.givenNames),
     familyName: inRequestedLanguages(person.familyNames),
@@ -289,6 +288,83 @@ function denotedPerson(
     sibling: references(person.siblings),
   };
 }
+
+/**
+ * The organization that the term denotes, or null if its source describes none, decided as for
+ * {@link denotedPlace}. One founding and one dissolution date are returned, the first where a
+ * source states several, as for a person’s birth and death.
+ */
+function denotedOrganization(
+  term: Term,
+  inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[],
+) {
+  const organization = term.organization;
+  if (organization === undefined) {
+    return null;
+  }
+
+  const references = referencesIn(inRequestedLanguages);
+  const places = locationsIn(inRequestedLanguages);
+  return {
+    additionalType: references(organization.additionalTypes),
+    foundingDate: organization.foundingDates[0] ?? null,
+    dissolutionDate: organization.dissolutionDates[0] ?? null,
+    location: places(organization.locations),
+    parentOrganization: references(organization.parentOrganizations),
+    // An undated event the language filter has left without a location says nothing.
+    event: organization.events
+      .map((event) => ({
+        startDate: event.startDate ?? null,
+        endDate: event.endDate ?? null,
+        location: places(event.locations),
+      }))
+      .filter(
+        (event) =>
+          event.startDate !== null ||
+          event.endDate !== null ||
+          event.location.length > 0,
+      ),
+  };
+}
+
+/**
+ * Terms a source identifies by IRI, each named on its own: one thing whatever its names.
+ */
+const referencesIn =
+  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
+  (relatedTerms: RelatedTerm[]) =>
+    relatedTerms.map((relatedTerm) => ({
+      uri: relatedTerm.id.value,
+      name: inRequestedLanguages(relatedTerm.prefLabels),
+    }));
+
+/**
+ * The locations a source mentions, as the API states them. A location is one place whatever its
+ * names, so its names fall back on their own, as a relative’s do. One the source only names is
+ * dropped once none of its names is left, unless its country still says where it is, and two that
+ * the language filter leaves alike are returned once.
+ */
+const locationsIn =
+  (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
+  (locations: OrganizationLocation[]) =>
+    locations
+      .map((location) => ({
+        uri: location.iri?.value ?? null,
+        name: inRequestedLanguages(location.names),
+        addressCountry: location.addressCountry ?? null,
+      }))
+      .filter(
+        (location) =>
+          location.uri !== null ||
+          location.name.length > 0 ||
+          location.addressCountry !== null,
+      )
+      .filter(
+        (location, index, kept) =>
+          kept.findIndex(
+            (other) => JSON.stringify(other) === JSON.stringify(location),
+          ) === index,
+      );
 
 /**
  * A role is kept when its occupation or its name survives the language filter; a period alone
@@ -377,6 +453,9 @@ function mapToTerm(term: Term, languages: string[]) {
       term,
       (literals) => placeLabels(literals, languages),
       (sets) => placeLabelsAcross(sets, languages),
+    ),
+    organization: denotedOrganization(term, (literals) =>
+      placeLabels(literals, languages),
     ),
   };
 }
