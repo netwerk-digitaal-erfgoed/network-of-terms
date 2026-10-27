@@ -78,6 +78,9 @@ export const schema = (languages: string[]) => `
 
     "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person. Whether the node exists does not depend on the requested languages: a source that names things only in a language the client did not ask for yields a node with those fields empty."
     person: Person
+
+    "The organization that this term denotes, if its source describes one. Null when the source describes no organization, whether because the term denotes something else or because the source gives no details about the organization. As for \`person\`, whether the node exists does not depend on the requested languages."
+    organization: Organization
   }
 
   type RelatedTerm {
@@ -185,6 +188,9 @@ export const schema = (languages: string[]) => `
 
     "The person that this term denotes, if its source describes one. Null when the source describes no person, whether because the term denotes something else or because the source gives no details about the person. Whether the node exists does not depend on the requested languages: a source that names things only in a language the client did not ask for yields a node with those fields empty."
     person: Person
+
+    "The organization that this term denotes, if its source describes one. Null when the source describes no organization, whether because the term denotes something else or because the source gives no details about the organization. As for \`person\`, whether the node exists does not depend on the requested languages."
+    organization: Organization
   }
 
   """
@@ -257,6 +263,56 @@ export const schema = (languages: string[]) => `
 
     "The person’s siblings, as for \`parent\`."
     sibling: [Reference]!
+  }
+
+  """
+  The organization that a term denotes. It carries only what SKOS cannot state: the organization’s names stay on \`prefLabel\` and \`altLabel\`, and its alignments to other sources on \`exactMatch\`.
+  """
+  type Organization {
+    "What kind of organization this is, according to the source’s own vocabulary, as on \`Place\`."
+    additionalType: [AdditionalType]!
+
+    "When the organization was founded, as an EDTF string like \`Person.birthDate\`. Null when the source states none."
+    foundingDate: String
+
+    "When the organization was dissolved, as an EDTF string. Null when the source states none."
+    dissolutionDate: String
+
+    "Where the organization is or was, as the places the source mentions."
+    location: [Location]!
+
+    "The organizations it belongs to, each one the source identifies by URI, with the names it gives them. An organization the source only names is left out."
+    parentOrganization: [Reference]!
+
+    "When, and where the source says, the organization was active: one entry per period the source states, ordered by when it began. A period of activity is not the organization’s existence, which \`foundingDate\` and \`dissolutionDate\` date: a source may date the activity under an earlier name, or only one of the organization’s kinds of work."
+    event: [Event]!
+  }
+
+  """
+  A place, identified by URI where the source links it, with the names its vocabulary gives it; or an address the source states only as text, in which case \`uri\` is null. Where the URI belongs to a source the Network of Terms covers, \`lookup\` resolves it to a term.
+  """
+  type Location {
+    uri: ID
+
+    "The place’s names, in the requested languages; for an address, its locality."
+    name: [LanguageString]!
+
+    "The country, as an ISO 3166-1 alpha-2 code like \`Place.addressCountry\`. Null when the source states none."
+    addressCountry: String
+  }
+
+  """
+  A period in which an organization was active, in the shape of Schema.org’s \`Event\`.
+  """
+  type Event {
+    "When the period began, as an EDTF string like \`Person.birthDate\`. Null when the source states no beginning."
+    startDate: String
+
+    "When the period ended, as an EDTF string. Null when the source states no end."
+    endDate: String
+
+    "Where the organization was active in this period. Empty when the source states only when."
+    location: [Location]!
   }
 
   """

@@ -156,9 +156,11 @@ describe('Server', () => {
       'Nergensland',
       'Onbekende schilder',
       '',
+      'Petrus Regout & Co.',
       'Rembrandt',
       '',
       'Rijnland',
+      'Société Céramique, N.V.',
       'Turner, William',
     ]); // Results with score must come first.
 
@@ -195,7 +197,7 @@ describe('Server', () => {
     );
     expect(body.data.terms).toHaveLength(1);
     expect(body.data.terms[0].result.__typename).toEqual('TranslatedTerms');
-    expect(body.data.terms[0].result.translatedTerms).toHaveLength(17); // Terms found.
+    expect(body.data.terms[0].result.translatedTerms).toHaveLength(19); // Terms found.
     expect(body.data.terms[0].result.translatedTerms[1].prefLabel).toEqual([
       { language: 'nl', value: 'Nachtwacht' },
       { language: 'en', value: 'The Night Watch' },
@@ -228,7 +230,7 @@ describe('Server', () => {
     expect(body.data.terms[0].source.uri).toEqual(
       'https://data.rkd.nl/rkdartists',
     );
-    expect(body.data.terms[0].result.terms).toHaveLength(17); // Terms found.
+    expect(body.data.terms[0].result.terms).toHaveLength(19); // Terms found.
   });
 
   it('respects GraphQL terms query limit', async () => {
@@ -559,6 +561,94 @@ describe('Server', () => {
       }),
     );
     expect(body.data.lookup[0].result.person).toBeNull();
+    expect(body.data.lookup[0].result.organization).toBeNull();
+  });
+
+  it('returns the organization that a term typed as schema:Organization denotes', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/ceramique'],
+        languages: ['nl'],
+      }),
+    );
+    expect(body.errors).toBeUndefined();
+    const term = body.data.lookup[0];
+    expect(term.result.person).toBeNull();
+    const maastricht = {
+      uri: 'https://example.com/places/maastricht',
+      name: [{ language: 'nl', value: 'Maastricht (stad)' }],
+      addressCountry: null,
+    };
+    expect(term.result.organization).toEqual({
+      additionalType: [
+        {
+          uri: 'https://example.com/types/ceramics-manufactory',
+          name: [{ language: 'nl', value: 'aardewerkfabriek' }],
+        },
+      ],
+      foundingDate: '1863',
+      dissolutionDate: '1958',
+      // A place the source links, and an address it states only as text, untagged and so Dutch.
+      location: [
+        maastricht,
+        {
+          uri: null,
+          name: [{ language: 'nl', value: 'Maastricht' }],
+          addressCountry: 'NL',
+        },
+      ],
+      parentOrganization: [
+        {
+          uri: 'https://example.com/resources/sphinx',
+          name: [{ language: 'nl', value: 'Sphinx, N.V.' }],
+        },
+      ],
+      // Ordered by when each period began.
+      event: [
+        { startDate: '1850', endDate: '1958', location: [maastricht] },
+        { startDate: '1863', endDate: '1958', location: [] },
+      ],
+    });
+  });
+
+  it('returns an organization whose source states little about it', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/regout'],
+        languages: ['nl'],
+      }),
+    );
+    expect(body.errors).toBeUndefined();
+    expect(body.data.lookup[0].result.organization).toEqual({
+      additionalType: [],
+      foundingDate: null,
+      dissolutionDate: null,
+      // An address named only in French has nothing left in Dutch and is dropped; one that
+      // states its country still says where the organization is, and is returned once.
+      location: [{ uri: null, name: [], addressCountry: 'NL' }],
+      parentOrganization: [],
+      event: [
+        { startDate: '1834', endDate: null, location: [] },
+        { startDate: null, endDate: '1925', location: [] },
+      ],
+    });
+  });
+
+  it('returns the denoted organization in monolingual lookup too, falling back to English', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/ceramique'],
+      }),
+    );
+    expect(body.errors).toBeUndefined();
+    const organization = body.data.lookup[0].result.organization;
+    expect(organization.foundingDate).toEqual('1863');
+    expect(organization.additionalType[0].name).toEqual([
+      { language: 'nl', value: 'aardewerkfabriek' },
+    ]);
+    expect(organization.event[0].location[0].name).toEqual([
+      { language: 'nl', value: 'Maastricht (stad)' },
+    ]);
   });
 
   it('returns the place that a term typed as schema:Place denotes', async () => {
@@ -872,6 +962,14 @@ function termsQuery({
                 spouse { uri name { language value } }
                 sibling { uri name { language value } }
               }
+              organization {
+                additionalType { uri name { language value } }
+                foundingDate
+                dissolutionDate
+                location { uri name { language value } addressCountry }
+                parentOrganization { uri name { language value } }
+                event { startDate endDate location { uri name { language value } addressCountry } }
+              }
             }
           }
           ... on Error {
@@ -953,6 +1051,14 @@ function lookupQuery({
               spouse { uri name { language value } }
               sibling { uri name { language value } }
             }
+            organization {
+              additionalType { uri name { language value } }
+              foundingDate
+              dissolutionDate
+              location { uri name { language value } addressCountry }
+              parentOrganization { uri name { language value } }
+              event { startDate endDate location { uri name { language value } addressCountry } }
+            }
           }
           `
               : `
@@ -988,6 +1094,14 @@ function lookupQuery({
               children { uri name { language value } }
               spouse { uri name { language value } }
               sibling { uri name { language value } }
+            }
+            organization {
+              additionalType { uri name { language value } }
+              foundingDate
+              dissolutionDate
+              location { uri name { language value } addressCountry }
+              parentOrganization { uri name { language value } }
+              event { startDate endDate location { uri name { language value } addressCountry } }
             }
           }
           `
