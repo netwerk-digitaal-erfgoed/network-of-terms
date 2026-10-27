@@ -15,6 +15,9 @@
   "genre": [
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties"
     }
   ],
   "creator": [
