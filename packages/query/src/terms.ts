@@ -16,9 +16,11 @@ export class Term {
     readonly exactMatches: RelatedTerm[],
     readonly datasetIri: RDF.Term | undefined,
     readonly score: RDF.Literal | undefined,
-    // What the source states about the place or person the term denotes, beyond what SKOS states.
+    // What the source states about the place, person or organization the term denotes, beyond
+    // what SKOS states.
     readonly place: Place | undefined = undefined,
     readonly person: Person | undefined = undefined,
+    readonly organization: DenotedOrganization | undefined = undefined,
   ) {}
 }
 
@@ -62,6 +64,54 @@ export class Person {
     readonly children: RelatedTerm[],
     readonly spouses: RelatedTerm[],
     readonly siblings: RelatedTerm[],
+  ) {}
+}
+
+/**
+ * The organization a term denotes: what SKOS cannot state about it, in Schema.org’s organization
+ * properties. A term has one only when it is typed `schema:Organization` and its source states at
+ * least one of these. Named apart from {@link Organization}, which is the organization that
+ * publishes a dataset.
+ *
+ * Dates are EDTF strings, passed through as the source states them, as for a {@link Person}.
+ */
+export class DenotedOrganization {
+  constructor(
+    // What kind of organization this is, in the source’s own vocabulary, as for a place.
+    readonly additionalTypes: RelatedTerm[],
+    readonly foundingDates: string[],
+    readonly dissolutionDates: string[],
+    readonly locations: Location[],
+    // The organizations it belongs to, each one the source identifies.
+    readonly parentOrganizations: RelatedTerm[],
+    // The periods in which the organization was active, ordered by when they began.
+    readonly events: Event[],
+  ) {}
+}
+
+/**
+ * A place an organization is or was at: an IRI where the source links one, with the names its
+ * vocabulary gives it, or an address the source states only as text, such as the KB’s
+ * `schema:PostalAddress` with a locality and a country.
+ */
+export class Location {
+  constructor(
+    readonly iri: RDF.NamedNode | undefined,
+    readonly names: RDF.Literal[],
+    // An ISO 3166-1 alpha-2 code, as for a {@link Place}.
+    readonly addressCountry: string | undefined,
+  ) {}
+}
+
+/**
+ * A period in which an organization was active, in the shape of Schema.org’s `Event`: when it
+ * began and ended, and where, so far as the source states them.
+ */
+export class Event {
+  constructor(
+    readonly startDate: string | undefined,
+    readonly endDate: string | undefined,
+    readonly locations: Location[],
   ) {}
 }
 
@@ -124,6 +174,7 @@ class SparqlResultTerm {
   names: RDF.Literal[] = [];
   geo: RDF.Term | undefined = undefined;
   addressCountry: RDF.Literal | undefined = undefined;
+  addressLocalities: RDF.Literal[] = [];
   additionalTypes: RDF.Term[] = [];
   birthDates: RDF.Literal[] = [];
   deathDates: RDF.Literal[] = [];
@@ -138,7 +189,12 @@ class SparqlResultTerm {
   children: RDF.Term[] = [];
   spouses: RDF.Term[] = [];
   siblings: RDF.Term[] = [];
-  // Read from a schema:Role node a term points at, never from the term itself.
+  foundingDates: RDF.Literal[] = [];
+  dissolutionDates: RDF.Literal[] = [];
+  locations: RDF.Term[] = [];
+  parentOrganizations: RDF.Term[] = [];
+  events: RDF.Term[] = [];
+  // Read from a schema:Role or schema:Event node a term points at, never from the term itself.
   roleNames: RDF.Literal[] = [];
   startDate: RDF.Literal | undefined = undefined;
   endDate: RDF.Literal | undefined = undefined;
@@ -179,6 +235,8 @@ export class TermsTransformer {
     ['http://schema.org/longitude', 'longitude'],
     ['https://schema.org/addressCountry', 'addressCountry'],
     ['http://schema.org/addressCountry', 'addressCountry'],
+    ['https://schema.org/addressLocality', 'addressLocalities'],
+    ['http://schema.org/addressLocality', 'addressLocalities'],
     ['https://schema.org/additionalType', 'additionalTypes'],
     ['http://schema.org/additionalType', 'additionalTypes'],
     ['https://schema.org/birthDate', 'birthDates'],
@@ -207,6 +265,16 @@ export class TermsTransformer {
     ['http://schema.org/spouse', 'spouses'],
     ['https://schema.org/sibling', 'siblings'],
     ['http://schema.org/sibling', 'siblings'],
+    ['https://schema.org/foundingDate', 'foundingDates'],
+    ['http://schema.org/foundingDate', 'foundingDates'],
+    ['https://schema.org/dissolutionDate', 'dissolutionDates'],
+    ['http://schema.org/dissolutionDate', 'dissolutionDates'],
+    ['https://schema.org/location', 'locations'],
+    ['http://schema.org/location', 'locations'],
+    ['https://schema.org/parentOrganization', 'parentOrganizations'],
+    ['http://schema.org/parentOrganization', 'parentOrganizations'],
+    ['https://schema.org/event', 'events'],
+    ['http://schema.org/event', 'events'],
     ['https://schema.org/roleName', 'roleNames'],
     ['http://schema.org/roleName', 'roleNames'],
     ['https://schema.org/startDate', 'startDate'],
@@ -266,6 +334,7 @@ export class TermsTransformer {
         term.score,
         this.place(term),
         this.person(term),
+        this.organization(term),
       );
     });
   }
@@ -325,6 +394,101 @@ export class TermsTransformer {
       ? undefined
       : person;
   };
+
+  private organization = (term: SparqlResultTerm) => {
+    if (!term.types.some(isOrganizationClass)) {
+      return undefined;
+    }
+
+    const organization = new DenotedOrganization(
+      term.additionalTypes
+        .filter((object) => object.termType === 'NamedNode')
+        .map(this.namedType)
+        .sort(alphabeticallyByPrefLabel),
+      dateValues(term.foundingDates),
+      dateValues(term.dissolutionDates),
+      this.locations(term.locations),
+      term.parentOrganizations
+        .filter((object) => object.termType === 'NamedNode')
+        .map(this.namedType)
+        .sort(alphabeticallyByPrefLabel),
+      term.events.flatMap(this.event).sort(byStartDate),
+    );
+
+    // Every field is a list, so an organization without any is one whose source states nothing.
+    return Object.values(organization).every(
+      (values: unknown[]) => values.length === 0,
+    )
+      ? undefined
+      : organization;
+  };
+
+  /**
+   * What `schema:event` points at, as an {@link Event}. A period that states neither when nor
+   * where says nothing, so it yields nothing.
+   */
+  private event = (object: RDF.Term): Event[] => {
+    const node =
+      object.termType === 'NamedNode' || object.termType === 'BlankNode'
+        ? this.termsMap.get(object.value)
+        : undefined;
+    if (node === undefined) {
+      return [];
+    }
+
+    const event = new Event(
+      stringValue(node.startDate),
+      stringValue(node.endDate),
+      this.locations(node.locations),
+    );
+    return event.startDate === undefined &&
+      event.endDate === undefined &&
+      event.locations.length === 0
+      ? []
+      : [event];
+  };
+
+  /**
+   * What `schema:location` points at, as the {@link Location}s it names. A `schema:PostalAddress`
+   * or a blank node is a place the source states only as text, read for its locality or name and
+   * its country, and never by its IRI: the KB mints one per address that identifies nothing outside
+   * it. Any other IRI is a place the source links, named as {@link namedType} names one; a literal
+   * is a name alone. An address that states nothing is dropped, and one stated twice – the KB
+   * states a street address and a post office box in the same town – is returned once.
+   */
+  private locations = (objects: RDF.Term[]) =>
+    objects
+      .flatMap((object): Location[] => {
+        const node = this.termsMap.get(object.value);
+        if (
+          object.termType === 'BlankNode' ||
+          node?.types.some(isPostalAddressClass)
+        ) {
+          const names = [
+            ...(node?.addressLocalities ?? []),
+            ...(node?.names ?? []),
+          ];
+          const country = stringValue(node?.addressCountry);
+          return names.length === 0 && country === undefined
+            ? []
+            : [new Location(undefined, names, country)];
+        }
+        // Otherwise a location is named as any entity is: a linked place by the names its
+        // vocabulary gives it, a literal as a name alone.
+        return this.entity(object).map(
+          (entity) =>
+            new Location(
+              entity.iri,
+              entity.names,
+              stringValue(node?.addressCountry),
+            ),
+        );
+      })
+      .filter(
+        (location, index, locations) =>
+          locations.findIndex((other) => sameLocation(location, other)) ===
+          index,
+      );
 
   /**
    * An object of a property as the {@link Entity} it mentions: an IRI named the way
@@ -481,6 +645,36 @@ const isSchemaClass = (name: string) => (type: RDF.Term) =>
 const isRoleClass = isSchemaClass('Role');
 const isPlaceClass = isSchemaClass('Place');
 const isPersonClass = isSchemaClass('Person');
+const isOrganizationClass = isSchemaClass('Organization');
+const isPostalAddressClass = isSchemaClass('PostalAddress');
+
+const sameLocation = (location: Location, other: Location) =>
+  location.iri !== undefined || other.iri !== undefined
+    ? location.iri !== undefined &&
+      other.iri !== undefined &&
+      location.iri.equals(other.iri)
+    : location.addressCountry === other.addressCountry &&
+      location.names.length === other.names.length &&
+      location.names.every((name) =>
+        other.names.some((otherName) => otherName.equals(name)),
+      );
+
+// An event without a start date sorts last, since nothing says when it began. EDTF dates of the
+// same precision sort as strings, compared by code point so the order does not depend on the
+// runtime’s collation.
+const byStartDate = (event: Event, other: Event) => {
+  if (event.startDate === undefined || other.startDate === undefined) {
+    return (
+      Number(event.startDate === undefined) -
+      Number(other.startDate === undefined)
+    );
+  }
+  return event.startDate < other.startDate
+    ? -1
+    : event.startDate > other.startDate
+      ? 1
+      : 0;
+};
 
 // Sources are not validated, so a value may be empty or blank; that is no value.
 const stringValue = (literal: RDF.Literal | undefined) =>
