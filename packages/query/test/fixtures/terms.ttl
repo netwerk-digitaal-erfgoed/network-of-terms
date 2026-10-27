@@ -247,4 +247,5 @@
     schema:location [ a schema:PostalAddress ; schema:addressCountry "NL" ],
         [ a schema:PostalAddress ; schema:addressLocality "Bruxelles"@fr ],
         [ a schema:PostalAddress ; schema:addressLocality "Maestricht"@fr ; schema:addressCountry "NL" ] ;
-    schema:event [ a schema:Event ; schema:startDate "1834" ], [ a schema:Event ; schema:endDate "1925" ] .
+    schema:event [ a schema:Event ; schema:startDate "1834" ], [ a schema:Event ; schema:endDate "1925" ],
+        [ a schema:Event ; schema:location [ a schema:PostalAddress ; schema:addressLocality "Bruxelles"@fr ] ] .

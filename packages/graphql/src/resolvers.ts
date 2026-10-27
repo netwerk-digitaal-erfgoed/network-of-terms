@@ -15,7 +15,7 @@ import {
   QueryMode,
   QueryTermsService,
   Entity,
-  Location,
+  OrganizationLocation,
   OccupationRole,
   RelatedTerm,
   ServerError,
@@ -245,10 +245,9 @@ function denotedPlace(
         latitude: place.latitude ?? null,
         longitude: place.longitude ?? null,
         addressCountry: place.addressCountry ?? null,
-        additionalType: place.additionalTypes.map((additionalType) => ({
-          uri: additionalType.id.value,
-          name: inRequestedLanguages(additionalType.prefLabels),
-        })),
+        additionalType: referencesIn(inRequestedLanguages)(
+          place.additionalTypes,
+        ),
       };
 }
 
@@ -312,11 +311,19 @@ function denotedOrganization(
     dissolutionDate: organization.dissolutionDates[0] ?? null,
     location: places(organization.locations),
     parentOrganization: references(organization.parentOrganizations),
-    event: organization.events.map((event) => ({
-      startDate: event.startDate ?? null,
-      endDate: event.endDate ?? null,
-      location: places(event.locations),
-    })),
+    // An undated event the language filter has left without a location says nothing.
+    event: organization.events
+      .map((event) => ({
+        startDate: event.startDate ?? null,
+        endDate: event.endDate ?? null,
+        location: places(event.locations),
+      }))
+      .filter(
+        (event) =>
+          event.startDate !== null ||
+          event.endDate !== null ||
+          event.location.length > 0,
+      ),
   };
 }
 
@@ -339,7 +346,7 @@ const referencesIn =
  */
 const locationsIn =
   (inRequestedLanguages: (literals: RDF.Literal[]) => RDF.Literal[]) =>
-  (locations: Location[]) =>
+  (locations: OrganizationLocation[]) =>
     locations
       .map((location) => ({
         uri: location.iri?.value ?? null,

@@ -81,11 +81,11 @@ export class DenotedOrganization {
     readonly additionalTypes: RelatedTerm[],
     readonly foundingDates: string[],
     readonly dissolutionDates: string[],
-    readonly locations: Location[],
+    readonly locations: OrganizationLocation[],
     // The organizations it belongs to, each one the source identifies.
     readonly parentOrganizations: RelatedTerm[],
     // The periods in which the organization was active, ordered by when they began.
-    readonly events: Event[],
+    readonly events: OrganizationEvent[],
   ) {}
 }
 
@@ -94,7 +94,7 @@ export class DenotedOrganization {
  * vocabulary gives it, or an address the source states only as text, such as the KB’s
  * `schema:PostalAddress` with a locality and a country.
  */
-export class Location {
+export class OrganizationLocation {
   constructor(
     readonly iri: RDF.NamedNode | undefined,
     readonly names: RDF.Literal[],
@@ -107,11 +107,11 @@ export class Location {
  * A period in which an organization was active, in the shape of Schema.org’s `Event`: when it
  * began and ended, and where, so far as the source states them.
  */
-export class Event {
+export class OrganizationEvent {
   constructor(
     readonly startDate: string | undefined,
     readonly endDate: string | undefined,
-    readonly locations: Location[],
+    readonly locations: OrganizationLocation[],
   ) {}
 }
 
@@ -424,10 +424,10 @@ export class TermsTransformer {
   };
 
   /**
-   * What `schema:event` points at, as an {@link Event}. A period that states neither when nor
-   * where says nothing, so it yields nothing.
+   * What `schema:event` points at, as an {@link OrganizationEvent}. A period that states neither
+   * when nor where says nothing, so it yields nothing.
    */
-  private event = (object: RDF.Term): Event[] => {
+  private event = (object: RDF.Term): OrganizationEvent[] => {
     const node =
       object.termType === 'NamedNode' || object.termType === 'BlankNode'
         ? this.termsMap.get(object.value)
@@ -436,7 +436,7 @@ export class TermsTransformer {
       return [];
     }
 
-    const event = new Event(
+    const event = new OrganizationEvent(
       stringValue(node.startDate),
       stringValue(node.endDate),
       this.locations(node.locations),
@@ -449,8 +449,8 @@ export class TermsTransformer {
   };
 
   /**
-   * What `schema:location` points at, as the {@link Location}s it names. A `schema:PostalAddress`
-   * or a blank node is a place the source states only as text, read for its locality or name and
+   * What `schema:location` points at, as the {@link OrganizationLocation}s it names. A
+   * `schema:PostalAddress` or a blank node is a place the source states only as text, read for its locality or name and
    * its country, and never by its IRI: the KB mints one per address that identifies nothing outside
    * it. Any other IRI is a place the source links, named as {@link namedType} names one; a literal
    * is a name alone. An address that states nothing is dropped, and one stated twice – the KB
@@ -458,7 +458,7 @@ export class TermsTransformer {
    */
   private locations = (objects: RDF.Term[]) =>
     objects
-      .flatMap((object): Location[] => {
+      .flatMap((object): OrganizationLocation[] => {
         const node = this.termsMap.get(object.value);
         if (
           object.termType === 'BlankNode' ||
@@ -471,17 +471,18 @@ export class TermsTransformer {
           const country = stringValue(node?.addressCountry);
           return names.length === 0 && country === undefined
             ? []
-            : [new Location(undefined, names, country)];
+            : [new OrganizationLocation(undefined, names, country)];
         }
         // Otherwise a location is named as any entity is: a linked place by the names its
-        // vocabulary gives it, a literal as a name alone.
+        // vocabulary gives it, a literal as a name alone. A linked place states its country as a
+        // place term does.
+        const country =
+          node === undefined
+            ? undefined
+            : stringValue(this.location(node).addressCountry);
         return this.entity(object).map(
           (entity) =>
-            new Location(
-              entity.iri,
-              entity.names,
-              stringValue(node?.addressCountry),
-            ),
+            new OrganizationLocation(entity.iri, entity.names, country),
         );
       })
       .filter(
@@ -648,7 +649,10 @@ const isPersonClass = isSchemaClass('Person');
 const isOrganizationClass = isSchemaClass('Organization');
 const isPostalAddressClass = isSchemaClass('PostalAddress');
 
-const sameLocation = (location: Location, other: Location) =>
+const sameLocation = (
+  location: OrganizationLocation,
+  other: OrganizationLocation,
+) =>
   location.iri !== undefined || other.iri !== undefined
     ? location.iri !== undefined &&
       other.iri !== undefined &&
@@ -662,7 +666,7 @@ const sameLocation = (location: Location, other: Location) =>
 // An event without a start date sorts last, since nothing says when it began. EDTF dates of the
 // same precision sort as strings, compared by code point so the order does not depend on the
 // runtime’s collation.
-const byStartDate = (event: Event, other: Event) => {
+const byStartDate = (event: OrganizationEvent, other: OrganizationEvent) => {
   if (event.startDate === undefined || other.startDate === undefined) {
     return (
       Number(event.startDate === undefined) -

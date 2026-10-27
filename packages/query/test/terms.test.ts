@@ -730,6 +730,23 @@ describe('TermsTransformer', () => {
       expect(term.organization?.locations[0].addressCountry).toBeUndefined();
     });
 
+    it('reads the country of a linked place from its schema:geo node, as for a place term', () => {
+      const geo = dataFactory.blankNode('maastricht-geo');
+      const [term] = transform(
+        organization(
+          dataFactory.quad(ceramique, schema('location'), maastrichtCity),
+          dataFactory.quad(maastrichtCity, schema('geo'), geo),
+          dataFactory.quad(
+            geo,
+            schema('addressCountry'),
+            dataFactory.literal('NL'),
+          ),
+        ),
+      );
+
+      expect(term.organization?.locations[0].addressCountry).toEqual('NL');
+    });
+
     it('reads a location the source only names as a name alone', () => {
       const [term] = transform(
         organization(

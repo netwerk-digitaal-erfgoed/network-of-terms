@@ -627,6 +627,7 @@ describe('Server', () => {
       // states its country still says where the organization is, and is returned once.
       location: [{ uri: null, name: [], addressCountry: 'NL' }],
       parentOrganization: [],
+      // An undated event located only in French says nothing in Dutch and is dropped.
       event: [
         { startDate: '1834', endDate: null, location: [] },
         { startDate: null, endDate: '1925', location: [] },
