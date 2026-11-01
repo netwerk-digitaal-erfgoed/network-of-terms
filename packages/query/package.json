@@ -44,7 +44,7 @@
     "nock": "14.0.16",
     "pino": "10.3.1",
     "pretty-ms": "10.0.0",
-    "rdf-data-factory": "2.0.2",
+    "rdf-data-factory": "2.1.0",
     "rdf-string-ttl": "^2.0.1",
     "spawnd": "11.0.0",
     "tslib": "2.8.1"
