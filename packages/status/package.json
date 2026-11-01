@@ -17,7 +17,7 @@
   "type": "module",
   "dependencies": {
     "@fastify/cors": "11.3.0",
-    "@lde/dataset": "0.7.7",
+    "@lde/dataset": "0.8.0",
     "@lde/distribution-monitor": "0.2.7",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
     "@netwerk-digitaal-erfgoed/network-of-terms-query": "*",
