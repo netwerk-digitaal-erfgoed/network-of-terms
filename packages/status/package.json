@@ -16,7 +16,7 @@
   "author": "Netwerk Digitaal Erfgoed",
   "type": "module",
   "dependencies": {
-    "@fastify/cors": "11.3.0",
+    "@fastify/cors": "11.3.1",
     "@lde/dataset": "0.8.0",
     "@lde/distribution-monitor": "0.3.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
