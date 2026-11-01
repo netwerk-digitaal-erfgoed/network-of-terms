@@ -18,7 +18,7 @@
     "build/"
   ],
   "dependencies": {
-    "@fastify/accepts": "5.0.4",
+    "@fastify/accepts": "5.0.7",
     "@fastify/cors": "11.3.0",
     "@fastify/formbody": "9.0.0",
     "@hapi/hoek": "11.0.7",
