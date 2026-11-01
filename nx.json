@@ -129,5 +129,8 @@
       "unitTestRunner": "vitest"
     }
   },
-  "analytics": false
+  "analytics": false,
+  "affected": {
+    "legacy": true
+  }
 }
