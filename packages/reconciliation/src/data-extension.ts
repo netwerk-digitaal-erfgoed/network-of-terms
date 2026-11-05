@@ -6,7 +6,12 @@ import {
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { entityNames, occupationNames, personalNames } from './entity-names.js';
-import { conceptType, personType } from './types.js';
+import {
+  conceptType,
+  organizationType,
+  personType,
+  placeType,
+} from './types.js';
 
 export type DataExtensionQuery = {
   ids: string[];
@@ -122,20 +127,44 @@ export const dataExtensionProperties: {
 /**
  * The properties to propose for a column reconciled against a type. Sources seldom place persons
  * in a hierarchy, so a person column is not offered broader and narrower terms, which would nearly
- * always be empty; a column reconciled against Concept still is. Any other column may hold
- * persons, since every person is a concept too, so it gets every property.
+ * always be empty; a column reconciled against Concept still is. A place or organization is never
+ * a person, so its column is not offered a person’s properties. Any other column may hold persons,
+ * since every person is a concept too, so it gets every property.
  */
-export const proposedProperties = (type: string | undefined) =>
-  type === personType.id
-    ? dataExtensionProperties.filter(
-        (property) => !hierarchyProperties.includes(property.id),
-      )
-    : dataExtensionProperties;
+export const proposedProperties = (type: string) => {
+  const excluded = excludedProperties.get(type) ?? [];
+  return dataExtensionProperties.filter(
+    (property) => !excluded.includes(property.id),
+  );
+};
 
 const hierarchyProperties: DataExtensionPropertyId[] = [
   'broaderTerms',
   'narrowerTerms',
 ];
+
+const personProperties: DataExtensionPropertyId[] = [
+  'birthDates',
+  'deathDates',
+  'birthPlaces',
+  'deathPlaces',
+  'genders',
+  'givenNames',
+  'familyNames',
+  'occupations',
+  'nationalities',
+  'parents',
+  'children',
+  'spouses',
+  'siblings',
+];
+
+// A Map, so that a type the client sends cannot look up a property of Object.prototype.
+const excludedProperties = new Map<string, DataExtensionPropertyId[]>([
+  [personType.id, hierarchyProperties],
+  [placeType.id, personProperties],
+  [organizationType.id, personProperties],
+]);
 
 export async function extendQuery(
   terms: IRI[],

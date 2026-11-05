@@ -13,7 +13,12 @@ import {
   dataExtensionProperties,
 } from '../src/data-extension.js';
 import { config } from '../src/config.js';
-import { conceptType, personType } from '../src/types.js';
+import {
+  conceptType,
+  organizationType,
+  personType,
+  placeType,
+} from '../src/types.js';
 import { escapeHtml } from '@hapi/hoek';
 
 let httpServer: FastifyInstance;
@@ -374,6 +379,29 @@ describe('Server', () => {
     expect(response.statusCode).toEqual(200);
   });
 
+  it('accepts a data extension query form-encoded in an ‘extend’ parameter, as OpenRefine sends it', async () => {
+    const formResponse = await httpServer.inject({
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      url: '/reconcile/https://data.rkd.nl/rkdartists',
+      payload: new URLSearchParams([
+        [
+          'extend',
+          JSON.stringify({
+            ids: ['https://example.com/resources/artwork'],
+            properties: [{ id: 'prefLabels' }],
+          }),
+        ],
+      ]).toString(),
+    });
+    expect(formResponse.statusCode).toEqual(200);
+    expect(
+      JSON.parse(formResponse.body).rows[
+        'https://example.com/resources/artwork'
+      ],
+    ).toEqual({ prefLabels: [{ str: 'Nachtwacht' }] });
+  });
+
   it('returns data extension response for terms', async () => {
     const response = await dataExtensionQuery({
       url: '/extend',
@@ -680,6 +708,14 @@ describe('Server', () => {
       type: personType,
     });
 
+    // A place or organization is never a person, but it may have broader and narrower terms.
+    for (const type of [placeType, organizationType]) {
+      const properties = ids((await propose(type.id)).properties);
+      expect(properties).toContain('broaderTerms');
+      expect(properties).not.toContain('birthDates');
+      expect(properties).not.toContain('parents');
+    }
+
     // Persons are concepts too, so a concept column gets every property, as does one without type.
     const concept = await propose(conceptType.id);
     expect(ids(concept.properties)).toEqual(ids(dataExtensionProperties));
@@ -694,6 +730,10 @@ describe('Server', () => {
     });
     expect(repeated.statusCode).toEqual(200);
     expect(JSON.parse(repeated.body).type).toEqual(personType.id);
+
+    // A type named like a property of every object is just a type the service does not know.
+    const inherited = await propose('constructor');
+    expect(ids(inherited.properties)).toEqual(ids(dataExtensionProperties));
   });
 
   it('shows HTML term preview when a proxy merged the slashes in the IRI', async () => {

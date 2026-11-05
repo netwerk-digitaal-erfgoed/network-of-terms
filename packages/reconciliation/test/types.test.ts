@@ -1,5 +1,58 @@
 import { describe, expect, it } from 'vitest';
-import { conceptType, personType, typeFilter } from '../src/types.js';
+import { Term } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import { NamedNode } from '@rdfjs/types';
+import {
+  conceptType,
+  organizationType,
+  personType,
+  placeType,
+  termTypes,
+  typeFilter,
+} from '../src/types.js';
+
+const iri = (value: string) => ({ termType: 'NamedNode', value }) as NamedNode;
+
+// A term the source types with these classes, and states nothing else about.
+const typedTerm = (...classes: string[]) =>
+  new Term(
+    iri('https://example.com/term'),
+    classes.map(iri),
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    undefined,
+    undefined,
+  );
+
+describe('Term types', () => {
+  it('makes every term a concept', () => {
+    expect(
+      termTypes(typedTerm('http://www.w3.org/2004/02/skos/core#Concept')),
+    ).toEqual([conceptType]);
+    expect(termTypes(typedTerm())).toEqual([conceptType]);
+  });
+
+  it('adds the Schema.org class the source types a term with, in either namespace', () => {
+    expect(termTypes(typedTerm('https://schema.org/Person'))).toEqual([
+      conceptType,
+      personType,
+    ]);
+    expect(termTypes(typedTerm('http://schema.org/Place'))).toEqual([
+      conceptType,
+      placeType,
+    ]);
+    expect(termTypes(typedTerm('https://schema.org/Organization'))).toEqual([
+      conceptType,
+      organizationType,
+    ]);
+  });
+});
 
 const concept = [conceptType];
 const person = [conceptType, personType];
