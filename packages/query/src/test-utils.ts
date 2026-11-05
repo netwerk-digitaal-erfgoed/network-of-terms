@@ -14,7 +14,7 @@ import nock from 'nock';
 
 nock('https://example.com')
   .get(/distributions\/timeout/)
-  .delay(3000)
+  .delay(15_000) // Far above the timeoutMs that tests pass, so this source always times out.
   .reply(200)
   .persist();
 

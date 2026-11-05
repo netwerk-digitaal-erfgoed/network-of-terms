@@ -10,6 +10,9 @@ import { IRI } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let httpServer: FastifyInstance;
+// Generous enough for regular sources on a busy CI runner, yet below the delay
+// of the timeout source and the vitest test timeout.
+const timeoutMs = 6000;
 const catalog = testCatalog(3000);
 describe('Server', () => {
   afterAll(async () => {
@@ -107,7 +110,7 @@ describe('Server', () => {
     expect(body.data.terms).toHaveLength(2);
     expect(body.data.terms[0].result.__typename).toEqual('TimeoutError');
     expect(body.data.terms[1].result.__typename).toEqual('Terms');
-    expect(body.data.terms[0].responseTimeMs).toBeGreaterThanOrEqual(2500); // timeoutMs set to 2500, below the 3000 ms delay of the timeout source.
+    expect(body.data.terms[0].responseTimeMs).toBeGreaterThanOrEqual(timeoutMs);
   });
 
   it('responds to successful GraphQL terms query', async () => {
@@ -881,7 +884,7 @@ function termsQuery({
         ${genres !== undefined ? `genres: [${genres.map((genre) => `"${genre}"`).join(',')}]` : ''}
         query: "${query}"
         limit: ${limit}
-        timeoutMs: 2500
+        timeoutMs: ${timeoutMs}
         ${languages !== undefined ? `languages: [${languages.join(',')}]` : ''}
       ) {
         source {
@@ -993,7 +996,7 @@ function lookupQuery({
     query {
       lookup(
         uris: [${uris.map((uri) => `"${uri}"`).join(',')}],
-        timeoutMs: 2500
+        timeoutMs: ${timeoutMs}
         ${languages !== undefined ? `languages: [${languages.join(',')}]` : ''}
       ) {
         uri
