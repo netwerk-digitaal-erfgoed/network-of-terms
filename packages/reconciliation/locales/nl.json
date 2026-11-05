@@ -9,18 +9,18 @@
   "view": "Meer informatie",
   "source": "Terminologiebron",
   "properties": {
-    "givenName": "Voornaam",
-    "familyName": "Achternaam",
-    "birthDate": "Geboortedatum",
-    "deathDate": "Overlijdensdatum",
-    "birthPlace": "Geboorteplaats",
-    "deathPlace": "Overlijdensplaats",
-    "gender": "Gender",
-    "hasOccupation": "Beroep",
-    "nationality": "Nationaliteit",
-    "parent": "Ouder",
+    "givenNames": "Voornaam",
+    "familyNames": "Achternaam",
+    "birthDates": "Geboortedatum",
+    "deathDates": "Overlijdensdatum",
+    "birthPlaces": "Geboorteplaats",
+    "deathPlaces": "Overlijdensplaats",
+    "genders": "Gender",
+    "occupations": "Beroep",
+    "nationalities": "Nationaliteit",
+    "parents": "Ouder",
     "children": "Kind",
-    "spouse": "Echtgeno(o)t(e)",
-    "sibling": "Broer of zus"
+    "spouses": "Echtgeno(o)t(e)",
+    "siblings": "Broer of zus"
   }
 }

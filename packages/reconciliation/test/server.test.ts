@@ -124,17 +124,17 @@ describe('Server', () => {
         born: {
           query: 'rembrandt',
           properties: [
-            { pid: 'birthDate', v: '1607' },
-            { pid: 'birthPlace', v: 'Leiden' },
+            { pid: 'birthDates', v: '1607' },
+            { pid: 'birthPlaces', v: 'Leiden' },
           ],
         },
         bornElsewhen: {
           query: 'rembrandt',
-          properties: [{ pid: 'birthDate', v: '1700' }],
+          properties: [{ pid: 'birthDates', v: '1700' }],
         },
         fullName: {
           query: 'rembrandt van rijn',
-          properties: [{ pid: 'birthDate', v: '1607' }],
+          properties: [{ pid: 'birthDates', v: '1607' }],
         },
       },
     );
@@ -149,8 +149,8 @@ describe('Server', () => {
       match: true,
       features: [
         { id: 'name', value: 1 },
-        { id: 'birthDate', value: 1 },
-        { id: 'birthPlace', value: 1 },
+        { id: 'birthDates', value: 1 },
+        { id: 'birthPlaces', value: 1 },
       ],
     });
     // A namesake whose source states neither ranks below, and its features say only the name was
@@ -165,7 +165,7 @@ describe('Server', () => {
       (candidate: { id: string }) =>
         candidate.id === 'https://example.com/resources/rembrandt',
     );
-    expect(contradicted.features).toContainEqual({ id: 'birthDate', value: 0 });
+    expect(contradicted.features).toContainEqual({ id: 'birthDates', value: 0 });
     expect(results.bornElsewhen.result[0].id).not.toEqual(
       'https://example.com/resources/rembrandt',
     );
@@ -184,7 +184,7 @@ describe('Server', () => {
           query: 'rembrandt',
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore a property without a value on purpose.
-          properties: [{ pid: 'birthDate' }],
+          properties: [{ pid: 'birthDates' }],
         },
       },
     );
@@ -196,7 +196,7 @@ describe('Server', () => {
       {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore a query without a name on purpose.
-        q1: { properties: [{ pid: 'birthDate', v: '1607' }] },
+        q1: { properties: [{ pid: 'birthDates', v: '1607' }] },
       },
     );
     expect(withoutName.statusCode).toEqual(400);
@@ -228,8 +228,8 @@ describe('Server', () => {
       headers: { 'accept-language': 'nl' },
     });
     expect(JSON.parse(dutch.body).result).toEqual([
-      { id: 'birthDate', name: 'Geboortedatum' },
-      { id: 'birthPlace', name: 'Geboorteplaats' },
+      { id: 'birthDates', name: 'Geboortedatum' },
+      { id: 'birthPlaces', name: 'Geboorteplaats' },
     ]);
 
     const english = await httpServer.inject({
@@ -238,8 +238,8 @@ describe('Server', () => {
       headers: { 'accept-language': 'en' },
     });
     expect(JSON.parse(english.body).result).toEqual([
-      { id: 'deathDate', name: 'Date of death' },
-      { id: 'deathPlace', name: 'Place of death' },
+      { id: 'deathDates', name: 'Date of death' },
+      { id: 'deathPlaces', name: 'Place of death' },
     ]);
 
     const repeated = await httpServer.inject({

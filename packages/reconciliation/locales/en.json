@@ -9,18 +9,18 @@
   "view": "More information",
   "source": "Terminology source",
   "properties": {
-    "givenName": "Given name",
-    "familyName": "Family name",
-    "birthDate": "Date of birth",
-    "deathDate": "Date of death",
-    "birthPlace": "Place of birth",
-    "deathPlace": "Place of death",
-    "gender": "Gender",
-    "hasOccupation": "Occupation",
-    "nationality": "Nationality",
-    "parent": "Parent",
+    "givenNames": "Given name",
+    "familyNames": "Family name",
+    "birthDates": "Date of birth",
+    "deathDates": "Date of death",
+    "birthPlaces": "Place of birth",
+    "deathPlaces": "Place of death",
+    "genders": "Gender",
+    "occupations": "Occupation",
+    "nationalities": "Nationality",
+    "parents": "Parent",
     "children": "Child",
-    "spouse": "Spouse",
-    "sibling": "Sibling"
+    "spouses": "Spouse",
+    "siblings": "Sibling"
   }
 }

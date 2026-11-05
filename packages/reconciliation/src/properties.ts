@@ -25,21 +25,24 @@ export type PropertyValue =
  */
 export type PropertyComparison = { id: PropertyId; value: number | undefined };
 
-/** The properties a client can send, named after the fields of the GraphQL `Person`. */
+/**
+ * The properties a client can send, with the IDs of the data extension properties: OpenRefine
+ * suggests them from the same service in its reconcile and its extend dialogs.
+ */
 export const propertyIds = [
-  'givenName',
-  'familyName',
-  'birthDate',
-  'deathDate',
-  'birthPlace',
-  'deathPlace',
-  'gender',
-  'hasOccupation',
-  'nationality',
-  'parent',
+  'givenNames',
+  'familyNames',
+  'birthDates',
+  'deathDates',
+  'birthPlaces',
+  'deathPlaces',
+  'genders',
+  'occupations',
+  'nationalities',
+  'parents',
   'children',
-  'spouse',
-  'sibling',
+  'spouses',
+  'siblings',
 ] as const;
 
 export type PropertyId = (typeof propertyIds)[number];
@@ -93,24 +96,24 @@ const compare: Record<
   PropertyId,
   (value: PropertyValue, term: Term) => Comparison
 > = {
-  givenName: (value, term) =>
+  givenNames: (value, term) =>
     compareNames(value, literals(term.person?.givenNames)),
-  familyName: (value, term) =>
+  familyNames: (value, term) =>
     compareNames(value, literals(term.person?.familyNames)),
-  birthDate: (value, term) => compareDates(value, term.person?.birthDates),
-  deathDate: (value, term) => compareDates(value, term.person?.deathDates),
-  birthPlace: (value, term) =>
+  birthDates: (value, term) => compareDates(value, term.person?.birthDates),
+  deathDates: (value, term) => compareDates(value, term.person?.deathDates),
+  birthPlaces: (value, term) =>
     compareEntities(value, entities(term.person?.birthPlaces)),
-  deathPlace: (value, term) =>
+  deathPlaces: (value, term) =>
     compareEntities(value, entities(term.person?.deathPlaces)),
-  nationality: (value, term) =>
+  nationalities: (value, term) =>
     compareEntities(value, entities(term.person?.nationalities)),
-  gender: (value, term) =>
+  genders: (value, term) =>
     compareEntities(
       genderValue(value),
       entities(term.person?.genders).map(genderCandidate),
     ),
-  hasOccupation: (value, term) =>
+  occupations: (value, term) =>
     compareEntities(
       value,
       (term.person?.occupations ?? []).map((role) => ({
@@ -120,13 +123,13 @@ const compare: Record<
         ),
       })),
     ),
-  parent: (value, term) =>
+  parents: (value, term) =>
     compareEntities(value, relatives(term.person?.parents)),
   children: (value, term) =>
     compareEntities(value, relatives(term.person?.children)),
-  spouse: (value, term) =>
+  spouses: (value, term) =>
     compareEntities(value, relatives(term.person?.spouses)),
-  sibling: (value, term) =>
+  siblings: (value, term) =>
     compareEntities(value, relatives(term.person?.siblings)),
 };
 

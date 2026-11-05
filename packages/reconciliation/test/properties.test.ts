@@ -15,11 +15,11 @@ import {
 describe('Property comparison', () => {
   it('matches a birth year with a full birth date, and the other way round', () => {
     const term = personTerm({ birthDates: ['1851-03-02'] });
-    expect(compare(term, { pid: 'birthDate', v: '1851' })).toEqual(1);
-    expect(compare(term, { pid: 'birthDate', v: 1851 })).toEqual(1);
+    expect(compare(term, { pid: 'birthDates', v: '1851' })).toEqual(1);
+    expect(compare(term, { pid: 'birthDates', v: 1851 })).toEqual(1);
     expect(
       compare(personTerm({ birthDates: ['1851'] }), {
-        pid: 'birthDate',
+        pid: 'birthDates',
         v: '1851-03-02',
       }),
     ).toEqual(1);
@@ -28,13 +28,13 @@ describe('Property comparison', () => {
   it('matches a date within an interval or an unspecified decade', () => {
     expect(
       compare(personTerm({ birthDates: ['1606-07-15/1607'] }), {
-        pid: 'birthDate',
+        pid: 'birthDates',
         v: '1607',
       }),
     ).toEqual(1);
     expect(
       compare(personTerm({ deathDates: ['185X'] }), {
-        pid: 'deathDate',
+        pid: 'deathDates',
         v: '1857-01-01',
       }),
     ).toEqual(1);
@@ -43,20 +43,20 @@ describe('Property comparison', () => {
   it('reads the date-time OpenRefine sends for a date column as the day it means', () => {
     expect(
       compare(personTerm({ birthDates: ['1851-03-02'] }), {
-        pid: 'birthDate',
+        pid: 'birthDates',
         v: '1851-03-02T00:00:00Z',
       }),
     ).toEqual(1);
     // Parsed in Dutch time, 2 March is sent as 23:00 UTC on 1 March.
     expect(
       compare(personTerm({ birthDates: ['1851-03-02'] }), {
-        pid: 'birthDate',
+        pid: 'birthDates',
         v: '1851-03-01T23:00:00Z',
       }),
     ).toEqual(1);
     expect(
       comparisons(personTerm({ birthDates: ['1851-03-02'] }), {
-        pid: 'birthDate',
+        pid: 'birthDates',
         v: '1851-13-01T00:00:00Z',
       }),
     ).toEqual([]);
@@ -64,14 +64,14 @@ describe('Property comparison', () => {
 
   it('counts a date a year off as half a match, and further off as a contradiction', () => {
     const term = personTerm({ birthDates: ['1851'] });
-    expect(compare(term, { pid: 'birthDate', v: '1852-01-01' })).toEqual(0.5);
-    expect(compare(term, { pid: 'birthDate', v: '1843' })).toEqual(0);
+    expect(compare(term, { pid: 'birthDates', v: '1852-01-01' })).toEqual(0.5);
+    expect(compare(term, { pid: 'birthDates', v: '1843' })).toEqual(0);
   });
 
   it('takes the best of several dates, sent or stated', () => {
     expect(
       compare(personTerm({ birthDates: ['1843', '1851'] }), {
-        pid: 'birthDate',
+        pid: 'birthDates',
         v: ['1700', '1851'],
       }),
     ).toEqual(1);
@@ -80,12 +80,12 @@ describe('Property comparison', () => {
   it('knows nothing about a candidate whose source states no date it can read', () => {
     expect(
       comparisons(personTerm({ birthDates: ['unknown', '../1700'] }), {
-        pid: 'birthDate',
+        pid: 'birthDates',
         v: '1851',
       }),
-    ).toEqual([{ id: 'birthDate', value: undefined }]);
-    expect(comparisons(nonPersonTerm, { pid: 'birthDate', v: '1851' })).toEqual(
-      [{ id: 'birthDate', value: undefined }],
+    ).toEqual([{ id: 'birthDates', value: undefined }]);
+    expect(comparisons(nonPersonTerm, { pid: 'birthDates', v: '1851' })).toEqual(
+      [{ id: 'birthDates', value: undefined }],
     );
   });
 
@@ -95,25 +95,25 @@ describe('Property comparison', () => {
       comparisons(
         term,
         { pid: 'P569', v: '1851' },
-        { pid: 'birthDate', v: 'not a date' },
-        { pid: 'birthDate', v: [true, '', { id: '' }] },
-        { pid: 'deathDate', v: { id: 'https://example.com/date' } },
-        { pid: 'givenName', v: { id: 'https://example.com/name', name: ' ' } },
+        { pid: 'birthDates', v: 'not a date' },
+        { pid: 'birthDates', v: [true, '', { id: '' }] },
+        { pid: 'deathDates', v: { id: 'https://example.com/date' } },
+        { pid: 'givenNames', v: { id: 'https://example.com/name', name: ' ' } },
       ),
     ).toEqual([]);
   });
 
   it('compares names with the source’s names', () => {
     const term = personTerm({ givenNames: ['Jan'], familyNames: ['Jansen'] });
-    expect(compare(term, { pid: 'givenName', v: 'jan' })).toEqual(1);
-    expect(compare(term, { pid: 'familyName', v: 'Janssen' })).toBeGreaterThan(
+    expect(compare(term, { pid: 'givenNames', v: 'jan' })).toEqual(1);
+    expect(compare(term, { pid: 'familyNames', v: 'Janssen' })).toBeGreaterThan(
       0.5,
     );
-    expect(compare(term, { pid: 'familyName', v: 'Pietersen' })).toBeLessThan(
+    expect(compare(term, { pid: 'familyNames', v: 'Pietersen' })).toBeLessThan(
       0.5,
     );
-    expect(comparisons(personTerm({}), { pid: 'givenName', v: 'Jan' })).toEqual(
-      [{ id: 'givenName', value: undefined }],
+    expect(comparisons(personTerm({}), { pid: 'givenNames', v: 'Jan' })).toEqual(
+      [{ id: 'givenNames', value: undefined }],
     );
   });
 
@@ -122,9 +122,9 @@ describe('Property comparison', () => {
       birthPlaces: [new Entity(iri(leiden), [name('Leiden (stad)', 'nl')])],
       deathPlaces: [new Entity(undefined, [name('Amsterdam (stad)', 'nl')])],
     });
-    expect(compare(term, { pid: 'birthPlace', v: { id: leiden } })).toEqual(1);
-    expect(compare(term, { pid: 'birthPlace', v: 'Leiden' })).toEqual(1);
-    expect(compare(term, { pid: 'deathPlace', v: 'Amsterdam' })).toEqual(1);
+    expect(compare(term, { pid: 'birthPlaces', v: { id: leiden } })).toEqual(1);
+    expect(compare(term, { pid: 'birthPlaces', v: 'Leiden' })).toEqual(1);
+    expect(compare(term, { pid: 'deathPlaces', v: 'Amsterdam' })).toEqual(1);
   });
 
   it('contradicts a place the source identifies by another IRI, unless the name matches', () => {
@@ -134,32 +134,32 @@ describe('Property comparison', () => {
     });
     expect(
       compare(term, {
-        pid: 'birthPlace',
+        pid: 'birthPlaces',
         v: { id: 'https://example.com/gouda' },
       }),
     ).toEqual(0);
     expect(
       compare(term, {
-        pid: 'deathPlace',
+        pid: 'deathPlaces',
         v: { id: 'https://example.com/amsterdam', name: 'Amsterdam' },
       }),
     ).toEqual(1);
     // The source only names the place, so an IRI alone says nothing about it.
     expect(
       comparisons(term, {
-        pid: 'deathPlace',
+        pid: 'deathPlaces',
         v: { id: 'https://example.com/amsterdam' },
       }),
-    ).toEqual([{ id: 'deathPlace', value: undefined }]);
+    ).toEqual([{ id: 'deathPlaces', value: undefined }]);
   });
 
   it('reads a source’s gender literal as Schema.org’s', () => {
     const term = personTerm({
       genders: [new Entity(undefined, [name('Vrouw', 'nl')])],
     });
-    expect(compare(term, { pid: 'gender', v: 'female' })).toEqual(1);
+    expect(compare(term, { pid: 'genders', v: 'female' })).toEqual(1);
     expect(
-      compare(term, { pid: 'gender', v: { id: 'https://schema.org/Male' } }),
+      compare(term, { pid: 'genders', v: { id: 'https://schema.org/Male' } }),
     ).toEqual(0);
   });
 
@@ -167,18 +167,18 @@ describe('Property comparison', () => {
     const term = personTerm({
       genders: [new Entity(iri('https://schema.org/Male'), [])],
     });
-    expect(compare(term, { pid: 'gender', v: 'man' })).toEqual(1);
-    expect(compare(term, { pid: 'gender', v: 'M' })).toEqual(1);
+    expect(compare(term, { pid: 'genders', v: 'man' })).toEqual(1);
+    expect(compare(term, { pid: 'genders', v: 'M' })).toEqual(1);
     expect(
-      compare(term, { pid: 'gender', v: { id: 'http://schema.org/Male' } }),
+      compare(term, { pid: 'genders', v: { id: 'http://schema.org/Male' } }),
     ).toEqual(1);
-    expect(compare(term, { pid: 'gender', v: 'vrouw' })).toEqual(0);
+    expect(compare(term, { pid: 'genders', v: 'vrouw' })).toEqual(0);
     expect(
       compare(
         personTerm({
           genders: [new Entity(undefined, [name('non-binary', 'en')])],
         }),
-        { pid: 'gender', v: 'Non-binary' },
+        { pid: 'genders', v: 'Non-binary' },
       ),
     ).toEqual(1);
   });
@@ -195,14 +195,14 @@ describe('Property comparison', () => {
         new OccupationRole(undefined, [name('etser', 'nl')], '1625', '1669'),
       ],
     });
-    expect(compare(term, { pid: 'hasOccupation', v: { id: painter } })).toEqual(
+    expect(compare(term, { pid: 'occupations', v: { id: painter } })).toEqual(
       1,
     );
-    expect(compare(term, { pid: 'hasOccupation', v: 'Schilder' })).toEqual(1);
-    expect(compare(term, { pid: 'hasOccupation', v: 'etser' })).toEqual(1);
+    expect(compare(term, { pid: 'occupations', v: 'Schilder' })).toEqual(1);
+    expect(compare(term, { pid: 'occupations', v: 'etser' })).toEqual(1);
     expect(
-      comparisons(nonPersonTerm, { pid: 'hasOccupation', v: 'schilder' }),
-    ).toEqual([{ id: 'hasOccupation', value: undefined }]);
+      comparisons(nonPersonTerm, { pid: 'occupations', v: 'schilder' }),
+    ).toEqual([{ id: 'occupations', value: undefined }]);
   });
 
   it('matches a nationality and relatives', () => {
@@ -213,14 +213,14 @@ describe('Property comparison', () => {
       spouses: [new RelatedTerm(iri(wife), [name('Maria de Vries', 'nl')])],
       siblings: [new RelatedTerm(iri(brother), [name('Klaas Jansen', 'nl')])],
     });
-    expect(compare(term, { pid: 'nationality', v: 'Nederlands' })).toEqual(1);
-    expect(compare(term, { pid: 'parent', v: { id: father } })).toEqual(1);
+    expect(compare(term, { pid: 'nationalities', v: 'Nederlands' })).toEqual(1);
+    expect(compare(term, { pid: 'parents', v: { id: father } })).toEqual(1);
     expect(compare(term, { pid: 'children', v: { id: child } })).toEqual(1);
-    expect(compare(term, { pid: 'spouse', v: 'Maria de Vries' })).toEqual(1);
-    expect(compare(term, { pid: 'sibling', v: { id: wife } })).toEqual(0);
+    expect(compare(term, { pid: 'spouses', v: 'Maria de Vries' })).toEqual(1);
+    expect(compare(term, { pid: 'siblings', v: { id: wife } })).toEqual(0);
     expect(
-      comparisons(personTerm({}), { pid: 'birthPlace', v: 'Leiden' }),
-    ).toEqual([{ id: 'birthPlace', value: undefined }]);
+      comparisons(personTerm({}), { pid: 'birthPlaces', v: 'Leiden' }),
+    ).toEqual([{ id: 'birthPlaces', value: undefined }]);
   });
 });
 
