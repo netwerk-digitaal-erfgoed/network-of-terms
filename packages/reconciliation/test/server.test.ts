@@ -446,6 +446,11 @@ describe('Server', () => {
         children: [],
         spouses: [],
         siblings: [],
+        placeNames: [],
+        latitudes: [],
+        longitudes: [],
+        countries: [],
+        placeTypes: [],
         broaderTerms: [{ str: 'https://example.com/resources/2' }],
         narrowerTerms: [],
         relatedTerms: [
@@ -473,6 +478,11 @@ describe('Server', () => {
         children: [],
         spouses: [],
         siblings: [],
+        placeNames: [],
+        latitudes: [],
+        longitudes: [],
+        countries: [],
+        placeTypes: [],
         broaderTerms: [],
         narrowerTerms: [],
         relatedTerms: [],
@@ -586,11 +596,63 @@ describe('Server', () => {
           },
         ],
         siblings: [],
+        placeNames: [],
+        latitudes: [],
+        longitudes: [],
+        countries: [],
+        placeTypes: [],
         broaderTerms: [],
         narrowerTerms: [],
         relatedTerms: [],
         exactMatches: [],
         seeAlso: [],
+      },
+    });
+  });
+
+  it('returns a place’s names, coordinates, country and types in data extension response', async () => {
+    const response = await dataExtensionQuery({
+      url: '/extend',
+      language: 'nl',
+      query: {
+        ids: [
+          'https://example.com/resources/place',
+          'https://example.com/resources/place-without-coordinates',
+          'https://example.com/resources/place-without-location',
+        ],
+        properties: [
+          { id: 'placeNames' },
+          { id: 'latitudes' },
+          { id: 'longitudes' },
+          { id: 'countries' },
+          { id: 'placeTypes' },
+        ],
+      },
+    });
+    expect(response.statusCode).toEqual(200);
+    expect(JSON.parse(response.body).rows).toEqual({
+      'https://example.com/resources/place': {
+        placeNames: [{ str: 'Maastricht' }],
+        latitudes: [{ float: 50.84833 }],
+        longitudes: [{ float: 5.68889 }],
+        countries: [{ str: 'NL' }],
+        placeTypes: [{ str: 'hoofdplaats van een provincie' }],
+      },
+      // A type its vocabulary does not name is its IRI.
+      'https://example.com/resources/place-without-location': {
+        placeNames: [{ str: 'Rijnland' }],
+        latitudes: [],
+        longitudes: [],
+        countries: [{ str: 'NL' }],
+        placeTypes: [{ str: 'https://www.geonames.org/ontology#H.LK' }],
+      },
+      // The source’s coordinates and country are unusable, so the place states none.
+      'https://example.com/resources/place-without-coordinates': {
+        placeNames: [],
+        latitudes: [],
+        longitudes: [],
+        countries: [],
+        placeTypes: [],
       },
     });
   });
@@ -702,6 +764,7 @@ describe('Server', () => {
     expect(person.type).toEqual(personType.id);
     expect(ids(person.properties)).toContain('occupations');
     expect(ids(person.properties)).not.toContain('broaderTerms');
+    expect(ids(person.properties)).not.toContain('latitudes');
     expect(person.properties).toContainEqual({
       id: 'parents',
       name: 'parents',
@@ -715,6 +778,14 @@ describe('Server', () => {
       expect(properties).not.toContain('birthDates');
       expect(properties).not.toContain('parents');
     }
+
+    // Only a place column is offered a place’s properties.
+    expect(ids((await propose(placeType.id)).properties)).toContain(
+      'latitudes',
+    );
+    expect(ids((await propose(organizationType.id)).properties)).not.toContain(
+      'latitudes',
+    );
 
     // Persons are concepts too, so a concept column gets every property, as does one without type.
     const concept = await propose(conceptType.id);

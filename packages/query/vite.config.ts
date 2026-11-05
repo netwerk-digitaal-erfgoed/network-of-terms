@@ -17,10 +17,10 @@ export default defineConfig(() => ({
       exclude: ['src/test-utils.ts'],
       thresholds: {
         autoUpdate: true,
-        lines: 90.81,
-        functions: 85.71,
+        lines: 90.83,
+        functions: 85.81,
         branches: 81.54,
-        statements: 90.57,
+        statements: 90.59,
       },
     },
   },

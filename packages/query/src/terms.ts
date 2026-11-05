@@ -351,7 +351,11 @@ export class TermsTransformer {
       numberValue(location.longitude),
       // An empty country is as unusable as an empty coordinate, and ISO 3166-1 has no empty code.
       stringValue(location.addressCountry),
-      term.additionalTypes.map(this.namedType).sort(alphabeticallyByPrefLabel),
+      // A type is a class, so an IRI, as for an organization.
+      term.additionalTypes
+        .filter((object) => object.termType === 'NamedNode')
+        .map(this.namedType)
+        .sort(alphabeticallyByPrefLabel),
     );
 
     return place.names.length === 0 &&
