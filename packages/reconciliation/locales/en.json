@@ -7,5 +7,20 @@
   "related": "Related terms",
   "notFound": "Not found",
   "view": "More information",
-  "source": "Terminology source"
+  "source": "Terminology source",
+  "properties": {
+    "givenName": "Given name",
+    "familyName": "Family name",
+    "birthDate": "Date of birth",
+    "deathDate": "Date of death",
+    "birthPlace": "Place of birth",
+    "deathPlace": "Place of death",
+    "gender": "Gender",
+    "hasOccupation": "Occupation",
+    "nationality": "Nationality",
+    "parent": "Parent",
+    "children": "Child",
+    "spouse": "Spouse",
+    "sibling": "Sibling"
+  }
 }

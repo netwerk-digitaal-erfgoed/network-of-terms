@@ -7,5 +7,20 @@
   "related": "Gerelateerde termen",
   "notFound": "Niet gevonden",
   "view": "Meer informatie",
-  "source": "Terminologiebron"
+  "source": "Terminologiebron",
+  "properties": {
+    "givenName": "Voornaam",
+    "familyName": "Achternaam",
+    "birthDate": "Geboortedatum",
+    "deathDate": "Overlijdensdatum",
+    "birthPlace": "Geboorteplaats",
+    "deathPlace": "Overlijdensplaats",
+    "gender": "Gender",
+    "hasOccupation": "Beroep",
+    "nationality": "Nationaliteit",
+    "parent": "Ouder",
+    "children": "Kind",
+    "spouse": "Echtgeno(o)t(e)",
+    "sibling": "Broer of zus"
+  }
 }

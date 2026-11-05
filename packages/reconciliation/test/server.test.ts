@@ -117,6 +117,138 @@ describe('Server', () => {
     ).toEqual('1606-07-15/1607 – 1669-10-04 • Rembrandt van Rijn');
   });
 
+  it('ranks candidates on the properties a query sends', async () => {
+    const response = await reconciliationQuery(
+      'https://data.rkd.nl/rkdartists',
+      {
+        born: {
+          query: 'rembrandt',
+          properties: [
+            { pid: 'birthDate', v: '1607' },
+            { pid: 'birthPlace', v: 'Leiden' },
+          ],
+        },
+        bornElsewhen: {
+          query: 'rembrandt',
+          properties: [{ pid: 'birthDate', v: '1700' }],
+        },
+        fullName: {
+          query: 'rembrandt van rijn',
+          properties: [{ pid: 'birthDate', v: '1607' }],
+        },
+      },
+    );
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+
+    // The person’s name, birth date and birthplace all match, which singles them out.
+    const [first, second] = results.born.result;
+    expect(first).toMatchObject({
+      id: 'https://example.com/resources/rembrandt',
+      score: 100,
+      match: true,
+      features: [
+        { id: 'name', value: 1 },
+        { id: 'birthDate', value: 1 },
+        { id: 'birthPlace', value: 1 },
+      ],
+    });
+    // A namesake whose source states neither ranks below, and its features say only the name was
+    // compared.
+    expect(second.score).toBeLessThan(100);
+    expect(second.features).toEqual([{ id: 'name', value: 1 }]);
+    expect(second.match).toBeUndefined();
+
+    // A birth date that contradicts the person’s ranks them below the namesake the source states
+    // nothing about.
+    const contradicted = results.bornElsewhen.result.find(
+      (candidate: { id: string }) =>
+        candidate.id === 'https://example.com/resources/rembrandt',
+    );
+    expect(contradicted.features).toContainEqual({ id: 'birthDate', value: 0 });
+    expect(results.bornElsewhen.result[0].id).not.toEqual(
+      'https://example.com/resources/rembrandt',
+    );
+    expect(results.bornElsewhen.result[0].match).toBeUndefined();
+
+    // The only candidate is the match when everything the query sends matches.
+    expect(results.fullName.result).toHaveLength(1);
+    expect(results.fullName.result[0].match).toEqual(true);
+  });
+
+  it('validates the properties of reconciliation requests', async () => {
+    const response = await reconciliationQuery(
+      'https://data.rkd.nl/rkdartists',
+      {
+        q1: {
+          query: 'rembrandt',
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore a property without a value on purpose.
+          properties: [{ pid: 'birthDate' }],
+        },
+      },
+    );
+    expect(response.statusCode).toEqual(400);
+
+    // Candidates are found by name, so properties alone are not a query.
+    const withoutName = await reconciliationQuery(
+      'https://data.rkd.nl/rkdartists',
+      {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore a query without a name on purpose.
+        q1: { properties: [{ pid: 'birthDate', v: '1607' }] },
+      },
+    );
+    expect(withoutName.statusCode).toEqual(400);
+  });
+
+  it('declares the property suggest service in the manifest', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/reconcile/https://data.rkd.nl/rkdartists',
+    });
+    expect(JSON.parse(response.body).suggest).toEqual({
+      property: {
+        service_url: 'http://localhost',
+        service_path: '/suggest/property',
+      },
+    });
+  });
+
+  it('suggests the properties a query can send, by ID or translated name', async () => {
+    const all = await httpServer.inject({
+      method: 'GET',
+      url: '/suggest/property',
+    });
+    expect(JSON.parse(all.body).result).toHaveLength(13);
+
+    const dutch = await httpServer.inject({
+      method: 'GET',
+      url: '/suggest/property?prefix=Geb',
+      headers: { 'accept-language': 'nl' },
+    });
+    expect(JSON.parse(dutch.body).result).toEqual([
+      { id: 'birthDate', name: 'Geboortedatum' },
+      { id: 'birthPlace', name: 'Geboorteplaats' },
+    ]);
+
+    const english = await httpServer.inject({
+      method: 'GET',
+      url: '/suggest/property?prefix=death',
+      headers: { 'accept-language': 'en' },
+    });
+    expect(JSON.parse(english.body).result).toEqual([
+      { id: 'deathDate', name: 'Date of death' },
+      { id: 'deathPlace', name: 'Place of death' },
+    ]);
+
+    const repeated = await httpServer.inject({
+      method: 'GET',
+      url: '/suggest/property?prefix=a&prefix=b',
+    });
+    expect(repeated.statusCode).toEqual(400);
+  });
+
   it('responds to successful reconciliation API request with backwards compatible distribution URI', async () => {
     const response = await reconciliationQuery(
       'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',

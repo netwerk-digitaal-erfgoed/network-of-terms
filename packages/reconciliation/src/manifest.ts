@@ -15,6 +15,8 @@ export class ServiceManifest {
   public readonly defaultTypes = [conceptType];
   public readonly preview;
   public readonly extend;
+  // The properties a client can send with a query, so OpenRefine offers them for its columns.
+  public readonly suggest;
 
   constructor(
     public readonly name: string,
@@ -33,6 +35,13 @@ export class ServiceManifest {
         service_path: '/extend/propose',
       },
       property_settings: [],
+    };
+
+    this.suggest = {
+      property: {
+        service_url: root,
+        service_path: '/suggest/property',
+      },
     };
   }
 }
