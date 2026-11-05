@@ -1,10 +1,12 @@
 import {
+  Entity,
   IRI,
   literalValues,
   LookupService,
   RelatedTerm,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
+import type { NamedNode } from '@rdfjs/types';
 import { entityNames, occupationNames, personalNames } from './entity-names.js';
 import {
   conceptType,
@@ -94,6 +96,27 @@ export const dataExtensionProperties: {
     name: 'siblings',
     type: personType,
   },
+  // What the source states about the place a term denotes; empty for any other term.
+  {
+    id: 'placeNames',
+    name: 'placeNames',
+  },
+  {
+    id: 'latitudes',
+    name: 'latitudes',
+  },
+  {
+    id: 'longitudes',
+    name: 'longitudes',
+  },
+  {
+    id: 'countries',
+    name: 'countries',
+  },
+  {
+    id: 'placeTypes',
+    name: 'placeTypes',
+  },
   // Terms in the same source, as entities a client can keep reconciled, so far as the source names them.
   {
     id: 'broaderTerms',
@@ -125,14 +148,22 @@ export const dataExtensionProperties: {
 ];
 
 /**
- * The properties to propose for a column reconciled against a type. Sources seldom place persons
- * in a hierarchy, so a person column is not offered broader and narrower terms, which would nearly
- * always be empty; a column reconciled against Concept still is. A place or organization is never
- * a person, so its column is not offered a person’s properties. Any other column may hold persons,
- * since every person is a concept too, so it gets every property.
+ * The properties to propose for a column reconciled against a type. A column of persons, places or
+ * organizations is not offered the properties of another of those types, which would always be
+ * empty. Sources seldom place persons in a hierarchy either, so a person column is not offered
+ * broader and narrower terms. Any other column may hold terms of every type, since each is a
+ * concept too, so it gets every property.
  */
 export const proposedProperties = (type: string) => {
-  const excluded = excludedProperties.get(type) ?? [];
+  if (!propertiesOfType.has(type)) {
+    return dataExtensionProperties;
+  }
+  const excluded = [
+    ...[...propertiesOfType]
+      .filter(([otherType]) => otherType !== type)
+      .flatMap(([, properties]) => properties),
+    ...(type === personType.id ? hierarchyProperties : []),
+  ];
   return dataExtensionProperties.filter(
     (property) => !excluded.includes(property.id),
   );
@@ -159,11 +190,20 @@ const personProperties: DataExtensionPropertyId[] = [
   'siblings',
 ];
 
-// A Map, so that a type the client sends cannot look up a property of Object.prototype.
-const excludedProperties = new Map<string, DataExtensionPropertyId[]>([
-  [personType.id, hierarchyProperties],
-  [placeType.id, personProperties],
-  [organizationType.id, personProperties],
+const placeProperties: DataExtensionPropertyId[] = [
+  'placeNames',
+  'latitudes',
+  'longitudes',
+  'countries',
+  'placeTypes',
+];
+
+// The properties only a term of each type has. A Map, so that a type the client sends cannot look
+// up a property of Object.prototype.
+const propertiesOfType = new Map<string, DataExtensionPropertyId[]>([
+  [personType.id, personProperties],
+  [placeType.id, placeProperties],
+  [organizationType.id, []],
 ]);
 
 export async function extendQuery(
@@ -214,6 +254,11 @@ type DataExtensionPropertyId =
   | 'children'
   | 'spouses'
   | 'siblings'
+  | 'placeNames'
+  | 'latitudes'
+  | 'longitudes'
+  | 'countries'
+  | 'placeTypes'
   | 'broaderTerms'
   | 'narrowerTerms'
   | 'relatedTerms'
@@ -251,6 +296,29 @@ const propertyValues: Record<
   children: (term, language) => entities(term.person?.children ?? [], language),
   spouses: (term, language) => entities(term.person?.spouses ?? [], language),
   siblings: (term, language) => entities(term.person?.siblings ?? [], language),
+  placeNames: (term, language) =>
+    strings(literalValues(term.place?.names ?? [], [language])),
+  // Numbers, so that a client can treat the column as numeric.
+  latitudes: (term) => floats(term.place?.latitude),
+  longitudes: (term) => floats(term.place?.longitude),
+  countries: (term) =>
+    strings(
+      term.place?.addressCountry === undefined
+        ? []
+        : [term.place.addressCountry],
+    ),
+  // A type is an IRI in the source’s own vocabulary, such as a GeoNames feature code; the query
+  // package keeps no other. It is named where the vocabulary names it and otherwise its IRI, as a
+  // gender is.
+  placeTypes: (term, language) =>
+    strings(
+      entityNames(
+        (term.place?.additionalTypes ?? []).map(
+          (type) => new Entity(type.id as NamedNode, type.prefLabels),
+        ),
+        language,
+      ),
+    ),
   broaderTerms: (term, language) => entities(term.broaderTerms, language),
   narrowerTerms: (term, language) => entities(term.narrowerTerms, language),
   relatedTerms: (term, language) => entities(term.relatedTerms, language),
@@ -260,6 +328,9 @@ const propertyValues: Record<
 };
 
 const strings = (values: string[]) => values.map((value) => ({ str: value }));
+
+const floats = (value: number | undefined) =>
+  value === undefined ? [] : [{ float: value }];
 
 // A term the source names is one it holds, so it is an entity, named in the client’s language where
 // it can be. A term without a name may be in another vocabulary, or cut off by the query limit, so
@@ -310,4 +381,5 @@ export type DataExtensionResult = {
 };
 
 // A literal value, or an entity in the same source, per the Reconciliation Service API.
-export type DataExtensionValue = { str: string } | { id: string; name: string };
+export type DataExtensionValue =
+  { str: string } | { float: number } | { id: string; name: string };
