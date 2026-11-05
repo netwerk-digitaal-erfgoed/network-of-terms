@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "@fastify/accepts": "5.0.7",
-    "@fastify/cors": "11.3.0",
+    "@fastify/cors": "11.3.1",
     "@fastify/formbody": "9.0.0",
     "@hapi/hoek": "11.0.7",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",

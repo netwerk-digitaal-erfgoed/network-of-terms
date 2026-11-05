@@ -16,7 +16,7 @@
   "author": "Netwerk Digitaal Erfgoed",
   "type": "module",
   "dependencies": {
-    "@fastify/cors": "11.3.0",
+    "@fastify/cors": "11.3.1",
     "@lde/dataset": "0.8.0",
     "@lde/distribution-monitor": "0.3.2",
     "@netwerk-digitaal-erfgoed/network-of-terms-catalog": "*",
@@ -25,7 +25,7 @@
     "env-schema": "7.0.0",
     "fastify": "5.12.7",
     "n3": "2.13.12",
-    "pino": "10.3.1",
+    "pino": "10.4.0",
     "rdf-serialize": "5.1.0"
   },
   "devDependencies": {
