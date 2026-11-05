@@ -44,8 +44,12 @@ export async function reconciliationQuery(
         dataset,
         distribution,
         // The source cuts off the name matches, so with properties to rank them on, the right
-        // person among many namesakes must be fetched before the ranking can find them.
-        properties.some(({ pid }) => isPropertyId(pid)) ? 1000 : 100,
+        // person among many namesakes must be fetched before the ranking can find them. Only a
+        // source of persons states the properties; any other would just answer slower.
+        properties.some(({ pid }) => isPropertyId(pid)) &&
+          dataset.genres.includes(personsGenre)
+          ? 1000
+          : 100,
         10000,
       );
       const terms =
@@ -104,6 +108,10 @@ export type ReconciliationCandidate = {
   features?: { id: string; value: number }[];
   match?: boolean;
 };
+
+// The genre the catalog gives sources of persons, such as RKDartists.
+const personsGenre =
+  'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen';
 
 /**
  * The name and each property the client sent count equally. A property the source states nothing

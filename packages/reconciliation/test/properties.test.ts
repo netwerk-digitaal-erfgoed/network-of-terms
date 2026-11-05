@@ -68,6 +68,15 @@ describe('Property comparison', () => {
     expect(compare(term, { pid: 'birthDates', v: '1843' })).toEqual(0);
   });
 
+  it('still compares dates once more have been parsed than it keeps', () => {
+    const term = personTerm({ birthDates: ['1851-03-02'] });
+    const days = Array.from({ length: 10_001 }, (_day, index) =>
+      new Date(Date.UTC(1830, 0, 1 + index)).toISOString().slice(0, 10),
+    );
+    expect(compare(term, { pid: 'birthDates', v: days })).toEqual(1);
+    expect(compare(term, { pid: 'birthDates', v: '1851' })).toEqual(1);
+  });
+
   it('takes the best of several dates, sent or stated', () => {
     expect(
       compare(personTerm({ birthDates: ['1843', '1851'] }), {
