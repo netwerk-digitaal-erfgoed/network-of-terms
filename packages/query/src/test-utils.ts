@@ -10,13 +10,6 @@ import { setup, teardown as teardownServer } from 'jest-dev-server';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { SpawndChildProcess } from 'spawnd';
-import nock from 'nock';
-
-nock('https://example.com')
-  .get(/distributions\/timeout/)
-  .delay(15_000) // Far above the timeoutMs that tests pass, so this source always times out.
-  .reply(200)
-  .persist();
 
 export const teardown = async () => {
   if (servers) {
@@ -347,4 +340,13 @@ export async function startDistributionSparqlEndpoint(
       launchTimeout: 40000,
     },
   ]);
+
+  // Import nock only once the servers are up: from nock 15 on, importing it intercepts TCP
+  // connects, which makes jest-dev-server's port check pass before the servers listen.
+  const { default: nock } = await import('nock');
+  nock('https://example.com')
+    .get(/distributions\/timeout/)
+    .delay(15_000) // Far above the timeoutMs that tests pass, so this source always times out.
+    .reply(200)
+    .persist();
 }
