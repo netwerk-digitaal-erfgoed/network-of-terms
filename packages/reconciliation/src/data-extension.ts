@@ -5,7 +5,7 @@ import {
   RelatedTerm,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { entityNames, occupationNames } from './entity-names.js';
+import { entityNames, occupationNames, personalNames } from './entity-names.js';
 import { conceptType, personType } from './manifest.js';
 
 export type DataExtensionQuery = {
@@ -210,9 +210,9 @@ const propertyValues: Record<
   genders: (term, language) =>
     strings(entityNames(term.person?.genders ?? [], language)),
   givenNames: (term, language) =>
-    strings(literalValues(term.person?.givenNames ?? [], [language])),
+    strings(personalNames(term.person?.givenNames ?? [], language)),
   familyNames: (term, language) =>
-    strings(literalValues(term.person?.familyNames ?? [], [language])),
+    strings(personalNames(term.person?.familyNames ?? [], language)),
   occupations: (term, language) =>
     strings(occupationNames(term.person?.occupations ?? [], language)),
   nationalities: (term, language) =>
