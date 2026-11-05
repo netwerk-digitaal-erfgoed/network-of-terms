@@ -20,7 +20,7 @@
     "@nx/vitest": "23.3.0",
     "@nx/web": "23.3.0",
     "@rdfjs/types": "2.0.1",
-    "@swc-node/core": "1.14.1",
+    "@swc-node/core": "1.15.0",
     "@swc-node/register": "1.12.1",
     "@types/node": "26.6.6",
     "@vitest/coverage-v8": "5.0.5",
