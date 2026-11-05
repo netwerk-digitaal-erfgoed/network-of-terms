@@ -5,6 +5,7 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import edtf from 'edtf';
 import { calculateMatchingScore } from './score.js';
+import { occupationEntities } from './entity-names.js';
 
 /**
  * A column a client sends along with a reconciliation query, such as a person’s birth date, in
@@ -80,6 +81,17 @@ export function compareProperties(
 export const isPropertyId = (pid: string): pid is PropertyId =>
   (propertyIds as readonly string[]).includes(pid);
 
+/**
+ * The Schema.org gender a label or IRI stands for, whatever the client or source calls it.
+ */
+export const schemaGender = (label: string | undefined) =>
+  genders[
+    (label ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\/schema\.org\//, '')
+  ];
+
 const isUsable = (value: PropertyValue) =>
   typeof value === 'object'
     ? value.id !== ''
@@ -116,12 +128,7 @@ const compare: Record<
   occupations: (value, term) =>
     compareEntities(
       value,
-      (term.person?.occupations ?? []).map((role) => ({
-        iri: role.occupation?.id.value,
-        names: [...(role.occupation?.prefLabels ?? []), ...role.roleNames].map(
-          (name) => name.value,
-        ),
-      })),
+      entities(occupationEntities(term.person?.occupations ?? [])),
     ),
   parents: (value, term) =>
     compareEntities(value, relatives(term.person?.parents)),
@@ -267,13 +274,7 @@ const genderCandidate = (candidate: Candidate): Candidate => {
 };
 
 const genderIri = (label: string | undefined) => {
-  const gender =
-    genders[
-      (label ?? '')
-        .trim()
-        .toLowerCase()
-        .replace(/^https?:\/\/schema\.org\//, '')
-    ];
+  const gender = schemaGender(label);
   return gender === undefined ? undefined : `https://schema.org/${gender}`;
 };
 

@@ -8,6 +8,7 @@ import {
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { score } from './score.js';
+import { termTypes, typeFilter } from './types.js';
 import {
   compareProperties,
   isPropertyId,
@@ -35,9 +36,13 @@ export async function reconciliationQuery(
   return Object.entries(query).reduce(
     async (
       resultsPromise: Promise<ReconciliationResultBatch>,
-      [queryId, { query: queryString, limit, properties = [] }],
+      [
+        queryId,
+        { query: queryString, limit, properties = [], type, type_strict },
+      ],
     ) => {
       const results = await resultsPromise;
+      const ofType = typeFilter(type, type_strict);
       const response = await queryTermsService.search(
         queryString,
         QueryMode.OPTIMIZED,
@@ -45,22 +50,28 @@ export async function reconciliationQuery(
         distribution,
         // The source cuts off the name matches, so with properties to rank them on, the right
         // person among many namesakes must be fetched before the ranking can find them. Only a
-        // source of persons states the properties; any other would just answer slower.
-        properties.some(({ pid }) => isPropertyId(pid)) &&
-          dataset.genres.includes(personsGenre)
+        // source of persons states the properties; any other would just answer slower. The type
+        // leaves out the terms not of it only once they are fetched, so it needs more of them too.
+        ofType !== undefined ||
+          (properties.some(({ pid }) => isPropertyId(pid)) &&
+            dataset.genres.includes(personsGenre))
           ? 1000
           : 100,
         10000,
       );
-      const terms =
-        response.result instanceof Terms ? response.result.terms : [];
+      const terms = (
+        response.result instanceof Terms ? response.result.terms : []
+      )
+        .map((term) => ({ term, types: termTypes(term) }))
+        .filter(({ types }) => ofType?.(types) ?? true);
       const candidates = terms
-        .map((term) => {
+        .map(({ term, types }) => {
           const nameScore = score(queryString, term);
           const comparisons = compareProperties(term, properties);
           return {
             id: term.id.value.toString(),
             name: literalValues(term.prefLabels, [language]).join(' • '), // Join similarly to network-of-terms-demo.
+            types,
             score: combinedScore(nameScore, comparisons),
             description: [
               ...lifespan(term),
@@ -92,6 +103,8 @@ export type ReconciliationQueryBatch = {
     query: string;
     limit?: number;
     properties?: ReconciliationQueryProperty[];
+    type?: string | string[];
+    type_strict?: 'any' | 'should' | 'all';
   };
 };
 
@@ -102,6 +115,7 @@ export type ReconciliationResultBatch = {
 export type ReconciliationCandidate = {
   id: string;
   name: string;
+  types: { id: string; name: string }[];
   score: number;
   description?: string;
   // Why the candidate scored as it did: the name and each property compared, from 0 to 1.

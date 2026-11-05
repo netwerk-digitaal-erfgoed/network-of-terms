@@ -13,6 +13,7 @@ import {
   dataExtensionProperties,
 } from '../src/data-extension.js';
 import { config } from '../src/config.js';
+import { conceptType, personType } from '../src/types.js';
 import { escapeHtml } from '@hapi/hoek';
 
 let httpServer: FastifyInstance;
@@ -85,6 +86,7 @@ describe('Server', () => {
       {
         id: 'https://example.com/resources/artwork',
         name: 'Nachtwacht',
+        types: [conceptType],
         score: 100,
         description: 'Nachtwacht alt',
       },
@@ -101,6 +103,43 @@ describe('Server', () => {
 
     expect(results.q3.result).toEqual([]); // No results.
   });
+
+  it('reconciles against the type the client sends', async () => {
+    const response = await reconciliationQuery(
+      'https://data.rkd.nl/rkdartists',
+      {
+        any: { query: 'rembrandt' },
+        // Clients may state Schema.org types in its http namespace.
+        person: { query: 'rembrandt', type: 'http://schema.org/Person' },
+        all: {
+          query: 'rembrandt',
+          type: [conceptType.id, personType.id],
+          type_strict: 'all',
+        },
+        should: {
+          query: 'rembrandt',
+          type: 'https://example.com/Unknown',
+          type_strict: 'should',
+        },
+      },
+    );
+    expect(response.statusCode).toEqual(200);
+    const results = JSON.parse(response.body);
+    const ids = (queryId: string) =>
+      results[queryId].result.map((candidate: { id: string }) => candidate.id);
+
+    // The painter is a concept that the source does not type as a person.
+    expect(ids('any')).toEqual([
+      'https://example.com/resources/painter',
+      'https://example.com/resources/rembrandt',
+    ]);
+    expect(results.any.result[0].types).toEqual([conceptType]);
+    expect(results.any.result[1].types).toEqual([conceptType, personType]);
+    expect(ids('person')).toEqual(['https://example.com/resources/rembrandt']);
+    expect(ids('all')).toEqual(ids('person'));
+    expect(ids('should')).toEqual(ids('any'));
+    // The queries run one after another, each against the test source.
+  }, 40_000);
 
   it('describes a person candidate by birth and death dates', async () => {
     const response = await reconciliationQuery(
@@ -277,6 +316,7 @@ describe('Server', () => {
       {
         id: 'https://example.com/resources/artwork',
         name: 'Nachtwacht',
+        types: [conceptType],
         score: 100,
         description: 'Nachtwacht alt',
       },
@@ -580,6 +620,33 @@ describe('Server', () => {
     );
   });
 
+  it('shows the work and family of a person in HTML term preview', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/preview/https://example.com/resources/rembrandt',
+    });
+    expect(response.body).toMatch(
+      new RegExp(
+        '<dt>Beroep</dt>\\s*<dd>schilder &#8226; etser &#8226; kunstverzamelaar &#8226; werkzaam</dd>',
+      ),
+    );
+    expect(response.body).toMatch(
+      new RegExp('<dt>Gender</dt>\\s*<dd>man</dd>'),
+    );
+    expect(response.body).toMatch(
+      new RegExp('<dt>Nationaliteit</dt>\\s*<dd>Noord-Nederlands</dd>'),
+    );
+    expect(response.body).toMatch(
+      new RegExp(
+        '<dt>Echtgeno\\(o\\)t\\(e\\)</dt>\\s*<dd>Saskia van Uylenburgh</dd>',
+      ),
+    );
+    expect(response.body).toMatch(
+      new RegExp('<dt>Kinderen</dt>\\s*<dd>Titus van Rijn</dd>'),
+    );
+    expect(response.body).not.toContain('Ouders');
+  });
+
   it('shows no birth or death in HTML term preview of a term that is not a person', async () => {
     const response = await httpServer.inject({
       method: 'GET',
@@ -587,6 +654,47 @@ describe('Server', () => {
     });
     expect(response.body).not.toContain('Geboren');
     expect(response.body).not.toContain('Overleden');
+    expect(response.body).not.toContain('Beroep');
+  });
+
+  it('proposes the properties of the type a column is reconciled against', async () => {
+    const propose = async (type?: string) =>
+      JSON.parse(
+        (
+          await httpServer.inject({
+            method: 'GET',
+            url: '/extend/propose',
+            query: type === undefined ? {} : { type },
+          })
+        ).body,
+      );
+    const ids = (properties: { id: string }[]) =>
+      properties.map((property) => property.id);
+
+    const person = await propose('http://schema.org/Person');
+    expect(person.type).toEqual('http://schema.org/Person');
+    expect(ids(person.properties)).toContain('occupations');
+    expect(ids(person.properties)).not.toContain('broaderTerms');
+    expect(person.properties).toContainEqual({
+      id: 'parents',
+      name: 'parents',
+      type: personType,
+    });
+
+    // Persons are concepts too, so a concept column gets every property, as does one without type.
+    const concept = await propose(conceptType.id);
+    expect(ids(concept.properties)).toEqual(ids(dataExtensionProperties));
+    const untyped = await propose();
+    expect(untyped.type).toEqual(conceptType.id);
+    expect(untyped.properties).toEqual(concept.properties);
+
+    // A repeated type is not rejected; the first counts.
+    const repeated = await httpServer.inject({
+      method: 'GET',
+      url: `/extend/propose?type=${encodeURIComponent(personType.id)}&type=${encodeURIComponent(conceptType.id)}`,
+    });
+    expect(repeated.statusCode).toEqual(200);
+    expect(JSON.parse(repeated.body).type).toEqual(personType.id);
   });
 
   it('shows HTML term preview when a proxy merged the slashes in the IRI', async () => {

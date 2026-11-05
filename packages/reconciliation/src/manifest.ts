@@ -3,11 +3,7 @@ import {
   FeatureType,
   IRI,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-
-export const conceptType = {
-  id: 'http://www.w3.org/2004/02/skos/core#Concept',
-  name: 'Concept',
-};
+import { conceptType } from './types.js';
 
 export class ServiceManifest {
   public readonly versions = ['0.1', '0.2'];

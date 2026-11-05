@@ -1,13 +1,12 @@
 import {
-  Entity,
   IRI,
   literalValues,
   LookupService,
   RelatedTerm,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { entityNames } from './entity-names.js';
-import { conceptType } from './manifest.js';
+import { entityNames, occupationNames, personalNames } from './entity-names.js';
+import { conceptType, isPersonType, personType } from './types.js';
 
 export type DataExtensionQuery = {
   ids: string[];
@@ -68,26 +67,27 @@ export const dataExtensionProperties: {
     id: 'nationalities',
     name: 'nationalities',
   },
-  // Family members are persons in the same source, so entities as related terms are.
+  // Family members are persons in the same source, so entities as related terms are, of the person
+  // type, so that OpenRefine proposes a person’s properties again for a column of them.
   {
     id: 'parents',
     name: 'parents',
-    type: conceptType,
+    type: personType,
   },
   {
     id: 'children',
     name: 'children',
-    type: conceptType,
+    type: personType,
   },
   {
     id: 'spouses',
     name: 'spouses',
-    type: conceptType,
+    type: personType,
   },
   {
     id: 'siblings',
     name: 'siblings',
-    type: conceptType,
+    type: personType,
   },
   // Terms in the same source, as entities a client can keep reconciled, so far as the source names them.
   {
@@ -117,6 +117,24 @@ export const dataExtensionProperties: {
     id: 'seeAlso',
     name: 'seeAlso',
   },
+];
+
+/**
+ * The properties to propose for a column reconciled against a type. Sources seldom place persons
+ * in a hierarchy, so a person column is not offered broader and narrower terms, which would nearly
+ * always be empty; a column reconciled against Concept still is. Any other column may hold
+ * persons, since every person is a concept too, so it gets every property.
+ */
+export const proposedProperties = (type: string | undefined) =>
+  isPersonType(type)
+    ? dataExtensionProperties.filter(
+        (property) => !hierarchyProperties.includes(property.id),
+      )
+    : dataExtensionProperties;
+
+const hierarchyProperties: DataExtensionPropertyId[] = [
+  'broaderTerms',
+  'narrowerTerms',
 ];
 
 export async function extendQuery(
@@ -193,26 +211,11 @@ const propertyValues: Record<
   genders: (term, language) =>
     strings(entityNames(term.person?.genders ?? [], language)),
   givenNames: (term, language) =>
-    strings(literalValues(term.person?.givenNames ?? [], [language])),
+    strings(personalNames(term.person?.givenNames ?? [], language)),
   familyNames: (term, language) =>
-    strings(literalValues(term.person?.familyNames ?? [], [language])),
-  // An occupation the source identifies is named by its vocabulary, and a role it only names by
-  // that name; each role is one entity, so the language is selected as it is for places.
+    strings(personalNames(term.person?.familyNames ?? [], language)),
   occupations: (term, language) =>
-    strings(
-      entityNames(
-        (term.person?.occupations ?? []).map(
-          (role) =>
-            new Entity(
-              role.occupation?.id.termType === 'NamedNode'
-                ? role.occupation.id
-                : undefined,
-              [...(role.occupation?.prefLabels ?? []), ...role.roleNames],
-            ),
-        ),
-        language,
-      ),
-    ),
+    strings(occupationNames(term.person?.occupations ?? [], language)),
   nationalities: (term, language) =>
     strings(entityNames(term.person?.nationalities ?? [], language)),
   parents: (term, language) => entities(term.person?.parents ?? [], language),

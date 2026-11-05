@@ -5,6 +5,17 @@
   "broader": "Broader terms",
   "narrower": "Narrower terms",
   "related": "Related terms",
+  "occupation": "Occupation",
+  "gender": "Gender",
+  "nationality": "Nationality",
+  "parents": "Parents",
+  "spouses": "Spouses",
+  "children": "Children",
+  "siblings": "Siblings",
+  "genders": {
+    "Male": "male",
+    "Female": "female"
+  },
   "notFound": "Not found",
   "view": "More information",
   "source": "Terminology source",
