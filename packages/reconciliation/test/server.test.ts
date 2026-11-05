@@ -109,8 +109,7 @@ describe('Server', () => {
       'https://data.rkd.nl/rkdartists',
       {
         any: { query: 'rembrandt' },
-        // Clients may state Schema.org types in its http namespace.
-        person: { query: 'rembrandt', type: 'http://schema.org/Person' },
+        person: { query: 'rembrandt', type: personType.id },
         all: {
           query: 'rembrandt',
           type: [conceptType.id, personType.id],
@@ -671,8 +670,8 @@ describe('Server', () => {
     const ids = (properties: { id: string }[]) =>
       properties.map((property) => property.id);
 
-    const person = await propose('http://schema.org/Person');
-    expect(person.type).toEqual('http://schema.org/Person');
+    const person = await propose(personType.id);
+    expect(person.type).toEqual(personType.id);
     expect(ids(person.properties)).toContain('occupations');
     expect(ids(person.properties)).not.toContain('broaderTerms');
     expect(person.properties).toContainEqual({
