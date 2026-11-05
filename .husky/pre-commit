@@ -1,2 +1,1 @@
-npx nx affected -t lint --fix
-npx nx format:write
+npx lint-staged
