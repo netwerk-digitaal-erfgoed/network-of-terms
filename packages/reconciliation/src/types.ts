@@ -1,5 +1,7 @@
 import {
+  isOrganizationClass,
   isPersonClass,
+  isPlaceClass,
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
@@ -15,16 +17,31 @@ export const personType: ReconciliationType = {
   name: 'Person',
 };
 
+export const placeType: ReconciliationType = {
+  id: 'https://schema.org/Place',
+  name: 'Place',
+};
+
+export const organizationType: ReconciliationType = {
+  id: 'https://schema.org/Organization',
+  name: 'Organization',
+};
+
 /**
  * The reconciliation types of a term: every term is a concept, and a term the source types as a
- * Schema.org person is a person too. Clients such as OpenRefine guess the type to reconcile
- * against from the types of the candidates, so a source of persons gets Person suggested without
- * the manifest naming it: few sources the catalog files under persons type their terms so.
+ * Schema.org person, place or organization is one of those too. Clients such as OpenRefine guess
+ * the type to reconcile against from the types of the candidates, so a source of persons gets
+ * Person suggested without the manifest naming it: few sources the catalog files under persons
+ * type their terms so.
  */
-export const termTypes = (term: Term) =>
-  isPerson(term) ? [conceptType, personType] : [conceptType];
+export const termTypes = (term: Term) => [
+  conceptType,
+  ...specificTypes
+    .filter(({ isClass }) => term.types.some(isClass))
+    .map(({ type }) => type),
+];
 
-export const isPerson = (term: Term) => term.types.some(isPersonClass);
+export const isPerson = (term: Term) => termTypes(term).includes(personType);
 
 /**
  * Which of a term’s types a client accepts: any of the types it reconciles against, or all of them
@@ -55,3 +72,11 @@ export const typeFilter = (
       : restrictive.some(isOfType);
   };
 };
+
+// The types more specific than a concept, each with the Schema.org class that makes a term one. A
+// kind of term the query package describes becomes a reconciliation type by adding it here.
+const specificTypes = [
+  { type: personType, isClass: isPersonClass },
+  { type: placeType, isClass: isPlaceClass },
+  { type: organizationType, isClass: isOrganizationClass },
+];
