@@ -27,12 +27,6 @@ export const termTypes = (term: Term) =>
 export const isPerson = (term: Term) => term.types.some(isPersonClass);
 
 /**
- * Whether a client reconciles against persons, with the type in either Schema.org namespace.
- */
-export const isPersonType = (type: string | undefined) =>
-  type !== undefined && normalisedType(type) === personType.id;
-
-/**
  * Which of a term’s types a client accepts: any of the types it reconciles against, or all of them
  * with `type_strict` ‘all’. Undefined when every term is accepted: when the client names no type,
  * or an empty one, when the types are only a preference (‘should’), which the score does not
@@ -42,9 +36,9 @@ export const typeFilter = (
   type: string | string[] = [],
   strict: 'any' | 'should' | 'all' = 'any',
 ) => {
-  const requested = (Array.isArray(type) ? type : [type])
-    .filter((id) => id !== '')
-    .map(normalisedType);
+  const requested = (Array.isArray(type) ? type : [type]).filter(
+    (id) => id !== '',
+  );
   const restrictive = requested.filter((id) => id !== conceptType.id);
   if (
     strict === 'should' ||
@@ -61,7 +55,3 @@ export const typeFilter = (
       : restrictive.some(isOfType);
   };
 };
-
-// Sources and clients state Schema.org types in either namespace.
-const normalisedType = (type: string) =>
-  type.replace(/^http:\/\/schema\.org\//, 'https://schema.org/');

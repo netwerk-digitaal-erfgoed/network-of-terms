@@ -6,7 +6,7 @@ import {
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { entityNames, occupationNames, personalNames } from './entity-names.js';
-import { conceptType, isPersonType, personType } from './types.js';
+import { conceptType, personType } from './types.js';
 
 export type DataExtensionQuery = {
   ids: string[];
@@ -126,7 +126,7 @@ export const dataExtensionProperties: {
  * persons, since every person is a concept too, so it gets every property.
  */
 export const proposedProperties = (type: string | undefined) =>
-  isPersonType(type)
+  type === personType.id
     ? dataExtensionProperties.filter(
         (property) => !hierarchyProperties.includes(property.id),
       )

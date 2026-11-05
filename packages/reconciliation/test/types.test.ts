@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  conceptType,
-  isPersonType,
-  personType,
-  typeFilter,
-} from '../src/types.js';
+import { conceptType, personType, typeFilter } from '../src/types.js';
 
 const concept = [conceptType];
 const person = [conceptType, personType];
@@ -38,12 +33,6 @@ describe('Type filter', () => {
     const ofType = accepts(personType.id);
     expect(ofType(person)).toBe(true);
     expect(ofType(concept)).toBe(false);
-  });
-
-  it('accepts Person in the http namespace of Schema.org', () => {
-    expect(accepts('http://schema.org/Person')(concept)).toBe(false);
-    expect(accepts('http://schema.org/Person')(person)).toBe(true);
-    expect(isPersonType('http://schema.org/Person')).toBe(true);
   });
 
   it('accepts only terms of all types with type_strict all', () => {
