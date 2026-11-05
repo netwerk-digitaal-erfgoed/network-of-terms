@@ -1,7 +1,6 @@
 import {
   Entity,
   filterLiteralsByLanguage,
-  literalValues,
   OccupationRole,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import * as RDF from '@rdfjs/types';
@@ -18,50 +17,74 @@ export const entityNames = (entities: Entity[], language: string) => {
     ? [language]
     : ['en'];
 
-  return unique(
-    entities
-      .map(
-        (entity) =>
-          filterLiteralsByLanguage(entity.names, languages)[0]?.value ??
-          (entity.iri === undefined
-            ? undefined
-            : (filterLiteralsByLanguage(entity.names, ['en'])[0]?.value ??
-              entity.iri.value)),
-      )
-      .filter((name) => name !== undefined),
+  const named = entities
+    .map((entity) => ({
+      iri: entity.iri?.value,
+      name:
+        filterLiteralsByLanguage(entity.names, languages)[0]?.value ??
+        (entity.iri === undefined
+          ? undefined
+          : (filterLiteralsByLanguage(entity.names, ['en'])[0]?.value ??
+            entity.iri.value)),
+    }))
+    .filter(
+      (entity): entity is { iri: string | undefined; name: string } =>
+        entity.name !== undefined,
+    );
+
+  // An entity the source states twice is named once, and so is a name the source only states
+  // beside an entity it identifies by that name. Entities the source identifies apart keep their
+  // names, even when they share one, such as two places called Bergen.
+  const identifiedNames = new Set(
+    named.filter((entity) => entity.iri !== undefined).map(({ name }) => name),
   );
+  return named
+    .filter((entity, index) =>
+      entity.iri === undefined
+        ? !identifiedNames.has(entity.name) &&
+          named.findIndex(
+            (other) => other.iri === undefined && other.name === entity.name,
+          ) === index
+        : named.findIndex((other) => other.iri === entity.iri) === index,
+    )
+    .map(({ name }) => name);
 };
 
-// An occupation the source identifies is named by its vocabulary, and a role by the names the source
-// gives it, such as ‘hofschilder’ beside the occupation ‘schilder’; each is one entity, so the language
-// is selected as it is for places. A source that states one occupation for several periods names it
-// once.
+// What a person does or did, as entities: the occupation the source identifies, named by its
+// vocabulary, and the role by the names the source gives it, such as ‘hofschilder’ beside the
+// occupation ‘schilder’. Where the vocabulary gives the occupation no name, the role’s names
+// name it.
+export const occupationEntities = (roles: OccupationRole[]) =>
+  roles.flatMap((role) => {
+    const roleEntities =
+      role.roleNames.length === 0
+        ? []
+        : [new Entity(undefined, role.roleNames)];
+    if (role.occupation === undefined) {
+      return roleEntities;
+    }
+    const iri =
+      role.occupation.id.termType === 'NamedNode'
+        ? role.occupation.id
+        : undefined;
+
+    return role.occupation.prefLabels.length === 0
+      ? [new Entity(iri, role.roleNames)]
+      : [new Entity(iri, role.occupation.prefLabels), ...roleEntities];
+  });
+
+// Each occupation and role is one entity, so the language is selected as it is for places. A
+// source that states one occupation for several periods names it once.
 export const occupationNames = (roles: OccupationRole[], language: string) =>
-  entityNames(
-    roles.flatMap((role) => [
-      ...(role.occupation === undefined
-        ? []
-        : [
-            // The query package only links an occupation by its IRI.
-            new Entity(
-              role.occupation.id as RDF.NamedNode,
-              role.occupation.prefLabels,
-            ),
-          ]),
-      ...(role.roleNames.length === 0
-        ? []
-        : [new Entity(undefined, role.roleNames)]),
-    ]),
-    language,
-  );
+  entityNames(occupationEntities(roles), language);
 
 // A person’s names are not translated, so a name the source states in another language than the
-// requested one, or in English, is still theirs.
+// requested one is still theirs, and no more so in English than in any other language.
 export const personalNames = (names: RDF.Literal[], language: string) => {
-  const inLanguage = literalValues(names, [language]);
-  return inLanguage.length > 0
-    ? inLanguage
-    : unique(names.map((name) => name.value));
+  const inLanguage = filterLiteralsByLanguage(names, [language]);
+  return [
+    ...new Set(
+      (inLanguage.length > 0 ? inLanguage : names).map((name) => name.value),
+    ),
+  ];
 };
-
-const unique = (values: string[]) => [...new Set(values)];

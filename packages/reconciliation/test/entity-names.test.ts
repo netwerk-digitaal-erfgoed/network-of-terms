@@ -4,7 +4,7 @@ import {
   OccupationRole,
   RelatedTerm,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { Literal, NamedNode } from '@rdfjs/types';
+import { BlankNode, Literal, NamedNode } from '@rdfjs/types';
 import {
   entityNames,
   occupationNames,
@@ -72,6 +72,25 @@ describe('Entity names', () => {
       ),
     ).toEqual(['Leiden']);
   });
+
+  it('names places the source identifies apart, even by the same name', () => {
+    expect(
+      entityNames(
+        [
+          new Entity(iri('https://example.com/places/bergen-nl'), [
+            name('Bergen', 'nl'),
+          ]),
+          new Entity(iri('https://example.com/places/bergen-no'), [
+            name('Bergen', 'nl'),
+          ]),
+          new Entity(iri('https://example.com/places/bergen-nl'), [
+            name('Bergen', 'nl'),
+          ]),
+        ],
+        'nl',
+      ),
+    ).toEqual(['Bergen', 'Bergen']);
+  });
 });
 
 describe('Occupation names', () => {
@@ -113,6 +132,55 @@ describe('Occupation names', () => {
       ),
     ).toEqual(['schilder', 'hofschilder']);
   });
+
+  it('names an occupation its vocabulary does not name by the role', () => {
+    const unnamed = new RelatedTerm(
+      iri('https://example.com/occupations/123'),
+      [],
+    );
+    expect(
+      occupationNames(
+        [
+          new OccupationRole(
+            unnamed,
+            [name('hofschilder', 'nl')],
+            undefined,
+            undefined,
+          ),
+        ],
+        'nl',
+      ),
+    ).toEqual(['hofschilder']);
+    expect(
+      occupationNames(
+        [new OccupationRole(unnamed, [], undefined, undefined)],
+        'nl',
+      ),
+    ).toEqual(['https://example.com/occupations/123']);
+  });
+
+  it('names an occupation that is not an IRI by its names only', () => {
+    const blankNode = { termType: 'BlankNode', value: 'b0_occupation' };
+    expect(
+      occupationNames(
+        [
+          new OccupationRole(
+            new RelatedTerm(blankNode as BlankNode, []),
+            [],
+            undefined,
+            undefined,
+          ),
+          new OccupationRole(
+            new RelatedTerm(blankNode as BlankNode, [name('etser', 'nl')]),
+            [],
+            undefined,
+            undefined,
+          ),
+        ],
+        'nl',
+      ),
+    ).toEqual(['etser']);
+  });
 });
 
 describe('Personal names', () => {
@@ -124,5 +192,11 @@ describe('Personal names', () => {
 
   it('returns names in another language when none is in the requested one', () => {
     expect(personalNames([name('Jan', 'nl')], 'en')).toEqual(['Jan']);
+  });
+
+  it('prefers no English name when none is in the requested language', () => {
+    expect(
+      personalNames([name('Jan', 'nl'), name('John', 'en')], 'fr'),
+    ).toEqual(['Jan', 'John']);
   });
 });
