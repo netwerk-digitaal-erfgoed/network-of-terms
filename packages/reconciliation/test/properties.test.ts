@@ -93,9 +93,9 @@ describe('Property comparison', () => {
         v: '1851',
       }),
     ).toEqual([{ id: 'birthDates', value: undefined }]);
-    expect(comparisons(nonPersonTerm, { pid: 'birthDates', v: '1851' })).toEqual(
-      [{ id: 'birthDates', value: undefined }],
-    );
+    expect(
+      comparisons(nonPersonTerm, { pid: 'birthDates', v: '1851' }),
+    ).toEqual([{ id: 'birthDates', value: undefined }]);
   });
 
   it('leaves out properties it does not know and values it cannot read', () => {
@@ -121,9 +121,9 @@ describe('Property comparison', () => {
     expect(compare(term, { pid: 'familyNames', v: 'Pietersen' })).toBeLessThan(
       0.5,
     );
-    expect(comparisons(personTerm({}), { pid: 'givenNames', v: 'Jan' })).toEqual(
-      [{ id: 'givenNames', value: undefined }],
-    );
+    expect(
+      comparisons(personTerm({}), { pid: 'givenNames', v: 'Jan' }),
+    ).toEqual([{ id: 'givenNames', value: undefined }]);
   });
 
   it('matches a place by IRI, or by name without the source’s qualifier', () => {

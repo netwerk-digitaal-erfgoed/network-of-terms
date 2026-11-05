@@ -143,7 +143,10 @@ export class LookupService {
                 datasetResponses.push([
                   queriedDataset,
                   batch,
-                  new TermsResponse(new TimeoutError(distribution, timeoutMs), 0),
+                  new TermsResponse(
+                    new TimeoutError(distribution, timeoutMs),
+                    0,
+                  ),
                 ] as const);
                 remaining = remaining.slice(batch.length);
                 continue;

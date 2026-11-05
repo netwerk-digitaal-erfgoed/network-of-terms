@@ -42,7 +42,9 @@ describe('LookupService', () => {
   // SPARQL has no escape for these characters inside an IRIREF, and lookup interpolates the IRI
   // into the query text, so a '>' would close the IRIREF and let the remainder be read as SPARQL.
   it.each([
-    ['https://example.com/resources/a> } INSERT DATA { <urn:a> <urn:b> <urn:c> } #'],
+    [
+      'https://example.com/resources/a> } INSERT DATA { <urn:a> <urn:b> <urn:c> } #',
+    ],
     ['https://example.com/resources/a"b'],
     ['https://example.com/resources/a b'],
     ['https://example.com/resources/a{b}'],
@@ -81,7 +83,10 @@ describe('LookupService', () => {
     queryService.lookup.mockImplementation(
       async () =>
         new Promise((resolve) =>
-          setTimeout(() => resolve({ terms: [], errors: [], responseTimeMs: 0 }), 30),
+          setTimeout(
+            () => resolve({ terms: [], errors: [], responseTimeMs: 0 }),
+            30,
+          ),
         ),
     );
     const iris = Array.from(
@@ -130,7 +135,10 @@ describe('LookupService', () => {
     queryService.lookup.mockImplementation(async () => {
       if (failNext) {
         failNext = false;
-        return new TermsResponse(new ServerError(distribution, 'terminated'), 0);
+        return new TermsResponse(
+          new ServerError(distribution, 'terminated'),
+          0,
+        );
       }
 
       return { terms: [], errors: [], responseTimeMs: 0 };

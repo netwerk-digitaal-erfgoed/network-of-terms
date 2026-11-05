@@ -20,11 +20,11 @@
   "oclif": {
     "commands": "./build"
   },
-  "nx": {
-    "name": "cli"
-  },
   "dependencies": {
     "@oclif/core": "4.11.0",
     "cli-ux": "6.0.9"
+  },
+  "nx": {
+    "name": "cli"
   }
 }
