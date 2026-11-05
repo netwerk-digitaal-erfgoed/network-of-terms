@@ -13,7 +13,7 @@ import {
   dataExtensionProperties,
 } from '../src/data-extension.js';
 import { config } from '../src/config.js';
-import { conceptType, personType } from '../src/manifest.js';
+import { conceptType, personType } from '../src/types.js';
 import { escapeHtml } from '@hapi/hoek';
 
 let httpServer: FastifyInstance;
@@ -109,7 +109,8 @@ describe('Server', () => {
       'https://data.rkd.nl/rkdartists',
       {
         any: { query: 'rembrandt' },
-        person: { query: 'rembrandt', type: personType.id },
+        // Clients may state Schema.org types in its http namespace.
+        person: { query: 'rembrandt', type: 'http://schema.org/Person' },
         all: {
           query: 'rembrandt',
           type: [conceptType.id, personType.id],
@@ -670,8 +671,8 @@ describe('Server', () => {
     const ids = (properties: { id: string }[]) =>
       properties.map((property) => property.id);
 
-    const person = await propose(personType.id);
-    expect(person.type).toEqual(personType.id);
+    const person = await propose('http://schema.org/Person');
+    expect(person.type).toEqual('http://schema.org/Person');
     expect(ids(person.properties)).toContain('occupations');
     expect(ids(person.properties)).not.toContain('broaderTerms');
     expect(person.properties).toContainEqual({
@@ -683,7 +684,17 @@ describe('Server', () => {
     // Persons are concepts too, so a concept column gets every property, as does one without type.
     const concept = await propose(conceptType.id);
     expect(ids(concept.properties)).toEqual(ids(dataExtensionProperties));
-    expect((await propose()).properties).toEqual(concept.properties);
+    const untyped = await propose();
+    expect(untyped.type).toEqual(conceptType.id);
+    expect(untyped.properties).toEqual(concept.properties);
+
+    // A repeated type is not rejected; the first counts.
+    const repeated = await httpServer.inject({
+      method: 'GET',
+      url: `/extend/propose?type=${encodeURIComponent(personType.id)}&type=${encodeURIComponent(conceptType.id)}`,
+    });
+    expect(repeated.statusCode).toEqual(200);
+    expect(JSON.parse(repeated.body).type).toEqual(personType.id);
   });
 
   it('shows HTML term preview when a proxy merged the slashes in the IRI', async () => {

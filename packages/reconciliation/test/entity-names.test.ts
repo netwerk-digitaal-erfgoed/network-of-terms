@@ -133,6 +133,28 @@ describe('Occupation names', () => {
     ).toEqual(['schilder', 'hofschilder']);
   });
 
+  it('keeps the names of a role in another language than the requested one', () => {
+    expect(
+      occupationNames(
+        [
+          new OccupationRole(
+            painter,
+            [name('hofschilder', 'nl')],
+            undefined,
+            undefined,
+          ),
+          new OccupationRole(
+            undefined,
+            [name('schilder', 'nl')],
+            undefined,
+            undefined,
+          ),
+        ],
+        'en',
+      ),
+    ).toEqual(['painter', 'hofschilder']);
+  });
+
   it('names an occupation its vocabulary does not name by the role', () => {
     const unnamed = new RelatedTerm(
       iri('https://example.com/occupations/123'),

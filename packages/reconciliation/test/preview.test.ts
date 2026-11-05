@@ -34,6 +34,9 @@ describe('Preview', () => {
     const friend = new RelatedTerm(iri('https://example.com/friend'), [
       name('Pieter Claesz'),
     ]);
+    const guild = new RelatedTerm(iri('https://example.com/guild'), [
+      name('Sint-Lucasgilde'),
+    ]);
     const person = new Term(
       iri('https://example.com/person'),
       [iri('https://schema.org/Person')],
@@ -42,7 +45,7 @@ describe('Preview', () => {
       [],
       [],
       [],
-      [],
+      [guild],
       [],
       [spouse, friend],
       [],
@@ -58,8 +61,8 @@ describe('Preview', () => {
         [],
         [],
         [],
-        // A gender the source only names, as some state it, is shown by that name.
-        [new Entity(undefined, [name('Man')])],
+        // A gender the source states as a literal is named in the client’s language.
+        [new Entity(undefined, [name('v')])],
         [],
         [],
         [spouse],
@@ -81,6 +84,10 @@ describe('Preview', () => {
     expect(html).toMatch(
       new RegExp('<dt>Gerelateerde termen</dt>\\s*<dd>Pieter Claesz</dd>'),
     );
-    expect(html).toMatch(new RegExp('<dt>Gender</dt>\\s*<dd>Man</dd>'));
+    expect(html).toMatch(new RegExp('<dt>Gender</dt>\\s*<dd>vrouw</dd>'));
+    expect(html).toMatch(
+      new RegExp('<dt>Bredere termen</dt>\\s*<dd>Sint-Lucasgilde</dd>'),
+    );
+    expect(html).toContain('<html lang="nl">');
   });
 });

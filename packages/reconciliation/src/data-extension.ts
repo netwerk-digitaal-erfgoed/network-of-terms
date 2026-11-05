@@ -6,7 +6,7 @@ import {
   Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { entityNames, occupationNames, personalNames } from './entity-names.js';
-import { conceptType, personType } from './manifest.js';
+import { conceptType, isPersonType, personType } from './types.js';
 
 export type DataExtensionQuery = {
   ids: string[];
@@ -120,12 +120,13 @@ export const dataExtensionProperties: {
 ];
 
 /**
- * The properties to propose for a column reconciled against a type. A person sits in no
- * hierarchy, so it has no broader or narrower terms. Any other column may hold persons, since
- * every person is a concept too, so it gets every property.
+ * The properties to propose for a column reconciled against a type. Sources seldom place persons
+ * in a hierarchy, so a person column is not offered broader and narrower terms, which would nearly
+ * always be empty; a column reconciled against Concept still is. Any other column may hold
+ * persons, since every person is a concept too, so it gets every property.
  */
 export const proposedProperties = (type: string | undefined) =>
-  type === personType.id
+  isPersonType(type)
     ? dataExtensionProperties.filter(
         (property) => !hierarchyProperties.includes(property.id),
       )

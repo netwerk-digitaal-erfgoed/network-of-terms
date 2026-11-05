@@ -81,6 +81,17 @@ export function compareProperties(
 export const isPropertyId = (pid: string): pid is PropertyId =>
   (propertyIds as readonly string[]).includes(pid);
 
+/**
+ * The Schema.org gender a label or IRI stands for, whatever the client or source calls it.
+ */
+export const schemaGender = (label: string | undefined) =>
+  genders[
+    (label ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/^https?:\/\/schema\.org\//, '')
+  ];
+
 const isUsable = (value: PropertyValue) =>
   typeof value === 'object'
     ? value.id !== ''
@@ -263,13 +274,7 @@ const genderCandidate = (candidate: Candidate): Candidate => {
 };
 
 const genderIri = (label: string | undefined) => {
-  const gender =
-    genders[
-      (label ?? '')
-        .trim()
-        .toLowerCase()
-        .replace(/^https?:\/\/schema\.org\//, '')
-    ];
+  const gender = schemaGender(label);
   return gender === undefined ? undefined : `https://schema.org/${gender}`;
 };
 

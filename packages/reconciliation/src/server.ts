@@ -2,6 +2,7 @@ import fastify, { FastifyInstance, FastifyLoggerOptions } from 'fastify';
 import fastifyCors from '@fastify/cors';
 import fastifyAccepts from '@fastify/accepts';
 import { findManifest } from './manifest.js';
+import { conceptType } from './types.js';
 import formBodyPlugin from '@fastify/formbody';
 import { reconciliationQuery, ReconciliationQueryBatch } from './query.js';
 import { preview } from './preview.js';
@@ -131,20 +132,22 @@ export async function server(
   );
 
   // OpenRefine sends the type the column is reconciled against.
-  server.get<{ Querystring: { type?: string } }>(
+  server.get<{ Querystring: { type?: string[] } }>(
     '/extend/propose',
     {
       schema: {
         querystring: {
           type: 'object',
-          properties: { type: { type: 'string' } },
+          // Ajv coerces a single type to an array, so a repeated one is accepted too.
+          properties: { type: { type: 'array', items: { type: 'string' } } },
         },
       },
     },
     (request, reply) => {
+      const type = request.query.type?.[0] || conceptType.id;
       void reply.send({
-        type: request.query.type ?? 'Concept',
-        properties: proposedProperties(request.query.type),
+        type,
+        properties: proposedProperties(type),
       });
     },
   );

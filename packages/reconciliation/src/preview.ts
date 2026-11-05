@@ -9,7 +9,8 @@ import {
 import { Literal } from '@rdfjs/types';
 import { escapeHtml } from '@hapi/hoek';
 import { entityNames, occupationNames } from './entity-names.js';
-import { isPerson } from './manifest.js';
+import { isPerson } from './types.js';
+import { schemaGender } from './properties.js';
 import { locale } from './server.js';
 
 export function preview(
@@ -21,7 +22,7 @@ export function preview(
 ) {
   const term = lookupResult.result;
   if (term instanceof Term) {
-    return `<html :lang="language">
+    return `<html lang="${language}">
     <head>
       <meta charset="utf-8" />
       <style>
@@ -49,9 +50,9 @@ export function preview(
           source.creators[0]?.alternateName['']
         })</dd>
       </dl>
-      </p><a target="_blank" href="${escapeHtml(
+      <p><a target="_blank" href="${escapeHtml(
         viewUrl(viewUrlTemplate, term.id.value),
-      )}">${locale.view}</a>
+      )}">${locale.view}</a></p>
   </body>
   </html>`;
   } else {
@@ -62,9 +63,15 @@ export function preview(
 // A concept’s place in its hierarchy and the terms related to it.
 const conceptFacts = (term: Term, locale: locale, language: string) =>
   [
+    hierarchy(term, locale, language),
+    relatedTerms(locale.related, term.relatedTerms, language),
+  ].join('');
+
+// Sources may place persons in a hierarchy too, such as under a family or a guild.
+const hierarchy = (term: Term, locale: locale, language: string) =>
+  [
     relatedTerms(locale.broader, term.broaderTerms, language),
     relatedTerms(locale.narrower, term.narrowerTerms, language),
-    relatedTerms(locale.related, term.relatedTerms, language),
   ].join('');
 
 // What tells a person apart from namesakes: their life, work and family. Sources that state family
@@ -95,12 +102,7 @@ const personFacts = (term: Term, locale: locale, language: string) => {
       locale.occupation,
       occupationNames(person?.occupations ?? [], language),
     ),
-    fact(
-      locale.gender,
-      entityNames(person?.genders ?? [], language).map((gender) =>
-        genderName(gender, locale),
-      ),
-    ),
+    fact(locale.gender, genderNames(person?.genders ?? [], locale, language)),
     fact(
       locale.nationality,
       entityNames(person?.nationalities ?? [], language),
@@ -109,6 +111,7 @@ const personFacts = (term: Term, locale: locale, language: string) => {
     relatedTerms(locale.spouses, person?.spouses ?? [], language),
     relatedTerms(locale.children, person?.children ?? [], language),
     relatedTerms(locale.siblings, person?.siblings ?? [], language),
+    hierarchy(term, locale, language),
     relatedTerms(
       locale.related,
       term.relatedTerms.filter(
@@ -119,12 +122,26 @@ const personFacts = (term: Term, locale: locale, language: string) => {
   ].join('');
 };
 
-// Male and female are Schema.org IRIs, which the preview names in the client’s language.
-const genderName = (gender: string, locale: locale) => {
-  const name = /^https?:\/\/schema\.org\/(Male|Female)$/.exec(gender)?.[1] as
-    'Male' | 'Female' | undefined;
+// Male and female, whether the source states them as Schema.org IRIs or as literals such as ‘v’,
+// are named in the client’s language. Any other gender is named as the source names it.
+const genderNames = (genders: Entity[], locale: locale, language: string) => {
+  const known = genders.map((gender) =>
+    [gender.iri?.value, ...gender.names.map(({ value }) => value)]
+      .map(schemaGender)
+      .find((schemaGender) => schemaGender !== undefined),
+  );
 
-  return name === undefined ? gender : locale.genders[name];
+  return [
+    ...new Set([
+      ...known
+        .filter((gender) => gender !== undefined)
+        .map((gender) => locale.genders[gender]),
+      ...entityNames(
+        genders.filter((_gender, index) => known[index] === undefined),
+        language,
+      ),
+    ]),
+  ];
 };
 
 function fact(label: string, values: string[]) {
@@ -162,10 +179,6 @@ function relatedTerms(label: string, terms: RelatedTerm[], language: string) {
   const prefLabels = terms
     .map((term) => literalValues(term.prefLabels, [language])[0])
     .filter((prefLabel) => prefLabel !== undefined);
-  if (prefLabels.length === 0) {
-    return '';
-  }
 
-  return `<dt>${label}</dt>
-      <dd>${escapeHtml(prefLabels.join(' • '))}</dd>`;
+  return fact(label, prefLabels);
 }
