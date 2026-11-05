@@ -5,6 +5,17 @@
   "broader": "Bredere termen",
   "narrower": "Nauwere termen",
   "related": "Gerelateerde termen",
+  "occupation": "Beroep",
+  "gender": "Gender",
+  "nationality": "Nationaliteit",
+  "parents": "Ouders",
+  "spouses": "Echtgeno(o)t(e)",
+  "children": "Kinderen",
+  "siblings": "Broers en zussen",
+  "genders": {
+    "Male": "man",
+    "Female": "vrouw"
+  },
   "notFound": "Niet gevonden",
   "view": "Meer informatie",
   "source": "Terminologiebron",

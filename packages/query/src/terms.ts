@@ -645,7 +645,7 @@ const isSchemaClass = (name: string) => (type: RDF.Term) =>
   type.value === `http://schema.org/${name}`;
 const isRoleClass = isSchemaClass('Role');
 const isPlaceClass = isSchemaClass('Place');
-const isPersonClass = isSchemaClass('Person');
+export const isPersonClass = isSchemaClass('Person');
 const isOrganizationClass = isSchemaClass('Organization');
 const isPostalAddressClass = isSchemaClass('PostalAddress');
 

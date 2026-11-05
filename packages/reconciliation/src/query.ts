@@ -8,6 +8,7 @@ import {
   Terms,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { score } from './score.js';
+import { termTypes } from './manifest.js';
 import {
   compareProperties,
   isPropertyId,
@@ -35,7 +36,10 @@ export async function reconciliationQuery(
   return Object.entries(query).reduce(
     async (
       resultsPromise: Promise<ReconciliationResultBatch>,
-      [queryId, { query: queryString, limit, properties = [] }],
+      [
+        queryId,
+        { query: queryString, limit, properties = [], type, type_strict },
+      ],
     ) => {
       const results = await resultsPromise;
       const response = await queryTermsService.search(
@@ -52,8 +56,9 @@ export async function reconciliationQuery(
           : 100,
         10000,
       );
-      const terms =
-        response.result instanceof Terms ? response.result.terms : [];
+      const terms = (
+        response.result instanceof Terms ? response.result.terms : []
+      ).filter(ofType(type, type_strict));
       const candidates = terms
         .map((term) => {
           const nameScore = score(queryString, term);
@@ -61,6 +66,7 @@ export async function reconciliationQuery(
           return {
             id: term.id.value.toString(),
             name: literalValues(term.prefLabels, [language]).join(' • '), // Join similarly to network-of-terms-demo.
+            types: termTypes(term),
             score: combinedScore(nameScore, comparisons),
             description: [
               ...lifespan(term),
@@ -92,6 +98,8 @@ export type ReconciliationQueryBatch = {
     query: string;
     limit?: number;
     properties?: ReconciliationQueryProperty[];
+    type?: string | string[];
+    type_strict?: 'any' | 'should' | 'all';
   };
 };
 
@@ -102,6 +110,7 @@ export type ReconciliationResultBatch = {
 export type ReconciliationCandidate = {
   id: string;
   name: string;
+  types: { id: string; name: string }[];
   score: number;
   description?: string;
   // Why the candidate scored as it did: the name and each property compared, from 0 to 1.
@@ -112,6 +121,26 @@ export type ReconciliationCandidate = {
 // The genre the catalog gives sources of persons, such as RKDartists.
 const personsGenre =
   'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen';
+
+/**
+ * Whether a term is of the types the client reconciles against: of any of them, or of all with
+ * `type_strict` ‘all’. With ‘should’ the types are a preference, which the score does not weigh,
+ * so no term is left out. A client that names no type reconciles against any.
+ */
+const ofType =
+  (type: string | string[] = [], strict: 'any' | 'should' | 'all' = 'any') =>
+  (term: Term) => {
+    const requested = Array.isArray(type) ? type : [type];
+    if (requested.length === 0 || strict === 'should') {
+      return true;
+    }
+    const types = termTypes(term).map(({ id }) => id);
+    const isOfType = (id: string) => types.includes(id);
+
+    return strict === 'all'
+      ? requested.every(isOfType)
+      : requested.some(isOfType);
+  };
 
 /**
  * The name and each property the client sent count equally. A property the source states nothing

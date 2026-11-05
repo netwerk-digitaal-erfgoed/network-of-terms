@@ -1,6 +1,7 @@
 import {
   Entity,
   filterLiteralsByLanguage,
+  OccupationRole,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 // The entities a source mentions – places, genders – by name. A source that only names them states
@@ -26,3 +27,19 @@ export const entityNames = (entities: Entity[], language: string) => {
     )
     .filter((name) => name !== undefined);
 };
+
+// An occupation the source identifies is named by its vocabulary, and a role it only names by that
+// name; each role is one entity, so the language is selected as it is for places.
+export const occupationNames = (roles: OccupationRole[], language: string) =>
+  entityNames(
+    roles.map(
+      (role) =>
+        new Entity(
+          role.occupation?.id.termType === 'NamedNode'
+            ? role.occupation.id
+            : undefined,
+          [...(role.occupation?.prefLabels ?? []), ...role.roleNames],
+        ),
+    ),
+    language,
+  );

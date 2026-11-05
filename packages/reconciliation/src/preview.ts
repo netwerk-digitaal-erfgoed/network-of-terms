@@ -8,7 +8,8 @@ import {
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { Literal } from '@rdfjs/types';
 import { escapeHtml } from '@hapi/hoek';
-import { entityNames } from './entity-names.js';
+import { entityNames, occupationNames } from './entity-names.js';
+import { isPerson } from './manifest.js';
 import { locale } from './server.js';
 
 export function preview(
@@ -41,11 +42,7 @@ export function preview(
               )}</dd>`
             : ''
         }
-        ${lifeEvent(locale.birth, term.person?.birthDates ?? [], term.person?.birthPlaces ?? [], language)}
-        ${lifeEvent(locale.death, term.person?.deathDates ?? [], term.person?.deathPlaces ?? [], language)}
-        ${relatedTerms(locale.broader, term.broaderTerms, language)}
-        ${relatedTerms(locale.narrower, term.narrowerTerms, language)}
-        ${relatedTerms(locale.related, term.relatedTerms, language)}
+        ${isPerson(term) ? personFacts(term, locale, language) : conceptFacts(term, locale, language)}
         <dt>${locale.source}</dt>
         <dd>${source.name[language]} (${
           source.creators[0]?.alternateName[language] ??
@@ -60,6 +57,83 @@ export function preview(
   } else {
     return locale.notFound;
   }
+}
+
+// A concept’s place in its hierarchy and the terms related to it.
+const conceptFacts = (term: Term, locale: locale, language: string) =>
+  [
+    relatedTerms(locale.broader, term.broaderTerms, language),
+    relatedTerms(locale.narrower, term.narrowerTerms, language),
+    relatedTerms(locale.related, term.relatedTerms, language),
+  ].join('');
+
+// What tells a person apart from namesakes: their life, work and family. Sources that state family
+// members state them as related terms too, so a term is related only when it is not family.
+const personFacts = (term: Term, locale: locale, language: string) => {
+  const person = term.person;
+  const family = [
+    ...(person?.parents ?? []),
+    ...(person?.spouses ?? []),
+    ...(person?.children ?? []),
+    ...(person?.siblings ?? []),
+  ];
+
+  return [
+    lifeEvent(
+      locale.birth,
+      person?.birthDates ?? [],
+      person?.birthPlaces ?? [],
+      language,
+    ),
+    lifeEvent(
+      locale.death,
+      person?.deathDates ?? [],
+      person?.deathPlaces ?? [],
+      language,
+    ),
+    fact(
+      locale.occupation,
+      occupationNames(person?.occupations ?? [], language),
+    ),
+    fact(
+      locale.gender,
+      entityNames(person?.genders ?? [], language).map((gender) =>
+        genderName(gender, locale),
+      ),
+    ),
+    fact(
+      locale.nationality,
+      entityNames(person?.nationalities ?? [], language),
+    ),
+    relatedTerms(locale.parents, person?.parents ?? [], language),
+    relatedTerms(locale.spouses, person?.spouses ?? [], language),
+    relatedTerms(locale.children, person?.children ?? [], language),
+    relatedTerms(locale.siblings, person?.siblings ?? [], language),
+    relatedTerms(
+      locale.related,
+      term.relatedTerms.filter(
+        (related) => !family.some((member) => member.id.equals(related.id)),
+      ),
+      language,
+    ),
+  ].join('');
+};
+
+// Male and female are Schema.org IRIs, which the preview names in the client’s language.
+const genderName = (gender: string, locale: locale) => {
+  const name = /^https?:\/\/schema\.org\/(Male|Female)$/.exec(gender)?.[1] as
+    'Male' | 'Female' | undefined;
+
+  return name === undefined ? gender : locale.genders[name];
+};
+
+function fact(label: string, values: string[]) {
+  if (values.length === 0) {
+    return '';
+  }
+
+  return `<dt>${label}</dt>
+      <dd>${escapeHtml(values.join(' • '))}</dd>`;
 }
 
 const literal = (values: Literal[], language: string) =>
@@ -80,13 +154,7 @@ function lifeEvent(
   places: Entity[],
   language: string,
 ) {
-  const facts = [...dates, ...entityNames(places, language)];
-  if (facts.length === 0) {
-    return '';
-  }
-
-  return `<dt>${label}</dt>
-      <dd>${escapeHtml(facts.join(' • '))}</dd>`;
+  return fact(label, [...dates, ...entityNames(places, language)]);
 }
 
 function relatedTerms(label: string, terms: RelatedTerm[], language: string) {

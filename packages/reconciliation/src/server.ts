@@ -17,9 +17,9 @@ import jsonSchema from '../json-schema/reconciliation-query.json' with { type: '
 import dataExtensionQuery from '../json-schema/data-extension-query.json' with { type: 'json' };
 import { parse } from 'querystring';
 import {
-  dataExtensionProperties,
   DataExtensionQuery,
   extendQuery,
+  proposedProperties,
 } from './data-extension.js';
 import { EnvSchemaData } from 'env-schema';
 import { propertyIds } from './properties.js';
@@ -130,12 +130,24 @@ export async function server(
     },
   );
 
-  server.get('/extend/propose', (request, reply) => {
-    void reply.send({
-      type: 'Concept',
-      properties: dataExtensionProperties,
-    });
-  });
+  // OpenRefine sends the type the column is reconciled against.
+  server.get<{ Querystring: { type?: string } }>(
+    '/extend/propose',
+    {
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: { type: { type: 'string' } },
+        },
+      },
+    },
+    (request, reply) => {
+      void reply.send({
+        type: request.query.type ?? 'Concept',
+        properties: proposedProperties(request.query.type),
+      });
+    },
+  );
 
   server.post<{ Body: DataExtensionQuery }>(
     '/extend',
