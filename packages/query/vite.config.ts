@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 
 export default defineConfig(() => ({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/query',
-  plugins: [],
+  plugins: [nxReadySignal()],
   test: {
     watch: false,
     environment: 'node',
