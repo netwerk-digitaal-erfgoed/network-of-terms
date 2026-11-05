@@ -171,10 +171,29 @@ const compareDates = (
 
 const year = 366 * 24 * 60 * 60 * 1000;
 
+type ParsedDate = { min: number; max: number };
+
+// Parsing EDTF takes some 60 µs, and a query compares its dates with those of up to 1,000
+// candidates, many of them the same year or day, so each date is parsed once. The cache is
+// emptied when it grows large, so it never holds more than the dates of recent queries.
+const parsedDates = new Map<string, ParsedDate | undefined>();
+const maxParsedDates = 10_000;
+
 const parseDate = (value: string | undefined) => {
   if (value === undefined) {
     return undefined;
   }
+  if (!parsedDates.has(value)) {
+    if (parsedDates.size >= maxParsedDates) {
+      parsedDates.clear();
+    }
+    parsedDates.set(value, parseEdtf(value));
+  }
+
+  return parsedDates.get(value);
+};
+
+const parseEdtf = (value: string): ParsedDate | undefined => {
   try {
     const { min, max } = edtf(dateOf(value.trim()));
     // An open interval, such as `../1700`, says too little to compare.

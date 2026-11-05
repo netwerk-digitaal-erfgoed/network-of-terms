@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+import { QueryTermsService } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 import { FastifyInstance } from 'fastify';
 import { server } from '../src/server.js';
 import { ReconciliationQueryBatch } from '../src/query.js';
@@ -174,6 +175,19 @@ describe('Server', () => {
     // The only candidate is the match when everything the query sends matches.
     expect(results.fullName.result).toHaveLength(1);
     expect(results.fullName.result[0].match).toEqual(true);
+  });
+
+  it('fetches more candidates to rank on properties only from a source of persons', async () => {
+    const search = vi.spyOn(QueryTermsService.prototype, 'search');
+    const properties = [{ pid: 'birthDates', v: '1607' }];
+    await reconciliationQuery('https://data.rkd.nl/rkdartists', {
+      q1: { query: 'rembrandt', properties },
+    });
+    await reconciliationQuery('https://data.cultureelerfgoed.nl/term/id/cht', {
+      q1: { query: 'kunst', properties },
+    });
+    expect(search.mock.calls.map((call) => call[4])).toEqual([1000, 100]);
+    search.mockRestore();
   });
 
   it('validates the properties of reconciliation requests', async () => {
