@@ -9,7 +9,8 @@ export default defineConfig(() => ({
     watch: false,
     environment: 'node',
     include: ['test/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    testTimeout: 10_000,
+    // Well above the 6 s that the tests of the timeout source wait, on a busy CI runner too.
+    testTimeout: 20_000,
     // Load the shipped catalog, not one from CATALOG_PATH in the developer’s shell.
     env: { CATALOG_PATH: '' },
     coverage: {

@@ -346,7 +346,9 @@ export async function startDistributionSparqlEndpoint(
   const { default: nock } = await import('nock');
   nock('https://example.com')
     .get(/distributions\/timeout/)
-    .delay(15_000) // Far above the timeoutMs that tests pass, so this source always times out.
+    // Above the 6 s timeoutMs that the GraphQL tests pass, so this source always times out, yet no
+    // longer: an aborted fetch leaves nock’s delay running, which keeps the test process alive.
+    .delay(8_000)
     .reply(200)
     .persist();
 }
