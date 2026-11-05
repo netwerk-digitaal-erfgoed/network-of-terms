@@ -420,10 +420,13 @@ describe('substituteBindings', () => {
   // Each binding used to be substituted in its own pass over the query, so a term inserted by an
   // earlier binding was searched again by the later ones.
   it('does not substitute into a term it just substituted', () => {
-    const query = substituteBindings('FILTER(?query) ?s schema:dataset ?datasetUri', {
-      query: dataFactory.literal('?datasetUri'),
-      datasetUri: dataFactory.namedNode('https://example.com/dataset'),
-    });
+    const query = substituteBindings(
+      'FILTER(?query) ?s schema:dataset ?datasetUri',
+      {
+        query: dataFactory.literal('?datasetUri'),
+        datasetUri: dataFactory.namedNode('https://example.com/dataset'),
+      },
+    );
 
     expect(query).toBe(
       'FILTER("?datasetUri") ?s schema:dataset <https://example.com/dataset>',

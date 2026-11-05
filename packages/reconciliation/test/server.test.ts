@@ -166,7 +166,10 @@ describe('Server', () => {
       (candidate: { id: string }) =>
         candidate.id === 'https://example.com/resources/rembrandt',
     );
-    expect(contradicted.features).toContainEqual({ id: 'birthDates', value: 0 });
+    expect(contradicted.features).toContainEqual({
+      id: 'birthDates',
+      value: 0,
+    });
     expect(results.bornElsewhen.result[0].id).not.toEqual(
       'https://example.com/resources/rembrandt',
     );

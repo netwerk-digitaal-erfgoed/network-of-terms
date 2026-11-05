@@ -85,16 +85,14 @@ const refreshGenre = (genre: IRI, key: string): void => {
   if (refreshing.has(key)) return;
   refreshing.add(key);
   doDereferenceGenre(genre)
-    .then(result =>
-      cache.set(key, {data: result, expires: Date.now() + maxAge}),
+    .then((result) =>
+      cache.set(key, { data: result, expires: Date.now() + maxAge }),
     )
-    .catch(error => console.error(error))
+    .catch((error) => console.error(error))
     .finally(() => refreshing.delete(key));
 };
 
-export const dereferenceGenre = async (
-  genre: IRI,
-): Promise<Genre | null> => {
+export const dereferenceGenre = async (genre: IRI): Promise<Genre | null> => {
   const key = String(genre);
   const cached = cache.get(key);
 
@@ -109,7 +107,7 @@ export const dereferenceGenre = async (
   // No cached data: must fetch synchronously.
   try {
     const result = await doDereferenceGenre(genre);
-    cache.set(key, {data: result, expires: Date.now() + maxAge});
+    cache.set(key, { data: result, expires: Date.now() + maxAge });
     return result;
   } catch (error) {
     console.error(error);
