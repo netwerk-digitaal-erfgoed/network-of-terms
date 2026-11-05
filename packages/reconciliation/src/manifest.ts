@@ -2,12 +2,30 @@ import {
   Catalog,
   FeatureType,
   IRI,
+  isPersonClass,
+  Term,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 export const conceptType = {
   id: 'http://www.w3.org/2004/02/skos/core#Concept',
   name: 'Concept',
 };
+
+export const personType = {
+  id: 'https://schema.org/Person',
+  name: 'Person',
+};
+
+/**
+ * The reconciliation types of a term: every term is a concept, and a term the source types as a
+ * Schema.org person is a person too. Clients such as OpenRefine guess the type to reconcile
+ * against from the types of the candidates, so a source of persons gets Person suggested without
+ * the manifest naming it: few sources the catalog files under persons type their terms so.
+ */
+export const termTypes = (term: Term) =>
+  isPerson(term) ? [conceptType, personType] : [conceptType];
+
+export const isPerson = (term: Term) => term.types.some(isPersonClass);
 
 export class ServiceManifest {
   public readonly versions = ['0.1', '0.2'];

@@ -11,7 +11,8 @@
     "vitest.config.ts",
     "vitest.config.mts",
     "test/**/*.test.ts",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "locales/*.json"
   ],
   "references": [
     {
