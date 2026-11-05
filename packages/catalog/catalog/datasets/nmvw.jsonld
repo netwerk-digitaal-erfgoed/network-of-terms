@@ -35,7 +35,9 @@
     }
   ],
   "url": [{ "@id": "https://hdl.handle.net/20.500.11840/" }],
-  "mainEntityOfPage": [{ "@id": "https://collectie.wereldculturen.nl/thesaurus" }],
+  "mainEntityOfPage": [
+    { "@id": "https://collectie.wereldculturen.nl/thesaurus" }
+  ],
   "description": [
     {
       "@language": "en",

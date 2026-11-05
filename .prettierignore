@@ -10,3 +10,6 @@ LICENSE.md
 # A snapshot of the published GraphQL surface, written by graphql’s test suite.
 # Reformatting it would make the snapshot mismatch on every run.
 packages/graphql/schema.graphql
+
+# Written by nx release on every publish.
+CHANGELOG.md

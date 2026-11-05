@@ -23,9 +23,13 @@
     }
   ],
   "url": [
-    { "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/" }
+    {
+      "@id": "https://linkeddata.cultureelerfgoed.nl/cho-kennis/id/rijksmonument/"
+    }
   ],
-  "mainEntityOfPage": [{ "@id": "https://monumentenregister.cultureelerfgoed.nl/" }],
+  "mainEntityOfPage": [
+    { "@id": "https://monumentenregister.cultureelerfgoed.nl/" }
+  ],
   "description": [
     {
       "@language": "en",

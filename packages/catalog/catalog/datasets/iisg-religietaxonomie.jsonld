@@ -22,9 +22,10 @@
       "@id": "https://iisg.amsterdam"
     }
   ],
-  "url": [
-    { "@id": "https://iisg.amsterdam/resource/TaxonomyOfReligions/" }],
-  "mainEntityOfPage": [{ "@id": "https://iisg.amsterdam/resource/TaxonomyOfReligions/" }],
+  "url": [{ "@id": "https://iisg.amsterdam/resource/TaxonomyOfReligions/" }],
+  "mainEntityOfPage": [
+    { "@id": "https://iisg.amsterdam/resource/TaxonomyOfReligions/" }
+  ],
   "description": [
     {
       "@language": "en",
@@ -35,10 +36,7 @@
       "@value": "Gecontroleerd vocabulaire voor het beschrijven van religies en religieuze stromingen"
     }
   ],
-  "inLanguage": [
-    "en",
-    "nl"
-  ],
+  "inLanguage": ["en", "nl"],
   "distribution": [
     {
       "@id": "https://api.druid.datalegend.net/datasets/IISG/Taxonomy-of-Religions/sparql",

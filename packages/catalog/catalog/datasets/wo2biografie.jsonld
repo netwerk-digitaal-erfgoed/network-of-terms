@@ -23,9 +23,7 @@
     }
   ],
   "url": [{ "@id": "https://data.niod.nl/WO2_biografieen/" }],
-  "mainEntityOfPage": [
-    { "@id": "https://data.niod.nl/WO2_biografieen.html" }
-  ],
+  "mainEntityOfPage": [{ "@id": "https://data.niod.nl/WO2_biografieen.html" }],
   "description": [
     {
       "@language": "en",

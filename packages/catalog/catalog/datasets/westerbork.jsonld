@@ -39,7 +39,9 @@
     }
   ],
   "url": [{ "@id": "https://digitaalerfgoed.poolparty.biz/westerbork/" }],
-  "mainEntityOfPage": [{ "@id": "https://digitaalerfgoed.poolparty.biz/westerbork.html" }],
+  "mainEntityOfPage": [
+    { "@id": "https://digitaalerfgoed.poolparty.biz/westerbork.html" }
+  ],
   "description": [
     {
       "@language": "en",

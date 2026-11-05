@@ -7,6 +7,13 @@
   "scripts": {
     "prepare": "husky"
   },
+  "lint-staged": {
+    "*.{ts,mts,cts,js,mjs,cjs}": [
+      "eslint --fix --no-warn-ignored",
+      "prettier --write"
+    ],
+    "!(*.{ts,mts,cts,js,mjs,cjs})": "prettier --write --ignore-unknown"
+  },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.2",
@@ -31,6 +38,7 @@
     "husky": "9.1.7",
     "jiti": "2.7.0",
     "jsonc-eslint-parser": "3.3.0",
+    "lint-staged": "17.6.0",
     "nodaemon": "0.0.5",
     "nodemon": "3.1.14",
     "nx": "24.0.2",

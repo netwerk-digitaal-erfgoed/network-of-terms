@@ -27,6 +27,7 @@ jobs:
       - run: npm ci
       - uses: nrwl/nx-set-shas@v5
 
+      - run: npx nx format:check --all
       - run: npx nx affected -t lint test typecheck build
 
   # The published GraphQL surface lives in a template string in schema.ts, where a
