@@ -222,6 +222,14 @@ describe('Server', () => {
         birthPlaces: [],
         deathPlaces: [],
         genders: [],
+        givenNames: [],
+        familyNames: [],
+        occupations: [],
+        nationalities: [],
+        parents: [],
+        children: [],
+        spouses: [],
+        siblings: [],
         broaderTerms: [{ str: 'https://example.com/resources/2' }],
         narrowerTerms: [],
         relatedTerms: [
@@ -230,6 +238,7 @@ describe('Server', () => {
           { id: 'https://example.com/resources/painter', name: 'Rembrandt' },
         ],
         exactMatches: [{ str: 'https://example.com/resources/match' }],
+        seeAlso: [{ str: 'https://example.com/html/artwork' }],
       },
       'https://example.com/resources/painter': {
         prefLabels: [{ str: 'Rembrandt' }],
@@ -240,10 +249,19 @@ describe('Server', () => {
         birthPlaces: [],
         deathPlaces: [],
         genders: [],
+        givenNames: [],
+        familyNames: [],
+        occupations: [],
+        nationalities: [],
+        parents: [],
+        children: [],
+        spouses: [],
+        siblings: [],
         broaderTerms: [],
         narrowerTerms: [],
         relatedTerms: [],
         exactMatches: [],
+        seeAlso: [],
       },
     });
   });
@@ -330,10 +348,33 @@ describe('Server', () => {
         birthPlaces: [{ str: 'Leiden (stad)' }],
         deathPlaces: [{ str: 'Amsterdam (stad)' }],
         genders: [{ str: 'https://schema.org/Male' }],
+        givenNames: [{ str: 'Rembrandt' }],
+        familyNames: [{ str: 'van Rijn' }],
+        // Each role by its Dutch name, so the English names of the same roles are left out.
+        occupations: [
+          { str: 'schilder' },
+          { str: 'etser' },
+          { str: 'kunstverzamelaar' },
+          { str: 'werkzaam' },
+        ],
+        nationalities: [{ str: 'Noord-Nederlands' }],
+        parents: [],
+        children: [
+          { id: 'https://example.com/resources/titus', name: 'Titus van Rijn' },
+        ],
+        // The sentence about Saskia names no person, so only Saskia herself is a spouse.
+        spouses: [
+          {
+            id: 'https://example.com/resources/saskia',
+            name: 'Saskia van Uylenburgh',
+          },
+        ],
+        siblings: [],
         broaderTerms: [],
         narrowerTerms: [],
         relatedTerms: [],
         exactMatches: [],
+        seeAlso: [],
       },
     });
   });

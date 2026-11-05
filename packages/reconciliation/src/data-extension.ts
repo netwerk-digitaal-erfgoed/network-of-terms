@@ -1,4 +1,5 @@
 import {
+  Entity,
   IRI,
   literalValues,
   LookupService,
@@ -51,6 +52,43 @@ export const dataExtensionProperties: {
     id: 'genders',
     name: 'genders',
   },
+  {
+    id: 'givenNames',
+    name: 'givenNames',
+  },
+  {
+    id: 'familyNames',
+    name: 'familyNames',
+  },
+  {
+    id: 'occupations',
+    name: 'occupations',
+  },
+  {
+    id: 'nationalities',
+    name: 'nationalities',
+  },
+  // Family members are persons in the same source, so entities as related terms are.
+  {
+    id: 'parents',
+    name: 'parents',
+    type: conceptType,
+  },
+  {
+    id: 'children',
+    name: 'children',
+    type: conceptType,
+  },
+  {
+    id: 'spouses',
+    name: 'spouses',
+    type: conceptType,
+  },
+  {
+    id: 'siblings',
+    name: 'siblings',
+    type: conceptType,
+  },
   // Terms in the same source, as entities a client can keep reconciled, so far as the source names them.
   {
     id: 'broaderTerms',
@@ -73,6 +111,11 @@ export const dataExtensionProperties: {
   {
     id: 'exactMatches',
     name: 'exactMatches',
+  },
+  // Web pages about the term, such as the records a person reconstruction was derived from.
+  {
+    id: 'seeAlso',
+    name: 'seeAlso',
   },
 ];
 
@@ -116,10 +159,19 @@ type DataExtensionPropertyId =
   | 'birthPlaces'
   | 'deathPlaces'
   | 'genders'
+  | 'givenNames'
+  | 'familyNames'
+  | 'occupations'
+  | 'nationalities'
+  | 'parents'
+  | 'children'
+  | 'spouses'
+  | 'siblings'
   | 'broaderTerms'
   | 'narrowerTerms'
   | 'relatedTerms'
-  | 'exactMatches';
+  | 'exactMatches'
+  | 'seeAlso';
 
 const propertyValues: Record<
   DataExtensionPropertyId,
@@ -140,11 +192,39 @@ const propertyValues: Record<
   // Male and female carry no names, so they are their IRIs.
   genders: (term, language) =>
     strings(entityNames(term.person?.genders ?? [], language)),
+  givenNames: (term, language) =>
+    strings(literalValues(term.person?.givenNames ?? [], [language])),
+  familyNames: (term, language) =>
+    strings(literalValues(term.person?.familyNames ?? [], [language])),
+  // An occupation the source identifies is named by its vocabulary, and a role it only names by
+  // that name; each role is one entity, so the language is selected as it is for places.
+  occupations: (term, language) =>
+    strings(
+      entityNames(
+        (term.person?.occupations ?? []).map(
+          (role) =>
+            new Entity(
+              role.occupation?.id.termType === 'NamedNode'
+                ? role.occupation.id
+                : undefined,
+              [...(role.occupation?.prefLabels ?? []), ...role.roleNames],
+            ),
+        ),
+        language,
+      ),
+    ),
+  nationalities: (term, language) =>
+    strings(entityNames(term.person?.nationalities ?? [], language)),
+  parents: (term, language) => entities(term.person?.parents ?? [], language),
+  children: (term, language) => entities(term.person?.children ?? [], language),
+  spouses: (term, language) => entities(term.person?.spouses ?? [], language),
+  siblings: (term, language) => entities(term.person?.siblings ?? [], language),
   broaderTerms: (term, language) => entities(term.broaderTerms, language),
   narrowerTerms: (term, language) => entities(term.narrowerTerms, language),
   relatedTerms: (term, language) => entities(term.relatedTerms, language),
   exactMatches: (term) =>
     strings(term.exactMatches.map((exactMatch) => exactMatch.id.value)),
+  seeAlso: (term) => strings(term.seeAlso.map((page) => page.value)),
 };
 
 const strings = (values: string[]) => values.map((value) => ({ str: value }));
