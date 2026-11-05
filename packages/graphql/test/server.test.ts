@@ -11,7 +11,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let httpServer: FastifyInstance;
 // Generous enough for regular sources on a busy CI runner, yet below the delay
-// of the timeout source and the vitest test timeout.
+// of the timeout source and the vitest test timeout (see vite.config.ts).
 const timeoutMs = 6000;
 const catalog = testCatalog(3000);
 describe('Server', () => {
