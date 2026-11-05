@@ -42,7 +42,7 @@
     "jest-dev-server": "11.0.0",
     "joi": "18.3.1",
     "nock": "14.0.16",
-    "pino": "10.3.1",
+    "pino": "10.4.0",
     "pretty-ms": "10.0.0",
     "rdf-data-factory": "2.1.0",
     "rdf-string-ttl": "^2.0.1",
