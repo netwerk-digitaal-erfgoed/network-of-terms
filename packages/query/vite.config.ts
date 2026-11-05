@@ -13,12 +13,14 @@ export default defineConfig(() => ({
       enabled: true,
       reporter: ['text'],
       provider: 'v8' as const,
+      // Test helpers that other packages' suites exercise, not code under test.
+      exclude: ['src/test-utils.ts'],
       thresholds: {
         autoUpdate: true,
-        lines: 90.19,
-        functions: 84.76,
-        branches: 80.85,
-        statements: 90,
+        lines: 90.81,
+        functions: 85.71,
+        branches: 81.54,
+        statements: 90.57,
       },
     },
   },
