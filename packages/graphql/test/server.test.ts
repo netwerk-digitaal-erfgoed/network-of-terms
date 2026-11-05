@@ -102,6 +102,7 @@ describe('Server', () => {
           'https://example.com/distributions/timeout',
           'https://data.netwerkdigitaalerfgoed.nl/rkd/rkdartists/sparql',
         ],
+        timeoutMs: 2500,
       }),
     );
     expect(body.data.terms).toHaveLength(2);
@@ -275,6 +276,9 @@ describe('Server', () => {
           'https://data.cultureelerfgoed.nl/term/id/cht/server-error',
           'http://vocab.getty.edu/aat/timeout',
         ],
+        // Below the 3000 ms delay of the timeout source. Other queries keep the default timeout,
+        // as the test endpoint can take seconds on a busy CI runner.
+        timeoutMs: 2500,
       }),
     );
 
@@ -867,12 +871,14 @@ function termsQuery({
   query = 'nachtwacht',
   limit = 100,
   languages,
+  timeoutMs,
 }: {
   sources: IRI[];
   genres?: IRI[];
   query?: string;
   limit?: number;
   languages?: string[];
+  timeoutMs?: number;
 }) {
   return `
     query {
@@ -881,7 +887,7 @@ function termsQuery({
         ${genres !== undefined ? `genres: [${genres.map((genre) => `"${genre}"`).join(',')}]` : ''}
         query: "${query}"
         limit: ${limit}
-        timeoutMs: 2500
+        ${timeoutMs !== undefined ? `timeoutMs: ${timeoutMs}` : ''}
         ${languages !== undefined ? `languages: [${languages.join(',')}]` : ''}
       ) {
         source {
@@ -985,15 +991,17 @@ function termsQuery({
 function lookupQuery({
   uris,
   languages,
+  timeoutMs,
 }: {
   uris: string[];
   languages?: string[];
+  timeoutMs?: number;
 }) {
   return `
     query {
       lookup(
         uris: [${uris.map((uri) => `"${uri}"`).join(',')}],
-        timeoutMs: 2500
+        ${timeoutMs !== undefined ? `timeoutMs: ${timeoutMs}` : ''}
         ${languages !== undefined ? `languages: [${languages.join(',')}]` : ''}
       ) {
         uri
