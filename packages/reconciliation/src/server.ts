@@ -22,6 +22,7 @@ import {
   extendQuery,
 } from './data-extension.js';
 import { EnvSchemaData } from 'env-schema';
+import { propertyIds } from './properties.js';
 
 export async function server(
   catalog: Catalog,
@@ -44,8 +45,7 @@ export async function server(
   server.addHook('onRequest', (request, reply, done) => {
     request.root = request.protocol + '://' + request.hostname;
     request.preferredLanguage = (request.languages(['nl', 'en']) || 'nl') as
-      | 'nl'
-      | 'en';
+      'nl' | 'en';
     done();
   });
 
@@ -102,6 +102,31 @@ export async function server(
           request.preferredLanguage,
         ),
       );
+    },
+  );
+
+  // The properties a client can send with a reconciliation query, whose ID or name starts with
+  // the prefix the user typed.
+  server.get<{ Querystring: { prefix?: string } }>(
+    '/suggest/property',
+    {
+      schema: {
+        querystring: {
+          type: 'object',
+          properties: { prefix: { type: 'string' } },
+        },
+      },
+    },
+    (request, reply) => {
+      const prefix = (request.query.prefix ?? '').trim().toLowerCase();
+      const names = locales[request.preferredLanguage].properties;
+      void reply.send({
+        result: propertyIds
+          .map((id) => ({ id, name: names[id] }))
+          .filter(({ id, name }) =>
+            [id, name].some((label) => label.toLowerCase().startsWith(prefix)),
+          ),
+      });
     },
   );
 

@@ -5,7 +5,7 @@
   "description": "This schema validates the JSON serialization of any reconciliation query batch, i.e. the payload of a GET/POST to a reconciliation endpoint.",
   "definitions": {
     "property_value": {
-      "oneOf": [
+      "anyOf": [
         {
           "type": "string"
         },
@@ -62,22 +62,37 @@
           "type": "string",
           "description": "A classification of the type matching strategy when multiple types are supplied",
           "enum": ["any", "should", "all"]
-        }
-      },
-      "anyOf": [
-        {
-          "required": ["query"]
         },
-        {
-          "required": ["properties"],
-          "properties": {
+        "properties": {
+          "type": "array",
+          "description": "Property values to refine the matching",
+          "items": {
+            "type": "object",
             "properties": {
-              "type": "array",
-              "minItems": 1
-            }
+              "pid": {
+                "type": "string",
+                "description": "The identifier of the property"
+              },
+              "v": {
+                "description": "A single value or a list of values",
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/property_value"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/definitions/property_value"
+                    }
+                  }
+                ]
+              }
+            },
+            "required": ["pid", "v"]
           }
         }
-      ],
+      },
+      "required": ["query"],
       "additionalProperties": false
     }
   }
