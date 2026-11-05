@@ -12,8 +12,8 @@
       "@value": "Thesaurus roerend agrarisch erfgoed"
     },
     {
-    "@language": "fy",
-    "@value": "Tesaurus roerend agrarysk erfgoed"
+      "@language": "fy",
+      "@value": "Tesaurus roerend agrarysk erfgoed"
     }
   ],
   "alternateName": [
@@ -40,7 +40,7 @@
     {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Materialen"
     },
-        {
+    {
       "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
     },
     {
@@ -52,9 +52,13 @@
       "@id": "https://erfgoedgelderland.nl/"
     }
   ],
-  "url": [{ "@id": "https://digitaalerfgoed.poolparty.biz/agrarischethesaurus/" }],
+  "url": [
+    { "@id": "https://digitaalerfgoed.poolparty.biz/agrarischethesaurus/" }
+  ],
   "mainEntityOfPage": [
-    { "@id": "https://erfgoedgelderland.nl/nieuws/van-aardappelhaak-tot-zwingelmolen-nieuwe-thesaurus-agrarische-collecties/" }
+    {
+      "@id": "https://erfgoedgelderland.nl/nieuws/van-aardappelhaak-tot-zwingelmolen-nieuwe-thesaurus-agrarische-collecties/"
+    }
   ],
   "description": [
     {

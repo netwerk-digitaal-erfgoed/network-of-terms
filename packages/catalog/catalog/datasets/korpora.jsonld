@@ -33,7 +33,9 @@
     }
   ],
   "url": [{ "@id": "https://digitaalerfgoed.poolparty.biz/data/rdf/" }],
-  "mainEntityOfPage": [{ "@id": "https://digitaalerfgoed.poolparty.biz/data/rfd.html" }],
+  "mainEntityOfPage": [
+    { "@id": "https://digitaalerfgoed.poolparty.biz/data/rfd.html" }
+  ],
   "description": [
     {
       "@language": "en",

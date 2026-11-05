@@ -22,9 +22,10 @@
       "@id": "https://iisg.amsterdam"
     }
   ],
-  "url": [
-    { "@id": "https://iisg.amsterdam/resource/ListOfDenominations/" } ],
-  "mainEntityOfPage": [{ "@id": "https://iisg.amsterdam/resource/ListOfDenominations/" }],
+  "url": [{ "@id": "https://iisg.amsterdam/resource/ListOfDenominations/" }],
+  "mainEntityOfPage": [
+    { "@id": "https://iisg.amsterdam/resource/ListOfDenominations/" }
+  ],
   "description": [
     {
       "@language": "en",
@@ -35,10 +36,7 @@
       "@value": "Gecontroleerd vocabulaire van religieuze denominaties met bekende spellingvarianten uit historische bronnen"
     }
   ],
-  "inLanguage": [
-    "en",
-    "nl"
-  ],
+  "inLanguage": ["en", "nl"],
   "distribution": [
     {
       "@id": "https://api.druid.datalegend.net/datasets/IISG/List-of-Religious-Denominations/sparql",

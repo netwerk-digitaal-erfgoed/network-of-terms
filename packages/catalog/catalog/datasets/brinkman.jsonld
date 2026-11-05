@@ -34,7 +34,9 @@
   ],
   "url": [{ "@id": "http://data.bibliotheken.nl/id/thes/" }],
   "mainEntityOfPage": [
-    { "@id": "https://data.bibliotheken.nl/KB/-/stories/Brinkman-trefwoordenthesaurus" }
+    {
+      "@id": "https://data.bibliotheken.nl/KB/-/stories/Brinkman-trefwoordenthesaurus"
+    }
   ],
   "description": [
     {

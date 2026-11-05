@@ -38,7 +38,9 @@
     }
   ],
   "url": [{ "@id": "https://data.indischherinneringscentrum.nl/ied/" }],
-  "mainEntityOfPage": [{ "@id": "https://data.indischherinneringscentrum.nl/ied.html" }],
+  "mainEntityOfPage": [
+    { "@id": "https://data.indischherinneringscentrum.nl/ied.html" }
+  ],
   "description": [
     {
       "@language": "en",

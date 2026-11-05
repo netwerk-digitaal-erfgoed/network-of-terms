@@ -51,10 +51,7 @@
       "@value": "Deze thesaurus bevat een gestandaardiseerde set termen voor rechtenstatus en gebruiksrechten van erfgoedobjecten. De thesaurus omvat rechtenstatements van RightsStatements.org en licenties en verklaringen van Creative Commons, waaronder Creative Commons-licenties en de CC0-verklaring. De termen zijn gemodelleerd als SKOS-concepten met stabiele URI’s, meertalige labels en korte toelichtingen. De thesaurus gebruikt de canonical URI’s van RightsStatements.org en Creative Commons direct als concept-URI’s om interoperabiliteit en hergebruik te maximaliseren. De thesaurus ondersteunt consistente registratie, interoperabiliteit en hergebruik binnen de erfgoedsector."
     }
   ],
-  "inLanguage": [
-    "nl",
-    "en"
-  ],
+  "inLanguage": ["nl", "en"],
   "distribution": [
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/rights",

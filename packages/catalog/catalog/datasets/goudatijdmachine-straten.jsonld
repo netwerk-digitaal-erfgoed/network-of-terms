@@ -34,9 +34,7 @@
       "alternateName": "GTM"
     }
   ],
-  "url": [
-    { "@id": "https://n2t.net/ark:/60537/" }
-  ],
+  "url": [{ "@id": "https://n2t.net/ark:/60537/" }],
   "mainEntityOfPage": [
     { "@id": "https://www.goudatijdmachine.nl/straatnamen/" }
   ],

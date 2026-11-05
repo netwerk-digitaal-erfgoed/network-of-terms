@@ -29,7 +29,9 @@
     }
   ],
   "url": [{ "@id": "http://eurovoc.europa.eu/" }],
-  "mainEntityOfPage": [{ "@id": "https://data.europa.eu/data/datasets/eurovoc" }],
+  "mainEntityOfPage": [
+    { "@id": "https://data.europa.eu/data/datasets/eurovoc" }
+  ],
   "description": [
     {
       "@language": "en",

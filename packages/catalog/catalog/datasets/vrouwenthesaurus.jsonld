@@ -23,7 +23,9 @@
     }
   ],
   "url": [{ "@id": "https://vrouwenthesaurus.org/conceptid/" }],
-  "mainEntityOfPage": [{ "@id": "https://vrouwenthesaurus.org/conceptid.html" }],
+  "mainEntityOfPage": [
+    { "@id": "https://vrouwenthesaurus.org/conceptid.html" }
+  ],
   "description": [
     {
       "@language": "en",

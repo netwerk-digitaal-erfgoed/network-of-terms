@@ -34,11 +34,11 @@
       "@id": "https://lgog.nl"
     }
   ],
-  "url": [
-    { "@id": "https://www.canonvannederland.nl/id/" }
-  ],
+  "url": [{ "@id": "https://www.canonvannederland.nl/id/" }],
   "mainEntityOfPage": [
-    { "@id": "https://www.canonvannederland.nl/nl/limburg/limburg-nieuw/colofon" }
+    {
+      "@id": "https://www.canonvannederland.nl/nl/limburg/limburg-nieuw/colofon"
+    }
   ],
   "description": [
     {

@@ -46,7 +46,7 @@
       ],
       "alternateName": "Westerbork"
     },
-        {
+    {
       "@id": "https://erfgoedgelderland.nl/",
       "@type": "Organization",
       "name": [
@@ -351,11 +351,11 @@
           "@language": "nl",
           "@value": "Internationaal Instituut voor Sociale Geschiedenis"
         },
-      {
+        {
           "@language": "en",
           "@value": "International Institute of Social History"
-      }
-    ],
+        }
+      ],
       "alternateName": "IISG"
     },
     {
@@ -378,10 +378,12 @@
       "@type": "Organization",
       "name": [
         {
-          "@language": "en", "@value": "Korpora, Heritage of Public Safety"
+          "@language": "en",
+          "@value": "Korpora, Heritage of Public Safety"
         },
-        { 
-          "@language": "nl", "@value": "Korpora, Erfgoed Publieke Veiligheid"
+        {
+          "@language": "nl",
+          "@value": "Korpora, Erfgoed Publieke Veiligheid"
         }
       ],
       "alternateName": "Korpora"
