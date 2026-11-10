@@ -19,7 +19,8 @@ CONSTRUCT {
         schema:gender ?gender ;
         schema:additionalType ?organizationType_uri ;
         schema:location ?activity_place ;
-        schema:event ?activity .
+        schema:event ?activity ;
+        schema:description ?description .
     ?organizationType_named schema:name ?organizationType_name .
     ?activity a schema:Event ;
         schema:startDate ?activity_startDate ;
@@ -129,6 +130,10 @@ WHERE {
     # A role has one place IRI beside its own Dutch and English literals, so pairing them is safe
     # there; the 31 roles that state a place by literals alone are left out.
     #
+    # RKD states its remarks on a person or organisation – ‘Names remark: …’, ‘Family relations: …’
+    # – as one schema:description each. The scopeNote joins them into one literal, which cannot be
+    # split again because a remark may contain the separator, so each is also constructed as it is.
+    #
     # The group is not an OPTIONAL, and its first branch repeats a pattern the term already matches,
     # for the reasons the README gives: an OPTIONAL stops Virtuoso applying the patterns outside the
     # group to the branches, and without the first branch a term with none of the properties drops
@@ -136,6 +141,7 @@ WHERE {
     {
         { ?uri a ?type . }
         UNION { ?uri schema:alternateName ?altLabel . }
+        UNION { ?uri schema:description ?description . }
         UNION { ?uri rdfs:seeAlso ?exactMatch_uri . }
         UNION { ?uri schema:birthPlace ?birthPlace_uri . FILTER(isIRI(?birthPlace_uri)) }
         UNION { ?uri schema:deathPlace ?deathPlace_uri . FILTER(isIRI(?deathPlace_uri)) }
