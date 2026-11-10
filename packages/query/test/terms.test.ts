@@ -210,6 +210,41 @@ describe('TermsTransformer', () => {
       expect(term.person?.deathDates).toEqual(['1669-10-04']);
     });
 
+    it('collects each description the source states, dropping blank ones and IRIs', () => {
+      const [term] = transform(
+        person(
+          dataFactory.quad(
+            rembrandt,
+            schema('description'),
+            dataFactory.literal('Names remark: ook Rembrant gespeld.'),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            // In the http namespace, as some sources state it.
+            dataFactory.namedNode('http://schema.org/description'),
+            dataFactory.literal('Family relations: zoon van Harmen.'),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            schema('description'),
+            dataFactory.literal(' '),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            schema('description'),
+            dataFactory.namedNode('https://example.com/rembrandt/biography'),
+          ),
+        ),
+      );
+
+      expect(
+        term.person?.descriptions.map((description) => description.value),
+      ).toEqual([
+        'Names remark: ook Rembrant gespeld.',
+        'Family relations: zoon van Harmen.',
+      ]);
+    });
+
     it('collects the given and family names a source states apart', () => {
       const [term] = transform(
         person(
@@ -668,6 +703,32 @@ describe('TermsTransformer', () => {
 
       expect(term.organization?.foundingDates).toEqual(['1863']);
       expect(term.organization?.dissolutionDates).toEqual(['1958']);
+    });
+
+    it('returns an organization whose source states only its descriptions', () => {
+      const [term] = transform(
+        organization(
+          dataFactory.quad(
+            ceramique,
+            schema('description'),
+            dataFactory.literal(
+              'Names remark: Vanaf 1863 werd de naam N.V. Société Céramique gevoerd.',
+            ),
+          ),
+          dataFactory.quad(
+            ceramique,
+            schema('description'),
+            dataFactory.literal('Qualifications remark: aardewerk; tegels.'),
+          ),
+        ),
+      );
+
+      expect(
+        term.organization?.descriptions.map((description) => description.value),
+      ).toEqual([
+        'Names remark: Vanaf 1863 werd de naam N.V. Société Céramique gevoerd.',
+        'Qualifications remark: aardewerk; tegels.',
+      ]);
     });
 
     it('names its kinds and parent organizations from the names its source gives them', () => {

@@ -263,6 +263,9 @@ export const schema = (languages: string[]) => `
 
     "The person’s siblings, as for \`parent\`."
     sibling: [Reference]!
+
+    "What the source says about the person in prose, in the requested languages: one entry per statement, passed through as the source states it. A source may label a statement with what it is about, as RKDartists does with \`Names remark:\`; the label is part of the value. Unlike \`scopeNote\`, which a source may assemble from several of these and from the person’s dates, each entry is one statement."
+    description: [LanguageString]!
   }
 
   """
@@ -286,6 +289,9 @@ export const schema = (languages: string[]) => `
 
     "When, and where the source says, the organization was active: one entry per period the source states, ordered by when it began. A period of activity is not the organization’s existence, which \`foundingDate\` and \`dissolutionDate\` date: a source may date the activity under an earlier name, or only one of the organization’s kinds of work."
     event: [Event]!
+
+    "What the source says about the organization in prose, as for \`Person.description\`."
+    description: [LanguageString]!
   }
 
   """

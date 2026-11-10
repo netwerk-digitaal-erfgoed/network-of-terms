@@ -195,7 +195,8 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
     schema:parent ?parent ;
     schema:children ?child ;
     schema:spouse ?spouse ;
-    schema:sibling ?sibling .
+    schema:sibling ?sibling ;
+    schema:description ?description .
 ?birthPlace schema:name ?birthPlaceName .
 ?spouse schema:name ?spouseName .
 ```
@@ -251,6 +252,11 @@ state. The person’s full names are not part of that: they stay on `skos:prefLa
   occupation’s IRI and its Dutch and English labels as parallel values with nothing pairing them,
   which is why its occupations are literals: pairing them would assign every label to every IRI.
 
+- A **description** is a statement the source makes about the person in prose. Construct one
+  `schema:description` per statement, as the source states it, beside the `skos:scopeNote` the
+  query composes: a client that wants the statements apart cannot split a scopeNote that joined
+  them. RKDartists labels each remark with its subject (`Names remark: …`, `Family relations: …`),
+  and the label stays in the value.
 - One `UNION` branch per property, since each is multi-valued on its own: a person with seven
   occupations, five alternate names and seven alignments is 19 rows that way and 245 as
   `OPTIONAL`s.
@@ -269,7 +275,8 @@ what SKOS cannot state, in Schema.org’s organization properties. The organizat
     schema:dissolutionDate ?dissolutionDate ;
     schema:location ?place , ?address ;
     schema:parentOrganization ?parent ;
-    schema:event ?activity .
+    schema:event ?activity ;
+    schema:description ?description .
 ?kind schema:name ?kindName .
 ?place schema:name ?placeName .
 ?address a schema:PostalAddress ;
@@ -298,6 +305,7 @@ what SKOS cannot state, in Schema.org’s organization properties. The organizat
   `schema:hasOccupation` and `schema:workLocation`, which are Person-only; its queries construct
   each role as an event, and the place of a `schema:workLocation` role as the event’s and the
   organization’s `schema:location`.
+- A **description** is a statement in prose, as for a person.
 - One `UNION` branch per property, as for a person.
 
 #### Full-text search

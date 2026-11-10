@@ -19,7 +19,8 @@ CONSTRUCT {
         schema:gender ?gender ;
         schema:additionalType ?organizationType_uri ;
         schema:location ?activity_place ;
-        schema:event ?activity .
+        schema:event ?activity ;
+        schema:description ?description .
     ?organizationType_named schema:name ?organizationType_name .
     ?activity a schema:Event ;
         schema:startDate ?activity_startDate ;
@@ -115,6 +116,7 @@ WHERE {
     {
         { ?uri a ?type . }
         UNION { ?uri schema:alternateName ?altLabel . }
+        UNION { ?uri schema:description ?description . }
         UNION { ?uri rdfs:seeAlso ?exactMatch_uri . }
         UNION { ?uri schema:birthPlace ?birthPlace_uri . FILTER(isIRI(?birthPlace_uri)) }
         UNION { ?uri schema:deathPlace ?deathPlace_uri . FILTER(isIRI(?deathPlace_uri)) }
