@@ -64,6 +64,8 @@ export class Person {
     readonly children: RelatedTerm[],
     readonly spouses: RelatedTerm[],
     readonly siblings: RelatedTerm[],
+    // What the source says about them in prose, one literal per statement.
+    readonly descriptions: RDF.Literal[] = [],
   ) {}
 }
 
@@ -86,6 +88,8 @@ export class DenotedOrganization {
     readonly parentOrganizations: RelatedTerm[],
     // The periods in which the organization was active, ordered by when they began.
     readonly events: OrganizationEvent[],
+    // What the source says about it in prose, one literal per statement, as for a person.
+    readonly descriptions: RDF.Literal[] = [],
   ) {}
 }
 
@@ -194,6 +198,7 @@ class SparqlResultTerm {
   locations: RDF.Term[] = [];
   parentOrganizations: RDF.Term[] = [];
   events: RDF.Term[] = [];
+  descriptions: RDF.Literal[] = [];
   // Read from a schema:Role or schema:Event node a term points at, never from the term itself.
   roleNames: RDF.Literal[] = [];
   startDate: RDF.Literal | undefined = undefined;
@@ -275,6 +280,8 @@ export class TermsTransformer {
     ['http://schema.org/parentOrganization', 'parentOrganizations'],
     ['https://schema.org/event', 'events'],
     ['http://schema.org/event', 'events'],
+    ['https://schema.org/description', 'descriptions'],
+    ['http://schema.org/description', 'descriptions'],
     ['https://schema.org/roleName', 'roleNames'],
     ['http://schema.org/roleName', 'roleNames'],
     ['https://schema.org/startDate', 'startDate'],
@@ -389,6 +396,7 @@ export class TermsTransformer {
       this.relatives(term, 'children'),
       this.relatives(term, 'spouses'),
       this.relatives(term, 'siblings'),
+      nonBlank(term.descriptions),
     );
 
     // Every field is a list, so a person without any is one whose source states nothing.
@@ -417,6 +425,7 @@ export class TermsTransformer {
         .map(this.namedType)
         .sort(alphabeticallyByPrefLabel),
       term.events.flatMap(this.event).sort(byStartDate),
+      nonBlank(term.descriptions),
     );
 
     // Every field is a list, so an organization without any is one whose source states nothing.
@@ -687,6 +696,13 @@ const byStartDate = (event: OrganizationEvent, other: OrganizationEvent) => {
 // Sources are not validated, so a value may be empty or blank; that is no value.
 const stringValue = (literal: RDF.Literal | undefined) =>
   literal?.value.trim() || undefined;
+
+// Prose only: Schema.org also lets a description be a TextObject, which says nothing as text here.
+const nonBlank = (literals: RDF.Literal[]) =>
+  literals.filter(
+    (literal) =>
+      literal.termType === 'Literal' && stringValue(literal) !== undefined,
+  );
 
 const dateValues = (literals: RDF.Literal[]) =>
   literals.flatMap((literal) => stringValue(literal) ?? []);

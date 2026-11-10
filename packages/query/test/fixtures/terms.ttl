@@ -73,6 +73,7 @@
     schema:familyName "van Rijn" ;
     schema:birthDate "1606-07-15/1607"^^<http://id.loc.gov/datatypes/edtf/EDTF> ;
     schema:deathDate "1669-10-04" ;
+    schema:description "Hollands schilder en etser."@nl, "Dutch painter and etcher."@en ;
     schema:birthPlace <https://example.com/places/leiden> ;
     schema:deathPlace "Amsterdam (stad)"@nl, "Amsterdam (city)"@en ;
     # Occupations the source only names become roles named by them; a schema:Role node it
@@ -216,7 +217,9 @@
     schema:location <https://example.com/places/maastricht>,
         [ a schema:PostalAddress ; schema:addressLocality "Maastricht" ; schema:addressCountry "NL" ] ;
     schema:event <https://example.com/resources/ceramique#active>,
-        <https://example.com/resources/ceramique#active-in-maastricht> .
+        <https://example.com/resources/ceramique#active-in-maastricht> ;
+    # RKDartists states its remarks untagged, one literal each.
+    schema:description "Names remark: Vanaf 1863 werd de naam N.V. Société Céramique gevoerd." .
 
 <https://example.com/types/ceramics-manufactory>
     schema:name "aardewerkfabriek"@nl, "ceramics manufactory"@en .
