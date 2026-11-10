@@ -286,6 +286,7 @@ function denotedPerson(
     children: references(person.children),
     spouse: references(person.spouses),
     sibling: references(person.siblings),
+    description: inRequestedLanguages(person.descriptions),
   };
 }
 
@@ -324,6 +325,7 @@ function denotedOrganization(
           event.endDate !== null ||
           event.location.length > 0,
       ),
+    description: inRequestedLanguages(organization.descriptions),
   };
 }
 

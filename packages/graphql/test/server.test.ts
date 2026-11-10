@@ -506,9 +506,24 @@ describe('Server', () => {
     const term = body.data.lookup[0];
     expect(term.result.__typename).toEqual('Term');
     expect(term.result.person.birthDate).toEqual('1606-07-15/1607');
+    expect(term.result.person.description).toEqual([
+      { language: 'nl', value: 'Hollands schilder en etser.' },
+    ]);
     // Names are language-tagged even here, where the term’s own labels are plain strings.
     expect(term.result.person.birthPlace[0].name).toEqual([
       { language: 'nl', value: 'Leiden (stad)' },
+    ]);
+  });
+
+  it('returns the denoted person’s descriptions in the requested language', async () => {
+    const body = await query(
+      lookupQuery({
+        uris: ['https://example.com/resources/rembrandt'],
+        languages: ['en'],
+      }),
+    );
+    expect(body.data.lookup[0].result.person.description).toEqual([
+      { language: 'en', value: 'Dutch painter and etcher.' },
     ]);
   });
 
@@ -611,6 +626,14 @@ describe('Server', () => {
         { startDate: '1850', endDate: '1958', location: [maastricht] },
         { startDate: '1863', endDate: '1958', location: [] },
       ],
+      // Untagged, and so Dutch.
+      description: [
+        {
+          language: 'nl',
+          value:
+            'Names remark: Vanaf 1863 werd de naam N.V. Société Céramique gevoerd.',
+        },
+      ],
     });
   });
 
@@ -635,6 +658,7 @@ describe('Server', () => {
         { startDate: '1834', endDate: null, location: [] },
         { startDate: null, endDate: '1925', location: [] },
       ],
+      description: [],
     });
   });
 
@@ -965,6 +989,7 @@ function termsQuery({
                 children { uri name { language value } }
                 spouse { uri name { language value } }
                 sibling { uri name { language value } }
+                description { language value }
               }
               organization {
                 additionalType { uri name { language value } }
@@ -973,6 +998,7 @@ function termsQuery({
                 location { uri name { language value } addressCountry }
                 parentOrganization { uri name { language value } }
                 event { startDate endDate location { uri name { language value } addressCountry } }
+                description { language value }
               }
             }
           }
@@ -1054,6 +1080,7 @@ function lookupQuery({
               children { uri name { language value } }
               spouse { uri name { language value } }
               sibling { uri name { language value } }
+              description { language value }
             }
             organization {
               additionalType { uri name { language value } }
@@ -1062,6 +1089,7 @@ function lookupQuery({
               location { uri name { language value } addressCountry }
               parentOrganization { uri name { language value } }
               event { startDate endDate location { uri name { language value } addressCountry } }
+              description { language value }
             }
           }
           `
@@ -1098,6 +1126,7 @@ function lookupQuery({
               children { uri name { language value } }
               spouse { uri name { language value } }
               sibling { uri name { language value } }
+              description { language value }
             }
             organization {
               additionalType { uri name { language value } }
@@ -1106,6 +1135,7 @@ function lookupQuery({
               location { uri name { language value } addressCountry }
               parentOrganization { uri name { language value } }
               event { startDate endDate location { uri name { language value } addressCountry } }
+              description { language value }
             }
           }
           `
