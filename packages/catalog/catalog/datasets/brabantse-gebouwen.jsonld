@@ -5,7 +5,7 @@
   "name": [
     {
       "@language": "en",
-      "@value": "Brabants buildings"
+      "@value": "Brabant buildings"
     },
     {
       "@language": "nl",
@@ -31,11 +31,11 @@
   "description": [
     {
       "@language": "en",
-      "@value": "Buildings in the province of Gebouwen in de provincie of North Brabant, as yet with a religious function such as monasteries"
+      "@value": "Buildings in the province of North Brabant, such as monasteries, churches, schools and houses, described by Erfgoed Brabant and heritage organisations in Brabant"
     },
     {
       "@language": "nl",
-      "@value": "Gebouwen in de provincie Noord-Brabant, vooralsnog met een religieuze functie, zoals kloosters"
+      "@value": "Gebouwen in de provincie Noord-Brabant, zoals kloosters, kerken, scholen en woonhuizen, beschreven door Erfgoed Brabant en Brabantse erfgoedorganisaties"
     }
   ],
   "inLanguage": "nl",
