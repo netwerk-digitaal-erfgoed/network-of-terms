@@ -331,6 +331,23 @@ describe('buildSearchQuery', () => {
     expect(result.bindings['query']).toBeUndefined();
   });
 
+  it('limits every subquery that has the placeholder', () => {
+    const { dataset, distribution } = createTestDataset(
+      'SELECT * WHERE { { SELECT ?s WHERE { ?s ?p ?o } #LIMIT# } UNION { SELECT ?s WHERE { ?s ?p ?o } #LIMIT# } }',
+    );
+    const result = buildSearchQuery({
+      dataset,
+      distribution,
+      searchTerm: 'test',
+      queryMode: QueryMode.OPTIMIZED,
+      limit: 10,
+    });
+
+    expect(result.query).toBe(
+      'SELECT * WHERE { { SELECT ?s WHERE { ?s ?p ?o } LIMIT 10 } UNION { SELECT ?s WHERE { ?s ?p ?o } LIMIT 10 } }',
+    );
+  });
+
   it('parameterizes genres when dataset has genres', () => {
     const { dataset, distribution } = createTestDataset(
       'SELECT * WHERE { VALUES ?requestedGenre { ?genres } ?s ?p ?o } #LIMIT#',

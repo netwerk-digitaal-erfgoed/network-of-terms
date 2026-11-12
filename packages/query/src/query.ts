@@ -103,8 +103,9 @@ export function buildSearchQuery(
 ): BuildSearchQueryResult {
   const variants = queryVariants(options.searchTerm, options.queryMode);
 
-  // Replace #LIMIT# placeholder and parameterize genres
-  let query = options.distribution.searchQuery.replace(
+  // Replace every #LIMIT# placeholder, such as in a search subquery repeated in UNION branches,
+  // and parameterize genres
+  let query = options.distribution.searchQuery.replaceAll(
     '#LIMIT#',
     `LIMIT ${options.limit}`,
   );
