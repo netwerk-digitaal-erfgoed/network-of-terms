@@ -5,11 +5,11 @@
   "name": [
     {
       "@language": "en",
-      "@value": "Brabant persons and organisations"
+      "@value": "Brabant persons & organisations"
     },
     {
       "@language": "nl",
-      "@value": "Brabantse personen en organisaties"
+      "@value": "Brabantse personen & organisaties"
     }
   ],
   "genre": [
@@ -38,11 +38,11 @@
   "description": [
     {
       "@language": "en",
-      "@value": "Persons and organisations from the history of North Brabant, such as artists, residents, associations and companies, described by Erfgoed Brabant and heritage organisations in Brabant"
+      "@value": "Persons and organisations that are related to, or have been of significance to, the province of North Brabant"
     },
     {
       "@language": "nl",
-      "@value": "Personen en organisaties uit de geschiedenis van Noord-Brabant, zoals kunstenaars, bewoners, verenigingen en bedrijven, beschreven door Erfgoed Brabant en Brabantse erfgoedorganisaties"
+      "@value": "Personen en organisaties die een relatie hebben tot of van belang zijn geweest voor de provincie Noord-Brabant"
     }
   ],
   "inLanguage": "nl",
