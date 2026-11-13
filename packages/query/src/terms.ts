@@ -513,7 +513,8 @@ export class TermsTransformer {
     if (object.termType === 'NamedNode') {
       return [new Entity(object, this.namedType(object).prefLabels)];
     }
-    if (object.termType === 'Literal') {
+    // A blank literal names nothing, so it is no entity.
+    if (object.termType === 'Literal' && stringValue(object) !== undefined) {
       return [new Entity(undefined, [object])];
     }
     return [];
