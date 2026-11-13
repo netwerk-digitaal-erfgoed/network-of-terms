@@ -91,7 +91,7 @@ describe('Server', () => {
       {
         id: 'https://example.com/resources/artwork',
         name: 'Nachtwacht',
-        types: [conceptType],
+        type: [conceptType],
         score: 100,
         description: 'Nachtwacht alt',
       },
@@ -137,8 +137,8 @@ describe('Server', () => {
       'https://example.com/resources/painter',
       'https://example.com/resources/rembrandt',
     ]);
-    expect(results.any.result[0].types).toEqual([conceptType]);
-    expect(results.any.result[1].types).toEqual([conceptType, personType]);
+    expect(results.any.result[0].type).toEqual([conceptType]);
+    expect(results.any.result[1].type).toEqual([conceptType, personType]);
     expect(ids('person')).toEqual(['https://example.com/resources/rembrandt']);
     expect(ids('all')).toEqual(ids('person'));
     expect(ids('should')).toEqual(ids('any'));
@@ -320,7 +320,7 @@ describe('Server', () => {
       {
         id: 'https://example.com/resources/artwork',
         name: 'Nachtwacht',
-        types: [conceptType],
+        type: [conceptType],
         score: 100,
         description: 'Nachtwacht alt',
       },

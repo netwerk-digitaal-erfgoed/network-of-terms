@@ -71,7 +71,7 @@ export async function reconciliationQuery(
           return {
             id: term.id.value.toString(),
             name: literalValues(term.prefLabels, [language]).join(' • '), // Join similarly to network-of-terms-demo.
-            types,
+            type: types,
             score: combinedScore(nameScore, comparisons),
             description: [
               ...lifespan(term),
@@ -115,7 +115,8 @@ export type ReconciliationResultBatch = {
 export type ReconciliationCandidate = {
   id: string;
   name: string;
-  types: { id: string; name: string }[];
+  // Named ‘type’ in version 0.2 of the Reconciliation Service API, where OpenRefine reads it.
+  type: { id: string; name: string }[];
   score: number;
   description?: string;
   // Why the candidate scored as it did: the name and each property compared, from 0 to 1.
