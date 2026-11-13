@@ -22,6 +22,11 @@ export function preview(
 ) {
   const term = lookupResult.result;
   if (term instanceof Term) {
+    // Some sources repeat a term’s name as an alternative label, which tells the reader nothing.
+    const prefLabels = literalValues(term.prefLabels, [language]);
+    const altLabels = literalValues(term.altLabels, [language]).filter(
+      (altLabel) => !prefLabels.includes(altLabel),
+    );
     return `<html lang="${language}">
     <head>
       <meta charset="utf-8" />
@@ -32,15 +37,12 @@ export function preview(
       </style>
     </head>
     <body>
-      <h1>${literal(term.prefLabels, language)}</h1>
+      <h1>${prefLabels.join(' • ')}</h1>
       <p>${literal(term.scopeNotes, language)}</p>
       <dl>
         ${
-          term.altLabels.length > 0
-            ? `<dt>${locale.altLabels}</dt><dd>${literal(
-                term.altLabels,
-                language,
-              )}</dd>`
+          altLabels.length > 0
+            ? `<dt>${locale.altLabels}</dt><dd>${altLabels.join(' • ')}</dd>`
             : ''
         }
         ${isPerson(term) ? personFacts(term, locale, language) : conceptFacts(term, locale, language)}
