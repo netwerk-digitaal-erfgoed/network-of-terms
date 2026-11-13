@@ -10,9 +10,10 @@
     "vite.config.mts",
     "vitest.config.ts",
     "vitest.config.mts",
-    "test/**/*.test.ts",
+    "test/**/*.ts",
     "src/**/*.d.ts",
-    "locales/*.json"
+    "locales/*.json",
+    "json-schema/0.2/*.json"
   ],
   "references": [
     {
