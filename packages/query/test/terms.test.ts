@@ -335,6 +335,38 @@ describe('TermsTransformer', () => {
       expect(term.person?.deathPlaces[0].names[0].value).toEqual('Amsterdam');
     });
 
+    it('reads a blank literal as no entity', () => {
+      const [term] = transform(
+        person(
+          dataFactory.quad(
+            rembrandt,
+            schema('birthPlace'),
+            dataFactory.literal(''),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            schema('nationality'),
+            dataFactory.literal(' '),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            schema('hasOccupation'),
+            dataFactory.literal(''),
+          ),
+          dataFactory.quad(
+            rembrandt,
+            schema('deathPlace'),
+            dataFactory.literal('Amsterdam'),
+          ),
+        ),
+      );
+
+      expect(term.person?.birthPlaces).toEqual([]);
+      expect(term.person?.nationalities).toEqual([]);
+      expect(term.person?.occupations).toEqual([]);
+      expect(term.person?.deathPlaces[0].names[0].value).toEqual('Amsterdam');
+    });
+
     it('normalises a binary gender to the https Schema.org namespace', () => {
       const [term] = transform(
         person(
