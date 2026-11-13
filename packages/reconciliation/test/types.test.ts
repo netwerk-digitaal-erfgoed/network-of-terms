@@ -38,24 +38,24 @@ describe('Term types', () => {
     expect(termTypes(typedTerm())).toEqual([conceptType]);
   });
 
-  it('adds the Schema.org class the source types a term with, in either namespace', () => {
+  it('puts the Schema.org class the source types a term with first, in either namespace', () => {
     expect(termTypes(typedTerm('https://schema.org/Person'))).toEqual([
-      conceptType,
       personType,
+      conceptType,
     ]);
     expect(termTypes(typedTerm('http://schema.org/Place'))).toEqual([
-      conceptType,
       placeType,
+      conceptType,
     ]);
     expect(termTypes(typedTerm('https://schema.org/Organization'))).toEqual([
-      conceptType,
       organizationType,
+      conceptType,
     ]);
   });
 });
 
 const concept = [conceptType];
-const person = [conceptType, personType];
+const person = [personType, conceptType];
 
 // Whether a term of these types is a candidate for a query of the type sent.
 const accepts = (
