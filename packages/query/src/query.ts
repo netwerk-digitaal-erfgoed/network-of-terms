@@ -267,7 +267,7 @@ export class QueryTermsService {
         }
         abortController.abort();
         const elapsed = Math.round(timer.elapsed());
-        this.logger.error(
+        this.logger.warn(
           `An error occurred when querying "${distribution.endpoint}": ${error} with %o`,
           error,
         );
