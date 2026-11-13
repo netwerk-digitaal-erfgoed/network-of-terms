@@ -425,7 +425,7 @@ describe('Server', () => {
 
     expect(results.meta).toContainEqual({
       id: 'relatedTerms',
-      name: 'Gerelateerde term',
+      name: 'Related term',
       type: {
         id: 'http://www.w3.org/2004/02/skos/core#Concept',
         name: 'Concept',
@@ -433,7 +433,7 @@ describe('Server', () => {
     });
     expect(results.meta).toContainEqual({
       id: 'parents',
-      name: 'Ouder',
+      name: 'Parent',
       type: personType,
     });
 
