@@ -153,20 +153,22 @@ export const dataExtensionProperties: {
  * empty. Sources seldom place persons in a hierarchy either, so a person column is not offered
  * broader and narrower terms. Any other column may hold terms of every type, since each is a
  * concept too, so it gets every property.
+ *
+ * A proposal names each property only: the spec defines no more, and OpenRefine reads no more. The
+ * type of a property’s values is in the data extension response’s meta instead.
  */
 export const proposedProperties = (type: string) => {
-  if (!propertiesOfType.has(type)) {
-    return dataExtensionProperties;
-  }
-  const excluded = [
-    ...[...propertiesOfType]
-      .filter(([otherType]) => otherType !== type)
-      .flatMap(([, properties]) => properties),
-    ...(type === personType.id ? hierarchyProperties : []),
-  ];
-  return dataExtensionProperties.filter(
-    (property) => !excluded.includes(property.id),
-  );
+  const excluded = propertiesOfType.has(type)
+    ? [
+        ...[...propertiesOfType]
+          .filter(([otherType]) => otherType !== type)
+          .flatMap(([, properties]) => properties),
+        ...(type === personType.id ? hierarchyProperties : []),
+      ]
+    : [];
+  return dataExtensionProperties
+    .filter((property) => !excluded.includes(property.id))
+    .map(({ id, name }) => ({ id, name }));
 };
 
 const hierarchyProperties: DataExtensionPropertyId[] = [

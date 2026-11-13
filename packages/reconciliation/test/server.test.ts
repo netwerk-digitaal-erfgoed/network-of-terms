@@ -427,6 +427,11 @@ describe('Server', () => {
         name: 'Concept',
       },
     });
+    expect(results.meta).toContainEqual({
+      id: 'parents',
+      name: 'parents',
+      type: personType,
+    });
 
     expect(results.rows).toEqual({
       'https://example.com/resources/artwork': {
@@ -768,7 +773,6 @@ describe('Server', () => {
     expect(person.properties).toContainEqual({
       id: 'parents',
       name: 'parents',
-      type: personType,
     });
 
     // A place or organization is never a person, but it may have broader and narrower terms.
