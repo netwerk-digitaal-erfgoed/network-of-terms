@@ -32,13 +32,14 @@ export const organizationType: ReconciliationType = {
  * Schema.org person, place or organization is one of those too. Clients such as OpenRefine guess
  * the type to reconcile against from the types of the candidates, so a source of persons gets
  * Person suggested without the manifest naming it: few sources the catalog files under persons
- * type their terms so.
+ * type their terms so. The specific type comes first, because OpenRefine weighs a candidate’s first
+ * type most, and would otherwise suggest Concept for a column of persons.
  */
 export const termTypes = (term: Term) => [
-  conceptType,
   ...specificTypes
     .filter(({ isClass }) => term.types.some(isClass))
     .map(({ type }) => type),
+  conceptType,
 ];
 
 export const isPerson = (term: Term) => termTypes(term).includes(personType);

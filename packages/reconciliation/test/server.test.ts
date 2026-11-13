@@ -138,7 +138,7 @@ describe('Server', () => {
       'https://example.com/resources/rembrandt',
     ]);
     expect(results.any.result[0].type).toEqual([conceptType]);
-    expect(results.any.result[1].type).toEqual([conceptType, personType]);
+    expect(results.any.result[1].type).toEqual([personType, conceptType]);
     expect(ids('person')).toEqual(['https://example.com/resources/rembrandt']);
     expect(ids('all')).toEqual(ids('person'));
     expect(ids('should')).toEqual(ids('any'));
