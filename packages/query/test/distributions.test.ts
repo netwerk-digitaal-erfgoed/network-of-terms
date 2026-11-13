@@ -17,7 +17,7 @@ describe('DistributionsService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     service = new DistributionsService({
-      logger: { info: vi.fn(), error: vi.fn() } as never,
+      logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() } as never,
       catalog,
       fetcher: fetcherMock as unknown as SparqlEndpointFetcher,
     });
