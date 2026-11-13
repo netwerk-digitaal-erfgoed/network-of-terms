@@ -188,11 +188,21 @@ export async function server(
             source,
             locales[request.preferredLanguage],
             request.preferredLanguage,
-            config.VIEW_URL_TEMPLATE as string,
           ),
         );
     },
   );
+
+  // The page about a term, which OpenRefine links a candidate’s name to. The IRI is in the path, as
+  // for the preview, so the template can encode it as it needs.
+  server.get<{ Params: { '*': string } }>('/view/*', (request, reply) => {
+    void reply.redirect(
+      viewUrl(
+        config.VIEW_URL_TEMPLATE as string,
+        iriFromPath(request.params['*']),
+      ),
+    );
+  });
 
   return server;
 }
@@ -205,6 +215,13 @@ export type locale = typeof en;
  */
 const iriFromPath = (path: string) =>
   path.replace(/^(https?):\/(?!\/)/, '$1://');
+
+// As in URI Templates (RFC 6570), {uri} is replaced with the percent-encoded IRI, which suits a
+// query parameter, and {+uri} with the IRI as it is, which suits a link to the term itself.
+const viewUrl = (template: string, iri: string) =>
+  template.replace(/\{(\+?)uri\}/g, (_placeholder, asIs: string) =>
+    asIs === '+' ? iri : encodeURIComponent(iri),
+  );
 
 /**
  * Reconciliation queries are JSON-encoded in a x-www-form-urlencoded ‘queries’ parameter, so unpack that parameter.

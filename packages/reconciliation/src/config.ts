@@ -7,7 +7,7 @@ const schema = {
       type: 'boolean',
       default: false,
     },
-    // Where the preview links to for more about a term: {uri} is replaced with the term’s
+    // Where /view/{IRI} redirects to, for more about a term: {uri} is replaced with the term’s
     // percent-encoded IRI, {+uri} with the IRI as it is.
     VIEW_URL_TEMPLATE: {
       type: 'string',

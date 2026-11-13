@@ -10,6 +10,9 @@ export class ServiceManifest {
   public readonly schemaSpace = conceptType.id;
   public readonly defaultTypes = [conceptType];
   public readonly preview;
+  // Where OpenRefine links a candidate’s name to. A link in the preview cannot open: OpenRefine
+  // shows the preview in a sandboxed frame.
+  public readonly view;
   public readonly extend;
   // The properties a client can send with a query, so OpenRefine offers them for its columns.
   public readonly suggest;
@@ -24,6 +27,8 @@ export class ServiceManifest {
       height: 300,
       url: root + '/preview/{{id}}',
     };
+
+    this.view = { url: root + '/view/{{id}}' };
 
     this.extend = {
       propose_properties: {

@@ -19,7 +19,6 @@ import {
   personType,
   placeType,
 } from '../src/types.js';
-import { escapeHtml } from '@hapi/hoek';
 import { SpecSchema, specViolations } from './spec.js';
 
 let httpServer: FastifyInstance;
@@ -833,24 +832,39 @@ describe('Server', () => {
     });
     expect(response.statusCode).toEqual(200);
     expect(response.headers['content-type']).toEqual('text/html');
-    expect(response.body).toContain(
-      `<a target="_blank" href="${escapeHtml(
-        'https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=https%3A%2F%2Fexample.com%2Fresources%2Fpainter',
-      )}">Meer informatie</a>`,
+    expect(response.body).toContain('<h1>Rembrandt</h1>');
+  });
+
+  it('links a candidate to its page on the Network of Terms', async () => {
+    const manifest = await httpServer.inject({
+      method: 'GET',
+      url: '/reconcile/https://data.rkd.nl/rkdartists',
+    });
+    expect(JSON.parse(manifest.body).view).toEqual({
+      url: 'http://localhost/view/{{id}}',
+    });
+
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/view/https:/example.com/resources/painter',
+    });
+    expect(response.statusCode).toEqual(302);
+    expect(response.headers.location).toEqual(
+      'https://termennetwerk.netwerkdigitaalerfgoed.nl/lookup?uri=https%3A%2F%2Fexample.com%2Fresources%2Fpainter',
     );
   });
 
-  it('links HTML term preview to the configured URL', async () => {
+  it('links a candidate to the configured URL', async () => {
     const configuredServer = await server(catalog, {
       ...config,
       VIEW_URL_TEMPLATE: '{+uri}',
     });
     const response = await configuredServer.inject({
       method: 'GET',
-      url: '/preview/https://example.com/resources/painter',
+      url: '/view/https://example.com/resources/painter',
     });
-    expect(response.body).toContain(
-      `href="${escapeHtml('https://example.com/resources/painter')}"`,
+    expect(response.headers.location).toEqual(
+      'https://example.com/resources/painter',
     );
   });
 
