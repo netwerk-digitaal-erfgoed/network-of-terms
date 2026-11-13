@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { QueryTermsService } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, LightMyRequestResponse } from 'fastify';
 import { server } from '../src/server.js';
 import { ReconciliationQueryBatch } from '../src/query.js';
 import {
@@ -20,6 +20,7 @@ import {
   placeType,
 } from '../src/types.js';
 import { escapeHtml } from '@hapi/hoek';
+import { SpecSchema, specViolations } from './spec.js';
 
 let httpServer: FastifyInstance;
 const catalog = testCatalog(3001);
@@ -47,6 +48,7 @@ describe('Server', () => {
       url: '/reconcile/https://data.rkd.nl/rkdartists',
     });
     expect(response.statusCode).toEqual(200);
+    expectSpecCompliant(response, 'manifest');
   });
 
   it('returns reconciliation service manifest with backwards compatible distribution URI', async () => {
@@ -281,6 +283,7 @@ describe('Server', () => {
       url: '/suggest/property',
     });
     expect(JSON.parse(all.body).result).toHaveLength(13);
+    expectSpecCompliant(all, 'suggest-properties-response');
 
     const dutch = await httpServer.inject({
       method: 'GET',
@@ -377,6 +380,7 @@ describe('Server', () => {
       url: '/extend/propose',
     });
     expect(response.statusCode).toEqual(200);
+    expectSpecCompliant(response, 'data-extension-property-proposal');
   });
 
   it('accepts a data extension query form-encoded in an ‘extend’ parameter, as OpenRefine sends it', async () => {
@@ -752,16 +756,15 @@ describe('Server', () => {
   });
 
   it('proposes the properties of the type a column is reconciled against', async () => {
-    const propose = async (type?: string) =>
-      JSON.parse(
-        (
-          await httpServer.inject({
-            method: 'GET',
-            url: '/extend/propose',
-            query: type === undefined ? {} : { type },
-          })
-        ).body,
-      );
+    const propose = async (type?: string) => {
+      const response = await httpServer.inject({
+        method: 'GET',
+        url: '/extend/propose',
+        query: type === undefined ? {} : { type },
+      });
+      expectSpecCompliant(response, 'data-extension-property-proposal');
+      return JSON.parse(response.body);
+    };
     const ids = (properties: { id: string }[]) =>
       properties.map((property) => property.id);
 
@@ -908,7 +911,7 @@ async function reconciliationQuery(
     },
   },
 ) {
-  return httpServer.inject({
+  const response = await httpServer.inject({
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -918,6 +921,9 @@ async function reconciliationQuery(
       ['queries', JSON.stringify(query)],
     ]).toString(),
   });
+  expectSpecCompliant(response, 'reconciliation-result-batch');
+
+  return response;
 }
 
 async function dataExtensionQuery({
@@ -933,7 +939,7 @@ async function dataExtensionQuery({
     'Content-Type': 'application/json',
     'Accept-Language': language === undefined ? '*' : language,
   };
-  return httpServer.inject({
+  const response = await httpServer.inject({
     method: 'POST',
     headers,
     url,
@@ -945,6 +951,21 @@ async function dataExtensionQuery({
       properties: allProperties,
     },
   });
+  expectSpecCompliant(response, 'data-extension-response');
+
+  return response;
+}
+
+/**
+ * A successful response must be as the spec defines it; an error response has no schema.
+ */
+function expectSpecCompliant(
+  response: LightMyRequestResponse,
+  schema: SpecSchema,
+) {
+  if (response.statusCode === 200) {
+    expect(specViolations(schema, JSON.parse(response.body))).toEqual([]);
+  }
 }
 
 const allProperties = dataExtensionProperties.map((property) => ({
