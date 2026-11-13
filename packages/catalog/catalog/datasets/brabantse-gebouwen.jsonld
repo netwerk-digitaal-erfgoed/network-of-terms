@@ -5,7 +5,7 @@
   "name": [
     {
       "@language": "en",
-      "@value": "Brabants buildings"
+      "@value": "Brabant buildings"
     },
     {
       "@language": "nl",
@@ -22,7 +22,7 @@
       "@id": "https://www.erfgoedbrabant.nl"
     }
   ],
-  "url": [{ "@id": "https://n2t.net/ark:/15052/" }],
+  "url": [{ "@id": "https://n2t.net/ark:15052/" }],
   "mainEntityOfPage": [
     {
       "@id": "https://www.brabantcloud.nl/page/787/brabantse-kloosters-als-termenlijst"
@@ -31,11 +31,11 @@
   "description": [
     {
       "@language": "en",
-      "@value": "Buildings in the province of Gebouwen in de provincie of North Brabant, as yet with a religious function such as monasteries"
+      "@value": "Buildings that are related to, or have been of significance to, the province of North Brabant"
     },
     {
       "@language": "nl",
-      "@value": "Gebouwen in de provincie Noord-Brabant, vooralsnog met een religieuze functie, zoals kloosters"
+      "@value": "Gebouwen die een relatie hebben tot of van belang zijn geweest voor de provincie Noord-Brabant"
     }
   ],
   "inLanguage": "nl",

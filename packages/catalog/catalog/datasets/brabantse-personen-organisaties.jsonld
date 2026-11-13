@@ -1,0 +1,78 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.brabantcloud.nl/personen-organisaties",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Brabant persons & organisations"
+    },
+    {
+      "@language": "nl",
+      "@value": "Brabantse personen & organisaties"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.erfgoedbrabant.nl"
+    }
+  ],
+  "url": [
+    {
+      "@id": "https://n2t.net/ark:15052/act"
+    }
+  ],
+  "mainEntityOfPage": [
+    {
+      "@id": "https://www.brabantcloud.nl/"
+    }
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Persons and organisations that are related to, or have been of significance to, the province of North Brabant"
+    },
+    {
+      "@language": "nl",
+      "@value": "Personen en organisaties die een relatie hebben tot of van belang zijn geweest voor de provincie Noord-Brabant"
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://data.brabantcloud.nl/personen-organisaties/query/",
+      "@type": "DataDownload",
+      "contentUrl": "https://data.brabantcloud.nl/personen-organisaties/query/",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/brabantse-personen-organisaties.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/brabantse-personen-organisaties.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}

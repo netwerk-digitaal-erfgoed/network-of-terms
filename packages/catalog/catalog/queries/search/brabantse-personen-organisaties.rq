@@ -1,0 +1,58 @@
+PREFIX schema: <https://schema.org/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+# Places (GeoNames) and occupations and organization kinds (AAT) are constructed as IRIs only:
+# the source states no names for them.
+CONSTRUCT {
+    ?uri a skos:Concept, ?type ;
+        skos:prefLabel ?schema_name ;
+        skos:altLabel ?schema_alternateName ;
+        schema:description ?schema_description ;
+        schema:givenName ?schema_givenName ;
+        schema:familyName ?schema_familyName ;
+        schema:birthDate ?schema_birthDate ;
+        schema:birthPlace ?schema_birthPlace ;
+        schema:deathDate ?schema_deathDate ;
+        schema:deathPlace ?schema_deathPlace ;
+        schema:hasOccupation ?schema_hasOccupation ;
+        schema:additionalType ?schema_additionalType ;
+        schema:foundingDate ?schema_foundingDate ;
+        schema:dissolutionDate ?schema_dissolutionDate ;
+        schema:location ?schema_location .
+}
+WHERE {
+    # DISTINCT, so a term whose several names match takes one row, and counts once towards the limit.
+    {
+        SELECT DISTINCT ?uri ?type WHERE {
+            ?uri a ?type ;
+                ?predicate ?label .
+            VALUES ?type { schema:Person schema:Organization }
+            VALUES ?predicate { schema:name schema:alternateName }
+            FILTER(CONTAINS(LCASE(?label), LCASE(?query)))
+        }
+        #LIMIT#
+    }
+
+    # The source states each of these at most once, so they do not multiply. They precede the UNION,
+    # because the source’s SPARQL engine rejects patterns after one.
+    OPTIONAL { ?uri schema:description ?schema_description }
+    OPTIONAL { ?uri schema:familyName ?schema_familyName }
+    OPTIONAL { ?uri schema:birthDate ?schema_birthDate }
+    OPTIONAL { ?uri schema:birthPlace ?schema_birthPlace }
+    OPTIONAL { ?uri schema:deathDate ?schema_deathDate }
+    OPTIONAL { ?uri schema:deathPlace ?schema_deathPlace }
+    OPTIONAL { ?uri schema:additionalType ?schema_additionalType }
+    OPTIONAL { ?uri schema:foundingDate ?schema_foundingDate }
+    OPTIONAL { ?uri schema:dissolutionDate ?schema_dissolutionDate }
+    OPTIONAL { ?uri schema:location ?schema_location }
+
+    # One UNION branch per independently multi-valued property, and not an OPTIONAL group:
+    # see “One UNION branch per multi-valued property” in the catalog README.
+    {
+        { ?uri a ?type }
+        UNION { ?uri schema:name ?schema_name }
+        UNION { ?uri schema:alternateName ?schema_alternateName }
+        UNION { ?uri schema:givenName ?schema_givenName }
+        UNION { ?uri schema:hasOccupation ?schema_hasOccupation }
+    }
+}
