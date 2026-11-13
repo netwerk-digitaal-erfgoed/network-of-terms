@@ -50,7 +50,6 @@ describe('Preview', () => {
         source,
         nl,
         'nl',
-        '{+uri}',
       );
 
     expect(html([name('Jan van Dijken'), name('J. van Dijken')])).toContain(
@@ -107,7 +106,6 @@ describe('Preview', () => {
       source,
       nl,
       'nl',
-      '{+uri}',
     );
 
     expect(html).toMatch(

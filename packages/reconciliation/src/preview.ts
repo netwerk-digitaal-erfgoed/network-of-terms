@@ -18,7 +18,6 @@ export function preview(
   source: Dataset,
   locale: locale,
   language: string,
-  viewUrlTemplate: string,
 ) {
   const term = lookupResult.result;
   if (term instanceof Term) {
@@ -52,9 +51,6 @@ export function preview(
           source.creators[0]?.alternateName['']
         })</dd>
       </dl>
-      <p><a target="_blank" href="${escapeHtml(
-        viewUrl(viewUrlTemplate, term.id.value),
-      )}">${locale.view}</a></p>
   </body>
   </html>`;
   } else {
@@ -157,13 +153,6 @@ function fact(label: string, values: string[]) {
 
 const literal = (values: Literal[], language: string) =>
   literalValues(values, [language]).join(' • ');
-
-// As in URI Templates (RFC 6570), {uri} is replaced with the percent-encoded IRI, which suits a
-// query parameter, and {+uri} with the IRI as it is, which suits a link to the term itself.
-const viewUrl = (template: string, iri: string) =>
-  template.replace(/\{(\+?)uri\}/g, (_placeholder, asIs: string) =>
-    asIs === '+' ? iri : encodeURIComponent(iri),
-  );
 
 // What the source states about the birth or death of the person a term denotes: the dates, then
 // the places. Empty for any other term.
