@@ -27,6 +27,38 @@ const source = {
 } as unknown as Dataset;
 
 describe('Preview', () => {
+  it('shows only the alternative labels that differ from the name', () => {
+    const html = (altLabels: Literal[]) =>
+      preview(
+        {
+          result: new Term(
+            iri('https://example.com/person'),
+            [],
+            [name('Jan van Dijken')],
+            altLabels,
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            [],
+            undefined,
+            undefined,
+          ),
+        } as unknown as LookupQueryResult,
+        source,
+        nl,
+        'nl',
+        '{+uri}',
+      );
+
+    expect(html([name('Jan van Dijken'), name('J. van Dijken')])).toContain(
+      '<dt>Alternatieve labels</dt><dd>J. van Dijken</dd>',
+    );
+    expect(html([name('Jan van Dijken')])).not.toContain('Alternatieve labels');
+  });
+
   it('shows a related term of a person only when it is not family', () => {
     const spouse = new RelatedTerm(iri('https://example.com/spouse'), [
       name('Grietje Jans'),
