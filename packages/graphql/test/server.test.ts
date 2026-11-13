@@ -7,7 +7,38 @@ import {
   testCatalog,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query/test-utils';
 import { IRI } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+
+// The tests check that the API serves a genre by its name, not that the vocabulary defining it is
+// online, so its names are fixed here instead of dereferenced from data.cultureelerfgoed.nl.
+vi.mock(
+  '@netwerk-digitaal-erfgoed/network-of-terms-catalog',
+  async (importOriginal) => {
+    const catalogPackage =
+      await importOriginal<
+        typeof import('@netwerk-digitaal-erfgoed/network-of-terms-catalog')
+      >();
+    const genreNames = new Map([
+      [
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Personen',
+        'Personen',
+      ],
+      [
+        'https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen',
+        'Abstracte begrippen',
+      ],
+    ]);
+    return {
+      ...catalogPackage,
+      dereferenceGenre: async (genre: string) => {
+        const name = genreNames.get(String(genre));
+        return name === undefined
+          ? null
+          : new catalogPackage.Genre(genre, { nl: name });
+      },
+    };
+  },
+);
 
 let httpServer: FastifyInstance;
 // Generous enough for regular sources on a busy CI runner, yet below the delay
