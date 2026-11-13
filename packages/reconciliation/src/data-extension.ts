@@ -20,130 +20,106 @@ export type DataExtensionQuery = {
   properties: { id: string }[];
 };
 
+/** A data extension property’s name in the client’s language, which clients show as a column name. */
+export type PropertyNames = Record<DataExtensionPropertyId, string>;
+
 export const dataExtensionProperties: {
   id: DataExtensionPropertyId;
-  name: string;
   type?: { id: string; name: string };
 }[] = [
   {
     id: 'prefLabels',
-    name: 'prefLabels',
   },
   {
     id: 'altLabels',
-    name: 'altLabels',
   },
   {
     id: 'scopeNotes',
-    name: 'scopeNotes',
   },
   // What the source states about the person a term denotes; empty for any other term.
   {
     id: 'birthDates',
-    name: 'birthDates',
   },
   {
     id: 'deathDates',
-    name: 'deathDates',
   },
   {
     id: 'birthPlaces',
-    name: 'birthPlaces',
   },
   {
     id: 'deathPlaces',
-    name: 'deathPlaces',
   },
   {
     id: 'genders',
-    name: 'genders',
   },
   {
     id: 'givenNames',
-    name: 'givenNames',
   },
   {
     id: 'familyNames',
-    name: 'familyNames',
   },
   {
     id: 'occupations',
-    name: 'occupations',
   },
   {
     id: 'nationalities',
-    name: 'nationalities',
   },
   // Family members are persons in the same source, so entities as related terms are, of the person
   // type, so that OpenRefine proposes a person’s properties again for a column of them.
   {
     id: 'parents',
-    name: 'parents',
     type: personType,
   },
   {
     id: 'children',
-    name: 'children',
     type: personType,
   },
   {
     id: 'spouses',
-    name: 'spouses',
     type: personType,
   },
   {
     id: 'siblings',
-    name: 'siblings',
     type: personType,
   },
   // What the source states about the place a term denotes; empty for any other term.
   {
     id: 'placeNames',
-    name: 'placeNames',
   },
   {
     id: 'latitudes',
-    name: 'latitudes',
   },
   {
     id: 'longitudes',
-    name: 'longitudes',
   },
   {
     id: 'countries',
-    name: 'countries',
   },
   {
     id: 'placeTypes',
-    name: 'placeTypes',
   },
   // Terms in the same source, as entities a client can keep reconciled, so far as the source names them.
   {
     id: 'broaderTerms',
-    name: 'broaderTerms',
     // The type the service manifest declares, so that OpenRefine gives a column of related terms
     // the same expected type as the column they were extended from.
     type: conceptType,
   },
   {
     id: 'narrowerTerms',
-    name: 'narrowerTerms',
     type: conceptType,
   },
   {
     id: 'relatedTerms',
-    name: 'relatedTerms',
     type: conceptType,
   },
   // IRIs in other sources, such as ULAN, VIAF or Wikidata, so as strings rather than entities.
   {
     id: 'exactMatches',
-    name: 'exactMatches',
   },
   // Web pages about the term, such as the records a person reconstruction was derived from.
   {
     id: 'seeAlso',
-    name: 'seeAlso',
   },
 ];
 
@@ -157,7 +133,7 @@ export const dataExtensionProperties: {
  * A proposal names each property only: the spec defines no more, and OpenRefine reads no more. The
  * type of a property’s values is in the data extension response’s meta instead.
  */
-export const proposedProperties = (type: string) => {
+export const proposedProperties = (type: string, names: PropertyNames) => {
   const excluded = propertiesOfType.has(type)
     ? [
         ...[...propertiesOfType]
@@ -168,7 +144,7 @@ export const proposedProperties = (type: string) => {
     : [];
   return dataExtensionProperties
     .filter((property) => !excluded.includes(property.id))
-    .map(({ id, name }) => ({ id, name }));
+    .map(({ id }) => ({ id, name: names[id] }));
 };
 
 const hierarchyProperties: DataExtensionPropertyId[] = [
@@ -213,6 +189,7 @@ export async function extendQuery(
   requestedProperties: { id: string }[],
   lookupService: LookupService,
   language: string,
+  names: PropertyNames,
 ) {
   // Clients build a column per property in the response, so it holds only those asked for.
   const properties = dataExtensionProperties.filter((property) =>
@@ -223,7 +200,10 @@ export async function extendQuery(
   );
 
   const futureSpecResult = {
-    meta: properties,
+    meta: properties.map((property) => ({
+      ...property,
+      name: names[property.id],
+    })),
     rows: lookupResults.map((lookupResult) => ({
       id: lookupResult.uri.toString(),
       properties: properties.map((property) => ({

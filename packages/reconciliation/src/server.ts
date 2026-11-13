@@ -83,6 +83,7 @@ export async function server(
             (request.body as DataExtensionQuery).properties,
             lookupService,
             request.preferredLanguage,
+            locales[request.preferredLanguage].properties,
           ),
         );
         return;
@@ -147,7 +148,10 @@ export async function server(
       const type = request.query.type?.[0] || conceptType.id;
       void reply.send({
         type,
-        properties: proposedProperties(type),
+        properties: proposedProperties(
+          type,
+          locales[request.preferredLanguage].properties,
+        ),
       });
     },
   );
@@ -166,6 +170,7 @@ export async function server(
           request.body.properties,
           lookupService,
           request.preferredLanguage,
+          locales[request.preferredLanguage].properties,
         ),
       );
     },

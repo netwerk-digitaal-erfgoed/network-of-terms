@@ -424,7 +424,7 @@ describe('Server', () => {
 
     expect(results.meta).toContainEqual({
       id: 'relatedTerms',
-      name: 'relatedTerms',
+      name: 'Related term',
       type: {
         id: 'http://www.w3.org/2004/02/skos/core#Concept',
         name: 'Concept',
@@ -432,7 +432,7 @@ describe('Server', () => {
     });
     expect(results.meta).toContainEqual({
       id: 'parents',
-      name: 'parents',
+      name: 'Parent',
       type: personType,
     });
 
@@ -552,7 +552,7 @@ describe('Server', () => {
     expect(response.statusCode).toEqual(200);
     const results = JSON.parse(response.body);
     expect(results.meta).toEqual([
-      { id: 'exactMatches', name: 'exactMatches' },
+      { id: 'exactMatches', name: 'Overeenkomstige term' },
     ]);
     expect(results.rows).toEqual({
       'https://example.com/resources/artwork': {
@@ -754,6 +754,18 @@ describe('Server', () => {
     expect(response.body).not.toContain('Beroep');
   });
 
+  it('names proposed properties in the client’s language', async () => {
+    const response = await httpServer.inject({
+      method: 'GET',
+      url: '/extend/propose',
+      headers: { 'accept-language': 'en' },
+    });
+    expect(JSON.parse(response.body).properties).toContainEqual({
+      id: 'birthPlaces',
+      name: 'Place of birth',
+    });
+  });
+
   it('proposes the properties of the type a column is reconciled against', async () => {
     const propose = async (type?: string) => {
       const response = await httpServer.inject({
@@ -774,7 +786,7 @@ describe('Server', () => {
     expect(ids(person.properties)).not.toContain('latitudes');
     expect(person.properties).toContainEqual({
       id: 'parents',
-      name: 'parents',
+      name: 'Ouder',
     });
 
     // A place or organization is never a person, but it may have broader and narrower terms.
