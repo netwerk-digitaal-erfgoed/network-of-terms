@@ -17,7 +17,7 @@ export class ServiceManifest {
   constructor(
     public readonly name: string,
     public readonly identifierSpace: IRI,
-    readonly root: string,
+    root: string,
   ) {
     this.preview = {
       width: 300,
