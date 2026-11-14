@@ -102,7 +102,12 @@ describe('Query', () => {
 
 describe('Query against an endpoint', () => {
   const endpointService = new QueryTermsService({
-    logger: { info: vi.fn(), error: vi.fn(), debug: vi.fn() } as never,
+    logger: {
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn(),
+    } as never,
   });
   const { dataset, distribution } = createTestDataset(
     'CONSTRUCT { ?s ?p ?o } WHERE { ?s ?p ?o }',
