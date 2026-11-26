@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/523",
+  "@id": "https://terms.personsincontext.org/sourcetypes/523",
   "@type": "Dataset",
   "name": [
     {
@@ -34,12 +34,12 @@
   ],
   "url": [
     {
-      "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/"
+      "@id": "https://terms.personsincontext.org/sourcetypes/"
     }
   ],
   "mainEntityOfPage": [
     {
-      "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens"
+      "@id": "https://terms.personsincontext.org/sourcetypes/"
     }
   ],
   "description": [
@@ -55,9 +55,9 @@
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens#source-types",
+      "@id": "https://terms.personsincontext.org/PoolParty/sparql/sourcetypes",
       "@type": "DataDownload",
-      "contentUrl": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens",
+      "contentUrl": "https://terms.personsincontext.org/PoolParty/sparql/sourcetypes",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {

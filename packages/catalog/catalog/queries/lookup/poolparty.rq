@@ -35,9 +35,9 @@ WHERE {
         UNION { ?uri skos:hiddenLabel ?hiddenLabel . }
         UNION { ?uri skos:scopeNote ?scopeNote . }
         UNION { ?uri skos:definition ?scopeNote . }
-        # Several datasets can share a terms URI prefix (e.g. the three PiCo-T
-        # sub-thesauri), in which case the Network of Terms uses the concept
-        # scheme to attribute the term to the dataset it really belongs to.
+        # Several datasets can share a terms URI prefix, in which case the
+        # Network of Terms uses the concept scheme to attribute the term to the
+        # dataset it really belongs to.
         UNION { ?uri skos:inScheme ?datasetUri . }
         UNION {
             ?uri skos:broader ?broader_uri .
