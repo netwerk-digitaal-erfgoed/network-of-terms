@@ -1,6 +1,6 @@
 {
   "@context": "https://schema.org",
-  "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/73",
+  "@id": "https://terms.personsincontext.org/eventtypes/73",
   "@type": "Dataset",
   "name": [
     {
@@ -34,12 +34,12 @@
   ],
   "url": [
     {
-      "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/"
+      "@id": "https://terms.personsincontext.org/eventtypes/"
     }
   ],
   "mainEntityOfPage": [
     {
-      "@id": "https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens"
+      "@id": "https://terms.personsincontext.org/eventtypes/"
     }
   ],
   "description": [
@@ -55,9 +55,9 @@
   "inLanguage": "nl",
   "distribution": [
     {
-      "@id": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens#events",
+      "@id": "https://terms.personsincontext.org/PoolParty/sparql/eventtypes",
       "@type": "DataDownload",
-      "contentUrl": "https://terms.personsincontext.org/PoolParty/sparql/ThesaurusHistorischePersoonsgegevens",
+      "contentUrl": "https://terms.personsincontext.org/PoolParty/sparql/eventtypes",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {

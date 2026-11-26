@@ -119,7 +119,6 @@ describe('Catalog', () => {
       'http://data.beeldengeluid.nl/gtaa', // GTAA
       'http://data.bibliotheken.nl/id/thes/', // KB: Brinkman, NTA, STCN, corporations
       'https://data.muziekweb.nl/Link/', // Muziekweb
-      'https://terms.personsincontext.org/ThesaurusHistorischePersoonsgegevens/', // PiCo-T
     ];
     const datasetsByPrefix = new Map<string, string[]>();
     for (const dataset of catalog.datasets) {
