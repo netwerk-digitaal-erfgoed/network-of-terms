@@ -402,6 +402,21 @@
         }
       ],
       "alternateName": "House of Legacies"
+    },
+    {
+      "@id": "https://www.scouting.nl",
+      "@type": "Organization",
+      "name": [
+        {
+          "@language": "en",
+          "@value": "Scouting Netherlands"
+        },
+        {
+          "@language": "nl",
+          "@value": "Scouting Nederland"
+        }
+      ],
+      "alternateName": "Scouting"
     }
   ]
 }
