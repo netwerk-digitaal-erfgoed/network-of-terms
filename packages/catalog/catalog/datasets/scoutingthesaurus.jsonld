@@ -1,0 +1,84 @@
+{
+  "@context": "https://schema.org",
+  "@id": "https://data.cultureelerfgoed.nl/scoutingthesaurus",
+  "@type": "Dataset",
+  "name": [
+    {
+      "@language": "en",
+      "@value": "Scouting Thesaurus"
+    },
+    {
+      "@language": "nl",
+      "@value": "Thesaurus Scouting"
+    }
+  ],
+  "genre": [
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Abstracte-begrippen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Actoren-en-organismen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Gebeurtenissen"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Locaties"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/Objecten"
+    },
+    {
+      "@id": "https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/organisaties"
+    }
+  ],
+  "creator": [
+    {
+      "@id": "https://www.scouting.nl"
+    }
+  ],
+  "url": [{ "@id": "https://data.cultureelerfgoed.nl/scoutingthesaurus/" }],
+  "mainEntityOfPage": [
+    { "@id": "https://data.cultureelerfgoed.nl/scoutingthesaurus/" }
+  ],
+  "description": [
+    {
+      "@language": "en",
+      "@value": "Terms for describing the history and heritage of Scouting in the Netherlands: books, periodicals, events, locations, organisations, functions, distinctions and the Scouting method."
+    },
+    {
+      "@language": "nl",
+      "@value": "Termen voor het beschrijven van de geschiedenis en het erfgoed van Scouting in Nederland: boeken, tijdschriften, evenementen, locaties, organisaties, functies, onderscheidingen en de scoutingmethode."
+    }
+  ],
+  "inLanguage": "nl",
+  "distribution": [
+    {
+      "@id": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/scoutingthesaurus",
+      "@type": "DataDownload",
+      "contentUrl": "https://digitaalerfgoed.poolparty.biz/PoolParty/sparql/scoutingthesaurus",
+      "encodingFormat": "application/sparql-query",
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "query": "file://../queries/search/poolparty.rq"
+        },
+        {
+          "@type": "FindAction",
+          "query": "file://../queries/lookup/poolparty.rq"
+        },
+        {
+          "@type": "Action",
+          "target": {
+            "@type": "EntryPoint",
+            "actionApplication": {
+              "@id": "https://reconciliation-api.github.io/specs/latest/",
+              "@type": "SoftwareApplication"
+            },
+            "urlTemplate": "https://termennetwerk-api.netwerkdigitaalerfgoed.nl/reconcile/{dataset}"
+          }
+        }
+      ]
+    }
+  ]
+}
