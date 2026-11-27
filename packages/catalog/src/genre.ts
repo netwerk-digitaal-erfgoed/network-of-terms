@@ -2,16 +2,14 @@ import {
   IRI,
   StringDictionary,
 } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
-import type { Literal, Quad } from '@rdfjs/types';
-import { RdfXmlParser } from 'rdfxml-streaming-parser';
-import { Readable } from 'node:stream';
-import { pipeline } from 'node:stream/promises';
 
 const timeout = 10_000;
-const rdfType = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type';
-const skosConcept = 'http://www.w3.org/2004/02/skos/core#Concept';
-const skosPrefLabel = 'http://www.w3.org/2004/02/skos/core#prefLabel';
 const maxAge = 86_400_000; // 24 hours in ms.
+
+// The genre IRIs (https://data.cultureelerfgoed.nl/termennetwerk/onderwerpen/…) no longer dereference,
+// so look up their labels in the RCE linked data platform instead.
+export const genreEndpoint =
+  'https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/onderwerpen-not/sparql';
 
 export class Genre {
   constructor(
@@ -23,59 +21,49 @@ export class Genre {
 const cache = new Map<string, { data: Genre; expires: number }>();
 const refreshing = new Set<string>();
 
+interface SparqlResults {
+  results: {
+    bindings: { label: { value: string; 'xml:lang'?: string } }[];
+  };
+}
+
 const doDereferenceGenre = async (genre: IRI): Promise<Genre> => {
-  // We can't dereference at the actual URL because content negotiation is broken, so suffix .rdf.
-  const url = `${genre.toString()}.rdf`;
+  if (/[\s<>"{}|\\^`]/.test(genre.toString())) {
+    throw new Error(`Invalid genre IRI <${genre}>`);
+  }
+
+  const query = `
+    PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+    SELECT ?label WHERE { <${genre}> a skos:Concept ; skos:prefLabel ?label }`;
   // The timeout covers the response body too.
-  const response = await fetch(url, {
-    headers: { Accept: 'application/rdf+xml' },
-    signal: AbortSignal.timeout(timeout),
-  });
-  if (!response.ok || response.body === null) {
+  const response = await fetch(
+    `${genreEndpoint}?${new URLSearchParams({ query })}`,
+    {
+      headers: { Accept: 'application/sparql-results+json' },
+      signal: AbortSignal.timeout(timeout),
+    },
+  );
+  if (!response.ok) {
     // Free the connection instead of leaving it to the timeout.
     await response.body?.cancel();
     throw new Error(`HTTP ${response.status} for genre <${genre}>`);
   }
 
-  // A pipeline, so a body that breaks off (such as on the timeout) fails the parse instead of
-  // leaving it waiting.
-  const quads: Quad[] = [];
-  await pipeline(
-    Readable.fromWeb(response.body),
-    new RdfXmlParser({ baseIRI: url }),
-    async (parsed: AsyncIterable<Quad>) => {
-      for await (const quad of parsed) {
-        quads.push(quad);
-      }
-    },
+  const { results } = (await response.json()) as SparqlResults;
+  const labels = results.bindings.filter(
+    (binding) => binding.label['xml:lang'] !== undefined,
   );
-  const concepts = new Set(
-    quads
-      .filter(
-        (quad) =>
-          quad.predicate.value === rdfType && quad.object.value === skosConcept,
-      )
-      .map((quad) => quad.subject.value),
-  );
-  const prefLabels = quads
-    .filter(
-      (quad) =>
-        quad.predicate.value === skosPrefLabel &&
-        quad.object.termType === 'Literal' &&
-        concepts.has(quad.subject.value),
-    )
-    .map((quad) => quad.object as Literal);
 
-  if (prefLabels.length === 0) {
+  if (labels.length === 0) {
     // Treat as failure so callers don’t cache an empty name dictionary
-    // (e.g. when the upstream returns a non-RDF error page).
+    // (e.g. when the genre is unknown to the endpoint).
     throw new Error(`No labels returned for genre <${genre}>`);
   }
 
   return new Genre(
     genre,
-    prefLabels.reduce((acc: StringDictionary, prefLabel) => {
-      acc[prefLabel.language] = prefLabel.value;
+    labels.reduce((acc: StringDictionary, { label }) => {
+      acc[label['xml:lang']!] = label.value;
       return acc;
     }, {}),
   );
