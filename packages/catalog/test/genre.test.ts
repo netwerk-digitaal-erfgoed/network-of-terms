@@ -114,6 +114,42 @@ describe('dereferenceGenre', () => {
     expect(result).toBeNull();
   });
 
+  it('does not query the endpoint for an IRI that cannot be put in a query', async () => {
+    const dereferenceGenre = await importGenre();
+
+    const result = await dereferenceGenre('http://example.com/> } # ');
+
+    expect(result).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('ignores labels without a language', async () => {
+    fetchMock.mockImplementation(
+      async () =>
+        new Response(
+          JSON.stringify({
+            results: {
+              bindings: [
+                { label: { type: 'literal', value: 'Zonder taal' } },
+                {
+                  label: {
+                    type: 'literal',
+                    value: 'Testgenre',
+                    'xml:lang': 'nl',
+                  },
+                },
+              ],
+            },
+          }),
+        ),
+    );
+    const dereferenceGenre = await importGenre();
+
+    const result = await dereferenceGenre(genreIri);
+
+    expect(result!.name).toEqual({ nl: 'Testgenre' });
+  });
+
   it('does not cache empty results when upstream returns no labels', async () => {
     fetchMock.mockImplementation(async () => sparqlResponse([]));
     const dereferenceGenre = await importGenre();
