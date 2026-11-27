@@ -56,7 +56,7 @@
     {
       "@id": "https://data.cultureelerfgoed.nl/PoolParty/sparql/rights",
       "@type": "DataDownload",
-      "contentUrl": "https://data.cultureelerfgoed.nl/PoolParty/sparql/rights",
+      "contentUrl": "https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/rechtenstatus-en-gebruiksrechten/sparql",
       "encodingFormat": "application/sparql-query",
       "potentialAction": [
         {
