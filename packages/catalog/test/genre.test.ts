@@ -11,21 +11,21 @@ import type { IRI } from '@netwerk-digitaal-erfgoed/network-of-terms-query';
 
 const genreIri: IRI = 'http://example.com/genre/1';
 
-const rdfXmlResponse = (labels: { language: string; value: string }[]) =>
+const sparqlResponse = (labels: { language: string; value: string }[]) =>
   new Response(
-    `<?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:skos="http://www.w3.org/2004/02/skos/core#">
-  <skos:Concept rdf:about="${genreIri}">
-    ${labels
-      .map(
-        (label) =>
-          `<skos:prefLabel xml:lang="${label.language}">${label.value}</skos:prefLabel>`,
-      )
-      .join('\n    ')}
-  </skos:Concept>
-</rdf:RDF>`,
-    { headers: { 'Content-Type': 'application/rdf+xml' } },
+    JSON.stringify({
+      head: { vars: ['label'] },
+      results: {
+        bindings: labels.map((label) => ({
+          label: {
+            type: 'literal',
+            value: label.value,
+            'xml:lang': label.language,
+          },
+        })),
+      },
+    }),
+    { headers: { 'Content-Type': 'application/sparql-results+json' } },
   );
 
 let fetchMock: MockInstance;
@@ -34,7 +34,7 @@ beforeEach(() => {
   fetchMock = vi
     .spyOn(globalThis, 'fetch')
     .mockImplementation(async () =>
-      rdfXmlResponse([{ language: 'nl', value: 'Testgenre' }]),
+      sparqlResponse([{ language: 'nl', value: 'Testgenre' }]),
     );
 });
 
@@ -47,6 +47,9 @@ afterEach(async () => {
 const importGenre = async () =>
   import('../src/genre.js').then((m) => m.dereferenceGenre);
 
+const genreEndpoint =
+  'https://api.linkeddata.cultureelerfgoed.nl/datasets/thesauri/onderwerpen-not/sparql';
+
 describe('dereferenceGenre', () => {
   it('fetches and caches a genre', async () => {
     const dereferenceGenre = await importGenre();
@@ -56,7 +59,9 @@ describe('dereferenceGenre', () => {
     expect(result).not.toBeNull();
     expect(result!.name.nl).toEqual('Testgenre');
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0][0]).toEqual(`${genreIri}.rdf`);
+    const url = new URL(fetchMock.mock.calls[0][0]);
+    expect(`${url.origin}${url.pathname}`).toEqual(genreEndpoint);
+    expect(url.searchParams.get('query')).toContain(`<${genreIri}>`);
 
     // Second call should return cached data without querying again.
     const cached = await dereferenceGenre(genreIri);
@@ -78,7 +83,7 @@ describe('dereferenceGenre', () => {
 
     // Update mock to return new data for the background refresh.
     fetchMock.mockImplementation(async () =>
-      rdfXmlResponse([{ language: 'nl', value: 'Updated genre' }]),
+      sparqlResponse([{ language: 'nl', value: 'Updated genre' }]),
     );
 
     // Should return stale data immediately.
@@ -110,7 +115,7 @@ describe('dereferenceGenre', () => {
   });
 
   it('does not cache empty results when upstream returns no labels', async () => {
-    fetchMock.mockImplementation(async () => rdfXmlResponse([]));
+    fetchMock.mockImplementation(async () => sparqlResponse([]));
     const dereferenceGenre = await importGenre();
 
     const result = await dereferenceGenre(genreIri);
@@ -118,7 +123,7 @@ describe('dereferenceGenre', () => {
 
     // Recovery: upstream starts returning labels on the next call.
     fetchMock.mockImplementation(async () =>
-      rdfXmlResponse([{ language: 'nl', value: 'Testgenre' }]),
+      sparqlResponse([{ language: 'nl', value: 'Testgenre' }]),
     );
 
     const recovered = await dereferenceGenre(genreIri);
@@ -164,7 +169,7 @@ describe('dereferenceGenre', () => {
         new Promise((resolve) =>
           setTimeout(
             () =>
-              resolve(rdfXmlResponse([{ language: 'nl', value: 'Refreshed' }])),
+              resolve(sparqlResponse([{ language: 'nl', value: 'Refreshed' }])),
             50,
           ),
         ),
